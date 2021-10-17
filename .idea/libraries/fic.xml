@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="fic">
+    <CLASSES />
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/Fractal-Image-Compression-master.zip!/Fractal-Image-Compression-master/src" />
+    </SOURCES>
+  </library>
+</component>
