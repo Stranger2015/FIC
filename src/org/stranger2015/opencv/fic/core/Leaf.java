@@ -5,42 +5,47 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
+import java.util.Collections;
+
 public
-class Leaf extends Node {
+class Leaf extends TreeNode <Leaf> {
+    protected int x;
+    protected int y;
+    protected int width;
+    protected int height;
+
+    protected final Mat image;
 
     public
-    Mat getDomainBlock () {
-        return domainBlock;
+    Leaf ( Leaf parent, Mat image, Rect rect ) {
+        super(parent, rect, Collections.emptyList());
+        this.image = image.submat(rect);
     }
 
-    //    private final Color color;
-    protected Mat domainBlock;
+    public
+    Leaf ( Leaf parent, Mat image, int x, int y, int width, int height ) {
+        this(parent, image, new Rect(x, y, width, height));
+    }
 
     public
-    Leaf ( Mat domainBlock ) {
-        this.domainBlock = domainBlock;
+    boolean isDomainBlock () {
+        return false;
     }
 
     @Override
     public
-    void draw ( Mat image, Rect rect, boolean drawQuads ) {
-        Imgproc.rectangle(image, rect, new Scalar());
+    void draw ( Mat image, Rect rect ) {
+        Imgproc.rectangle(image, rect, new Scalar(1.0 / 255, 1.0 / 255, 1.0 / 255, 0.0));
     }
-
-//    public
-//    Color getColor () {
-//        return domainBlock.;
-//    }
 
     @Override
     public
-    Node instance ( Object... objects ) {
+    Leaf merge () {
         return this;
     }
 
-    @Override
     public
-    Node merge () {
-        return this;
+    Mat getImage () {
+        return image;
     }
 }

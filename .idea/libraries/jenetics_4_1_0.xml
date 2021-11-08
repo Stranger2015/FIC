@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="jenetics-4.1.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jenetics-4.1.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/jenetics-4.1.0.zip!/jenetics-4.1.0/project/jenetics.xml/src/jmh/java" />
+      <root url="jar://$PROJECT_DIR$/lib/jenetics-4.1.0.zip!/jenetics-4.1.0/project/jenetics.xml/src/main/java" />
+      <root url="jar://$USER_HOME$/.ideaLibSources/jenetics-4.1.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

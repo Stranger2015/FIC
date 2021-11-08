@@ -1,6 +1,8 @@
 package org.stranger2015.opencv.fic.core;
 
+import org.opencv.core.Mat;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
+import org.stranger2015.opencv.fic.transform.ScaleTransform;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
@@ -15,10 +17,10 @@ import java.util.Set;
         */
 public class Compressor extends Observable {
 
-    private final lib.transformations.ScaleTransform scaleTransform;
+    private final ScaleTransform scaleTransform;
     private final Tiler<BufferedImage>        tiler;
-    private final Distanceator<BufferedImage> comparator;
-    private final Set <ImageTransform> transforms;
+    private final ThreadLocal <Distanceator <BufferedImage>> comparator = new ThreadLocal <>();
+    private final Set <ImageTransform<Mat>> transforms;
     private final Set<BufferedImageOp>        filters;
 
     /**
@@ -33,11 +35,12 @@ public class Compressor extends Observable {
      * @see Observable
      * @see Observer#update(java.util.Observable, java.lang.Object)
      */
-    public Compressor(final lib.transformations.ScaleTransform scaleTransform,
+    public Compressor(final ScaleTransform scaleTransform,
                       final Tiler<BufferedImage> tiler,
                       final Distanceator<BufferedImage> comparator,
-                      final Set<ImageTransform> transforms,
-                      Observer observer) throws NullPointerException {
+                      final Set<ImageTransform<Mat>> transforms,
+                      final Observer observer)
+            throws NullPointerException {
         this(scaleTransform, tiler, comparator, transforms,
                 new HashSet <BufferedImageOp>(0), observer);
     }
@@ -52,20 +55,19 @@ public class Compressor extends Observable {
      *
      * @throws NullPointerException if any field is null
      *
-     * @see #compress(java.awt.image.BufferedImage)
      * @see Observable
      * @see Observer#update(java.util.Observable, java.lang.Object)
      */
-    public Compressor(final lib.transformations.ScaleTransform scaleTransform,
+    public Compressor(final ScaleTransform scaleTransform,
                       final Tiler<BufferedImage> tiler,
                       final Distanceator<BufferedImage> comparator,
-                      final Set<ImageTransform> transforms,
+                      final Set<ImageTransform<Mat>> transforms,
                       final Set<BufferedImageOp> filters,
                       Observer observer) throws NullPointerException {
         assert (comparator != null) && (transforms != null) && (filters != null)
                 && (tiler != null) && (scaleTransform != null) : "Null elements now allowed";
 
-        this.comparator = comparator;
+        this.comparator.set(comparator);
         this.tiler      = tiler;
         this.filters    = filters;
         this.transforms = transforms;
@@ -74,4 +76,25 @@ public class Compressor extends Observable {
         if (observer != null) {
             this.addObserver(observer);
         }
-    }}
+    }
+
+    public
+    ScaleTransform getScaleTransform () {
+        return scaleTransform;
+    }
+
+    public
+    Tiler <BufferedImage> getTiler () {
+        return tiler;
+    }
+
+    public
+    Set <ImageTransform<Mat>> getTransforms () {
+        return transforms;
+    }
+
+    public
+    Set <BufferedImageOp> getFilters () {
+        return filters;
+    }
+}

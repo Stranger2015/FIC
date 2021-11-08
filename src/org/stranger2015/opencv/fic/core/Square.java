@@ -4,10 +4,9 @@ import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Size;
-import org.stranger2015.opencv.fic.IDrawable;
 
 public
-class Square extends Rect implements IDrawable {
+class Square extends Rect implements IShape {
     public
     Square ( int x, int y, int size ) {
         super(x, y, size, size);
@@ -34,8 +33,8 @@ class Square extends Rect implements IDrawable {
 
     @Override
     public
-    void draw ( Mat image, Rect rect, boolean drawQuads ) {
+    void draw ( Mat image, Rect rect ) {
 
     }
-
 }
+

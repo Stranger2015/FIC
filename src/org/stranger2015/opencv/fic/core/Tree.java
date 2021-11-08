@@ -6,33 +6,51 @@ import org.opencv.core.Rect;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.function.Consumer;
 
 abstract public
-class Tree<N extends Node, M extends Mat> {
+class Tree<N extends TreeNode <N>, M extends Mat> {
+    public static final int DEFAULT_DEPTH = Integer.MAX_VALUE;
+    public static final Rect DEFAULT_BBOX = new Rect(0, 0, 0, 0);
+
+    protected final List <Leaf> leaves = new ArrayList <>();
+    protected final List <N> nodes = new ArrayList <>();
 
     protected final M image;
-    protected final N root;                            // The root of the tree
-    protected final List <N> leafs=new ArrayList <>();
+    protected final TreeNode <N> root;
+    protected final Consumer <N> action;
 
+    private final Rect area;
     /**
      *
      */
-    protected int depth;                                // The depth of the tree
-    protected final Rect area;
-
+    protected int depth;          // The depth of the tree
 
     /**
      * Constructs a new object.
+     *
      * @param image
-     * @param root
      * @param area
      */
-    public
-    Tree ( M image, N root, Rect area ) {
-        super();
+    protected
+    Tree ( N root, M image, Consumer <N> action, Rect area, int depth ) {
         this.image = image;
         this.root = root;
         this.area = area;
+        this.depth = depth;
+        this.action = action;
+        nodes.add(root);
+    }
+
+    protected
+    Tree ( N root, M image, Consumer <N> action ) {
+        this(
+                root,
+                image,
+                action,
+                DEFAULT_BBOX,
+                DEFAULT_DEPTH
+        );
     }
 
     public
@@ -40,59 +58,79 @@ class Tree<N extends Node, M extends Mat> {
         return null;
     }
 
-    public
-    void add ( N node ) {
-//        if (getChildren().size() == 4) {
-//            throw new IllegalStateException("quads size is not be greater than 4!");
+//    public
+//    void insert ( N node ) {
+//        if (node == null) {
+//            throw new IllegalArgumentException();
 //        }
-//        getChildren().add(node);
-    }
+//        int i = node.index;
+//        N insertAfterNode = findNode(node);
+//    }
 
+    /**
+     * @param parent
+     * @param rect
+     * @param nodes
+     * @return
+     */
+    abstract public
+    TreeNode <N> nodeInstance (N parent, CornerDirection quadrant, Rect rect, List <N> nodes );
+
+    /**
+     * @return
+     */
     public
-    void set ( int index, N node ) {
-
-//        getChildren().set(index, node);
-    }
-
-    public
-    void set ( List <N> children ) {
-//        this.children.clear();
-//        this.children.addAll(children);
-    }
-
-    //    @Override
-    public
-    void draw ( M image, Rect rect, boolean drawQuads ) {
-//        for (Node node : getChildren()) {
-//            node.draw(image, rect, drawQuads);
-//        }
-    }
-
-    public
-    N getRoot () {
+    TreeNode <N> getRoot () {
         return root;
     }
 
+    /**
+     * @return
+     */
     public
     M getImage () {
         return image;
     }
 
+    /**
+     * @param tree
+     * @param depth
+     * @param action
+     * @return
+     */
+    public
+    TreeTraverser <N> getTraverser ( Tree <N, M> tree,
+                               //      NeighborVector <N> neighbors,
+                                     int depth,
+                                     TreeNodeAction <N> action ) {
+        return new TreeTraverser <>(tree, /*neighbors,*/ depth, action);
+    }
+
+    /**
+     * @return
+     */
+    public
+    Rect getArea () {
+        return area;
+    }
+
+    /**
+     * @return
+     */
+    public
+    List<N> getNodes () {
+        return nodes;
+    }
+
+    /**
+     *
+     */
     public
     enum AffineTransform {
-        TRANSLATE,
+        MIRROR, // flip/flop
         ROTATE,
         SCALE,
         SKEW,
-        MIRROR,
-        PERSPECTIVE
-    }
-
-    public
-    Tree ( M image, N root, List <N> leafs, Rect area ) {
-        this.image = image;
-        this.root = root;
-        this.area = area;
-        this.leafs.addAll(leafs);
+        TRANSLATE,
     }
 }

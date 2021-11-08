@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="ijblob1.2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/ijblob-1.2.jar!/ij" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/lib/ijblob-1.2.jar!/ij/blob/ijdoc" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/ijblob-1.2.jar!/" />
+    </SOURCES>
+  </library>
+</component>

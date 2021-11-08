@@ -7,7 +7,7 @@ import org.opencv.core.Mat;
  *
  */
 public
-class TriangleTree extends BinTree <Node, Mat> {
+class TriangleTree extends BinTree <TreeNode, Mat> {
 
     public
     TriangleTree () {

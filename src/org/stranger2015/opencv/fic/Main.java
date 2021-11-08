@@ -6,9 +6,9 @@ import org.opencv.highgui.HighGui;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.osgi.OpenCVNativeLoader;
-import org.stranger2015.opencv.fic.core.Node;
+import org.stranger2015.opencv.fic.core.ImagePartitionProcessor;
 
-import static org.stranger2015.opencv.fic.ImagePartitionProcessor.getNearestGreaterPow2;
+import static org.stranger2015.opencv.fic.core.ImagePartitionProcessor.getNearestGreaterPow2;
 import static org.stranger2015.opencv.fic.core.PartitionScheme.QUADTREE;
 
 /**
@@ -17,11 +17,11 @@ import static org.stranger2015.opencv.fic.core.PartitionScheme.QUADTREE;
 public
 class Main {
 
-    public static int row;
-    public static int col;
+//    public static int row;
+//    public static int col;
 
-    public static Node currNode;
-//    public final static List <Node> currQuads = new ArrayList <>(4);
+//    public  static TreeNode<N> currTreeNode;
+//    public final static List <TreeNode> currQuads = new ArrayList <>(4);
 
 //    private
 
@@ -60,12 +60,11 @@ class Main {
 
         HighGui.namedWindow("OpenCV");
 
-//        HighGui.imshow("OpenCV", image2);
         System.out.println(image2.dump());
 
-       ImagePartitionProcessor processor = new ImagePartitionProcessor(image2, QUADTREE, rangeBlocks, tree);
-       processor.process();
-       processor.draw();
+        ImagePartitionProcessor <?, Mat> processor = new ImagePartitionProcessor <>(image2, QUADTREE/*, rangeBlocks, tree*/);
+        processor.process();
+        processor.draw();
 
         HighGui.destroyAllWindows();
 

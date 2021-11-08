@@ -8,17 +8,20 @@ import org.opencv.imgproc.Imgproc;
 import org.stranger2015.opencv.fic.core.Square;
 import org.stranger2015.opencv.fic.core.Triangle;
 
+/**
+ *
+ */
 public
 interface IDrawable {
-    void draw ( Mat image, Rect rect, boolean drawQuads );
+    void draw ( Mat image, Rect rect );
 
     default
-    void rectangle ( Mat image, Rect rect, Scalar color/*, int thickness*/ ) {
+    void rectangle ( Mat image, Rect rect, Scalar color ) {
         Imgproc.rectangle(image, rect, color);
     }
 
     default
-    void square ( Mat image, Square rect, Scalar color/*, int thickness*/ ) {
+    void square ( Mat image, Square rect, Scalar color ) {
         Imgproc.rectangle(image, rect, color);
     }
 

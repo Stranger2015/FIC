@@ -2,21 +2,21 @@ package org.stranger2015.opencv.fic;
 
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
-import org.stranger2015.opencv.fic.core.Node;
+import org.stranger2015.opencv.fic.core.TreeNode;
 
 public
 class NodeVisualizer implements IDrawable {
 
-    private Node node;
+    private TreeNode treeNode;
 
     @Override
     public
-    void draw ( Mat image, Rect rect, boolean  drawQuads ) {
-        node.draw(image, rect, drawQuads);
+    void draw ( Mat image, Rect rect ) {
+        treeNode.draw(image, rect);
     }
 
     public
-    void setNode ( Node node ) {
-        this.node = node;
+    void setNode ( TreeNode treeNode ) {
+        this.treeNode = treeNode;
     }
 }

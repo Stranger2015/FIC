@@ -4,23 +4,21 @@ import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 
 import java.util.HashMap;
+import java.util.List;
 
+@Deprecated
 public
-class HexNode extends OcNode {
+class HexTreeNode<N extends HexTreeNode<N>> extends OcTreeNode<N> {
 
-    protected Node child8;
-    protected Node child9;
-    protected Node child10;
-    protected Node child11;
-    protected Node child12;
-    protected Node child13;
-    protected Node child14;
-    protected Node child15;
+    public
+    HexTreeNode ( N parent, Rect rect, List <N> children ) {
+        super(parent, rect, children);
+    }
 
     @Override
     public
-    void draw ( Mat image, Rect rect, boolean drawQuads ) {
-        super.draw(image, rect, drawQuads);
+    void draw ( Mat image, Rect rect ) {
+        super.draw(image, rect);
     }
 
     /**
@@ -57,6 +55,7 @@ class HexNode extends OcNode {
      * @see Object#equals(Object)
      * @see System#identityHashCode
      */
+    @Deprecated
     @Override
     public
     int hashCode () {
@@ -140,63 +139,5 @@ class HexNode extends OcNode {
     public
     String toString () {
         return super.toString();
-    }
-
-    @Override
-    public
-    Node instance ( Object... objects ) {
-        return new HexNode(
-                objects[0],
-                objects[1],
-                objects[2],
-                objects[3],
-                objects[4],
-                objects[5],
-                objects[6],
-                objects[7],
-                objects[8],
-                objects[9],
-                objects[10],
-                objects[11],
-                objects[12],
-                objects[13],
-                objects[14],
-                objects[15]
-                );
-    }
-
-    public
-    HexNode ( Node child0,
-              Node child1,
-              Node child2,
-              Node child3,
-              Node child4,
-              Node child5,
-              Node child6,
-              Node child7,
-              Node child8,
-              Node child9,
-              Node child10,
-              Node child11,
-              Node child12,
-              Node child13,
-              Node child14,
-              Node child15
-    ) {
-        super(child0, child1, child2, child3, child4, child5, child6, child7);
-
-        this.child8 = child8;
-        this.child9 = child9;
-        this.child10 = child10;
-        this.child11 = child11;
-        this.child12 = child12;
-        this.child13 = child13;
-        this.child14 = child14;
-        this.child15 = child15;
-    }
-
-    public
-    HexNode ( Object... objects ) {
-        instance(objects);
     }
 }

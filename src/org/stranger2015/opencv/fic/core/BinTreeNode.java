@@ -1,45 +1,35 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 
 import java.util.HashMap;
+import java.util.List;
 
 public
-class BinNode extends Node {
+class BinTreeNode<N extends BinTreeNode<N>> extends TreeNode<N> {
 
-    protected Node child0;
-    protected Node child1;
-
+    /**
+     * @param parent
+     * @param label
+     * @param rect
+     * @param treeNodes
+     */
     public
-    BinNode ( Node child0, Node child1 ) {
-        this.child0 = child0;
-        this.child1 = child1;
-    }
-
-    public
-    BinNode ( Object... objects ) {
-        instance(objects);
-    }
-
-    @Override
-    public
-    Node instance ( Object @NotNull ... objects ) {
-        return new BinNode(objects[0], objects[1]);
+    BinTreeNode ( N parent, Enum<?> label, Rect rect, List<N> treeNodes ) {
+        super(parent, label, rect, treeNodes);
     }
 
     @Override
     public final
-    Node merge () {
+    N merge () {
         return getChildren().get(0);
     }
-//
 
     @Override
     public
-    void draw ( Mat image, Rect rect, boolean drawQuads ) {
-//        super.draw(image, rect, drawQuads);
+    void draw ( Mat image, Rect rect ) {
+
     }
 
     /**
