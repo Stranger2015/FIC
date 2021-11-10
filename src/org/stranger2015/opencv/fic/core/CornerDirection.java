@@ -6,10 +6,19 @@ import static org.stranger2015.opencv.fic.core.SideDirection.*;
 
 public
 enum CornerDirection implements ICornerDirection {
-    NORTH_EAST,
-    SOUTH_EAST,
-    SOUTH_WEST,
-    NORTH_WEST;
+    NORTH_WEST("NW", 4),
+    NORTH_EAST("NE", 5),
+    SOUTH_EAST("SE", 6),
+    SOUTH_WEST("SW", 7);
+
+    private final String shortName;
+    private final int ord;
+
+    CornerDirection ( String shortName, int ord ) {
+
+        this.shortName = shortName;
+        this.ord = ord;
+    }
 
     @Override
     public
@@ -106,5 +115,15 @@ enum CornerDirection implements ICornerDirection {
         }
 
         return set;
+    }
+
+    public
+    String getShortName () {
+        return shortName;
+    }
+
+    public
+    int getOrd () {
+        return ord;
     }
 }

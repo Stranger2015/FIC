@@ -6,32 +6,35 @@ import static org.stranger2015.opencv.fic.core.CornerDirection.*;
 
 public
 enum SideDirection implements ISideDirection {
-
-    NORTH,
-    EAST,
-    SOUTH,
-    WEST;
+    NORTH("N", 0),
+    EAST("E", 1),
+    SOUTH("S", 2),
+    WEST("W", 3);
 
     private final SideDirection parent;
 
-    private final static Hierarchy <SideDirection> hierarchy =
-            new Hierarchy <>(SideDirection.class, SideDirection::getParent);
+//    private final static Hierarchy <SideDirection> hierarchy =
+//            new Hierarchy <>(SideDirection.class, SideDirection::getParent);
+    private final String shortName;
+    private final int ord;
 
-    public
-    SideDirection[] children () {
-        return hierarchy.getChildren(this);
-    }
+//    public
+//    SideDirection[] children () {
+//        return hierarchy.getChildren(this);
+//    }
+//
+//    public
+//    boolean isA ( SideDirection other ) {
+//        return hierarchy.relate(other, this);
+//    }
 
-    public
-    boolean isA ( SideDirection other ) {
-        return hierarchy.relate(other, this);
-    }
+//    SideDirection ( SideDirection parent ) {
+//        this.parent = parent;
+//    }
 
-    SideDirection ( SideDirection parent ) {
-        this.parent = parent;
-    }
-
-    SideDirection () {
+    SideDirection (String shortName, int ord) {
+        this.shortName = shortName;
+        this.ord = ord;
         this.parent = null;
     }
 
@@ -73,6 +76,7 @@ enum SideDirection implements ISideDirection {
         if (result == null) {
             throw new IllegalStateException("null result in reflect()");
         }
+
         return result;
     }
 
@@ -241,5 +245,21 @@ enum SideDirection implements ISideDirection {
         }
 
         return result;
+    }
+
+    /**
+     * @return
+     */
+    public
+    String getShortName () {
+        return shortName;
+    }
+
+    /**
+     * @return
+     */
+    public
+    int getOrd () {
+        return ord;
     }
 }

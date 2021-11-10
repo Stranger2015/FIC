@@ -8,13 +8,17 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * @param <N>
+ * @param <M>
+ */
 abstract public
 class Tree<N extends TreeNode <N>, M extends Mat> {
     public static final int DEFAULT_DEPTH = Integer.MAX_VALUE;
     public static final Rect DEFAULT_BBOX = new Rect(0, 0, 0, 0);
 
-    protected final List <Leaf> leaves = new ArrayList <>();
-    protected final List <N> nodes = new ArrayList <>();
+    protected final NodeList leaves = new NodeList();
+    protected final NodeList nodes = new NodeList();
 
     protected final M image;
     protected final TreeNode <N> root;
@@ -42,6 +46,11 @@ class Tree<N extends TreeNode <N>, M extends Mat> {
         nodes.add(root);
     }
 
+    /**
+     * @param root
+     * @param image
+     * @param action
+     */
     protected
     Tree ( N root, M image, Consumer <N> action ) {
         this(
@@ -58,23 +67,13 @@ class Tree<N extends TreeNode <N>, M extends Mat> {
         return null;
     }
 
-//    public
-//    void insert ( N node ) {
-//        if (node == null) {
-//            throw new IllegalArgumentException();
-//        }
-//        int i = node.index;
-//        N insertAfterNode = findNode(node);
-//    }
-
     /**
      * @param parent
      * @param rect
-     * @param nodes
      * @return
      */
     abstract public
-    TreeNode <N> nodeInstance (N parent, CornerDirection quadrant, Rect rect, List <N> nodes );
+    TreeNode <N> nodeInstance (N parent, CornerDirection quadrant, Rect rect );
 
     /**
      * @return
@@ -118,7 +117,7 @@ class Tree<N extends TreeNode <N>, M extends Mat> {
      * @return
      */
     public
-    List<N> getNodes () {
+    NodeList getNodes () {
         return nodes;
     }
 

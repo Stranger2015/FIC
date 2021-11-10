@@ -3,16 +3,20 @@ package org.stranger2015.opencv.fic.core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 
-import java.util.List;
-
 /**
  * @param <N>
  */
 public
 class RLTreeNode<N extends RLTreeNode <N>> extends TreeNode <N> {
+    @Override
     public
-    RLTreeNode ( N parent, CornerDirection direction, Rect rect, List <N> children ) {
-        super(parent, direction, rect, children);
+    RLTreeNode<N> createChild ( CornerDirection quadrant, Rect boundingBox ) {
+        return new RLTreeNode <>((N) this, quadrant, boundingBox);
+    }
+
+    public
+    RLTreeNode ( N parent, CornerDirection direction, Rect rect ) {
+        super(parent, direction, rect);
     }
 
     @Override

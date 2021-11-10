@@ -32,22 +32,20 @@ class TreeNodeAction<N extends TreeNode<N>> implements Consumer <N> {
      *
      * @param n the input argument
      */
+    @SuppressWarnings("*")//fixme
     @Override
     public
     void accept ( N n ) {
         if (n.isLeaf()) {
             if (
-                    W == n.getBoundingBox().width &&
-                    H == n.getBoundingBox().height
+                    W == n.boundingBox.width &&
+                    H == n.boundingBox.height
             ) {
-                n = (N) new DomainBlock((Leaf) n);
+                n = (N) new DomainBlock(n, ((Leaf) n).image, n.boundingBox);
                 domainPool.add((DomainBlock) n);//fixme is it meaningful
             }
             leaves.add(n);
         }
-//        else {
-//
-//        }
     }
 
     /**

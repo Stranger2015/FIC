@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static java.lang.String.format;
 import static org.stranger2015.opencv.fic.core.TreeNode.Type.*;
 
 /**
@@ -24,14 +25,12 @@ class TreeNode<N extends TreeNode <N>> implements IDrawable, Comparable <N> {
     /**
      *
      */
-    protected final N parent;
+    protected final TreeNode <N> parent;
 
     protected final List <N> children = new ArrayList <>();
     protected Type type;
 
     protected CornerDirection quadrant;
-
-//    protected final List <N> neighbors = new ArrayList <>(8);
 
     private int distance;
 
@@ -67,6 +66,9 @@ class TreeNode<N extends TreeNode <N>> implements IDrawable, Comparable <N> {
         this.type = type;
     }
 
+    public abstract
+    TreeNode <N> createChild ( CornerDirection quadrant, Rect boundingBox );
+
     /**
      *
      */
@@ -74,6 +76,27 @@ class TreeNode<N extends TreeNode <N>> implements IDrawable, Comparable <N> {
         BLACK,
         GRAY,
         WHITE,
+    }
+
+    /**
+     * @param quadrant
+     * @param node
+     */
+    void setChild ( CornerDirection quadrant, N node ) {
+        if (quadrant.ordinal() < children.size()) {
+            children.set(quadrant.ordinal(), node);
+        }
+        else {
+            children.add(quadrant.ordinal(), node);
+        }
+    }
+
+    /**
+     * @param quadrant
+     * @return
+     */
+    N getChild ( CornerDirection quadrant ) {
+        return children.get(quadrant.ordinal());
     }
 
     /**
@@ -161,22 +184,25 @@ class TreeNode<N extends TreeNode <N>> implements IDrawable, Comparable <N> {
     @Override
     public
     String toString () {
-        return String.format("TreeNode{index=%s}", index);
+        return format("TreeNode{index=%s}", index);
     }
 
     /**
      * @param parent
      * @param quadrant
      * @param rect
-     * @param children
      */
     public
-    TreeNode ( N parent, CornerDirection quadrant, Rect rect, List <N> children ) {
+    TreeNode ( TreeNode <N> parent, CornerDirection quadrant, Rect rect ) {
         this.quadrant = quadrant;
+
         this.index = (short) indexCounter++;
-        boundingBox = rect;
+
+        this.boundingBox = rect;
         this.parent = parent;
-        this.children.addAll(children);
+
+        setDistance(0);
+        setType(WHITE);
     }
 
     /**
@@ -187,6 +213,9 @@ class TreeNode<N extends TreeNode <N>> implements IDrawable, Comparable <N> {
         return children;
     }
 
+    /**
+     * @return
+     */
     public
     boolean isLeaf () {
         return getChildren().size() == 0;
@@ -197,12 +226,6 @@ class TreeNode<N extends TreeNode <N>> implements IDrawable, Comparable <N> {
      */
     abstract public
     N merge ();
-
-//    public
-//    List <N> getNeighbors () {
-//        return neighbors;
-//    }
-//=====================================================================
 
     /**
      * @return
@@ -245,7 +268,7 @@ class TreeNode<N extends TreeNode <N>> implements IDrawable, Comparable <N> {
     }
 
     public
-    N getParent () {
+    TreeNode <N> getParent () {
         return parent;
     }
 }

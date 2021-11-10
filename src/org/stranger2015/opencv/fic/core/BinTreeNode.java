@@ -4,20 +4,20 @@ import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 
 import java.util.HashMap;
-import java.util.List;
 
 public
-class BinTreeNode<N extends BinTreeNode<N>> extends TreeNode<N> {
+class BinTreeNode<N extends BinTreeNode <N>> extends TreeNode <N> {
 
     /**
+     *
+     *
      * @param parent
-     * @param label
+     * @param quadrant
      * @param rect
-     * @param treeNodes
      */
     public
-    BinTreeNode ( N parent, Enum<?> label, Rect rect, List<N> treeNodes ) {
-        super(parent, label, rect, treeNodes);
+    BinTreeNode (BinTreeNode<N> parent, CornerDirection quadrant, Rect rect ) {
+        super(parent, quadrant, rect);
     }
 
     @Override
@@ -70,6 +70,12 @@ class BinTreeNode<N extends BinTreeNode<N>> extends TreeNode<N> {
     public
     int hashCode () {
         return super.hashCode();
+    }
+
+    @Override
+    public
+    TreeNode <N> createChild ( CornerDirection quadrant, Rect boundingBox ) {
+        return new BinTreeNode <>(this, quadrant, boundingBox);
     }
 
     /**

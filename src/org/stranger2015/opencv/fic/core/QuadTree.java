@@ -16,11 +16,21 @@ import java.util.function.Consumer;
 public
 class QuadTree<N extends QuadTreeNode<N>, M extends Mat> extends BinTree<N,M> {
 
+    /**
+     * @param parent
+     * @param image
+     * @param action
+     */
     public
     QuadTree ( N parent, M image, Consumer <N> action ) {
         super(parent, image, action);
     }
 
+    /**
+     * @param w
+     * @param h
+     * @return
+     */
     protected
     List <DomainBlock> getDomainBlocks ( int w, int h ) {
         List <DomainBlock> l = new ArrayList <>();
@@ -36,12 +46,20 @@ class QuadTree<N extends QuadTreeNode<N>, M extends Mat> extends BinTree<N,M> {
         return l;
     }
 
-    @Override
-    public final
-    QuadTreeNode<N> nodeInstance (N parent, CornerDirection quadrant, Rect rect, List<N> nodes ) {
-        return new QuadTreeNode <>(parent, quadrant, rect, nodes);
+    /**
+     * @param parent
+     * @param quadrant
+     * @param rect
+     * @return
+     */
+    public
+    QuadTreeNode<N> nodeInstance (N parent, CornerDirection quadrant, Rect rect ) {
+        return new QuadTreeNode <>(parent, quadrant, rect);
     }
 
+    /**
+     * @return
+     */
     public
     Consumer <N> getAction () {
         return action;
