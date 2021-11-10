@@ -234,8 +234,7 @@ class TreeTraverser<N extends TreeNode <N>> {
         NodeList nodes = tree.getNodes();
         NodeList neighbors = new NodeList();
 
-        neighbors.set()
-
+        neighbors.set(dir, );
         return neighbors;
     }
 
