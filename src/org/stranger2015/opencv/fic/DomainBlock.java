@@ -9,13 +9,18 @@ import org.stranger2015.opencv.fic.core.TreeNode;
  * 8 X 8
  */
 public
-class DomainBlock extends Leaf {
+class DomainBlock<N extends DomainBlock<N>> extends Leaf {
 
     public final static int W = 8;
     public final static int H = 8;
 
+    /**
+     * @param parent
+     * @param image
+     * @param rect
+     */
     public
-    DomainBlock ( TreeNode <?> parent, Mat image, Rect rect ) {
+    DomainBlock ( DomainBlock <N> parent, Mat image, Rect rect ) {
         super(parent, image, rect);
     }
 }

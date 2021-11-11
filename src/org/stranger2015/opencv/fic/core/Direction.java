@@ -7,22 +7,45 @@ import java.util.EnumSet;
  */
 public
 enum Direction implements ISideDirection, ICornerDirection {
-    NORTH("N", 0),
-    EAST("E", 1),
-    SOUTH("S", 2),
-    WEST("W", 3),
 
-    NORTH_WEST("NW", 4),
-    NORTH_EAST("NE", 5),
-    SOUTH_EAST("SE", 6),
-    SOUTH_WEST("SW", 7);
+    NORTH("N", 0, SideDirection.NORTH),
+    EAST("E", 1, SideDirection.EAST),
+    SOUTH("S", 2, SideDirection.SOUTH),
+    WEST("W", 3, SideDirection.WEST),
+
+    NORTH_WEST("NW", 4, CornerDirection.NORTH_WEST),
+    NORTH_EAST("NE", 5, CornerDirection.NORTH_EAST),
+    SOUTH_EAST("SE", 6, CornerDirection.SOUTH_EAST),
+    SOUTH_WEST("SW", 7, CornerDirection.NORTH_WEST);
 
     private final String shortName;
     private final int ord;
 
-    Direction ( String shortName, int ord2) {
+    private final SideDirection sideDirection;
+    private final CornerDirection cornerDirection;
+
+    /**
+     * @param shortName
+     * @param ord
+     * @param sideDirection
+     */
+    Direction ( String shortName, int ord, SideDirection sideDirection ) {
         this.shortName = shortName;
-        this.ord = ord2;
+        this.ord = ord;
+        this.sideDirection = sideDirection;
+        this.cornerDirection = null;
+    }
+
+    /**
+     * @param shortName
+     * @param ord
+     * @param cornerDirection
+     */
+    Direction ( String shortName, int ord, CornerDirection cornerDirection ) {
+        this.shortName = shortName;
+        this.ord = ord;
+        this.cornerDirection = cornerDirection;
+        this.sideDirection = null;
     }
 
     /**
@@ -31,7 +54,7 @@ enum Direction implements ISideDirection, ICornerDirection {
     @Override
     public
     int northEast () {
-        return 0;
+        return NORTH_EAST.getOrd();
     }
 
     /**
@@ -40,7 +63,7 @@ enum Direction implements ISideDirection, ICornerDirection {
     @Override
     public
     int southEast () {
-        return 0;
+        return SOUTH_EAST.getOrd();
     }
 
     /**
@@ -49,7 +72,7 @@ enum Direction implements ISideDirection, ICornerDirection {
     @Override
     public
     int southWest () {
-        return 0;
+        return SOUTH_WEST.getOrd();
     }
 
     /**
@@ -58,7 +81,7 @@ enum Direction implements ISideDirection, ICornerDirection {
     @Override
     public
     int northWest () {
-        return 0;
+        return NORTH_WEST.getOrd();
     }
 
     /**
@@ -66,8 +89,8 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    ICornerDirection opQuad () {
-        return null;
+    CornerDirection opQuad () {
+        return cornerDirection.opQuad();
     }
 
     /**
@@ -77,7 +100,7 @@ enum Direction implements ISideDirection, ICornerDirection {
     @Override
     public
     ISideDirection commonSide ( CornerDirection quadrant ) {
-        return null;
+        return cornerDirection.commonSide(quadrant);
     }
 
     /**
@@ -86,7 +109,7 @@ enum Direction implements ISideDirection, ICornerDirection {
     @Override
     public
     EnumSet <SideDirection> toSideDirection () {
-        return null;
+        return cornerDirection.toSideDirection();
     }
 
     /**
@@ -95,7 +118,7 @@ enum Direction implements ISideDirection, ICornerDirection {
     @Override
     public
     int north () {
-        return 0;
+        return NORTH.getOrd();
     }
 
     /**
@@ -104,7 +127,7 @@ enum Direction implements ISideDirection, ICornerDirection {
     @Override
     public
     int east () {
-        return 0;
+        return EAST.getOrd();
     }
 
     /**
@@ -113,7 +136,7 @@ enum Direction implements ISideDirection, ICornerDirection {
     @Override
     public
     int south () {
-        return 0;
+        return SOUTH.getOrd();
     }
 
     /**
@@ -122,7 +145,7 @@ enum Direction implements ISideDirection, ICornerDirection {
     @Override
     public
     int west () {
-        return 0;
+        return WEST.getOrd();
     }
 
     /**
@@ -130,8 +153,8 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    ISideDirection cSide () {
-        return null;
+    SideDirection cSide () {
+        return sideDirection.cSide();
     }
 
     /**
@@ -139,8 +162,8 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    ISideDirection ccSide () {
-        return null;
+    SideDirection ccSide () {
+        return sideDirection.ccSide();
     }
 
     /**
@@ -148,8 +171,8 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    ISideDirection opSide () {
-        return null;
+    SideDirection opSide () {
+        return sideDirection.opSide();
     }
 
     /**
@@ -158,8 +181,8 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    ICornerDirection reflect ( CornerDirection quadrant ) {
-        return null;
+    CornerDirection reflect ( CornerDirection quadrant ) {
+        return sideDirection.reflect(quadrant);
     }
 
     /**
@@ -168,18 +191,18 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    ICornerDirection quadrant ( SideDirection side ) {
-        return null;
+    CornerDirection quadrant ( SideDirection side ) {
+        return quadrant(side);
     }
 
     /**
-     * @param cornerDirection
+     * @param  quadrant
      * @return
      */
     @Override
     public
-    boolean adjacent ( CornerDirection cornerDirection ) {
-        return false;
+    boolean adjacent ( CornerDirection quadrant ) {
+        return sideDirection.adjacent(quadrant);
     }
 
     public
@@ -190,5 +213,15 @@ enum Direction implements ISideDirection, ICornerDirection {
     public
     String getShortName () {
         return shortName;
+    }
+
+    public
+    SideDirection getSideDirection () {
+        return sideDirection;
+    }
+
+    public
+    CornerDirection getCornerDirection () {
+        return cornerDirection;
     }
 }

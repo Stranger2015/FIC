@@ -22,7 +22,7 @@ class QuadTree<N extends QuadTreeNode<N>, M extends Mat> extends BinTree<N,M> {
      * @param action
      */
     public
-    QuadTree ( N parent, M image, Consumer <N> action ) {
+    QuadTree ( N parent, M image, TreeNodeAction <N> action ) {
         super(parent, image, action);
     }
 
@@ -32,13 +32,13 @@ class QuadTree<N extends QuadTreeNode<N>, M extends Mat> extends BinTree<N,M> {
      * @return
      */
     protected
-    List <DomainBlock> getDomainBlocks ( int w, int h ) {
-        List <DomainBlock> l = new ArrayList <>();
+    NodeList <N> getDomainBlocks ( int w, int h ) {
+        NodeList<N> l = new NodeList <>();
         if (!leaves.isEmpty()) {
             for (Leaf leaf : leaves) {
                 Mat image = leaf.getImage();
                 if (image.width() == w && image.height() == h) {
-                    l.add(new DomainBlock(leaf.parent, leaf.image, leaf.boundingBox));
+                    l.add(new DomainBlock<>(leaf.parent, leaf.image, leaf.boundingBox));
                 }
             }
         }

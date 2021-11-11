@@ -6,6 +6,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.Collections;
+import java.util.List;
 
 public
 class Leaf extends TreeNode <Leaf> {
@@ -18,7 +19,7 @@ class Leaf extends TreeNode <Leaf> {
 
     public
     Leaf ( Leaf parent, Mat image, Rect rect ) {
-        super(parent, rect, Collections.emptyList());
+        super(parent, null, rect);
         this.image = image.submat(rect);
     }
 
@@ -36,6 +37,12 @@ class Leaf extends TreeNode <Leaf> {
     public
     void draw ( Mat image, Rect rect ) {
         Imgproc.rectangle(image, rect, new Scalar(1.0 / 255, 1.0 / 255, 1.0 / 255, 0.0));
+    }
+
+    @Override
+    public
+    TreeNode <Leaf> createChild ( CornerDirection quadrant, Rect boundingBox ) {
+        throw new IllegalStateException("createChild() in Leaf");
     }
 
     @Override

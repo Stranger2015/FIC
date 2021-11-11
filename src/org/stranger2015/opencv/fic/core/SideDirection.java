@@ -1,7 +1,5 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.stranger2015.org.enumus.Hierarchy;
-
 import static org.stranger2015.opencv.fic.core.CornerDirection.*;
 
 public

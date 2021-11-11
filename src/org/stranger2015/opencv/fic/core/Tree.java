@@ -17,12 +17,12 @@ class Tree<N extends TreeNode <N>, M extends Mat> {
     public static final int DEFAULT_DEPTH = Integer.MAX_VALUE;
     public static final Rect DEFAULT_BBOX = new Rect(0, 0, 0, 0);
 
-    protected final NodeList leaves = new NodeList();
-    protected final NodeList nodes = new NodeList();
+    protected final NodeList<N> leaves = new NodeList<>();
+    protected final NodeList<N> nodes = new NodeList<>();
 
     protected final M image;
     protected final TreeNode <N> root;
-    protected final Consumer <N> action;
+    protected final TreeNodeAction <N> action;
 
     private final Rect area;
     /**
@@ -37,7 +37,7 @@ class Tree<N extends TreeNode <N>, M extends Mat> {
      * @param area
      */
     protected
-    Tree ( N root, M image, Consumer <N> action, Rect area, int depth ) {
+    Tree ( TreeNode<N> root, M image, TreeNodeAction <N> action, Rect area, int depth ) {
         this.image = image;
         this.root = root;
         this.area = area;
@@ -52,7 +52,7 @@ class Tree<N extends TreeNode <N>, M extends Mat> {
      * @param action
      */
     protected
-    Tree ( N root, M image, Consumer <N> action ) {
+    Tree ( TreeNode<N > root, M image, TreeNodeAction <N> action ) {
         this(
                 root,
                 image,
@@ -65,7 +65,7 @@ class Tree<N extends TreeNode <N>, M extends Mat> {
     public
     EnumSet <AffineTransform> getTransforms () {
         return null;
-    }
+    }//TODO
 
     /**
      * @param parent
@@ -73,7 +73,7 @@ class Tree<N extends TreeNode <N>, M extends Mat> {
      * @return
      */
     abstract public
-    TreeNode <N> nodeInstance (N parent, CornerDirection quadrant, Rect rect );
+    TreeNode <N> nodeInstance (TreeNode<N> parent, CornerDirection quadrant, Rect rect );
 
     /**
      * @return
@@ -99,10 +99,9 @@ class Tree<N extends TreeNode <N>, M extends Mat> {
      */
     public
     TreeTraverser <N> getTraverser ( Tree <N, M> tree,
-                               //      NeighborVector <N> neighbors,
                                      int depth,
                                      TreeNodeAction <N> action ) {
-        return new TreeTraverser <>(tree, /*neighbors,*/ depth, action);
+        return new TreeTraverser <>(tree, depth, action);
     }
 
     /**
@@ -117,7 +116,7 @@ class Tree<N extends TreeNode <N>, M extends Mat> {
      * @return
      */
     public
-    NodeList getNodes () {
+    NodeList<N> getNodes () {
         return nodes;
     }
 

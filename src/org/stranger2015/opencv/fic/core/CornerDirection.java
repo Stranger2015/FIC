@@ -23,28 +23,26 @@ enum CornerDirection implements ICornerDirection {
     @Override
     public
     int northEast () {
-        return NORTH_EAST.ordinal();
+        return NORTH_EAST.getOrd();
     }
 
     @Override
     public
     int southEast () {
-        return SOUTH_EAST.ordinal();
+        return SOUTH_EAST.getOrd();
     }
 
     @Override
     public
     int southWest () {
-        return SOUTH_WEST.ordinal();
+        return SOUTH_WEST.getOrd();
     }
 
     @Override
     public
     int northWest () {
-        return NORTH_WEST.ordinal();
+        return NORTH_WEST.getOrd();
     }
-
-    //====================================
 
     @Override
     public

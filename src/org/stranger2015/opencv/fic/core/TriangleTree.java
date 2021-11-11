@@ -7,10 +7,16 @@ import org.opencv.core.Mat;
  *
  */
 public
-class TriangleTree extends BinTree <TreeNode, Mat> {
-
+class TriangleTree<N extends TreeNode<N>> extends BinTree <BinTreeNode<N>, Mat> {
+    /**
+     * Constructs a new object.
+     *
+     * @param parent
+     * @param image
+     * @param action
+     */
     public
-    TriangleTree () {
+    TriangleTree ( BinTreeNode<N> parent, Mat image, TreeNodeAction<N> action ) {
+        super(parent, image, action);
     }
-
 }

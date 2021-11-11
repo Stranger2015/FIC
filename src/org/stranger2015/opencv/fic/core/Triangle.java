@@ -37,8 +37,8 @@ class Triangle extends Square {
     class TriangleTreeNode<N extends TriangleTreeNode<N>> extends QuadTreeNode<N> {
 
         public
-        TriangleTreeNode (TriangleTreeNode<N> parent, Rect rect, List <N> nodes ) {
-            super(parent, rect,nodes);
+        TriangleTreeNode (TriangleTreeNode<N> parent, Rect rect) {
+            super(parent, null, rect);
         }
 
           @Override

@@ -1,6 +1,5 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.jetbrains.annotations.Nullable;
 import org.opencv.core.Rect;
 
 import java.util.ArrayList;
@@ -37,17 +36,18 @@ class TreeTraverser<N extends TreeNode <N>> {
             EnumSet.allOf(CornerDirection.class);
     public static final EnumSet <Direction> SIDES_QUADS =
             EnumSet.allOf(Direction.class);
-    private static TreeNode <? extends TreeNode> node;
-    private static Direction dir;
+//    private static TreeNode <N extends TreeNode<N>> node;
+//    private static Direction dir;
 
     //    public final NeighborVector <N> neighbors;
     protected final Tree <N, ?> tree;
     protected final TreeNodeAction <N> action;
     //    protected final Deque <N> stack = new ArrayDeque <>();
     protected final SearchType searchType = DEPTH_FIRST;
+    private final NodeList<N> nodes;
     protected int depth;
     protected Order order = IN;
-    protected SideDirection direction = NORTH;
+    protected Direction direction = Direction.NORTH;
 
     /**
      * @param tree
@@ -57,11 +57,11 @@ class TreeTraverser<N extends TreeNode <N>> {
     public
     TreeTraverser ( Tree <N, ?> tree,
                     int depth,
-                    TreeNodeAction <N> action
-    ) {
+                    TreeNodeAction <N> action ) {
         this.tree = tree;
         this.depth = depth;
         this.action = action;
+        this.nodes = getNodes();
     }
 
     /**
@@ -79,7 +79,7 @@ class TreeTraverser<N extends TreeNode <N>> {
      */
     protected static
     <N extends TreeNode <N>>
-    void add ( NodeList nodes, N node, CornerDirection dir ) {
+    void add ( NodeList<N> nodes, N node, CornerDirection dir ) {
         nodes.add(dir.ordinal(), node);
     }
 
@@ -90,7 +90,7 @@ class TreeTraverser<N extends TreeNode <N>> {
     }
 
     protected
-    NodeList getNodes () {
+    NodeList<N> getNodes () {
         return this.getTree().getNodes();
     }
 
@@ -102,8 +102,8 @@ class TreeTraverser<N extends TreeNode <N>> {
      */
     public static
     <N extends TreeNode <N>>
-    TreeNode <N> child ( TreeNode <N> node, CornerDirection quadrant ) {
-        return node.getChildren().get(quadrant.ordinal());
+    TreeNode <N> child ( TreeNode <N> node, Direction quadrant ) {
+        return node.getChildren().get(quadrant.getOrd());
     }
 
     /**
@@ -114,9 +114,9 @@ class TreeTraverser<N extends TreeNode <N>> {
      */
     public static
     <N extends TreeNode <N>>
-    TreeNode <N> child1 ( TreeNode <N> node, CornerDirection quadrant ) {
+    TreeNode <N> child1 ( TreeNode <N> node, Direction quadrant ) {
         TreeNode <N> result;
-        if (node.isLeaf()) {
+        if (node.isGray()) {
             result = node;
         }
         else {
@@ -194,13 +194,13 @@ class TreeTraverser<N extends TreeNode <N>> {
      * @param node
      */
     public
-    void traverse ( TreeNode <N> node, int depth, NodeList neighbors, TreeNodeAction <N> action )
+    void traverse ( TreeNode <N> node, int depth, NodeList<N> neighbors, TreeNodeAction <N> action )
             throws DepthLimitExceeded {
         traverse(node, depth, neighbors, action, IN);
     }
 
     public
-    void traverse ( TreeNode <N> node, int depth, NodeList neighbors, TreeNodeAction <N> action, Order order )
+    void traverse ( TreeNode <N> node, int depth, NodeList<N> neighbors, TreeNodeAction <N> action, Order order )
             throws DepthLimitExceeded {
         if (--depth == 0) {
             throw new DepthLimitExceeded();
@@ -217,7 +217,7 @@ class TreeTraverser<N extends TreeNode <N>> {
             case POST:
                 break;
             case IN:
-                NodeList nl = new NodeList();
+                findNeighbor(direction,  child1(node, direction.opSide().quadrant(direction.cSide()))); //SONI( A[ dir ], quadrant( opSide( dir),  cSide( dir))));
 //                for (int i = 0, size = node.getChildren().size(); i < size; i++) {
 //                    TreeNode <N> child = child(node, direction.quadrant(direction.cSide()));
 //                    traverse(child, depth, neighbors, action);
@@ -228,14 +228,10 @@ class TreeTraverser<N extends TreeNode <N>> {
         }
     }
 
-    private
-    NodeList findNeighbors ( TreeNode <N> node, Direction dir ) {
-
-        NodeList nodes = tree.getNodes();
-        NodeList neighbors = new NodeList();
-
-        neighbors.set(dir, );
-        return neighbors;
+    private static
+    <N extends TreeNode <N>>
+    void findNeighbor ( Direction tdir, Direction adir, NodeList <N> tNodes, NodeList <N> aNodes ) {
+        tNodes.add(tdir, aNodes.get(adir));
     }
 
     /**
@@ -359,14 +355,14 @@ class TreeTraverser<N extends TreeNode <N>> {
                 node.getParent();
         // Follow the reflected path to locate the neighbor
         if (q != null && !q.isBlack()) {
-            NodeList l;
+            NodeList<N> l;
             if (node.isGray()) {
-                l = (List <N>) child(Collections.singletonList(q),
+                l = child(Collections.singletonList(q),
                         dir.reflect(childType(node))
                 );
             }
             else {
-                l = (List <N>) child(TreeTraverser. <N>addFourWhiteChildren(node),
+                l = child(TreeTraverser. <N>addFourWhiteChildren(node),
                         dir.reflect(childType(node))
                 );
             }

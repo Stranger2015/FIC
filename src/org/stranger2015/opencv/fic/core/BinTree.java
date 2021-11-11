@@ -3,13 +3,11 @@ package org.stranger2015.opencv.fic.core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 
-import java.util.function.Consumer;
-
 /**
  *
  */
 public
-class BinTree<N extends BinTreeNode<N>, M extends Mat> extends Tree <N, M> {
+class BinTree<N extends BinTreeNode <N>, M extends Mat> extends Tree <N, M> {
 
     /**
      * Constructs a new object.
@@ -17,18 +15,18 @@ class BinTree<N extends BinTreeNode<N>, M extends Mat> extends Tree <N, M> {
      * @param image
      */
     public
-    BinTree (N parent, M image, Consumer <N> action ) {
+    BinTree ( TreeNode <N> parent, M image, TreeNodeAction <N> action ) {
         super(parent, image, action, DEFAULT_BBOX, DEFAULT_DEPTH);
     }
 
-//    @Override
+    //    @Override
     public
     void draw ( M image, Rect rect ) {
 
     }
 
     public
-    BinTreeNode<N> merge () {
+    BinTreeNode <N> merge () {
         return null;
     }
 
@@ -39,7 +37,7 @@ class BinTree<N extends BinTreeNode<N>, M extends Mat> extends Tree <N, M> {
      */
     @Override
     public
-    BinTreeNode <N> nodeInstance (N parent,CornerDirection quadrant,Rect rect ) {
+    BinTreeNode <N> nodeInstance ( TreeNode <N> parent, CornerDirection quadrant, Rect rect ) {
         throw new UnsupportedOperationException("Tree#nodeInstance()");
     }
 }
