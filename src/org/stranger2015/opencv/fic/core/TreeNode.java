@@ -30,7 +30,7 @@ class TreeNode<N extends TreeNode <N>> implements IDrawable, Comparable <N> {
     protected final List <N> children = new ArrayList <>();
     protected Type type;
 
-    protected CornerDirection quadrant;
+    protected Direction quadrant;
 
     private int distance;
 
@@ -38,7 +38,7 @@ class TreeNode<N extends TreeNode <N>> implements IDrawable, Comparable <N> {
      * @return
      */
     public
-    CornerDirection getQuadrant () {
+    Direction getQuadrant () {
         return quadrant;
     }
 
@@ -46,7 +46,7 @@ class TreeNode<N extends TreeNode <N>> implements IDrawable, Comparable <N> {
      * @param quadrant
      */
     public
-    void setQuadrant ( CornerDirection quadrant ) {
+    void setQuadrant ( Direction quadrant ) {
         this.quadrant = quadrant;
     }
 
@@ -66,8 +66,13 @@ class TreeNode<N extends TreeNode <N>> implements IDrawable, Comparable <N> {
         this.type = type;
     }
 
+    /**
+     * @param quadrant
+     * @param boundingBox
+     * @return
+     */
     public abstract
-    TreeNode <N> createChild ( CornerDirection quadrant, Rect boundingBox );
+    TreeNode <N> createChild ( Direction quadrant, Rect boundingBox );
 
     /**
      *
@@ -82,7 +87,7 @@ class TreeNode<N extends TreeNode <N>> implements IDrawable, Comparable <N> {
      * @param quadrant
      * @param node
      */
-    void setChild ( CornerDirection quadrant, N node ) {
+    void setChild ( Direction quadrant, N node ) {
         if (quadrant.ordinal() < children.size()) {
             children.set(quadrant.ordinal(), node);
         }
@@ -95,7 +100,7 @@ class TreeNode<N extends TreeNode <N>> implements IDrawable, Comparable <N> {
      * @param quadrant
      * @return
      */
-    N getChild ( CornerDirection quadrant ) {
+    N getChild ( Direction quadrant ) {
         return children.get(quadrant.ordinal());
     }
 
@@ -193,7 +198,7 @@ class TreeNode<N extends TreeNode <N>> implements IDrawable, Comparable <N> {
      * @param rect
      */
     public
-    TreeNode ( TreeNode <N> parent, CornerDirection quadrant, Rect rect ) {
+    TreeNode ( TreeNode <N> parent, Direction quadrant, Rect rect ) {
         this.quadrant = quadrant;
 
         this.index = (short) indexCounter++;
@@ -267,6 +272,9 @@ class TreeNode<N extends TreeNode <N>> implements IDrawable, Comparable <N> {
         return type == GRAY;
     }
 
+    /**
+     * @return
+     */
     public
     TreeNode <N> getParent () {
         return parent;

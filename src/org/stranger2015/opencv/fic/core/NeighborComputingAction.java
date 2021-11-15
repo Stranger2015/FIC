@@ -12,10 +12,10 @@ public
 class NeighborComputingAction<N extends TreeNode <N>> extends TreeNodeAction <N> {
 
     private final N node;
-    private final TreeTraverser.QuadDirection direction;
+    private final Direction direction;
 
     public
-    NeighborComputingAction ( DomainPool domainPool, final N node, TreeTraverser.QuadDirection direction) {
+    NeighborComputingAction ( DomainPool domainPool, final N node, Direction direction) {
         super(domainPool);
         this.node = node;
         this.direction = direction;
@@ -32,9 +32,9 @@ class NeighborComputingAction<N extends TreeNode <N>> extends TreeNodeAction <N>
         if (n == node) {
             return;
         }
-        if (node.compareTo(n) <= 0 && TreeTraverser.shareCommonBorder(node, n, direction)) {
-            return;
-        }
+//        if (node.compareTo(n) <= 0 && TreeTraverser.shareCommonBorder(node, n, direction)) {
+//            return;
+//        }
 
 
     }

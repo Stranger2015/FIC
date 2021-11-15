@@ -14,20 +14,32 @@ class NodeList<N extends TreeNode <N>> implements Iterable<N>{
 
     private final List <TreeNode <N>> list = new ArrayList <>();
 
+    /**
+     *
+     */
     public
     NodeList () {
     }
 
+    /**
+     * @param node
+     */
     public
     NodeList ( TreeNode <N> node ) {
         list.add(node);
     }
 
+    /**
+     * @return
+     */
     public
     boolean isEmpty () {
         return list.isEmpty();
     }
 
+    /**
+     * @return
+     */
     public
     int size () {
         return list.size();
@@ -69,6 +81,15 @@ class NodeList<N extends TreeNode <N>> implements Iterable<N>{
     }
 
     /**
+     * @param direction
+     * @param node
+     */
+    public
+    void set ( Direction direction, TreeNode <N> node ) {
+        int index = direction.getOrd();
+        seti(index, node);
+    }
+    /**
      * @param index
      * @param node
      */
@@ -109,14 +130,20 @@ class NodeList<N extends TreeNode <N>> implements Iterable<N>{
         return list.get(dir.getOrd());
     }
 
+    /**
+     * @return
+     */
     public
     List <TreeNode <N>> getList () {
         return list;
     }
 
+    /**
+     * @param node
+     * @return
+     */
     NodeList <N> singleton ( TreeNode <N> node ) {
         return new NodeList <>(node);
-
     }
 
     /**
@@ -128,6 +155,6 @@ class NodeList<N extends TreeNode <N>> implements Iterable<N>{
     @Override
     public
     Iterator <N> iterator () {
-        return null;//todo
+        return (Iterator <N>) list.iterator();
     }
 }

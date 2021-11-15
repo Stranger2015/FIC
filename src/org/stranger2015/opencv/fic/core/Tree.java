@@ -3,10 +3,7 @@ package org.stranger2015.opencv.fic.core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 
-import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * @param <N>
@@ -14,8 +11,9 @@ import java.util.function.Consumer;
  */
 abstract public
 class Tree<N extends TreeNode <N>, M extends Mat> {
+
     public static final int DEFAULT_DEPTH = Integer.MAX_VALUE;
-    public static final Rect DEFAULT_BBOX = new Rect(0, 0, 0, 0);
+    public static final Rect DEFAULT_BOUNDING_BOX = new Rect(0, 0, 0, 0);
 
     protected final NodeList<N> leaves = new NodeList<>();
     protected final NodeList<N> nodes = new NodeList<>();
@@ -57,7 +55,7 @@ class Tree<N extends TreeNode <N>, M extends Mat> {
                 root,
                 image,
                 action,
-                DEFAULT_BBOX,
+                DEFAULT_BOUNDING_BOX,
                 DEFAULT_DEPTH
         );
     }

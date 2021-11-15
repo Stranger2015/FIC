@@ -40,7 +40,7 @@ import org.stranger2015.opencv.fic.core.TreeNode;
  * @param <M>
  */
 public
-class ImagePartitionSegmenter<N extends TreeNode, M extends Mat> extends ImagePartitionProcessor <N, M> {
+class ImagePartitionSegmenter<N extends TreeNode<N>, M extends Mat> extends ImagePartitionProcessor <N, M> {
 
     public
     ImagePartitionSegmenter ( M image, PartitionScheme scheme ) {

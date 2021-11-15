@@ -7,7 +7,7 @@ import org.opencv.core.Rect;
  *
  */
 public
-class QuadTreeNode<N extends QuadTreeNode <N>> extends BinTreeNode <N> {
+class QuadTreeNode<N extends QuadTreeNode> extends BinTreeNode <N> {
 
     /**
      * @param parent

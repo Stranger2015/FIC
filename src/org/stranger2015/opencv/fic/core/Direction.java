@@ -89,7 +89,7 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    CornerDirection opQuad () {
+    Direction opQuad () {
         return cornerDirection.opQuad();
     }
 
@@ -99,8 +99,92 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    ISideDirection commonSide ( CornerDirection quadrant ) {
+    Direction commonSide ( Direction quadrant ) {
         return cornerDirection.commonSide(quadrant);
+    }
+
+    /**
+     * @param quadrant
+     * @return
+     */
+    @Override
+    public
+    Direction side1 ( Direction quadrant ) {
+        return null;
+    }
+
+    /**
+     * @param quadrant
+     * @return
+     */
+    @Override
+    public
+    Direction side2 ( Direction quadrant ) {
+        return null;
+    }
+
+    /**
+     * @param quadrant
+     * @return
+     */
+    @Override
+    public
+    int width ( Direction quadrant ) {
+        return 0;
+    }
+
+    /**
+     * @param quadrant
+     * @return
+     */
+    @Override
+    public
+    int radius ( Direction quadrant ) {
+        return 0;
+    }
+
+    /**
+     * @param quadrant
+     * @return
+     */
+    @Override
+    public
+    int xOf ( Direction quadrant ) {
+        return 0;
+    }
+
+    /**
+     * @param quadrant
+     * @return
+     */
+    @Override
+    public
+    int yOf ( Direction quadrant ) {
+        return 0;
+    }
+
+    /**
+     * @param quadrant
+     * @return
+     */
+    @Override
+    public
+    Direction value ( Direction quadrant ) {
+        return null;
+    }
+
+    /**
+     * @param x
+     * @param y
+     * @param width
+     * @param color
+     * @param d
+     * @return
+     */
+    @Override
+    public
+    Direction insertReverseOrder ( int x, int y, int width, int color, int d ) {
+        return null;
     }
 
     /**
@@ -108,7 +192,7 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    EnumSet <SideDirection> toSideDirection () {
+    EnumSet <Direction> toSideDirection () {
         return cornerDirection.toSideDirection();
     }
 
@@ -153,7 +237,7 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    SideDirection cSide () {
+    Direction cSide () {
         return sideDirection.cSide();
     }
 
@@ -162,7 +246,7 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    SideDirection ccSide () {
+    Direction ccSide () {
         return sideDirection.ccSide();
     }
 
@@ -171,7 +255,7 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    SideDirection opSide () {
+    Direction opSide () {
         return sideDirection.opSide();
     }
 
@@ -181,7 +265,7 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    CornerDirection reflect ( CornerDirection quadrant ) {
+    Direction reflect ( Direction quadrant ) {
         return sideDirection.reflect(quadrant);
     }
 
@@ -191,8 +275,8 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    CornerDirection quadrant ( SideDirection side ) {
-        return quadrant(side);
+    Direction quadrant ( Direction side ) {
+        return sideDirection.quadrant(side);
     }
 
     /**
@@ -201,25 +285,37 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    boolean adjacent ( CornerDirection quadrant ) {
+    boolean adjacent ( Direction quadrant ) {
         return sideDirection.adjacent(quadrant);
     }
 
+    /**
+     * @return
+     */
     public
     int getOrd () {
         return ord;
     }
 
+    /**
+     * @return
+     */
     public
     String getShortName () {
         return shortName;
     }
 
+    /**
+     * @return
+     */
     public
     SideDirection getSideDirection () {
         return sideDirection;
     }
 
+    /**
+     * @return
+     */
     public
     CornerDirection getCornerDirection () {
         return cornerDirection;

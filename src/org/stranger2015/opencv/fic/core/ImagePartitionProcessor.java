@@ -1,37 +1,32 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.opencv.core.Mat;
-import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.objdetect.QRCodeDetector;
 import org.stranger2015.opencv.fic.DomainBlock;
 import org.stranger2015.opencv.fic.DomainPool;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
-import java.util.Objects;
-import java.util.function.Consumer;
-
-import static org.stranger2015.opencv.fic.Main.currTreeNode;
 
 /**
  * Step 1: Construct the domain pools Ddepth, corresponding to
  * each quad tree partition level starting from minimum
  * partitions to maximum partitions (depth=0 to max_part-min_part).
- *
+ * <p>
  * Step 2: Calculate the block pixel value difference using
  * equation (5) of all the domain blocks in each pool Ddepth.
- *
+ * <p>
  * Step  3:  Classify  and  sort  the  domains  in  each  pool  Ddepth  in
  * ascending order of the pixel value difference, and place on a
  * list structure.
- *
+ * <p>
  * Step 4: Search for a best match between a range and domain
  * belonging to the same class.
  * write_header_info; (min_part, max_part, domain_step, hsize, vsize)
  * depth=0; ec =rms_tol;
- *
- *  Function Quadtree(image, depth) {
+ * <p>
+ * Function Quadtree(image, depth) {
  * best_rms = infinity;
  * β0 = initial value; βdepth *= 1.25;
  * While (depth < min_part) Quadtree (image, depth+1);
@@ -39,7 +34,7 @@ import static org.stranger2015.opencv.fic.Main.currTreeNode;
  * While there are uncovered ranges Ri do {
  * //Select the domain pool list Ddepth corresponding to the
  * current range block Ri.
- *
+ * <p>
  * For (j = 1; j < num_domains; ++j) {
  * If  (Rpdiff  < β * Dpdiff) {
  * Compute s, o, sym_op;
@@ -57,7 +52,7 @@ import static org.stranger2015.opencv.fic.Main.currTreeNode;
  * }// End function Quadtree()
  */
 public
-class ImagePartitionProcessor<N extends TreeNode<N>, M extends Mat> {
+class ImagePartitionProcessor<N extends TreeNode <N>, M extends Mat> {
 
     protected final M image;
     protected final PartitionScheme scheme;
@@ -70,17 +65,13 @@ class ImagePartitionProcessor<N extends TreeNode<N>, M extends Mat> {
     protected final List <M> rangeBlocks = new ArrayList <>();
 
     public
-    List <DomainBlock> getDomainBlocks () {
+    List <DomainBlock <?>> getDomainBlocks () {
         return domainBlocks;
     }
 
-    protected final List <DomainBlock> domainBlocks = new ArrayList <>();
+    protected final List <DomainBlock <?>> domainBlocks = new ArrayList <>();
 
     protected final Tree <N, M> tree;
-
-    private final
-    Consumer <N> action = n -> {
-    };
 
     protected int row;
     protected int col;
@@ -109,46 +100,52 @@ class ImagePartitionProcessor<N extends TreeNode<N>, M extends Mat> {
 
     /**
      * 1. Divide the image into range block.
+     * <p>
      * 2. Divide  the  image  into  non-overlapping  domain  blocks,  Di.
+     * <p>
      * The  union  of  the  domain  blocks  must  cover  the  entire
      * image, G, but they can be any size or shape [1].
+     * <p>
      * 3. Define  a  finite  set  of  contractive  affine  transformations,  wi
      * (which map from a range block R to a domain block Di).
+     * <p>
      * 4. For each domain block {
+     * <p>
      * For each range block {
      * For each transformation {
      * Calculate the Hausdorff distance h(wi(R  G), Di  G) (or use another metric)
      * }
      * }
+     * <p>
      * 5. Record the transformed domain block which is found to be the best approximation for
      * the current range block is assigned to that range block.
+     * <p>
      * 6. Next domain block [1].
      */
     public
     void process () {
         List <M> rangeBlocks = createRangeBlocks(image, 4, 4);
-//        List <M> domainBlocks = createDomainBlocks(image, 8, 8);
+        List <M> domainBlocks = createDomainBlocks(image, 8, 8);
 
     }
 
-//    private
-//    List <M> createDomainBlocks ( M image, int w, int h ) {
-//        List <M> l = new ArrayList <>();
-//        Consumer<M> action = new TreeNodeAction(new DomainPool());
-//        final QuadTree <Leaf, M> quadTree = new QuadTree <N, M>(image, action);
-//
-//
-//        final TreeNode root = quadTree.getRoot();
-//        TreeNode node = root.getChildren().get(0);
-//
-//        for (int i = 0, width = image.width(); i < width / w; i++, width /= 2) {
-//            for (int j = 0, height = image.height(); j < height / h; j++, height /= 2) {
-//
-//            }
-//        }
-//
-//        return l;
-//    }
+    protected
+    List <M> createDomainBlocks ( M image, int w, int h ) {
+        List <M> l = new ArrayList <>();
+        TreeNodeAction <N> action = new TreeNodeAction <>(new DomainPool());
+        final QuadTree<N, M> quadTree = new QuadTree<N,M>(new QuadTreeNode<N>(),  image, action);
+
+        final TreeNode <N> root = quadTree.getRoot();
+        TreeNode <N> node = root.getChildren().get(0);
+
+        for (int i = 0, width = image.width(); i < width / w; i++, width /= 2) {
+            for (int j = 0, height = image.height(); j < height / h; j++, height /= 2) {
+
+            }
+        }
+
+        return l;
+    }
 
 
     private
@@ -156,6 +153,7 @@ class ImagePartitionProcessor<N extends TreeNode<N>, M extends Mat> {
         return createBlocks(image, w, h);
     }
 
+    @SuppressWarnings("unchecked")
     private
     List <M> createBlocks ( M image, int w, int h ) {
         List <M> l = new ArrayList <>();
@@ -201,13 +199,13 @@ class ImagePartitionProcessor<N extends TreeNode<N>, M extends Mat> {
 //        }
 //    }
 //
-//    private
-    boolean isLeaf ( TreeNode treeNode ) {
-        return currTreeNode.getChildren().size() == 0;
+    private
+    boolean isLeaf ( TreeNode <?> treeNode ) {
+        return treeNode.getChildren().size() == 0;
     }
 
     private
-    TreeNode merge ( TreeNode treeNode ) {
+    TreeNode <?> merge ( TreeNode <?> treeNode ) {
         if (treeNode.isLeaf()) {
             return treeNode;
         }

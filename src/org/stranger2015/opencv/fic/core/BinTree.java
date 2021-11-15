@@ -15,8 +15,14 @@ class BinTree<N extends BinTreeNode <N>, M extends Mat> extends Tree <N, M> {
      * @param image
      */
     public
-    BinTree ( TreeNode <N> parent, M image, TreeNodeAction <N> action ) {
-        super(parent, image, action, DEFAULT_BBOX, DEFAULT_DEPTH);
+    BinTree (M image, TreeNodeAction <N> action ) {
+        super(image, action, DEFAULT_BOUNDING_BOX, DEFAULT_DEPTH);
+    }
+
+    public
+    <N extends QuadTreeNode<N>, M extends Mat>
+    BinTree ( TreeNode<N> root, M image, TreeNodeAction<N> action ) {
+        super(root, image, action);
     }
 
     //    @Override

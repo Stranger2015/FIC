@@ -1,6 +1,8 @@
 package org.stranger2015.opencv.fic.core;
 
-import static org.stranger2015.opencv.fic.core.CornerDirection.*;
+import org.jetbrains.annotations.NotNull;
+
+import static java.lang.String.*;
 
 public
 enum SideDirection implements ISideDirection {
@@ -9,42 +11,18 @@ enum SideDirection implements ISideDirection {
     SOUTH("S", 2),
     WEST("W", 3);
 
-    private final SideDirection parent;
-
-//    private final static Hierarchy <SideDirection> hierarchy =
-//            new Hierarchy <>(SideDirection.class, SideDirection::getParent);
     private final String shortName;
     private final int ord;
 
-//    public
-//    SideDirection[] children () {
-//        return hierarchy.getChildren(this);
-//    }
-//
-//    public
-//    boolean isA ( SideDirection other ) {
-//        return hierarchy.relate(other, this);
-//    }
-
-//    SideDirection ( SideDirection parent ) {
-//        this.parent = parent;
-//    }
-
-    SideDirection (String shortName, int ord) {
+    SideDirection ( String shortName, int ord ) {
         this.shortName = shortName;
         this.ord = ord;
-        this.parent = null;
     }
 
-    public
-    SideDirection getParent () {
-        return parent;
-    }
-
+    @NotNull
     @Override
     public
-    CornerDirection reflect ( CornerDirection quadrant ) {
-        CornerDirection result = null;
+    Direction reflect ( Direction quadrant ) {
         switch (this) {
             case NORTH:
             case SOUTH:
@@ -54,8 +32,7 @@ enum SideDirection implements ISideDirection {
                     case SOUTH_WEST:
                         break;
                     case SOUTH_EAST:
-                        result = NORTH_EAST;
-                        break;
+                        return Direction.NORTH_EAST;
                 }
                 break;
             case EAST:
@@ -66,74 +43,73 @@ enum SideDirection implements ISideDirection {
                     case NORTH_WEST:
                         break;
                     case SOUTH_EAST:
-                        result = SOUTH_WEST;
-                        break;
+                        return Direction.SOUTH_WEST;
                 }
                 break;
+            default:
+                throw new IllegalStateException(format("Unexpected value: %s", this));
         }
-        if (result == null) {
-            throw new IllegalStateException("null result in reflect()");
-        }
-
-        return result;
+        throw new IllegalStateException(format("Unexpected value: %s", this));
     }
 
     /**
-     *
-     *
      * @param side
      * @return
      */
     @Override
     public
-    CornerDirection quadrant ( SideDirection side ) {
+    Direction quadrant ( Direction side ) {
         switch (this) {
             case NORTH:
                 switch (side) {
                     case NORTH:
                     case SOUTH:
-                        throw new IllegalArgumentException("illegal input - " + this + ", " + side);
+                        throw new IllegalArgumentException(format("illegal input - %s, %s", this, side));
                     case EAST:
-                        return NORTH_EAST;
+                        return Direction.NORTH_EAST;
                     case WEST:
-                        return NORTH_WEST;
+                        return Direction.NORTH_WEST;
+                    default:
+                        throw new IllegalStateException(format("Unexpected value: %s", side));
                 }
-                break;
             case EAST:
                 switch (side) {
                     case NORTH:
-                        return NORTH_EAST;
+                        return Direction.NORTH_EAST;
                     case EAST:
                     case WEST:
-                        throw new IllegalArgumentException("illegal input - " + this + ", " + side);
+                        throw new IllegalArgumentException(format("illegal input - %s, %s", this, side));
                     case SOUTH:
-                        return SOUTH_EAST;
+                        return Direction.SOUTH_EAST;
                 }
-                throw new IllegalArgumentException("illegal input - " + this + ", " + side);
+                throw new IllegalArgumentException(format("illegal input - %s, %s", this, side));
             case SOUTH:
                 switch (side) {
                     case NORTH:
                     case SOUTH:
-                        throw new IllegalArgumentException("illegal input - " + this + ", " + side);
+                        throw new IllegalArgumentException(format("illegal input - %s, %s", this, side));
                     case EAST:
-                        return SOUTH_EAST;
+                        return Direction.SOUTH_EAST;
                     case WEST:
-                        return SOUTH_WEST;
+                        return Direction.SOUTH_WEST;
+                    default:
+                        throw new IllegalStateException(format("Unexpected value: %s", side));
                 }
-                break;
             case WEST:
                 switch (side) {
                     case NORTH:
-                        return NORTH_WEST;
+                        return Direction.NORTH_WEST;
                     case EAST:
                     case WEST:
-                        throw new IllegalArgumentException("illegal input - " + this + ", " + side);
+                        throw new IllegalArgumentException(format("illegal input - %s, %s", this, side));
                     case SOUTH:
-                        return SOUTH_WEST;
+                        return Direction.SOUTH_WEST;
+                    default:
+                        throw new IllegalStateException(format("Unexpected value: %s", side));
                 }
-                break;
+            default:
+                throw new IllegalStateException(format("Unexpected value: %s", side));
         }
-        throw new IllegalArgumentException("illegal input - " + this + ", " + side);
     }
 
     /**
@@ -145,104 +121,98 @@ enum SideDirection implements ISideDirection {
      */
     @Override
     public
-    boolean adjacent ( CornerDirection cornerDirection ) {
+    boolean adjacent ( Direction cornerDirection ) {
         return cornerDirection.toSideDirection().contains(this);
     }
 
     @Override
     public
     int north () {
-        return NORTH.ordinal();
+        return NORTH.getOrd();
     }
 
     @Override
     public
     int east () {
-        return EAST.ordinal();
+        return EAST.getOrd();
     }
 
+    /**
+     * @return
+     */
     @Override
     public
     int south () {
-        return SOUTH.ordinal();
+        return SOUTH.getOrd();
     }
 
+    /**
+     * @return
+     */
     @Override
     public
     int west () {
-        return WEST.ordinal();
+        return WEST.getOrd();
     }
 
+    /**
+     * @return
+     */
     @Override
     public
-    SideDirection cSide () {
-        SideDirection result = null;
+    Direction cSide () {
         switch (this) {
             case NORTH:
-                result = EAST;
-                break;
+                return Direction.EAST;
             case EAST:
-                result = SOUTH;
-                break;
+                return Direction.SOUTH;
             case SOUTH:
-                result = WEST;
-                break;
+                return Direction.WEST;
             case WEST:
-                result = NORTH;
-                break;
+                return Direction.NORTH;
+            default:
+                throw new IllegalStateException(format("Unexpected value: %s", this));
         }
-        if (result == null) {
-            result = this;
-        }
-
-        return result;
     }
 
+    /**
+     * @return
+     */
     @Override
     public
-    SideDirection ccSide () {
-        SideDirection result = null;
+    Direction ccSide () {
         switch (this) {
             case NORTH:
-                result = WEST;
-                break;
+                return Direction.WEST;
             case WEST:
-                result = SOUTH;
-                break;
+                return Direction.SOUTH;
             case SOUTH:
-                result = EAST;
-                break;
+                return Direction.EAST;
             case EAST:
-                result = NORTH;
-                break;
+                return Direction.NORTH;
+            default:
+                throw new IllegalStateException(format("Unexpected value: %s", this));
         }
-        if (result == null) {
-            result = this;
-        }
-
-        return result;
     }
 
+    /**
+     * @return
+     */
     @Override
     public
-    SideDirection opSide () {
-        SideDirection result = null;
+    Direction opSide () {
         switch (this) {
             case NORTH:
-                result = EAST;
-                break;
+                return Direction.EAST;
             case EAST:
-                result = SOUTH;
-                break;
+                return Direction.SOUTH;
             case SOUTH:
-                result = WEST;
-                break;
+                return Direction.WEST;
             case WEST:
-                result = NORTH;
-                break;
+                return Direction.NORTH;
+            default:
+                throw new IllegalStateException(format("Unexpected value: %s", this));
         }
-
-        return result;
     }
 
     /**

@@ -4,9 +4,6 @@ import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.stranger2015.opencv.fic.DomainBlock;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -17,13 +14,13 @@ public
 class QuadTree<N extends QuadTreeNode<N>, M extends Mat> extends BinTree<N,M> {
 
     /**
-     * @param parent
+     * @param root
      * @param image
      * @param action
      */
     public
-    QuadTree ( N parent, M image, TreeNodeAction <N> action ) {
-        super(parent, image, action);
+    QuadTree ( TreeNode<N> root, M image, TreeNodeAction <N> action) {
+        super( root, image, action );
     }
 
     /**
@@ -31,14 +28,15 @@ class QuadTree<N extends QuadTreeNode<N>, M extends Mat> extends BinTree<N,M> {
      * @param h
      * @return
      */
-    protected
-    NodeList <N> getDomainBlocks ( int w, int h ) {
+    protected static
+    <N extends DomainBlock<N>>
+    NodeList <N> getDomainBlocks ( NodeList<N> leaves, int w, int h ) {
         NodeList<N> l = new NodeList <>();
         if (!leaves.isEmpty()) {
-            for (Leaf leaf : leaves) {
+            for (Leaf<N> leaf : leaves) {
                 Mat image = leaf.getImage();
                 if (image.width() == w && image.height() == h) {
-                    l.add(new DomainBlock<>(leaf.parent, leaf.image, leaf.boundingBox));
+                    l.add(new DomainBlock <N>(null, leaf.image, leaf.boundingBox));//fixme
                 }
             }
         }
@@ -53,7 +51,7 @@ class QuadTree<N extends QuadTreeNode<N>, M extends Mat> extends BinTree<N,M> {
      * @return
      */
     public
-    QuadTreeNode<N> nodeInstance (N parent, CornerDirection quadrant, Rect rect ) {
+    QuadTreeNode<N> nodeInstance (QuadTreeNode<N> parent, CornerDirection quadrant, Rect rect ) {
         return new QuadTreeNode <>(parent, quadrant, rect);
     }
 
