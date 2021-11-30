@@ -5,8 +5,9 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Size;
 
-import java.util.List;
-
+/**
+ *
+ */
 public
 class Triangle extends Square {
 
@@ -16,7 +17,8 @@ class Triangle extends Square {
     }
 
     public
-    Triangle () {}
+    Triangle () {
+    }
 
     public
     Triangle ( Point p, Size s ) {
@@ -34,14 +36,14 @@ class Triangle extends Square {
     }
 
     public static
-    class TriangleTreeNode<N extends TriangleTreeNode<N>> extends QuadTreeNode<N> {
+    class TriangleTreeNode<N extends TriangleTreeNode <N>> extends QuadTreeNode <N> {
 
         public
-        TriangleTreeNode (TriangleTreeNode<N> parent, Rect rect) {
+        TriangleTreeNode ( TriangleTreeNode <N> parent, Rect rect ) {
             super(parent, null, rect);
         }
 
-          @Override
+        @Override
         public
         void draw ( Mat image, Rect rect ) {
 

@@ -3,7 +3,10 @@ package org.stranger2015.opencv.fic.core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.EnumSet;
+
+import static org.stranger2015.opencv.fic.core.Tree.EAffineTransform.*;
 
 /**
  * @param <N>
@@ -15,18 +18,22 @@ class Tree<N extends TreeNode <N>, M extends Mat> {
     public static final int DEFAULT_DEPTH = Integer.MAX_VALUE;
     public static final Rect DEFAULT_BOUNDING_BOX = new Rect(0, 0, 0, 0);
 
-    protected final NodeList<N> leaves = new NodeList<>();
-    protected final NodeList<N> nodes = new NodeList<>();
+    protected final NodeList <N> leaves = new NodeList <>();
+    protected final NodeList <N> nodes = new NodeList <>();
 
-    protected final M image;
-    protected final TreeNode <N> root;
-    protected final TreeNodeAction <N> action;
+    protected M image;
+    protected TreeNode <N> root;
+    protected TreeNodeAction <N> action;
 
-    private final Rect area;
+    private Rect area;
     /**
      *
      */
     protected int depth;          // The depth of the tree
+
+    public
+    Tree () {
+    }
 
     /**
      * Constructs a new object.
@@ -35,7 +42,7 @@ class Tree<N extends TreeNode <N>, M extends Mat> {
      * @param area
      */
     protected
-    Tree ( TreeNode<N> root, M image, TreeNodeAction <N> action, Rect area, int depth ) {
+    Tree ( TreeNode <N> root, M image, TreeNodeAction <N> action, Rect area, int depth ) {
         this.image = image;
         this.root = root;
         this.area = area;
@@ -50,7 +57,7 @@ class Tree<N extends TreeNode <N>, M extends Mat> {
      * @param action
      */
     protected
-    Tree ( TreeNode<N > root, M image, TreeNodeAction <N> action ) {
+    Tree ( TreeNode <N> root, M image, TreeNodeAction <N> action ) {
         this(
                 root,
                 image,
@@ -60,10 +67,42 @@ class Tree<N extends TreeNode <N>, M extends Mat> {
         );
     }
 
+    @SuppressWarnings("unchecked")
+    public static
+    <N extends TreeNode <N>, M extends Mat>
+    Tree <N, M> create ( String className ) {
+        int rc = 0;
+        try {
+            Class <?> clazz = Class.forName(className);
+            Tree <N, M> tree = (Tree <N, M>) clazz.getDeclaredConstructor().newInstance();
+            tree.initialize();
+        } catch (ClassNotFoundException |
+                NoSuchMethodException |
+                InvocationTargetException |
+                InstantiationException |
+                IllegalAccessException e) {
+
+            e.printStackTrace();
+            rc = -1;
+        }
+
+
+        return rc != 0 ? null : null;
+    }
+
+    protected
+    void initialize () {
+
+    }
+
     public
-    EnumSet <AffineTransform> getTransforms () {
-        return null;
-    }//TODO
+    EnumSet <EAffineTransform> getTransforms () {
+        return EnumSet.of(
+                FLIP,
+                ROTATE,
+                SCALE
+        );
+    }
 
     /**
      * @param parent
@@ -71,7 +110,13 @@ class Tree<N extends TreeNode <N>, M extends Mat> {
      * @return
      */
     abstract public
-    TreeNode <N> nodeInstance (TreeNode<N> parent, CornerDirection quadrant, Rect rect );
+    TreeNode <N> nodeInstance ( TreeNode <N> parent, Direction quadrant, Rect rect );
+
+    /**
+     * @return
+     */
+    public abstract
+    Class <N> getNodeClass ();
 
     /**
      * @return
@@ -114,7 +159,7 @@ class Tree<N extends TreeNode <N>, M extends Mat> {
      * @return
      */
     public
-    NodeList<N> getNodes () {
+    NodeList <N> getNodes () {
         return nodes;
     }
 
@@ -122,11 +167,12 @@ class Tree<N extends TreeNode <N>, M extends Mat> {
      *
      */
     public
-    enum AffineTransform {
-        MIRROR, // flip/flop
+    enum EAffineTransform {
+        FLIP, // flip/flop
         ROTATE,
         SCALE,
-        SKEW,
-        TRANSLATE,
+        // SKEW,//??????????
+        // TRANSLATE,//?????????????
+        ;
     }
 }

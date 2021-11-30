@@ -15,7 +15,7 @@ import static org.stranger2015.opencv.fic.core.TreeNode.Type.*;
  * @param <N>
  */
 abstract public
-class TreeNode<N extends TreeNode <N>> implements IDrawable, Comparable <N> {
+class TreeNode<N extends TreeNode <N>> implements IDrawable<Image>, Comparable <N> {
 
     protected static int indexCounter;
     protected short index;
@@ -73,6 +73,9 @@ class TreeNode<N extends TreeNode <N>> implements IDrawable, Comparable <N> {
      */
     public abstract
     TreeNode <N> createChild ( Direction quadrant, Rect boundingBox );
+
+//    public abstract
+//    TreeNode <N> createNode ( TreeNode<N> parent, Direction quadrant, Rect boundingBox );
 
     /**
      *
@@ -157,6 +160,9 @@ class TreeNode<N extends TreeNode <N>> implements IDrawable, Comparable <N> {
         return index;
     }
 
+    public abstract
+    TreeNode <N> createNode ( TreeNode <N> parent, Direction quadrant, Rect boundingBox );
+
     /**
      * @param o
      * @return
@@ -229,8 +235,10 @@ class TreeNode<N extends TreeNode <N>> implements IDrawable, Comparable <N> {
     /**
      * @return
      */
-    abstract public
-    N merge ();
+    public final
+    N merge () {
+        return getChildren().get(0);
+    }
 
     /**
      * @return

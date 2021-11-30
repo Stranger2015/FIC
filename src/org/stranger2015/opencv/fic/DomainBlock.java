@@ -1,9 +1,9 @@
 package org.stranger2015.opencv.fic;
 
-import org.opencv.core.Mat;
 import org.opencv.core.Rect;
+import org.opencv.core.Size;
+import org.stranger2015.opencv.fic.core.Image;
 import org.stranger2015.opencv.fic.core.Leaf;
-import org.stranger2015.opencv.fic.core.TreeNode;
 
 /**
  * 8 X 8
@@ -20,13 +20,13 @@ class DomainBlock<N extends DomainBlock<N>> extends Leaf<N> implements IImageBlo
      * @param rect
      */
     public
-    DomainBlock ( DomainBlock <N> parent, Mat image, Rect rect ) {
+    DomainBlock ( DomainBlock <N> parent, Image image, Rect rect ) {
         super(parent, image, rect);
     }
 
     @Override
     public
-    int getSize () {
-        return 0;
-    }
+    Size getSize () {
+        return new Size();
+    }//fixme
 }

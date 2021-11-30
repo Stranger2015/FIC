@@ -1,24 +1,32 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.opencv.core.Mat;
+import org.stranger2015.opencv.fic.core.CompressedImage;
+import org.stranger2015.opencv.fic.core.Image;
 
-/*
+/**
  * The 'None' transform -- makes no change to the given image.
  * This is useful to traverse the transforms without special casing
- * the comparison with the normal(non-transformed) image.
+ * the comparison with the normal (non-transformed) image.
  */
-public class NoneTransform<T extends Mat> extends ImageTransform<T> {
+public class NoneTransform<M extends Image, C extends CompressedImage> extends ImageTransform<M,C> {
+
     /**
-     * @param inputimage
-     * @param outputimage
+     * @param image
+     */
+    protected
+    NoneTransform ( M image ) {
+        super(image);
+    }
+
+    /**
+     * @param inputImage
      * @param transformMatrix
      * @param interpolationType
      * @return
      */
     @Override
     public
-    void transform ( T inputimage, T outputimage, T transformMatrix, int interpolationType ) {
-
+    M transform ( M inputImage, M transformMatrix, EInterpolationType interpolationType ) {
+        return inputImage;
     }
-
 }

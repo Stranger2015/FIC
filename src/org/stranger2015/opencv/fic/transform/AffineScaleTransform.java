@@ -1,39 +1,60 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.opencv.core.Mat;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
+import org.stranger2015.opencv.fic.core.CompressedImage;
+import org.stranger2015.opencv.fic.core.Image;
 
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
+import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
 
 /**
  * 
  */
-public class AffineScaleTransform<T extends Mat> extends ImageTransform<T>{
+public class AffineScaleTransform<M extends Image, C extends CompressedImage> extends AffineTransform<M, C>{
 
-    private final double scalex;
-    private final double scaley;
-    private final int interpolationType;
+    private final double scaleX;
+    private final double scaleY;
 
-    public AffineScaleTransform(final double scalex, final double scaley, final int interpolationType) {
-        this.scalex = scalex;
-        this.scaley = scaley;
-        this.interpolationType = interpolationType;
+    public AffineScaleTransform(M image, double scaleX, double scaleY, EInterpolationType interpolationType) {
+        super(image, interpolationType);
+        this.scaleX = scaleX;
+        this.scaleY = scaleY;
     }
 
-    public AffineScaleTransform(final double scalex, final double scaley) {
-        this(scalex, scaley, AffineTransformOp.TYPE_BILINEAR);
+    public AffineScaleTransform(M image, double scaleX, double scaleY) {
+        this(image, scaleX, scaleY, BILINEAR);
     }
 
     /**
-     * @param inputimage
-     * @param outputimage
+     * @param src
      * @param transformMatrix
+     * @param interpolationType
      * @return
      */
     @Override
     public
-    void transform ( Mat inputimage, Mat outputimage, Mat transformMatrix, int interpolationType ) {
+    M transform ( M src, M transformMatrix, EInterpolationType interpolationType ) {
+        // Creating the Size object
+        Size size = new Size(src.rows()*2, src.rows()*2);
 
+        M out= (M) new Image();
+        // Scaling the Image
+        Imgproc.resize(src, out, size, 0, 0, Imgproc.INTER_AREA);
+
+        // Writing the image
+//        Imgcodecs.imwrite("E:/OpenCV/chap24/scale_output.jpg", dst);
+
+        System.out.println("Image Processed");
+        return out;
+    }
+
+    public
+    double getScaleX () {
+        return scaleX;
+    }
+
+    public
+    double getScaleY () {
+        return scaleY;
     }
 }

@@ -1,43 +1,35 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.opencv.core.Mat;
+import org.stranger2015.opencv.fic.core.CompressedImage;
+import org.stranger2015.opencv.fic.core.Image;
 
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
+import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
 
 /**
  * 
  */
-public class AffineFlipTransform<T extends Mat> extends ImageTransform<T> {
+public class AffineFlipTransform<M extends Image, C extends CompressedImage> extends AffineTransform <M,C> {
 
-    /**
-     *
-     */
-    private final int interpolationType;
 
-    public AffineFlipTransform(final int interpolationType) {
-        this.interpolationType = interpolationType;
+    public AffineFlipTransform(M image, EInterpolationType interpolationType) {super(image, interpolationType);
     }
 
-    public AffineFlipTransform() {
-        this(AffineTransformOp.TYPE_BILINEAR);
+    public AffineFlipTransform(M image) {
+        this(image, BILINEAR);
     }
 
     /**
-    /**
-     * @param inputimage
-     * @param outputimage
+     * @param inputImage
      * @param transformMatrix
      * @param interpolationType
      * @return
      */
     @Override
     public
-    void transform ( T inputimage, T outputimage, T transformMatrix, int interpolationType ) {
-
+    M transform ( M inputImage, M transformMatrix, EInterpolationType interpolationType ) {
+        return null;
     }
-//
+
 //    @Override
 //    public BufferedImage transform(final BufferedImage inputimage) {
 //        AffineTransform transform = new AffineTransform();
@@ -46,6 +38,4 @@ public class AffineFlipTransform<T extends Mat> extends ImageTransform<T> {
 //        transform.translate(-inputimage.getWidth() / 2, -inputimage.getHeight() / 2);
 //        return affineTransform(inputimage, transform, interpolationType);
 //    }
-
-
 }

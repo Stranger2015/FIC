@@ -16,11 +16,10 @@ class BinTree<N extends BinTreeNode <N>, M extends Mat> extends Tree <N, M> {
      */
     public
     BinTree (M image, TreeNodeAction <N> action ) {
-        super(image, action, DEFAULT_BOUNDING_BOX, DEFAULT_DEPTH);
+        this(null, image, action);
     }
 
     public
-    <N extends QuadTreeNode<N>, M extends Mat>
     BinTree ( TreeNode<N> root, M image, TreeNodeAction<N> action ) {
         super(root, image, action);
     }
@@ -30,20 +29,31 @@ class BinTree<N extends BinTreeNode <N>, M extends Mat> extends Tree <N, M> {
     void draw ( M image, Rect rect ) {
 
     }
-
-    public
-    BinTreeNode <N> merge () {
-        return null;
-    }
+//
+//    public
+//    BinTreeNode <N> merge () {
+//        return null;
+//    }
 
     /**
      * @param parent
+     * @param quadrant
      * @param rect
      * @return
      */
     @Override
     public
-    BinTreeNode <N> nodeInstance ( TreeNode <N> parent, CornerDirection quadrant, Rect rect ) {
+    TreeNode <N> nodeInstance ( TreeNode <N> parent, Direction quadrant, Rect rect ) {
         throw new UnsupportedOperationException("Tree#nodeInstance()");
+    }
+
+    /**
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public
+    Class <N> getNodeClass () {
+        return (Class <N>) BinTreeNode.class;
     }
 }

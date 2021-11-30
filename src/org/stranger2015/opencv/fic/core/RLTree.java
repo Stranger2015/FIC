@@ -13,16 +13,27 @@ class RLTree<N extends RLTreeNode <N>, M extends Mat> extends Tree <N, M> {
      * @param root
      * @param image
      * @param action
+     */    public
+    RLTree (RLTreeNode <N> root, M image, TreeNodeAction <N> action) {
+        this(root, image, action,DEFAULT_BOUNDING_BOX, DEFAULT_DEPTH);
+    }
+
+    /**
+     * Constructs a new object.
+     *
+     * @param root
+     * @param image
+     * @param action
      * @param area
      * @param depth
      */
     protected
-    RLTree ( N root, M image, Consumer <N> action, Rect area, int depth ) {
+    RLTree ( RLTreeNode<N> root, M image, TreeNodeAction<N> action, Rect area, int depth ) {
         super(root, image, action, area, depth);
     }
 
 
-    /**
+     /**
      * @param parent
      * @param quadrant
      * @param rect
@@ -30,7 +41,17 @@ class RLTree<N extends RLTreeNode <N>, M extends Mat> extends Tree <N, M> {
      */
     @Override
     public
-    TreeNode <N> nodeInstance ( N parent, CornerDirection quadrant, Rect rect ) {
-        return new RLTreeNode <>(parent, quadrant, rect);
+    TreeNode <N> nodeInstance ( TreeNode <N> parent, Direction quadrant, Rect rect ) {
+        return new RLTreeNode <N>(parent, quadrant, rect);
+    }
+
+    /**
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public
+    Class <N> getNodeClass () {
+        return (Class <N>) RLTreeNode.class;
     }
 }

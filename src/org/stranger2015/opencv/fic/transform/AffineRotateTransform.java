@@ -1,44 +1,72 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
+import org.stranger2015.opencv.fic.core.CompressedImage;
+import org.stranger2015.opencv.fic.core.Image;
 
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
+import static java.awt.image.AffineTransformOp.*;
+import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
 
 /**
  * functor class to rotate an image by the given degrees
  */
-public class AffineRotateTransform<T extends Mat> extends ImageTransform<T> {
+public class AffineRotateTransform<M extends Image, C extends CompressedImage> extends AffineTransform<M,C> {
 
     private final double degrees;
-    private final int interpolationType;
 
-    public AffineRotateTransform(final double degrees, final int interpolationType) {
+    /**
+     * @param degrees
+     * @param interpolationType
+     */
+    public AffineRotateTransform(M image, double degrees, EInterpolationType interpolationType) {
+        super(image, interpolationType);
         this.degrees = degrees;
-        this.interpolationType = interpolationType;
     }
 
-    public AffineRotateTransform(final double degrees) {
-        this(degrees, AffineTransformOp.TYPE_BILINEAR);
+    /**
+     * @param degrees
+     */
+    public AffineRotateTransform(M image , double degrees) {
+        this(image, degrees, BILINEAR);
     }
 
-//    @Override
+    /**
+     * @param src
+     * @param transformMatrix
+     * @param interpolationType
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public
+    M transform ( M src, M transformMatrix, EInterpolationType interpolationType ) {
+        // Creating a Point object
+        Point point = new Point(300, 200);//todo
+
+        // Creating the transformation matrix M
+        M rotationMatrix = (M) Imgproc.getRotationMatrix2D(point, getDegrees(), 1);
+
+        // Creating the object of the class Size
+        Size size = new Size(src.cols(), src.cols());
+        M out = (M) new Image();
+
+        // Rotating the given image
+        Imgproc.warpAffine(src, out, rotationMatrix, size);
+
+        return out;
+    }
+
+    public
+    double getDegrees () {
+        return degrees;
+    }
+
 //    public BufferedImage transform(final BufferedImage inputimage) {
 //        return affineTransform(inputimage, AffineTransform.getRotateInstance(
 //                Math.toRadians(degrees), inputimage.getWidth()  / 2,
 //                                         inputimage.getHeight() / 2), interpolationType);
 //    }
 
-    /**
-     * @param inputimage
-     * @param outputimage
-     * @param transformMatrix
-     * @return
-     */
-    @Override
-    public
-    void transform ( Mat inputimage, Mat outputimage, Mat transformMatrix,int interpolationType ) {
-
-    }
 }

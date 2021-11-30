@@ -16,14 +16,8 @@ class BinTreeNode<N extends BinTreeNode <N>> extends TreeNode <N> {
      * @param rect
      */
     public
-    BinTreeNode (BinTreeNode<N> parent, CornerDirection quadrant, Rect rect ) {
+    BinTreeNode (BinTreeNode<N> parent, Direction quadrant, Rect rect ) {
         super(parent, quadrant, rect);
-    }
-
-    @Override
-    public final
-    N merge () {
-        return getChildren().get(0);
     }
 
     @Override
@@ -74,8 +68,20 @@ class BinTreeNode<N extends BinTreeNode <N>> extends TreeNode <N> {
 
     @Override
     public
-    TreeNode <N> createChild ( CornerDirection quadrant, Rect boundingBox ) {
+    TreeNode <N> createChild ( Direction quadrant, Rect boundingBox ) {
         return new BinTreeNode <>(this, quadrant, boundingBox);
+    }
+//
+//    @Override
+//    public
+//    TreeNode <N> createNode ( TreeNode <N> parent, Direction quadrant, Rect boundingBox ) {
+//        return null;
+//    }
+
+    @Override
+    public
+    BinTreeNode <N> createNode ( BinTreeNode <N> parent, Direction quadrant, Rect boundingBox ) {
+        return new BinTreeNode<>(parent, quadrant, boundingBox);
     }
 
     /**

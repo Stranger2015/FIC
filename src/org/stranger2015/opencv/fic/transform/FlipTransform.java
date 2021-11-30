@@ -1,38 +1,35 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.opencv.core.Mat;
-
-import java.awt.AlphaComposite;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
+import org.stranger2015.opencv.fic.core.CompressedImage;
+import org.stranger2015.opencv.fic.core.Image;
 
 /**
  * functor class to affineFlip an image
  */
-public class FlipTransform<T extends Mat> extends ImageTransform<T> {
+public
+class FlipTransform<M extends Image, C extends CompressedImage> extends PreserveAlphaTransform <M, C> {
 
-    private final boolean preserveAlpha;
-
-    public FlipTransform(final boolean preserveAlpha) {
-        this.preserveAlpha = preserveAlpha;
-    }
-
-    public FlipTransform() {
-        this(false);
+    /**
+     * @param preserveAlpha
+     */
+    public
+    FlipTransform ( M image, boolean preserveAlpha ) {
+        super(image, preserveAlpha);
     }
 
     /**
-     * @param inputimage
-     * @param outputimage
+     * @param inputImage
      * @param transformMatrix
      * @param interpolationType
      * @return
      */
     @Override
     public
-    void transform ( T inputimage, T outputimage, T transformMatrix, int interpolationType ) {
-
+    M transform ( M inputImage, M transformMatrix, EInterpolationType interpolationType ) {
+        M out = (M) new Image();
+        return out;
     }
+
 
 //    @Override
 //    public BufferedImage transform(final BufferedImage inputimage) {

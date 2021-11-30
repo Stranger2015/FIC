@@ -1,54 +1,67 @@
-package lib.transformations;
+package org.stranger2015.opencv.fic.transform;
 
-import org.opencv.core.Mat;
-import org.stranger2015.opencv.fic.transform.ImageTransform;
+import org.stranger2015.opencv.fic.core.CompressedImage;
+import org.stranger2015.opencv.fic.core.Image;
 
-import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
+
+import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
 
 /**
  * functor class to affineShear an image
  */
-public class AffineShearTransform<T extends Mat> extends ImageTransform <T> {
+public class AffineShearTransform<M extends Image, C extends CompressedImage> extends AffineTransform <M, C> {
 
-    private final double shearx;
-    private final double sheary;
-    private final int interpolationType;
-
+    private final double shearX;
+    private final double shearY;
     /**
-     * 
-     * @param shearx the multiplier by which coordinates are shifted in the 
+     *
+     * @param shearX the multiplier by which coordinates are shifted in the 
      * direction of the positive X axis as a factor of their Y coordinate
-     * @param sheary the multiplier by which coordinates are shifted in the 
+     * @param shearY the multiplier by which coordinates are shifted in the 
      * direction of the positive Y axis as a factor of their X coordinate
-     * @param interpolationType  
+     * @param interpolationType
      */
-    public AffineShearTransform(final double shearx, final double sheary, final int interpolationType) {
-        this.shearx = shearx;
-        this.sheary = sheary;
-        this.interpolationType = interpolationType;
+    public AffineShearTransform(M image, double shearX,
+                                final double shearY,
+                                final EInterpolationType interpolationType) {
+        super(image,interpolationType);
+        this.shearX = shearX;
+        this.shearY = shearY;
     }
 
-    public AffineShearTransform(final double shearx, final double sheary) {
-        this(shearx, sheary, AffineTransformOp.TYPE_BILINEAR);
+    public AffineShearTransform(M image, double shearX, double shearY) {
+        this(image,shearX, shearY, BILINEAR);
     }
-
-//    @Override
-//    public BufferedImage transform(final BufferedImage inputimage) {
-//        return affineTransform(inputimage, AffineTransform.getShearInstance(shearx, sheary), interpolationType);
-//    }
 
     /**
-     * @param inputimage
-     * @param outputimage
+     * @param inputImage
      * @param transformMatrix
      * @param interpolationType
      * @return
      */
     @Override
     public
-    void transform ( T inputimage, T outputimage, T transformMatrix, int interpolationType ) {
+    M transform ( M inputImage, M transformMatrix,EInterpolationType interpolationType ) {
 
+        M outputImage= (M) new Image();
+
+        return outputImage;
     }
+
+    public
+    double getShearX () {
+        return shearX;
+    }
+
+    public
+    double getShearY () {
+        return shearY;
+    }
+
+//    @Override
+//    public BufferedImage transform(final BufferedImage inputimage) {
+//        return affineTransform(inputimage, AffineTransform.getShearInstance(shearX, shearY), interpolationType);
+//    }
+
 }

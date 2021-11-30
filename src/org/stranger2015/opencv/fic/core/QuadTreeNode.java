@@ -7,7 +7,7 @@ import org.opencv.core.Rect;
  *
  */
 public
-class QuadTreeNode<N extends QuadTreeNode> extends BinTreeNode <N> {
+class QuadTreeNode<N extends QuadTreeNode<N>> extends BinTreeNode <N> {
 
     /**
      * @param parent
@@ -15,7 +15,7 @@ class QuadTreeNode<N extends QuadTreeNode> extends BinTreeNode <N> {
      * @param rect
      */
     public
-    QuadTreeNode ( QuadTreeNode<N> parent, CornerDirection quadrant, Rect rect ) {
+    QuadTreeNode ( QuadTreeNode<N> parent, Direction quadrant, Rect rect ) {
         super(parent, quadrant, rect);
     }
 
@@ -26,7 +26,7 @@ class QuadTreeNode<N extends QuadTreeNode> extends BinTreeNode <N> {
      */
     @SuppressWarnings("*")
     public
-    TreeNode <N> createChild (CornerDirection quadrant, Rect rect ) {
+    TreeNode <N> createChild (Direction quadrant, Rect rect ) {
         return new QuadTreeNode<N>(this, quadrant, rect);
     }
 

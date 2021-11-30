@@ -12,14 +12,22 @@ class Leaf <N extends Leaf <N>> extends TreeNode <N> {
     protected int width;
     protected int height;
 
-    protected final Mat image;
+    protected final Image image;
 
     public
-    Leaf ( Leaf <N> parent, Mat image, Rect rect ) {
+    Leaf ( TreeNode <N> parent, Image image, Rect rect ) {
         super(parent, null, rect);
         this.image = image.submat(rect);
     }
 
+    /**
+     * @param parent
+     * @param image
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     */
     public
     Leaf ( Leaf <N> parent, Mat image, int x, int y, int width, int height ) {
         this(parent, image, new Rect(x, y, width, height));
@@ -32,7 +40,7 @@ class Leaf <N extends Leaf <N>> extends TreeNode <N> {
 
     @Override
     public
-    void draw ( Mat image, Rect rect ) {
+    void draw ( Image image, Rect rect ) {
         Imgproc.rectangle(image, rect, new Scalar(1.0 / 255, 1.0 / 255, 1.0 / 255, 0.0));
     }
 
@@ -47,15 +55,14 @@ class Leaf <N extends Leaf <N>> extends TreeNode <N> {
         throw new IllegalStateException("createChild() in Leaf");
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public
-    N merge () {
-        return (N) this;
+    TreeNode <N> createNode ( TreeNode <N> parent, Direction quadrant, Rect boundingBox ) {
+        return new Leaf <>(parent, null, boundingBox);
     }
 
     public
-    Mat getImage () {
+   Image getImage () {
         return image;
     }
 }

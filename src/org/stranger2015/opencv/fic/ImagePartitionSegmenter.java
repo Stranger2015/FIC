@@ -2,6 +2,7 @@ package org.stranger2015.opencv.fic;
 
 import org.opencv.core.Mat;
 import org.opencv.core.Range;
+import org.stranger2015.opencv.fic.core.EPartitionScheme;
 import org.stranger2015.opencv.fic.core.ImagePartitionProcessor;
 import org.stranger2015.opencv.fic.core.PartitionScheme;
 import org.stranger2015.opencv.fic.core.TreeNode;
@@ -43,7 +44,7 @@ public
 class ImagePartitionSegmenter<N extends TreeNode<N>, M extends Mat> extends ImagePartitionProcessor <N, M> {
 
     public
-    ImagePartitionSegmenter ( M image, PartitionScheme scheme ) {
+    ImagePartitionSegmenter ( M image, EPartitionScheme scheme ) {
         super(image, scheme);
     }
 

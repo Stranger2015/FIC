@@ -13,7 +13,7 @@ import static org.stranger2015.opencv.fic.DomainBlock.W;
 
 public
 class TreeNodeAction<N extends TreeNode<N>> implements Consumer <N> {
-    private final DomainPool domainPool;
+//    private final DomainPool domainPool;
     private final List <N> leaves;
 
     public
@@ -22,8 +22,8 @@ class TreeNodeAction<N extends TreeNode<N>> implements Consumer <N> {
     }
 
     public
-    TreeNodeAction ( DomainPool domainPool ) {
-        this.domainPool = domainPool;
+    TreeNodeAction ( /*DomainPool domainPool */) {
+//        this.domainPool = domainPool;
         leaves = new ArrayList <>();
     }
 
@@ -41,8 +41,8 @@ class TreeNodeAction<N extends TreeNode<N>> implements Consumer <N> {
                     W == n.boundingBox.width &&
                     H == n.boundingBox.height
             ) {
-                n = (N) new DomainBlock(n, ((Leaf) n).image, n.boundingBox);
-                domainPool.add((DomainBlock) n);//fixme is it meaningful
+//                n = (N) new DomainBlock(n, ((Leaf) n).image, n.boundingBox);
+//                domainPool.add((DomainBlock) n);//fixme is it meaningful
             }
             leaves.add(n);
         }

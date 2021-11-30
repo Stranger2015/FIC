@@ -1,12 +1,10 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.opencv.core.Mat;
-
 /**
  *
  */
 public
-class ImageContentSegmentationProcessor<M extends Mat> extends ImagePartitionProcessor<TreeNode, M> {
+class ImageContentSegmentationProcessor<N extends TreeNode<N>, M extends Image> extends ImagePartitionProcessor<N, M> {
     public
     ImageContentSegmentationProcessor (M image) {
         super(image, null);

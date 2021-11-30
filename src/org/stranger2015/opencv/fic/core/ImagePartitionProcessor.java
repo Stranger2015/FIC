@@ -1,10 +1,7 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.opencv.core.Mat;
-import org.opencv.core.Scalar;
-import org.opencv.objdetect.QRCodeDetector;
-import org.stranger2015.opencv.fic.DomainBlock;
-import org.stranger2015.opencv.fic.DomainPool;
+import org.jetbrains.annotations.NotNull;
+import org.stranger2015.opencv.fic.core.codec.Codec;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,50 +49,37 @@ import java.util.List;
  * }// End function Quadtree()
  */
 public
-class ImagePartitionProcessor<N extends TreeNode <N>, M extends Mat> {
-
-    protected final M image;
-    protected final PartitionScheme scheme;
-
-    public
-    List <M> getRangeBlocks () {
-        return rangeBlocks;
-    }
+class ImagePartitionProcessor<N extends TreeNode <N>, M extends Image, C extends CompressedImage>
+        extends ImageProcessor <N, M, C> {
 
     protected final List <M> rangeBlocks = new ArrayList <>();
-
-    public
-    List <DomainBlock <?>> getDomainBlocks () {
-        return domainBlocks;
-    }
-
-    protected final List <DomainBlock <?>> domainBlocks = new ArrayList <>();
+    protected final List <M> domainBlocks = new ArrayList <>();
 
     protected final Tree <N, M> tree;
 
     protected int row;
     protected int col;
 
+    /**
+     * @param image
+     * @param scheme
+     * @param tree
+     */
     public
-    ImagePartitionProcessor ( M image, PartitionScheme scheme, Tree <N, M> tree ) {
-        this.image = image;
-        this.scheme = scheme;
+    ImagePartitionProcessor ( M image, EPartitionScheme scheme, Tree <N, M> tree ) {
+        super(image, scheme);
+//        this.image = image;
+//        this.scheme = scheme;
         this.tree = tree;
     }
 
+    /**
+     * @param image
+     * @param scheme
+     */
     public
-    ImagePartitionProcessor ( M image, PartitionScheme scheme ) {
+    ImagePartitionProcessor ( M image, EPartitionScheme scheme ) {
         this(image, scheme, null);
-    }
-
-    public static
-    int getNearestGreaterPow2 ( int n ) {
-        int ngp2 = 1;
-        for (; ngp2 < n; ngp2 *= 2) {
-
-        }
-
-        return ngp2;
     }
 
     /**
@@ -122,33 +106,49 @@ class ImagePartitionProcessor<N extends TreeNode <N>, M extends Mat> {
      * <p>
      * 6. Next domain block [1].
      */
+    @SuppressWarnings("unchecked")
     public
-    void process () {
-        List <M> rangeBlocks = createRangeBlocks(image, 4, 4);
-        List <M> domainBlocks = createDomainBlocks(image, 8, 8);
+    C process ( Image image ) {
+//        List <M> rangeBlocks = createRangeBlocks(image, 4, 4);
+//        List <M> domainBlocks = createDomainBlocks(image, 8, 8);
 
+        return (C) new CompressedImage(image);
     }
 
-    protected
-    List <M> createDomainBlocks ( M image, int w, int h ) {
-        List <M> l = new ArrayList <>();
-        TreeNodeAction <N> action = new TreeNodeAction <>(new DomainPool());
-        final QuadTree<N, M> quadTree = new QuadTree<N,M>(new QuadTreeNode<N>(),  image, action);
+//    protected
+//    List <M> createDomainBlocks ( M image, int w, int h ) {
+//        List <M> l = new ArrayList <>();
+//        TreeNodeAction <N> action = new TreeNodeAction <>(new DomainPool());
+//        final Tree <N, M> tree = Tree.create();
+////                new QuadTree <>(
+//                        new QuadTreeNode <>(
+//                                null,
+//                                NORTH_WEST,
+//                                DEFAULT_BOUNDING_BOX
+//                        ),
+//                        image,
+//                        action);
+//
+//        final TreeNode <N> root = quadTree.getRoot();
+//        TreeNode <N> node = root.getChildren().get(0);
+//
+//        for (int i = 0, width = image.width(); i < width / w; i++, width /= 2) {
+//            for (int j = 0, height = image.height(); j < height / h; j++, height /= 2) {
+//
+//            }
+//        }
+//
+//        return l;
+//    }
 
-        final TreeNode <N> root = quadTree.getRoot();
-        TreeNode <N> node = root.getChildren().get(0);
 
-        for (int i = 0, width = image.width(); i < width / w; i++, width /= 2) {
-            for (int j = 0, height = image.height(); j < height / h; j++, height /= 2) {
-
-            }
-        }
-
-        return l;
-    }
-
-
-    private
+    /**
+     * @param image
+     * @param w
+     * @param h
+     * @return
+     */
+    private @NotNull
     List <M> createRangeBlocks ( M image, int w, int h ) {
         return createBlocks(image, w, h);
     }
@@ -200,12 +200,12 @@ class ImagePartitionProcessor<N extends TreeNode <N>, M extends Mat> {
 //    }
 //
     private
-    boolean isLeaf ( TreeNode <?> treeNode ) {
+    boolean isLeaf ( TreeNode <N> treeNode ) {
         return treeNode.getChildren().size() == 0;
     }
 
     private
-    TreeNode <?> merge ( TreeNode <?> treeNode ) {
+    TreeNode <N> merge ( TreeNode <N> treeNode ) {
         if (treeNode.isLeaf()) {
             return treeNode;
         }
@@ -213,7 +213,7 @@ class ImagePartitionProcessor<N extends TreeNode <N>, M extends Mat> {
     }
 
     private
-    Color getColor ( Mat image, int i ) {
+    Color getColor ( M image, int i ) {
         switch (i) {
             case 0:
                 col = 0;
@@ -225,41 +225,10 @@ class ImagePartitionProcessor<N extends TreeNode <N>, M extends Mat> {
                 break;
             case 2:
                 col = 0;
-                row = 1;
-                break;
-            case 3:
-                col = 1;
-                row = 1;
-                break;
         }
 
-        double[] cdata = image.get(col, row);
 
-        return getColor(new Scalar(cdata));
-    }
-
-    private
-    Color getColor ( Scalar data ) {
-        if (Color.BLACK.getData() == data) {
-            return Color.BLACK;
-        }
-        else {
-            return Color.WHITE;
-        }
-    }
-
-    public
-    void draw () {
-
-
-    }
-
-    protected
-    void findMatchesFor () {
-
-    }
-
-    //    /*
+        //    /*
 // * Fractal Image Compression. Copyright 2004 Alex Kennberg.
 // *
 // * Licensed under the Apache License, Version 2.0 (the "License");
@@ -447,5 +416,68 @@ class ImagePartitionProcessor<N extends TreeNode <N>, M extends Mat> {
 //            }
 //        }
 //    }
+        return null;
+    }
 
+
+    /**
+     * @return
+     */
+    public
+    List <M> getRangeBlocks () {
+        return rangeBlocks;
+    }
+
+    /**
+     * @return
+     */
+    public
+    List <M> getDomainBlocks () {
+        return domainBlocks;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    M getImage () {
+        return null;
+    }//todo
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    EPartitionScheme getScheme () {
+        return null;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    Codec <M, C> getCodec () {
+        return null;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    IImageProcessor <N, M, C> getPreprocessor () {
+        return null;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    IImageProcessor <N, M, C> getPostprocessor () {
+        return null;
+    }
 }

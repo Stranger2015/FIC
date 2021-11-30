@@ -1,6 +1,5 @@
 package org.stranger2015.opencv.utils.geom;
 
-import org.jetbrains.annotations.NotNull;
 import org.locationtech.jts.awt.PointShapeFactory;
 import org.locationtech.jts.util.Assert;
 import org.locationtech.jts.util.NumberUtil;

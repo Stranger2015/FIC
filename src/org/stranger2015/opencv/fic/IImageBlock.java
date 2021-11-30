@@ -1,7 +1,15 @@
 package org.stranger2015.opencv.fic;
 
+import org.opencv.core.Size;
+
+/**
+ *
+ */
 public
-interface IImageBlock {
-int getSize();
+interface IImageBlock{
+    /**
+     * @return
+     */
+    Size getSize ();
 
 }

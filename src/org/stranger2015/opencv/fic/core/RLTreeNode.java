@@ -8,25 +8,26 @@ import org.opencv.core.Rect;
  */
 public
 class RLTreeNode<N extends RLTreeNode <N>> extends TreeNode <N> {
+
     @Override
     public
-    RLTreeNode<N> createChild ( CornerDirection quadrant, Rect boundingBox ) {
-        return new RLTreeNode <>((N) this, quadrant, boundingBox);
+    TreeNode <N> createNode ( TreeNode <N> parent, Direction quadrant, Rect boundingBox ) {
+        return new RLTreeNode<>(parent, quadrant, boundingBox);
     }
 
     public
-    RLTreeNode ( N parent, CornerDirection direction, Rect rect ) {
-        super(parent, direction, rect);
+    RLTreeNode ( TreeNode <N> parent, Direction quadrant, Rect rect ) {
+        super(parent, quadrant, rect);
+    }
+
+    @Override
+    public
+    RLTreeNode<N> createChild ( Direction quadrant, Rect boundingBox ) {
+        return new RLTreeNode <>(parent, quadrant, boundingBox);
     }
 
     @Override
     public
     void draw ( Mat image, Rect rect ) {
-    }
-
-    @Override
-    public
-    N merge () {
-        return null;
     }
 }

@@ -11,8 +11,10 @@ class OcTreeNode<N extends OcTreeNode<N>> extends QuadTreeNode<N> {
 
 
     public
-    OcTreeNode ( N parent, Rect rect, List <N> children ) {
-        super(parent, rect, children);
+    OcTreeNode ( OcTreeNode<N> parent,
+                 Direction direction,
+                 Rect rect) {
+        super(parent, direction, rect );
     }
 
     @Override

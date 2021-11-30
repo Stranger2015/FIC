@@ -1,32 +1,34 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.opencv.core.Mat;
+import org.stranger2015.opencv.fic.core.CompressedImage;
+import org.stranger2015.opencv.fic.core.Image;
 
-import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
+
+import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
 
 /**
  * functor class to rotate an image by the given quadrant
  */
-public class AffineRotateQuadrantsTransform<T extends Mat> extends ImageTransform<T> {
+public class AffineRotateQuadrantsTransform<M extends Image, C extends CompressedImage> extends AffineTransform<M, C> {
 
-    private int quadrants;
-    private int interpolationType;
+    private final int quadrants;
+    private final EInterpolationType interpolationType;
 
     /**
      * @param quadrants the number of 90 degree arcs to rotate by
      * @param interpolationType  
      */
-    public AffineRotateQuadrantsTransform(final int quadrants, final int interpolationType) {
+    public AffineRotateQuadrantsTransform(M image, int quadrants, EInterpolationType interpolationType) {
+        super(image);
         this.quadrants = quadrants;
         this.interpolationType = interpolationType;
     }
 
-    public AffineRotateQuadrantsTransform(final int quadrants) {
-        this(quadrants, AffineTransformOp.TYPE_BILINEAR);
+    public AffineRotateQuadrantsTransform(M image, int quadrants) {
+        this(image, quadrants, BILINEAR);
     }
-//
+
 //    @Override
 //    public BufferedImage transform(final BufferedImage inputimage) {
 //        return affineTransform(inputimage, AffineTransform.getQuadrantRotateInstance(
@@ -34,15 +36,25 @@ public class AffineRotateQuadrantsTransform<T extends Mat> extends ImageTransfor
 //                           inputimage.getHeight() / 2), interpolationType);
 //    }
 //
+    public
+    int getQuadrants () {
+        return quadrants;
+    }
+
+    public
+    EInterpolationType getInterpolationType () {
+        return interpolationType;
+    }
+
     /**
-     * @param inputimage
-     * @param outputimage
+     * @param inputImage
      * @param transformMatrix
+     * @param interpolationType
      * @return
      */
     @Override
     public
-    void transform ( Mat inputimage, Mat outputimage, Mat transformMatrix, int interpolationType ) {
-
+    M transform ( M inputImage, M transformMatrix, EInterpolationType interpolationType ) {
+        return null;
     }
 }
