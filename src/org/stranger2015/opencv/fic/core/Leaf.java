@@ -1,12 +1,11 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 public
-class Leaf <N extends Leaf <N>> extends TreeNode <N> {
+class Leaf<N extends Leaf <N, ?>, A extends Address <A>> extends TreeNode <N, A> {
     protected int x;
     protected int y;
     protected int width;
@@ -15,9 +14,9 @@ class Leaf <N extends Leaf <N>> extends TreeNode <N> {
     protected final Image image;
 
     public
-    Leaf ( TreeNode <N> parent, Image image, Rect rect ) {
+    Leaf ( TreeNode <N, A> parent, Image image, Rect rect ) {
         super(parent, null, rect);
-        this.image = image.submat(rect);
+        this.image = new Image(image.submat(rect));
     }
 
     /**
@@ -29,15 +28,19 @@ class Leaf <N extends Leaf <N>> extends TreeNode <N> {
      * @param height
      */
     public
-    Leaf ( Leaf <N> parent, Mat image, int x, int y, int width, int height ) {
+    Leaf ( Leaf <N, A> parent, Image image, int x, int y, int width, int height ) {
         this(parent, image, new Rect(x, y, width, height));
     }
 
-    public
-    boolean isDomainBlock () {
-        return false;
-    }
+//    public
+//    boolean isDomainBlock () {
+//        return false;
+//    }Image
 
+    /**
+     * @param image
+     * @param rect
+     */
     @Override
     public
     void draw ( Image image, Rect rect ) {
@@ -51,18 +54,18 @@ class Leaf <N extends Leaf <N>> extends TreeNode <N> {
      */
     @Override
     public
-    TreeNode <N> createChild ( Direction quadrant, Rect boundingBox ) {
+    TreeNode <N, A> createChild ( Direction quadrant, Rect boundingBox ) {
         throw new IllegalStateException("createChild() in Leaf");
     }
 
     @Override
     public
-    TreeNode <N> createNode ( TreeNode <N> parent, Direction quadrant, Rect boundingBox ) {
+    TreeNode <N, A> createNode ( TreeNode <N, A> parent, Direction quadrant, Rect boundingBox ) {
         return new Leaf <>(parent, null, boundingBox);
     }
 
     public
-   Image getImage () {
+    Image getImage () {
         return image;
     }
 }

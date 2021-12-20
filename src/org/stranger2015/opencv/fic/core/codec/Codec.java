@@ -1,26 +1,22 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.opencv.core.*;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
-import org.stranger2015.opencv.fic.transform.AffineTransforms;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.Math.*;
-
 public
-class Codec<M extends Image, C extends CompressedImage> implements IEncoder <M, C>, IDecoder <C, M> {
+class Codec<N extends TreeNode <N>, M extends Image, C extends CompressedImage> implements IEncoder <N, M, C>, IDecoder <C, M> {
 //    private final IEncoder <M, C> encoder = new Encoder <>();
 //    private final IDecoder <C, M> decoder = new Decoder <>();
 
     public static
-    <M extends Image, C extends CompressedImage>
-    Codec<M, C>    create( EPartitionScheme scheme,  EncodeAction action){
+    <N extends TreeNode <N>, M extends Image, C extends CompressedImage>
+    Codec <N, M, C> create ( EPartitionScheme scheme, EncodeAction action ) {
 
-        return null;
+        return new Codec <>();
     }
 
     /**
@@ -31,6 +27,15 @@ class Codec<M extends Image, C extends CompressedImage> implements IEncoder <M, 
     public
     M encode ( M image ) {
         return null;
+    }
+
+    /**
+     *
+     */
+    @Override
+    public
+    void segmentImage () {
+
     }
 
     /**
@@ -117,7 +122,7 @@ class Codec<M extends Image, C extends CompressedImage> implements IEncoder <M, 
 //        return null;
 //    }
 
-//    /**
+    //    /**
 //     * Performs a random spatial shear of an image tensor.
 //     *
 //     * @param image
@@ -168,8 +173,8 @@ class Codec<M extends Image, C extends CompressedImage> implements IEncoder <M, 
 //    M randomChannelShift ( M x, int intensity, int channelAxis ) {
 //        return x;
 //    }
-@Override
-@SuppressWarnings("unchecked")
+    @Override
+    @SuppressWarnings("unchecked")
 //    public
 //    M applyAffineTransform ( M image,
 //                             double theta,
@@ -354,17 +359,10 @@ class Codec<M extends Image, C extends CompressedImage> implements IEncoder <M, 
 //                transformed_blocks.append((k, l, direction, angle, apply_transform(S, direction, angle)))
 //    return transformed_blocks
 
-    /**
-     * @param image
-     * @param sourceSize
-     * @param destinationSize
-     * @param step
-     * @return
-     */
     public
     List <ImageTransform <M, C>> compress ( M image, int sourceSize, int destinationSize, int step ) {
         List <ImageTransform <M, C>> transformations = new ArrayList <>();
-        List <ImageBlock> transformedBlocks = generateAllTransformedBlocks(image, sourceSize, destinationSize, step);
+        List <ImageBlock<M>> transformedBlocks = generateAllTransformedBlocks(image, sourceSize, destinationSize, step);
 //    for (int i : range(image.shape[0])){ // destination_size):
 //            transformations.append([]);
 //        for(int j : range(image.shape[1] )){// destination_size):
@@ -388,7 +386,7 @@ class Codec<M extends Image, C extends CompressedImage> implements IEncoder <M, 
 
     @Override
     public
-    List <ImageBlock> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
+    List <ImageBlock<M>> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
         return null;
     }
 

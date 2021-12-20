@@ -3,6 +3,7 @@ package org.stranger2015.opencv.fic.core;
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Rect;
 import org.stranger2015.opencv.fic.IDrawable;
+import org.stranger2015.opencv.fic.core.codec.IAddress;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,19 +16,19 @@ import static org.stranger2015.opencv.fic.core.TreeNode.Type.*;
  * @param <N>
  */
 abstract public
-class TreeNode<N extends TreeNode <N>> implements IDrawable<Image>, Comparable <N> {
+class TreeNode<N extends TreeNode <N, A>, A extends IAddress <A>> implements IDrawable <Image>, Comparable <N> {
 
     protected static int indexCounter;
-    protected short index;
+    protected int index;
+
+    protected IAddress <A> address;
 
     protected Rect boundingBox;
 
-    /**
-     *
-     */
-    protected final TreeNode <N> parent;
+    protected final TreeNode <N, A> parent;
 
     protected final List <N> children = new ArrayList <>();
+
     protected Type type;
 
     protected Direction quadrant;
@@ -72,10 +73,7 @@ class TreeNode<N extends TreeNode <N>> implements IDrawable<Image>, Comparable <
      * @return
      */
     public abstract
-    TreeNode <N> createChild ( Direction quadrant, Rect boundingBox );
-
-//    public abstract
-//    TreeNode <N> createNode ( TreeNode<N> parent, Direction quadrant, Rect boundingBox );
+    TreeNode <N, A> createChild ( Direction quadrant, Rect boundingBox ) throws ValueError;
 
     /**
      *
@@ -156,12 +154,18 @@ class TreeNode<N extends TreeNode <N>> implements IDrawable<Image>, Comparable <
      * @return
      */
     public
-    short getIndex () {
+    int getIndex () {
         return index;
     }
 
+    /**
+     * @param parent
+     * @param quadrant
+     * @param boundingBox
+     * @return
+     */
     public abstract
-    TreeNode <N> createNode ( TreeNode <N> parent, Direction quadrant, Rect boundingBox );
+    TreeNode <N, A> createNode ( TreeNode <N, A> parent, Direction quadrant, Rect boundingBox ) throws ValueError;
 
     /**
      * @param o
@@ -204,16 +208,27 @@ class TreeNode<N extends TreeNode <N>> implements IDrawable<Image>, Comparable <
      * @param rect
      */
     public
-    TreeNode ( TreeNode <N> parent, Direction quadrant, Rect rect ) {
+    TreeNode ( TreeNode <N, A> parent, Direction quadrant, Rect rect ) throws ValueError {
         this.quadrant = quadrant;
 
-        this.index = (short) indexCounter++;
+        this.index = indexCounter++;
+        this.address = newAddress(index);
 
         this.boundingBox = rect;
         this.parent = parent;
 
         setDistance(0);
         setType(WHITE);
+    }
+
+    /**
+     * @param index
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    protected
+    A newAddress ( int index ) throws ValueError {
+        return (A) new Address<>(index);
     }
 
     /**
@@ -284,7 +299,7 @@ class TreeNode<N extends TreeNode <N>> implements IDrawable<Image>, Comparable <
      * @return
      */
     public
-    TreeNode <N> getParent () {
+    TreeNode <N, A> getParent () {
         return parent;
     }
 }

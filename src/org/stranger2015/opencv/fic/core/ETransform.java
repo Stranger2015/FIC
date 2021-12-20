@@ -8,5 +8,6 @@ enum ETransform {
     SHEAR,
     ZOOM,
     BRIGHTNESS,
-    INTENSITY;
+    INTENSITY,
+    ;
 }

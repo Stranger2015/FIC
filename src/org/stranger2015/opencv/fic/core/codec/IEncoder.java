@@ -3,6 +3,7 @@ package org.stranger2015.opencv.fic.core.codec;
 import org.stranger2015.opencv.fic.core.CompressedImage;
 import org.stranger2015.opencv.fic.core.Image;
 import org.stranger2015.opencv.fic.core.ImageBlock;
+import org.stranger2015.opencv.fic.core.TreeNode;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 
@@ -178,18 +179,24 @@ import java.util.List;
  * //
  */
 public
-interface IEncoder<M extends Image, C extends CompressedImage> {
+interface IEncoder<N extends TreeNode<N>, M extends Image, C extends CompressedImage, A extends IAddress <A>> {
     /**
+     *
      * @return
      */
     M encode (M image);
 
     /**
-     * @param x
+     *
+     */
+    void segmentImage();
+
+    /**
+     * @param image
      * @param axis
      * @return
      */
-    M flipAxis ( M x, int axis );
+    M flipAxis ( M image, int axis );
 
     /**
      * @param image
@@ -469,6 +476,5 @@ interface IEncoder<M extends Image, C extends CompressedImage> {
      * @param step
      * @return
      */
-    List <ImageBlock> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step );
+    List <ImageBlock<M>> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step );
 }
-

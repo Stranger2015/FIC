@@ -7,10 +7,16 @@ import org.stranger2015.opencv.fic.IImageBlock;
  *
  */
 public
-class ImageBlock extends Image implements IImageBlock {
+class ImageBlock<M extends Image> extends Image implements IImageBlock<M> {
 
     public static final int[] EMPTY_ARRAY = new int[0];
 
+    /**
+     * @param rows
+     * @param cols
+     * @param blockWidth
+     * @param blockHeight
+     */
     public
     ImageBlock ( int rows, int cols, int blockWidth, int blockHeight ) {
         this(rows, cols, blockWidth, blockHeight, -1);//fixme
@@ -119,6 +125,10 @@ class ImageBlock extends Image implements IImageBlock {
 //        this.pixelValues = newPixelValues;
     }
 
+    /**
+     * @param n
+     * @return
+     */
     public int plus(int ... n){
        int result = 0;
         for (int j : n) {

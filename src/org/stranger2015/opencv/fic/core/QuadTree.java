@@ -3,6 +3,7 @@ package org.stranger2015.opencv.fic.core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.stranger2015.opencv.fic.DomainBlock;
+import org.stranger2015.opencv.fic.core.codec.IAddress;
 
 import java.util.function.Consumer;
 
@@ -11,7 +12,7 @@ import java.util.function.Consumer;
  * @param <M>
  */
 public
-class QuadTree<N extends QuadTreeNode <N>, M extends Mat> extends BinTree <N, M> {
+class QuadTree<N extends QuadTreeNode <N,?>, M extends Image, A extends IAddress <A>> extends BinTree <N, M,         A> {
 
     /**
      * @param root
@@ -19,7 +20,7 @@ class QuadTree<N extends QuadTreeNode <N>, M extends Mat> extends BinTree <N, M>
      * @param action
      */
     public
-    QuadTree ( TreeNode <N> root, M image, TreeNodeAction <N> action ) {
+    QuadTree ( TreeNode <N,?> root, M image, TreeNodeAction <N> action ) {
         super(root, image, action);
     }
 
@@ -61,7 +62,7 @@ class QuadTree<N extends QuadTreeNode <N>, M extends Mat> extends BinTree <N, M>
      * @return
      */
     public
-    TreeNode <N> nodeInstance ( QuadTreeNode<N> parent, Direction quadrant, Rect rect ) {
+    TreeNode <N,?> nodeInstance ( QuadTreeNode<N,?> parent, Direction quadrant, Rect rect ) {
         return new QuadTreeNode <>(parent, quadrant, rect);
     }
 

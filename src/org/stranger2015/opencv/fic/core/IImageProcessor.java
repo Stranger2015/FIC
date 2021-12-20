@@ -10,12 +10,12 @@ import java.util.List;
  * @param <C>
  */
 public
-interface IImageProcessor<N extends TreeNode <N>, M extends Image, C extends CompressedImage> {
-
+interface IImageProcessor<N extends TreeNode <N>, M extends Image, C extends CompressedImage>
+        extends IProcessor <M> {
     /**
      *
      */
-    M process ( M inImage );
+    M process ();
 
     /**
      * @return
@@ -30,20 +30,20 @@ interface IImageProcessor<N extends TreeNode <N>, M extends Image, C extends Com
     /**
      * @return
      */
-    Codec <M, C> getCodec ();
+    Codec <N, M, C> getCodec ();
 
     /**
      * @return
      */
-    IImageProcessor <N, M, C> getPreprocessor ();
+    M preprocess ( );
 
     /**
      * @return
      */
-    IImageProcessor <N, M, C> getPostprocessor ();
+    M postprocess ();
 
     /**
      * @return
      */
-    List <Task<N,M>> getTasks ();
+    List <Task <M>> getTasks ();
 }

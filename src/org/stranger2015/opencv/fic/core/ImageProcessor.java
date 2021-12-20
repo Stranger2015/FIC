@@ -1,60 +1,72 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.opencv.highgui.HighGui;
-import org.opencv.imgcodecs.Imgcodecs;
+import org.stranger2015.opencv.fic.core.LoadSaveImageTask.BidiImageColorModelTask;
+import org.stranger2015.opencv.fic.core.LoadSaveImageTask.NormalizeImageShapeTask;
 import org.stranger2015.opencv.fic.core.codec.Codec;
 import org.stranger2015.opencv.fic.core.codec.EncodeAction;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.stranger2015.opencv.fic.core.EPartitionScheme.QUAD_TREE;
-import static org.stranger2015.opencv.fic.core.codec.Codec.create;
 
 /**
  *
  */
 public
 class ImageProcessor<N extends TreeNode <N>, M extends Image, C extends CompressedImage>
-        extends CompositeTask <N, M>
+        extends CompositeTask <M>
         implements IImageProcessor <N, M, C> {
 
-    private final M image;
+    //    private final M image;
     private final String imageFilename;
     private final EPartitionScheme scheme;
-    private final Codec <M, C> codec;
-    private final IImageProcessor <N, M, C> preprocessor;
-    private final IImageProcessor <N, M, C> postprocessor;
+    private final Codec <N,M, C> codec;
 
     /**
-     * @param image
      * @param scheme
      * @param imageFilename
      */
     public
-    ImageProcessor ( M image, EPartitionScheme scheme, List <Task <N, M>> tasks, String imageFilename ) {
+    ImageProcessor ( String imageFilename, EPartitionScheme scheme, List <Task <M>> tasks ) {
         super(tasks);
 
-        this.image = image;
         this.scheme = scheme;
         this.imageFilename = imageFilename;
 
-        List <Task <N, M>> preprocTasks = new ArrayList <>();
-        List <Task <N, M>> postprocTasks = new ArrayList <>();
-        BidiTask <N, M> task1 = new LoadImageTask(imageFilename, tasks);
-        BidiTask <N, M> task2 = new NormalizeImageShapeTask(tasks);
-        BidiTask <N, M> task3 = new SetImageYuvColorModelTask(tasks);
+        final List <Task <M>> preprocTasks = new ArrayList <>();
+        final List <Task <M>> postprocTasks = new ArrayList <>();
+//        BidiTask <N, M> task1 = new LoadSaveImageTask(imageFilename, tasks);
+        BidiTask < M> task1 = new NormalizeImageShapeTask <>(tasks);
+        BidiTask < M> task2 = new BidiImageColorModelTask <>(tasks);
         preprocTasks.add(task1.getTask());
         preprocTasks.add(task2.getTask());
-        preprocTasks.add(task3.getTask());
 
         postprocTasks.add(task1.getInverseTask());
         postprocTasks.add(task2.getInverseTask());
-        postprocTasks.add(task3.getInverseTask());
 
-        preprocessor = new ImageProcessor <>(image, scheme, preprocTasks, imageFilename);
-        postprocessor = new ImageProcessor <>(image, scheme, postprocTasks, imageFilename);
-        codec = create(scheme, new EncodeAction(imageFilename));
+        codec = (Codec <N,M, C>) create(scheme, new EncodeAction(imageFilename));
+    }
+
+    protected abstract
+    IImageProcessor <N, M, C> create ( EPartitionScheme scheme, EncodeAction action ) {
+        return null;
+    }
+
+//    public
+//    ImageProcessor ( String filename ) {
+//        super(filename);
+//    }
+
+    public static
+    <N extends TreeNode <N>, M extends Image, C extends CompressedImage>
+    IImageProcessor <N, M, C> create ( String filename ) {
+        LoadSaveImageTask <M> loadSaveImageTask = new LoadSaveImageTask <>(filename, Collections.emptyList());
+        loadSaveImageTask.execute();
+
+        return new ImageProcessor <N, M, C>(filename, Collections.emptyList());
     }
 
     /**
@@ -63,9 +75,27 @@ class ImageProcessor<N extends TreeNode <N>, M extends Image, C extends Compress
     public
     M process ( M inImage ) {
         M outImage = preprocessor.process(inImage);
-        outImage = execute(outImage);
+        outImage = execute();
 
         return postprocessor.process(outImage);
+    }
+
+    /**
+     *
+     */
+    @Override
+    public
+    M process () {
+        return null;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    M getImage () {
+        return null;
     }
 
 //    def generate_all_transformed_blocks(img, source_size, destination_size, step):
@@ -122,7 +152,62 @@ class ImageProcessor<N extends TreeNode <N>, M extends Image, C extends Compress
      * @return
      */
     public
-    M getImage () {
+    EPartitionScheme getScheme () {
+        return scheme;
+    }
+
+    public
+    Codec <N,M, C> getCodec () {
+        return codec;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    M preprocess () {
+        return null;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    M postprocess () {
+        return null;
+    }
+
+    /**
+     * @param image
+     * @return
+     */
+    @Override
+    public
+    M preprocess ( M image ) {
+        return null;
+    }
+
+    /**
+     * @param image
+     * @return
+     */
+    @Override
+    public
+    M postprocess ( M image ) {
+        return null;
+    }
+
+    /**
+     */
+    @Override
+    public
+    M execute () {
+        for (Task <M> task : tasks) {
+            image = task.execute();
+        }
+
         return image;
     }
 
@@ -130,131 +215,19 @@ class ImageProcessor<N extends TreeNode <N>, M extends Image, C extends Compress
      * @return
      */
     public
-    EPartitionScheme getScheme () {
-        return scheme;
-    }
-
-    public
-    Codec <M, C> getCodec () {
-        return codec;
-    }
-
-    @Override
-    public
-    IImageProcessor <N, M, C> getPreprocessor () {
-        return preprocessor;
-    }
-
-    @Override
-    public
-    IImageProcessor <N, M, C> getPostprocessor () {
-        return postprocessor;
-    }
-
-    /**
-     * @param image
-     */
-    @Override
-    public
-    M execute ( M image ) {
-        for (Task <N, M> task : tasks) {
-            image = task.execute(image);
-        }
-
-        return image;
-    }
-
-    public
     String getImageFilename () {
         return imageFilename;
     }
 
     /**
+     * Applies this function to the given argument.
      *
+     * @param s the function argument
+     * @return the function result
      */
-    class LoadImageTask extends BidiTask <N, M> {
-        private final String fileName;
-
-        /**
-         * @param fileName
-         * @param tasks
-         */
-        public
-        LoadImageTask ( String fileName, List <Task <N, M>> tasks ) {
-            super(tasks);
-            this.fileName = fileName;
-        }
-
-        /**
-         * @param image
-         */
-        @SuppressWarnings("unchecked")
-        @Override
-        public
-        M execute ( M image ) {
-            M outImage = (M) new Image(Imgcodecs.imread(fileName, Imgcodecs.IMREAD_ANYCOLOR), image.size());
-            if (outImage.empty()) {
-                System.out.printf("Cannot read the image, `%s'", fileName);
-                throw new RuntimeException();
-            }
-
-            return outImage;
-        }
-
-        /**
-         * @return
-         */
-        public
-        String getFileName () {
-            return fileName;
-        }
-    }
-
-    /**
-     *
-     */
-    class NormalizeImageShapeTask extends BidiTask <N, M> {
-        /**
-         * @param tasks
-         */
-        public
-        NormalizeImageShapeTask ( List <Task <N, M>> tasks ) {
-            super(tasks);
-        }
-
-        /**
-         * @param image
-         */
-        @SuppressWarnings("unchecked")
-        @Override
-        public
-        M execute ( M image ) {
-            int sideSize = getNearestGreaterPow2(Math.max(image.getHeight(), image.getWidth()));
-            return (M) new Image(image, sideSize);
-        }
-    }
-
-    /**
-     *
-     */
-    class SetImageYuvColorModelTask extends BidiTask <N, M> {
-        /**
-         * @param tasks
-         */
-        public
-        SetImageYuvColorModelTask ( List <Task <N, M>> tasks ) {
-            super(tasks);
-        }
-
-        /**
-         * @param image
-         */
-        @Override
-        public
-        M execute ( M image ) {
-            image.convertTo();
-            image.get;
-            return null;
-        }
+    @Override
+    public
+    M apply ( String s ) {
+        return null;
     }
 }

@@ -1,13 +1,13 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.opencv.core.Mat;
 import org.opencv.core.Rect;
+import org.stranger2015.opencv.fic.core.codec.IAddress;
 
 /**
  *
  */
 public
-class QuadTreeNode<N extends QuadTreeNode<N>> extends BinTreeNode <N> {
+class QuadTreeNode<N extends QuadTreeNode <N, A>, A extends Address <A>> extends BinTreeNode <N, A> {
 
     /**
      * @param parent
@@ -15,7 +15,7 @@ class QuadTreeNode<N extends QuadTreeNode<N>> extends BinTreeNode <N> {
      * @param rect
      */
     public
-    QuadTreeNode ( QuadTreeNode<N> parent, Direction quadrant, Rect rect ) {
+    QuadTreeNode ( QuadTreeNode <N, A> parent, Direction quadrant, Rect rect ) {
         super(parent, quadrant, rect);
     }
 
@@ -26,8 +26,8 @@ class QuadTreeNode<N extends QuadTreeNode<N>> extends BinTreeNode <N> {
      */
     @SuppressWarnings("*")
     public
-    TreeNode <N> createChild (Direction quadrant, Rect rect ) {
-        return new QuadTreeNode<N>(this, quadrant, rect);
+    TreeNode <N, A> createChild ( Direction quadrant, Rect rect ) {
+        return new QuadTreeNode <>(this, quadrant, rect);
     }
 
     /**
@@ -36,7 +36,7 @@ class QuadTreeNode<N extends QuadTreeNode<N>> extends BinTreeNode <N> {
      */
     @Override
     public
-    void draw ( Mat image, Rect rect ) {
+    void draw ( Image image, Rect rect ) {
         super.draw(image, rect);
     }
 }

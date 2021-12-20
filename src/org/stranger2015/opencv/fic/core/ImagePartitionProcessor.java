@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.stranger2015.opencv.fic.core.codec.Codec;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -67,9 +68,7 @@ class ImagePartitionProcessor<N extends TreeNode <N>, M extends Image, C extends
      */
     public
     ImagePartitionProcessor ( M image, EPartitionScheme scheme, Tree <N, M> tree ) {
-        super(image, scheme);
-//        this.image = image;
-//        this.scheme = scheme;
+        super(image, scheme, Collections.emptyList(), "???");
         this.tree = tree;
     }
 
@@ -108,11 +107,11 @@ class ImagePartitionProcessor<N extends TreeNode <N>, M extends Image, C extends
      */
     @SuppressWarnings("unchecked")
     public
-    C process ( Image image ) {
+    M process ( M image ) {
 //        List <M> rangeBlocks = createRangeBlocks(image, 4, 4);
 //        List <M> domainBlocks = createDomainBlocks(image, 8, 8);
 
-        return (C) new CompressedImage(image);
+        return (M) new CompressedImage(image);
     }
 
 //    protected

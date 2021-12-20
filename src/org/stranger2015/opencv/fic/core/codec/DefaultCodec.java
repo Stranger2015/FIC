@@ -3,17 +3,22 @@ package org.stranger2015.opencv.fic.core.codec;
 import org.stranger2015.opencv.fic.core.CompressedImage;
 import org.stranger2015.opencv.fic.core.Image;
 import org.stranger2015.opencv.fic.core.ImageBlock;
+import org.stranger2015.opencv.fic.core.TreeNode;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
-import org.stranger2015.opencv.fic.transform.AffineTransforms;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 
 import java.util.List;
 
 import static org.stranger2015.opencv.fic.core.EPartitionScheme.FIXED_SIZE;
 
+/**
+ * @param <N>
+ * @param <M>
+ * @param <C>
+ */
 public
-class DefaultCodec<M extends Image, C extends CompressedImage> implements IEncoder <M, C>, IConstants {
-    private final IEncoder <M, C> encoder = Encoder.create(FIXED_SIZE, new EncodeAction(null));
+class DefaultCodec<N extends TreeNode <N>, M extends Image, C extends CompressedImage> implements IEncoder <N, M, C>, IConstants {
+    private final IEncoder <N, M, C> encoder = Encoder.create(FIXED_SIZE, new EncodeAction(null));
     private final IDecoder <C, M> decoder = new Decoder <>();
 
     /**
@@ -21,7 +26,7 @@ class DefaultCodec<M extends Image, C extends CompressedImage> implements IEncod
      */
     @Override
     public
-    M encode (M image) {
+    M encode ( M image ) {
         return encoder.encode(image);
     }
 
@@ -62,8 +67,17 @@ class DefaultCodec<M extends Image, C extends CompressedImage> implements IEncod
 
     @Override
     public
-    List <ImageBlock> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
+    List <ImageBlock <M>> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
         return encoder.generateAllTransformedBlocks(image, sourceSize, destinationSize, step);
+    }
+
+    /**
+     *
+     */
+    @Override
+    public
+    void segmentImage () {
+        encoder.segmentImage();
     }
 
 //    /**

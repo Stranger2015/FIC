@@ -1,7 +1,7 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 public
-class RangeFloat extends RangeInt{
+class RangeFloat extends RangeInt {
     /**
      * @param s
      * @param e

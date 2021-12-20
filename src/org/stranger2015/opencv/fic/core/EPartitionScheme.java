@@ -2,24 +2,32 @@ package org.stranger2015.opencv.fic.core;
 
 import org.stranger2015.org.enumus.Hierarchy;
 
+/**
+ *
+ */
 public
 enum EPartitionScheme {
-    FIXED_SIZE(""),
-    BIN_TREE(""),
-    ABP("", BIN_TREE),
-    HV(""),
-    IRREGULAR(""),
+    
+    FIXED_SIZE("org.stranger2015.opencv.fic.core.codec.Encoder"),
+    BIN_TREE("org.stranger2015.opencv.fic.core.codec.Encoder"),
+    CONST_SIZE_DOMAIN_POOL("org.stranger2015.opencv.fic.core.codec.ConstSizeDomainPoolEncoder"),
+    ABP("org.stranger2015.opencv.fic.core.codec.Encoder", BIN_TREE),
+    HV("org.stranger2015.opencv.fic.core.codec.HvEncoder"),
+    IRREGULAR("org.stranger2015.opencv.fic.core.codec.Encoder"),
     QUADRILATERAL(""),
-    QUAD_TREE(""),
+    QUAD_TREE("org.stranger2015.opencv.fic.core.codec.QuadTreeEncoder"),
     TRIANGULAR(""),
     SPLIT_AND_MERGE_0("", QUAD_TREE),
     SPLIT_AND_MERGE_1("", ABP),
 
+    SEARCHLESS("org.stranger2015.opencv.fic.core.codec.SearchlessEncoder"),
     UNIFORM_SQUARE(""),
     TWO_LEVEL_SQUARE(""),
-    VSA_0("", null, QUAD_TREE)
+    VSA_0("org.stranger2015.opencv.fic.core.codec.VsaEncoder", null, QUAD_TREE),
+    SABVR("org.stranger2015.opencv.fic.core.codec.SabvrEncoder", VSA_0),
+    SQUIRAL("org.stranger2015.opencv.fic.core.codec.SipEncoder"),
     ;
-
+    
     private final EPartitionScheme parent;
     private final EPartitionScheme backend;
 

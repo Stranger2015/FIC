@@ -5,16 +5,16 @@ package org.stranger2015.opencv.fic.core.codec;
  * @param <O>
  */
 public
-interface IConverter<I,O> {
+interface IConverter<I, O> {
     /**
      * @param input
      * @return
      */
-    O map(I input);
+    O map ( I input );
 
     /**
      * @param output
      * @return
      */
-    I unmap(O output);
+    I unmap ( O output );
 }

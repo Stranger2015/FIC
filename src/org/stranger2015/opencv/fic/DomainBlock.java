@@ -9,7 +9,7 @@ import org.stranger2015.opencv.fic.core.Leaf;
  * 8 X 8
  */
 public
-class DomainBlock<N extends DomainBlock<N>> extends Leaf<N> implements IImageBlock {
+class DomainBlock<N extends DomainBlock<N>> extends Leaf<N> implements IImageBlock<Image> {
 
     public final static int W = 8;
     public final static int H = 8;

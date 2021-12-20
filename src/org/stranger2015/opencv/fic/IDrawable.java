@@ -37,7 +37,7 @@ interface IDrawable<M extends Image> {
      */
     default
     void square ( M image, Square rect, Scalar color ) {
-        Imgproc.rectangle(image, rect, color);
+        Imgproc.rectangle(image, rect.getRectangle(), color);
     }
 
     /**
@@ -47,9 +47,9 @@ interface IDrawable<M extends Image> {
      */
     default
     void triangle ( Image image, Triangle triangle, Scalar color ) {
-        Point p0 = new Point(triangle.x, triangle.y);
-        Point p1 = new Point(triangle.x + triangle.width, triangle.y);
-        Point p2 = new Point(triangle.x, triangle.y + triangle.height);
+        Point p0 = triangle.getVertices().get(0);
+        Point p1 = triangle.getVertices().get(1);
+        Point p2 = triangle.getVertices().get(2);
 
         Imgproc.line(image, p0, p1, color);
         Imgproc.line(image, p1, p2, color);

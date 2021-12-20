@@ -5,6 +5,10 @@ import org.stranger2015.opencv.fic.core.Image;
 
 import static org.stranger2015.opencv.fic.transform.IfsTransform.SYM.*;
 
+/**
+ * @param <M>
+ * @param <C>
+ */
 public
 class IfsTransform<M extends Image, C extends CompressedImage> extends ImageTransform <M, C> {
 
@@ -70,6 +74,13 @@ class IfsTransform<M extends Image, C extends CompressedImage> extends ImageTran
         this.offset = offset;
     }
 
+    /**
+     * @param src
+     * @param startX
+     * @param startY
+     * @param targetSize
+     * @return
+     */
     public
     M downSample ( M src, /*int srcWidth,*/ int startX, int startY, int targetSize ) {
         Image out = new Image();
@@ -212,5 +223,4 @@ class IfsTransform<M extends Image, C extends CompressedImage> extends ImageTran
     int getOffset () {
         return offset;
     }
-
 }

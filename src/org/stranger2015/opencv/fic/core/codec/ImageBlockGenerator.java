@@ -10,8 +10,9 @@ import java.util.List;
 /**
  *
  */
-public
+public abstract
 class ImageBlockGenerator {
+
     protected Size rangeSize;
     protected Size domainSize;
 
@@ -37,7 +38,7 @@ class ImageBlockGenerator {
         int numOfBlocksPerRow = inputImage.getWidth() / blockWidth;
         int numOfBlocksPerCol = inputImage.getHeight() / blockHeight;
 
-        List <ImageBlock> blocks = new ArrayList <>();
+        List <ImageBlock> blocks = List.of();
 
         for (int i = 0; i < numOfBlocksPerRow; i++) {
             for (int j = 0; j < numOfBlocksPerCol; j++) {
@@ -67,7 +68,7 @@ class ImageBlockGenerator {
         int blockHeight = (int) domainSize.height;
         int numOfBlocksPerRow = inputImage.getWidth() - blockWidth + 1;
         int numOfBlocksPerCol = inputImage.getHeight() - blockHeight + 1;
-        List <ImageBlock> blocks = new ArrayList <>();
+        List <ImageBlock> blocks = List.of();
 
         for (int i = 0; i < numOfBlocksPerRow; i++) {
             for (int j = 0; j < numOfBlocksPerCol; j++) {

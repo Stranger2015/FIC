@@ -12,7 +12,7 @@ import static org.stranger2015.opencv.fic.DomainBlock.H;
 import static org.stranger2015.opencv.fic.DomainBlock.W;
 
 public
-class TreeNodeAction<N extends TreeNode<N>> implements Consumer <N> {
+class TreeNodeAction<N extends TreeNode<N,?>> implements Consumer <N> {
 //    private final DomainPool domainPool;
     private final List <N> leaves;
 

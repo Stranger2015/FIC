@@ -2,32 +2,28 @@ package org.stranger2015.opencv.fic.core;
 
 import org.opencv.osgi.OpenCVNativeLoader;
 
+import java.util.Collections;
 import java.util.function.Consumer;
 
 import static org.stranger2015.opencv.fic.core.EPartitionScheme.FIXED_SIZE;
+import static org.stranger2015.opencv.fic.core.EPartitionScheme.valueOf;
 
+/**
+ *
+ */
 public
 class FicApplication implements Runnable, Consumer <String> {
-
     //    private final Tree <?, Mat> tree;
     private final Consumer <String> action = this;
-//    private final ImageProcessor <?, Image, CompressedImage> processor;
     private final String filename;
 
+    /**
+     * @param args
+     */
     public
-    FicApplication (  String[] args
-//                     Mat image,
-//                     PartitionScheme scheme,
-//                     Tree<?, Mat> tree,
-            /* Consumer <String[]> action*/ ) {
-//        this.processor = new ImageProcessor <>();
-//        this.image = image;
-//        this.scheme = scheme;
-//        this.tree = tree;
+    FicApplication (  String[] args){
         switch (args[0]) {
             case "-e":
-                filename = args[1];
-                break;
             case "-d":
                 filename = args[1];
                 break;
@@ -35,17 +31,10 @@ class FicApplication implements Runnable, Consumer <String> {
                 throw new IllegalStateException("Unexpected value: " + args[0]);
         }
     }
-//        this.processor = new ImageProcessor();
-//        encoder = new Encoder();
-//        decoder = new Decoder();
-//        init();
-//        action.accept(args);
 
-//    public
-//    Tree <?, Mat> getTree () {
-//        return tree;
-//    }
-
+    /**
+     *
+     */
     private
     void init () {
         new OpenCVNativeLoader().init();
@@ -65,7 +54,7 @@ class FicApplication implements Runnable, Consumer <String> {
     @Override
     public void run () {
         init();
-        action.accept(toString());//fixme
+        action.accept(filename);//fixme
     }
 
     public
@@ -73,20 +62,23 @@ class FicApplication implements Runnable, Consumer <String> {
         return action;
     }
 
-//    public
-//    ImageProcessor <?, ?, ?> getProcessor () {
-//        return processor;
-//    }
-
     /**
      * Performs this operation on the given argument.
      *
-     * @param s the input argument
+     * @param filename the input argument
      */
     @Override
     public
-    void accept ( String s ) {
-        /*processor = new ImageProcessor <N, M, C>(s);*/
+    void accept ( String filename ) {
+        ImageProcessor.create(filename);
 
+    }
+
+    /**
+     * @return
+     */
+    public
+    String getFilename () {
+        return filename;
     }
 }

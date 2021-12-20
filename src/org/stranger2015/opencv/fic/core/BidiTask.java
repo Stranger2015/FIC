@@ -1,22 +1,21 @@
 package org.stranger2015.opencv.fic.core;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
- * @param <N>
  * @param <M>
  */
 public abstract
-class BidiTask<N extends TreeNode <N>, M extends Image> extends CompositeTask <N, M> {
-    private final Task <N, M> task;
-    private final Task <N, M> inverseTask;
+class BidiTask<M extends Image> extends CompositeTask <M> {
+    private final Task <M> task;
+    private final Task <M> inverseTask;
 
     /**
      * @param tasks
      */
     public
-    BidiTask ( List<Task <N, M>> tasks ) {
-        super(tasks);
+    BidiTask ( List <Task <M>> tasks ) {
         this.task = tasks.get(0);
         this.inverseTask = tasks.get(1);
         addTask(task);
@@ -24,27 +23,40 @@ class BidiTask<N extends TreeNode <N>, M extends Image> extends CompositeTask <N
     }
 
     /**
-     * @param image
+     * @param tasks
      */
-    @Override
-    public abstract
-    M execute ( M image );
+    @SafeVarargs
+    BidiTask (Task <M>... tasks ) {
+        this(Arrays.asList(tasks));
+    }
 
     /**
-     *
      * @return
      */
     public
-    Task <N, M> getTask () {
+    Task <M> getTask () {
         return task;
     }
 
     /**
-     *
      * @return
      */
     public
-    Task <N, M> getInverseTask () {
+    Task <M> getInverseTask () {
         return inverseTask;
     }
+
+    /**
+     * @param fn
+     * @return
+     */
+    public abstract
+    M loadImage ( String fn );
+
+    /**
+     * @param fn
+     * @param image
+     */
+    public abstract
+    void saveImage ( String fn, M image );
 }

@@ -1,17 +1,14 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.opencv.core.Mat;
 import org.opencv.core.Rect;
-
-import java.util.List;
 
 @Deprecated
 public
-class OcTreeNode<N extends OcTreeNode<N>> extends QuadTreeNode<N> {
+class OcTreeNode<N extends OcTreeNode<N,?>, A extends Address<A>> extends QuadTreeNode<N,A> {
 
 
     public
-    OcTreeNode ( OcTreeNode<N> parent,
+    OcTreeNode ( OcTreeNode<N,A> parent,
                  Direction direction,
                  Rect rect) {
         super(parent, direction, rect );
@@ -19,7 +16,7 @@ class OcTreeNode<N extends OcTreeNode<N>> extends QuadTreeNode<N> {
 
     @Override
     public
-    void draw ( Mat image, Rect rect ) {
+    void draw ( Image image, Rect rect ) {
         super.draw(image, rect);
     }
 }

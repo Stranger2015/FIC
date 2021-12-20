@@ -4,8 +4,8 @@ import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.CompressedImage;
 import org.stranger2015.opencv.fic.core.Image;
 import org.stranger2015.opencv.fic.core.ImageBlock;
+import org.stranger2015.opencv.fic.core.TreeNode;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
-import org.stranger2015.opencv.fic.transform.AffineTransforms;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 
 import java.util.List;
@@ -15,7 +15,8 @@ import java.util.List;
  * @param <C>
  */
 public
-class ConstSizeDomainPoolEncoder<M extends Image, C extends CompressedImage> extends Encoder<M, C> {
+class ConstSizeDomainPoolEncoder<N extends TreeNode <N>, M extends Image, C extends CompressedImage>
+        extends Encoder <N, M, C> {
     /**
      * @param inputImage
      * @param rangeSize
@@ -31,38 +32,38 @@ class ConstSizeDomainPoolEncoder<M extends Image, C extends CompressedImage> ext
      */
     @Override
     public
-    M encode (M  image) {
-        return null;
+    M encode ( M image ) {
+        return null;//todo
     }
 
     @Override
     public
     M randomTransform ( M image, ImageTransform <M, C> transform ) {
-        return null;
+        return null;//todo
     }
 
     @Override
     public
     M applyTransform ( M image, ImageTransform <M, C> transform ) {
-        return null;
+        return null;//todo
     }
 
     @Override
     public
     M applyAffineTransform ( M image, AffineTransform <M, C> transform ) {
-        return null;
+        return null;//todo
     }
 
     @Override
     public
-    List <ImageTransform <M, C>> compress (M image, int sourceSize, int destinationSize, int step ) {
-        return null;
+    List <ImageTransform <M, C>> compress ( M image, int sourceSize, int destinationSize, int step ) {
+        return null;//todo
     }
 
     @Override
     public
-    List <ImageBlock> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
-        return null;
+    List <ImageBlock<M>> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
+        return null;//todo
     }
 }
 
@@ -82,7 +83,7 @@ class ConstSizeDomainPoolEncoder<M extends Image, C extends CompressedImage> ext
 //    @Override
 //    public
 //    Image randomRotation ( Image x, Range rg, int rowAxis, int colAxis, int channelAxis, EFillMode fillMode, double cval, int interpolationOrder ) {
-//        return null;
+//        return null;//todo
 //    }
 //
 //    /**
@@ -102,7 +103,7 @@ class ConstSizeDomainPoolEncoder<M extends Image, C extends CompressedImage> ext
 //    @Override
 //    public
 //    Image randomShift ( Image x, Range wrg, Range hrg, int rowAxis, int colAxis, int channelAxis, EFillMode fillMode, double cval, int interpolationOrder ) {
-//        return null;
+//        return null;//todo
 //    }
 //
 //    /**
@@ -120,7 +121,7 @@ class ConstSizeDomainPoolEncoder<M extends Image, C extends CompressedImage> ext
 //    @Override
 //    public
 //    Image randomShear ( Image image, int intensity, int rowAxis, int colAxis, int channelAxis, EFillMode fillMode, double cval ) {
-//        return null;
+//        return null;//todo
 //    }
 //
 //    /**
@@ -136,13 +137,13 @@ class ConstSizeDomainPoolEncoder<M extends Image, C extends CompressedImage> ext
 //    @Override
 //    public
 //    Image randomZoom ( Image x, Mat.Tuple2 <Float> zoomRange, int rowAxis, int colAxis, int channelAxis, EFillMode fillMode, double cval ) {
-//        return null;
+//        return null;//todo
 //    }
 //
 //    @Override
 //    public
 //    Image randomChannelShift ( Image x, int intensity, int channelAxis ) {
-//        return null;
+//        return null;//todo
 //    }
 //
 //    /**
@@ -165,7 +166,7 @@ class ConstSizeDomainPoolEncoder<M extends Image, C extends CompressedImage> ext
 //    @Override
 //    public
 //    Image applyAffineTransform ( Image image, double theta, double tx, double ty, double shear, double zx, double zy, int rowAxis, int colAxis, int channelAxis, EFillMode fillMode, double cval, int order ) {
-//        return null;
+//        return null;//todo
 //    }
 
 //    /**
@@ -177,7 +178,7 @@ class ConstSizeDomainPoolEncoder<M extends Image, C extends CompressedImage> ext
 //    @Override
 //    public
 //    Image transformMatrixOffsetCenter ( Image matrix, int x, int y ) {
-//        return null;
+//        return null;//todo
 //    }
 //
 //    /**
@@ -191,6 +192,6 @@ class ConstSizeDomainPoolEncoder<M extends Image, C extends CompressedImage> ext
 //    @Override
 //    public
 //    Image applyBrightnessShift ( Image image, Range brightness ) {
-//        return null;
+//        return null;//todo
 //    }
 //}

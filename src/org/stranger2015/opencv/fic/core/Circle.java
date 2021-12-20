@@ -1,13 +1,12 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 
 public
 class Circle implements IShape{
     @Override
     public
-    void draw ( Mat image, Rect rect ) {
+    void draw ( Image image, Rect rect ) {
 
     }
 

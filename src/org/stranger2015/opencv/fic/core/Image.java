@@ -4,6 +4,8 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfDouble;
 import org.opencv.core.Size;
 
+import java.awt.*;
+
 /**
  *
  */
@@ -23,28 +25,24 @@ class Image extends MatOfDouble {
      * @param n
      */
     public
-    Image (double ... n ) {
+    Image ( double... n ) {
         super(n);
     }
 
     /**
      * @param imread
-     * @param size
+     */
+    public
+    Image ( Mat imread ) {
+        imread.create(imread.size(), type());
+    }
+
+    /**
+     * @param imread
      */
     public
     Image ( Mat imread, Size size ) {
         imread.create(size, type());
-    }
-
-    /**
-     * @param image
-     * @param sideSize
-     * @param <M>
-     */
-    public
-    <M extends Image>
-    Image ( M image, int sideSize ) {
-        this(image, new Size(sideSize, sideSize));
     }
 
     /**
@@ -114,7 +112,6 @@ class Image extends MatOfDouble {
     }
 
     /**
-     *
      * @param image
      * @return
      */

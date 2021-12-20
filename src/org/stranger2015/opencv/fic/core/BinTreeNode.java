@@ -2,11 +2,12 @@ package org.stranger2015.opencv.fic.core;
 
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
+import org.stranger2015.opencv.fic.core.codec.IAddress;
 
 import java.util.HashMap;
 
 public
-class BinTreeNode<N extends BinTreeNode <N>> extends TreeNode <N> {
+class BinTreeNode<N extends TreeNode<N,?>, A extends IAddress <A>> extends TreeNode <N, A> {
 
     /**
      *
@@ -16,14 +17,8 @@ class BinTreeNode<N extends BinTreeNode <N>> extends TreeNode <N> {
      * @param rect
      */
     public
-    BinTreeNode (BinTreeNode<N> parent, Direction quadrant, Rect rect ) {
+    BinTreeNode (BinTreeNode<N,A> parent, Direction quadrant, Rect rect ) {
         super(parent, quadrant, rect);
-    }
-
-    @Override
-    public
-    void draw ( Mat image, Rect rect ) {
-
     }
 
     /**
@@ -68,8 +63,20 @@ class BinTreeNode<N extends BinTreeNode <N>> extends TreeNode <N> {
 
     @Override
     public
-    TreeNode <N> createChild ( Direction quadrant, Rect boundingBox ) {
+    TreeNode <N,A> createChild ( Direction quadrant, Rect boundingBox ) {
         return new BinTreeNode <>(this, quadrant, boundingBox);
+    }
+
+    /**
+     * @param parent
+     * @param quadrant
+     * @param boundingBox
+     * @return
+     */
+    @Override
+    public
+    TreeNode <N, A> createNode ( TreeNode <N, A> parent, Direction quadrant, Rect boundingBox ) {
+        return null;
     }
 //
 //    @Override
@@ -78,9 +85,8 @@ class BinTreeNode<N extends BinTreeNode <N>> extends TreeNode <N> {
 //        return null;
 //    }
 
-    @Override
     public
-    BinTreeNode <N> createNode ( BinTreeNode <N> parent, Direction quadrant, Rect boundingBox ) {
+    BinTreeNode <N,A> createNode ( BinTreeNode <N,A> parent, Direction quadrant, Rect boundingBox ) {
         return new BinTreeNode<>(parent, quadrant, boundingBox);
     }
 
@@ -161,5 +167,15 @@ class BinTreeNode<N extends BinTreeNode <N>> extends TreeNode <N> {
     public
     String toString () {
         return super.toString();
+    }
+
+    /**
+     * @param image
+     * @param rect
+     */
+    @Override
+    public
+    void draw ( Image image, Rect rect ) {
+
     }
 }
