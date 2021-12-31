@@ -1,7 +1,9 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.opencv.core.Rect;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.SipAddress;
+import org.stranger2015.opencv.fic.core.codec.VsaTree;
 
 /**
  * @param <N>
@@ -9,20 +11,36 @@ import org.stranger2015.opencv.fic.core.codec.SipAddress;
  * @param <A>
  */
 public
-class SipTree<N extends SipTreeNode <N, ?>, M extends Image, A extends SipAddress <A>>
-        extends Tree <N, M, A> {
+class SipTree<N extends TreeNode <N, A, M>, A extends SipAddress <A>, M extends Image>
+        extends VsaTree <N, A, M> {
 
-    /**
-     * @param parent
-     * @param quadrant
-     * @param rect
-     * @return
-     */
-    @Override
+//    /**
+//     * @return
+//     */
+//    @Override
+//    public
+//    TreeNode <N, A, M> getRoot () {
+//        return super.getRoot();
+//    }
+
     public
-    TreeNode <N, A> nodeInstance ( TreeNode <N, A> parent, Direction quadrant, Rect rect ) {
-        return new SipTreeNode <>(parent, quadrant, rect);
+    SipTree (TreeNode <N, A, M> root, M image, TreeNodeAction <N> action) {
+        super(root, image, action);
     }
+
+//    /**
+//     * @param parent
+//     * @param quadrant
+//     * @param rect
+//     * @return
+//     */
+////    @Override
+//    public
+//    TreeNode <N, A, M> nodeInstance ( VsaTreeNode <N, A, M> parent, EDirection quadrant, Rect rect ) {
+//        return null;//todo
+//    }
+
+
 
     /**
      * @return

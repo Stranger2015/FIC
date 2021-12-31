@@ -1,7 +1,9 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.opencv.core.Size;
-import org.stranger2015.opencv.fic.core.*;
+import org.stranger2015.opencv.fic.core.Image;
+import org.stranger2015.opencv.fic.core.ImageBlock;
+import org.stranger2015.opencv.fic.core.VsaTreeNode;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 
@@ -11,11 +13,13 @@ import java.util.List;
 /**
  * @param <N>
  * @param <M>
- * @param <C>
  */
 public
-class SipEncoder<N extends VsaTreeNode <N, A>, M extends Image, C extends CompressedImage, A extends SipAddress <A>>
-        extends VsaEncoder <N, M, C, A> {
+class SipEncoder<N extends VsaTreeNode <N, A>, M extends Image, A extends SipAddress <A, ?>>
+        extends VsaEncoder <N, M, A> {
+
+    private SipImage inputImage;
+    private SipImage outputImage;
 
     /**
      * @param inputImage
@@ -28,13 +32,22 @@ class SipEncoder<N extends VsaTreeNode <N, A>, M extends Image, C extends Compre
     }
 
     /**
+     * @return
+     */
+    @Override
+    public
+    int getImageSizeBase () {
+        return 3;
+    }
+
+    /**
      * @param image
      * @param transform
      * @return
      */
     @Override
     public
-    M randomTransform ( M image, ImageTransform <M, C> transform ) {
+    M randomTransform ( M image, ImageTransform <M> transform ) {
         return null;//todo
     }
 
@@ -45,7 +58,7 @@ class SipEncoder<N extends VsaTreeNode <N, A>, M extends Image, C extends Compre
      */
     @Override
     public
-    M applyTransform ( M image, ImageTransform <M, C> transform ) {
+    M applyTransform ( M image, ImageTransform <M> transform ) {
         return null;//todo
     }
 
@@ -56,8 +69,35 @@ class SipEncoder<N extends VsaTreeNode <N, A>, M extends Image, C extends Compre
      */
     @Override
     public
-    M applyAffineTransform ( M image, AffineTransform <M, C> transform ) {
+    M applyAffineTransform ( M image, AffineTransform <M> transform ) {
         return null;//todo
+    }
+
+    /**
+     *
+     */
+    @Override
+    public
+    void onPreprocess () {
+        super.onPreprocess();
+    }
+
+    /**
+     *
+     */
+    @Override
+    public
+    void onProcess () {
+        super.onProcess();
+    }
+
+    /**
+     *
+     */
+    @Override
+    public
+    void onPostprocess () {
+        super.onPostprocess();
     }
 
     /**
@@ -69,8 +109,18 @@ class SipEncoder<N extends VsaTreeNode <N, A>, M extends Image, C extends Compre
      */
     @Override
     public
-    List <ImageTransform <M, C>> compress ( M image, int sourceSize, int destinationSize, int step ) {
+    List <ImageTransform <M>> compress ( M image, int sourceSize, int destinationSize, int step ) {
         return null;//todo
+    }
+
+    /**
+     * @param image
+     * @return
+     */
+    @Override
+    public
+    M encode ( M image ) {
+        return super.encode(image);
     }
 
     /**
@@ -84,5 +134,27 @@ class SipEncoder<N extends VsaTreeNode <N, A>, M extends Image, C extends Compre
     public
     List <ImageBlock <M>> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
         return Collections.emptyList(); //todo
+    }
+
+    @Override
+    public
+    M getInputImage () {
+        return (M) inputImage;
+    }
+
+    @Override
+    public
+    M getOutputImage () {
+        return (M) outputImage;
+    }
+
+    public
+    void setOutputImage ( SipImage outputImage ) {
+        this.outputImage = outputImage;
+    }
+
+    public
+    void setInputImage ( SipImage inputImage ) {
+        this.inputImage = inputImage;
     }
 }

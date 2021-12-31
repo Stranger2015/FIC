@@ -6,30 +6,30 @@ import java.util.EnumSet;
  *
  */
 public
-enum Direction implements ISideDirection, ICornerDirection {
+enum EDirection implements ISideDirection, ICornerDirection {
 
-    NORTH("N", 0, SideDirection.NORTH),
-    EAST("E", 1, SideDirection.EAST),
-    SOUTH("S", 2, SideDirection.SOUTH),
-    WEST("W", 3, SideDirection.WEST),
+    NORTH("N", 0, ESideDirection.NORTH),
+    EAST("E", 1, ESideDirection.EAST),
+    SOUTH("S", 2, ESideDirection.SOUTH),
+    WEST("W", 3, ESideDirection.WEST),
 
-    NORTH_WEST("NW", 4, CornerDirection.NORTH_WEST),
-    NORTH_EAST("NE", 5, CornerDirection.NORTH_EAST),
-    SOUTH_EAST("SE", 6, CornerDirection.SOUTH_EAST),
-    SOUTH_WEST("SW", 7, CornerDirection.NORTH_WEST);
+    NORTH_WEST("NW", 4, ECornerDirection.NORTH_WEST),
+    NORTH_EAST("NE", 5, ECornerDirection.NORTH_EAST),
+    SOUTH_EAST("SE", 6, ECornerDirection.SOUTH_EAST),
+    SOUTH_WEST("SW", 7, ECornerDirection.NORTH_WEST);
 
     private final String shortName;
     private final int ord;
 
-    private final SideDirection sideDirection;
-    private final CornerDirection cornerDirection;
+    private final ESideDirection sideDirection;
+    private final ECornerDirection cornerDirection;
 
     /**
      * @param shortName
      * @param ord
      * @param sideDirection
      */
-    Direction ( String shortName, int ord, SideDirection sideDirection ) {
+    EDirection ( String shortName, int ord, ESideDirection sideDirection ) {
         this.shortName = shortName;
         this.ord = ord;
         this.sideDirection = sideDirection;
@@ -41,7 +41,7 @@ enum Direction implements ISideDirection, ICornerDirection {
      * @param ord
      * @param cornerDirection
      */
-    Direction ( String shortName, int ord, CornerDirection cornerDirection ) {
+    EDirection ( String shortName, int ord, ECornerDirection cornerDirection ) {
         this.shortName = shortName;
         this.ord = ord;
         this.cornerDirection = cornerDirection;
@@ -89,7 +89,7 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    Direction opQuad () {
+    EDirection opQuad () {
         return cornerDirection.opQuad();
     }
 
@@ -99,7 +99,7 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    Direction commonSide ( Direction quadrant ) {
+    EDirection commonSide ( EDirection quadrant ) {
         return cornerDirection.commonSide(quadrant);
     }
 
@@ -109,7 +109,7 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    Direction side1 ( Direction quadrant ) {
+    EDirection side1 ( EDirection quadrant ) {
         return null;
     }
 
@@ -119,7 +119,7 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    Direction side2 ( Direction quadrant ) {
+    EDirection side2 ( EDirection quadrant ) {
         return null;
     }
 
@@ -129,7 +129,7 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    int width ( Direction quadrant ) {
+    int width ( EDirection quadrant ) {
         return 0;
     }
 
@@ -139,7 +139,7 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    int radius ( Direction quadrant ) {
+    int radius ( EDirection quadrant ) {
         return 0;
     }
 
@@ -149,7 +149,7 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    int xOf ( Direction quadrant ) {
+    int xOf ( EDirection quadrant ) {
         return 0;
     }
 
@@ -159,7 +159,7 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    int yOf ( Direction quadrant ) {
+    int yOf ( EDirection quadrant ) {
         return 0;
     }
 
@@ -169,7 +169,7 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    Direction value ( Direction quadrant ) {
+    EDirection value ( EDirection quadrant ) {
         return null;
     }
 
@@ -183,7 +183,7 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    Direction insertReverseOrder ( int x, int y, int width, int color, int d ) {
+    EDirection insertReverseOrder ( int x, int y, int width, int color, int d ) {
         return null;
     }
 
@@ -192,7 +192,7 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    EnumSet <Direction> toSideDirection () {
+    EnumSet <EDirection> toSideDirection () {
         return cornerDirection.toSideDirection();
     }
 
@@ -237,7 +237,7 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    Direction cSide () {
+    EDirection cSide () {
         return sideDirection.cSide();
     }
 
@@ -246,7 +246,7 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    Direction ccSide () {
+    EDirection ccSide () {
         return sideDirection.ccSide();
     }
 
@@ -255,7 +255,7 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    Direction opSide () {
+    EDirection opSide () {
         return sideDirection.opSide();
     }
 
@@ -265,7 +265,7 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    Direction reflect ( Direction quadrant ) {
+    EDirection reflect ( EDirection quadrant ) {
         return sideDirection.reflect(quadrant);
     }
 
@@ -275,7 +275,7 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    Direction quadrant ( Direction side ) {
+    EDirection quadrant ( EDirection side ) {
         return sideDirection.quadrant(side);
     }
 
@@ -285,7 +285,7 @@ enum Direction implements ISideDirection, ICornerDirection {
      */
     @Override
     public
-    boolean adjacent ( Direction quadrant ) {
+    boolean adjacent ( EDirection quadrant ) {
         return sideDirection.adjacent(quadrant);
     }
 
@@ -309,7 +309,7 @@ enum Direction implements ISideDirection, ICornerDirection {
      * @return
      */
     public
-    SideDirection getSideDirection () {
+    ESideDirection getSideDirection () {
         return sideDirection;
     }
 
@@ -317,7 +317,7 @@ enum Direction implements ISideDirection, ICornerDirection {
      * @return
      */
     public
-    CornerDirection getCornerDirection () {
+    ECornerDirection getCornerDirection () {
         return cornerDirection;
     }
 }

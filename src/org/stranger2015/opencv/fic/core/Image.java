@@ -2,23 +2,32 @@ package org.stranger2015.opencv.fic.core;
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfDouble;
+import org.opencv.core.Scalar;
 import org.opencv.core.Size;
-
-import java.awt.*;
 
 /**
  *
  */
 public
 class Image extends MatOfDouble {
+    public int originalImageWidth;
+    public int originalImageHeight;
+
     /**
      * @param rows
      * @param cols
      * @param type
+     * @param pixelData
      */
     public
-    Image ( int rows, int cols, int type ) {
-        super(rows, cols, type);
+    Image ( int rows, int cols, int type, Scalar pixelData ) {
+        super(rows,
+                cols,
+                type,
+                pixelData.val[0],
+                pixelData.val[1],
+                pixelData.val[2],
+                pixelData.val[3]);
     }
 
     /**
@@ -30,7 +39,17 @@ class Image extends MatOfDouble {
     }
 
     /**
+     *
+     */
+    @SuppressWarnings("unchecked")
+    public ImageBlock<Image> subImage(){
+
+        return (ImageBlock <Image>) submat(0,0,0,0);
+    }
+
+    /**
      * @param imread
+     *
      */
     public
     Image ( Mat imread ) {
@@ -92,10 +111,6 @@ class Image extends MatOfDouble {
      */
     public
     Image reduce ( Image inputImage, Image outputImage, int factor ) {
-//    outputImage = np.zeros((img.shape[0] // factor, img.shape[1] // factor))
-//    for i in range(outputImage.shape[0]):
-//        for j in range(outputImage.shape[1]):
-//            outputImage[i,j] = np.mean(img[i*factor:(i+1)*factor,j*factor:(j+1)*factor])
         return outputImage;
     }
 

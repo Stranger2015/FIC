@@ -1,7 +1,9 @@
 package org.stranger2015.opencv.fic.core.codec;
 
+import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.*;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 
 import java.lang.reflect.Constructor;
@@ -16,25 +18,56 @@ import static org.stranger2015.opencv.fic.core.ImageBlock.EMPTY_ARRAY;
 /**
  * @param <N>
  * @param <M>
- * @param <C>
  */
 public abstract
-class Encoder<N extends TreeNode <N, A>, M extends Image, C extends CompressedImage, A extends IAddress <A>>
-        implements IEncoder <N, M, C, A>, IConstants {
+class Encoder<N extends TreeNodeBase.TreeNode <N, A,M>, A extends Address <A>,M extends Image>
+        implements IEncoder <N,A,M>, IConstants, IImageProcessorListener {
 
     public static final Size ZERO_SIZE = new Size(0, 0);
 
     protected final ImageBlockGenerator blockGenerator;
-    protected final List <ImageBlock <M>> rangeBlocks = List.of();
+
+    protected final List <IEncoderListener> listeners = new ArrayList <>();
+
     /**
-     *
+     * @return
      */
-    protected final List <ImageBlock <M>> domainBlocks = List.of();
+    public
+    List <ImageBlock <M>> getRangeBlocks () {
+        return rangeBlocks;
+    }
+
+    /**
+     * @return
+     */
+    public
+    List <ImageBlock <M>> getDomainBlocks () {
+        return domainBlocks;
+    }
+
+    /**
+     * @return
+     */
+    public
+    M getInputImage () {
+        return inputImage;
+    }
+
+    /**
+     * @return
+     */
+    public
+    M getOutputImage () {
+        return outputImage;
+    }
+
+    protected final List <ImageBlock <M>> rangeBlocks = new ArrayList <>();
+    protected final List <ImageBlock <M>> domainBlocks = new ArrayList <>();
 
     protected M inputImage;
-    protected C outputImage;
+    protected M outputImage;
 
-    private final List <ImageTransform <M, C>> transforms = List.of();
+    private final List <ImageTransform <M>> transforms = new ArrayList <>();
 
     /**
      * @param inputImage
@@ -45,7 +78,7 @@ class Encoder<N extends TreeNode <N, A>, M extends Image, C extends CompressedIm
     protected
     Encoder ( M inputImage, Size rangeSize, Size domainSize ) {
         this.inputImage = inputImage;
-        outputImage = (C) new CompressedImage(inputImage);
+        outputImage = (M) new Image(inputImage, addresses);
         outputImage.originalImageWidth = inputImage.getWidth();
         outputImage.originalImageHeight = inputImage.getHeight();
 
@@ -57,10 +90,18 @@ class Encoder<N extends TreeNode <N, A>, M extends Image, C extends CompressedIm
 //        outputImage.domainBlocks = domainBlocks;
     }
 
+    /**
+     * @param scheme
+     * @param action
+     * @param <N>
+     * @param <A>
+     * @param <M>
+     * @return
+     */
     public static
-    <M extends Image, N extends TreeNode <N, A>, C extends CompressedImage, A extends IAddress <A>>
-    IEncoder <N, M, C, A> create ( EPartitionScheme scheme, EncodeAction action ) {
-        return create(scheme, action, new LoadSaveImageTask <>(""));
+    <N extends TreeNodeBase.TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+    @NotNull IEncoder <N,A,M> create ( EPartitionScheme scheme, EncodeAction action ) {
+        return create(scheme, action, new LoadSaveImageTask <>("???"));
     }
 
     /**
@@ -83,11 +124,12 @@ class Encoder<N extends TreeNode <N, A>, M extends Image, C extends CompressedIm
 
     @SuppressWarnings("unchecked")
     public static
-    <N extends TreeNode <N, A>, M extends Image, C extends CompressedImage, A extends IAddress <A>>
-    IEncoder <N, M, C, A> create ( EPartitionScheme scheme, EncodeAction action, LoadSaveImageTask <M> lit ) {
+    <N extends TreeNode <N, A,M>, A extends Address <A>,M extends Image>
+    IEncoder <N,A,M> create ( EPartitionScheme scheme, EncodeAction action, LoadSaveImageTask <M> lit ) {
         try {
-            Class <IEncoder <N, M, C, A>> encoderClass = (Class <IEncoder <N, M, C, A>>) Class.forName(scheme.getEncoderClassName());
-            Constructor <IEncoder <N, M, C, A>> ctor = encoderClass.getDeclaredConstructor(
+            Class <IEncoder <N,A,M>> encoderClass =
+                    (Class <IEncoder <N,A,M>>) Class.forName(scheme.getEncoderClassName());
+            Constructor <IEncoder <N,A,M>> ctor = encoderClass.getDeclaredConstructor(
                     Image.class,
                     Size.class,
                     Size.class);
@@ -107,10 +149,28 @@ class Encoder<N extends TreeNode <N, A>, M extends Image, C extends CompressedIm
      * @return
      */
     M loadImage ( String imageFn ) {
-        List <Task <M>> tasks = new ArrayList <>();
+        List <Task <M>> tasks = new ArrayList <>();//todo
         LoadSaveImageTask <M> lit = new LoadSaveImageTask <>(imageFn, tasks);
 
         return lit.loadImage(imageFn);
+    }
+
+    /**
+     * @param listener
+     */
+    @Override
+    public
+    void addListener ( IEncoderListener listener ) {
+        listeners.add(listener);
+    }
+
+    /**
+     * @param listener
+     */
+    @Override
+    public
+    void removeListener ( IEncoderListener listener ) {
+        listeners.remove(listener);
     }
 
     /**
@@ -200,7 +260,7 @@ class Encoder<N extends TreeNode <N, A>, M extends Image, C extends CompressedIm
      * @return
      */
     private
-    List <ImageTransform <M, C>> getTransforms () {
+    List <ImageTransform <M>> getTransforms () {
         return transforms;
     }
 
@@ -216,32 +276,6 @@ class Encoder<N extends TreeNode <N, A>, M extends Image, C extends CompressedIm
 //        x = x.swapaxes(0, axis);
         return x;
     }
-
-//    /**
-//     * @param image
-//     * @param range
-//     * @param size
-//     * @return
-//     */
-//    @Override
-//    public
-//    M applyTransform ( M image, Rect range, Size size ) {
-//        return null;
-//    }
-
-//    /**
-//     * @param matrix
-//     * @param x
-//     * @param y
-//     * @return
-//     */
-//    @Override
-//    public
-//    Mat transformMatrixOffsetCenter ( Mat matrix, int x, int y ) {
-//
-//        return matrix;//fixme
-//    }
-
 //    /**
 
 //     * Performs a brightness shift.

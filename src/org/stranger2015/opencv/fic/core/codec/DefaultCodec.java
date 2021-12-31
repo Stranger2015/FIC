@@ -3,7 +3,7 @@ package org.stranger2015.opencv.fic.core.codec;
 import org.stranger2015.opencv.fic.core.CompressedImage;
 import org.stranger2015.opencv.fic.core.Image;
 import org.stranger2015.opencv.fic.core.ImageBlock;
-import org.stranger2015.opencv.fic.core.TreeNode;
+import org.stranger2015.opencv.fic.core.TreeNodeBase;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 
@@ -17,7 +17,7 @@ import static org.stranger2015.opencv.fic.core.EPartitionScheme.FIXED_SIZE;
  * @param <C>
  */
 public
-class DefaultCodec<N extends TreeNode <N>, M extends Image, C extends CompressedImage> implements IEncoder <N, M, C>, IConstants {
+class DefaultCodec<N extends TreeNodeBase <N>, M extends Image, C extends CompressedImage> implements IEncoder <N, M, C>, IConstants {
     private final IEncoder <N, M, C> encoder = Encoder.create(FIXED_SIZE, new EncodeAction(null));
     private final IDecoder <C, M> decoder = new Decoder <>();
 

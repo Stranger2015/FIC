@@ -30,54 +30,54 @@ interface ICornerDirection {
     /**
      * @return
      */
-    Direction opQuad ();
+    EDirection opQuad ();
 
     /**
      * @param quadrant
      * @return
      */
-    Direction commonSide (Direction quadrant );
+    EDirection commonSide ( EDirection quadrant );
 
     /**
      * @param quadrant
      * @return
      */
-    Direction side1 ( Direction quadrant );
+    EDirection side1 ( EDirection quadrant );
 /**
      * @param quadrant
      * @return
      */
-    Direction side2 ( Direction quadrant );
+    EDirection side2 ( EDirection quadrant );
 
     /**
      * @param quadrant
      * @return
      */
-    int width ( Direction quadrant );
+    int width ( EDirection quadrant );
 
     /**
      * @param quadrant
      * @return
      */
-    int radius ( Direction quadrant );
+    int radius ( EDirection quadrant );
 
     /**
      * @param quadrant
      * @return
      */
-    int xOf ( Direction quadrant );
+    int xOf ( EDirection quadrant );
 
     /**
      * @param quadrant
      * @return
      */
-    int yOf ( Direction quadrant );
+    int yOf ( EDirection quadrant );
 
     /**
      * @param quadrant
      * @return
      */
-    Object value ( Direction quadrant );//todo
+    Object value ( EDirection quadrant );//todo
 
     /**
      * @param x
@@ -87,10 +87,10 @@ interface ICornerDirection {
      * @param d
      * @return
      */
-    Direction insertReverseOrder(int x, int y, int width, int color, int d);
+    EDirection insertReverseOrder( int x, int y, int width, int color, int d);
 
     /**
      * @return
      */
-    EnumSet <Direction> toSideDirection();
+    EnumSet <EDirection> toSideDirection();
 }

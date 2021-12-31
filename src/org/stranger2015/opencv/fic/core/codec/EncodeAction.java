@@ -1,12 +1,15 @@
 package org.stranger2015.opencv.fic.core.codec;
 
+import org.stranger2015.opencv.fic.core.Image;
+import org.stranger2015.opencv.fic.core.Task;
+
 import java.util.function.Consumer;
 
 /**
  *
  */
 public
-class EncodeAction implements Consumer <String> {
+class EncodeAction extends Task<Image> implements Consumer <String> {
     private final String fn;
 
     /**
@@ -14,6 +17,7 @@ class EncodeAction implements Consumer <String> {
      */
     public
     EncodeAction ( String fn) {
+        super(image);
         this.fn = fn;
     }
 
@@ -33,5 +37,17 @@ class EncodeAction implements Consumer <String> {
     public
     String getFn () {
         return fn;
+    }
+
+    /**
+     * Applies this function to the given argument.
+     *
+     * @param s the function argument
+     * @return the function result
+     */
+    @Override
+    public
+    Image apply ( String s ) {
+        return null;
     }
 }

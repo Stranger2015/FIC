@@ -7,14 +7,14 @@ import java.util.function.Function;
  */
 public abstract
 class Task<M extends Image> implements Function <String, M> {
-
     private final M image;
 
     /**
+     *
      * @param image
      */
-    public
-    Task (M image) {
+    protected
+    Task ( M image ) {
         this.image = image;
     }
 

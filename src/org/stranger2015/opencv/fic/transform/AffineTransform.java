@@ -1,10 +1,9 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.stranger2015.opencv.fic.core.CompressedImage;
 import org.stranger2015.opencv.fic.core.Image;
 
 public abstract
-class AffineTransform<M extends Image, C extends CompressedImage> extends ImageTransform<M,C>{
+class AffineTransform<M extends Image> extends ImageTransform<M>{
 
     private final EInterpolationType type;
 

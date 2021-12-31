@@ -1,19 +1,27 @@
 package org.stranger2015.opencv.fic.core;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
-import static org.stranger2015.opencv.fic.core.EDigits.values;
+import static java.util.EnumSet.noneOf;
+import static org.stranger2015.opencv.fic.core.EDigits7.values;
 
 /**
  * sa addresses
  * 0,        1,      2,       3,      4,      5,      6
  * Cartesian coordinates
- * {0, 0}   {0, -1}  {-1, -1}  {-1, 0} {0, 1}  {1, 1}  {1, 0}
+ * {0, 0}
+ * {0, -1}
+ * {-1, -1}
+ * {-1, 0}
+ * {0, 1}
+ * {1, 1}
+ * {1, 0}
  */
 public
-class SaAddress<A extends SaAddress <A>> extends Address <A> {
+class SaAddress<A extends Address <A/*, E*/>/*, E extends Enum <E>*/> extends Address <A/*, E*/> {
 
-    public final EnumSet <EDigits> digits = EnumSet.noneOf(EDigits.class);
+//    public final EnumSet <EDigits7> digits = noneOf(EDigits7.class);
 
     static final int[][] addTable = new int[][]{
             {0, +1, +2, +3, +4, +5, +6},
@@ -35,50 +43,36 @@ class SaAddress<A extends SaAddress <A>> extends Address <A> {
             {0, 6, 1, 2, 3, 4, 5},
             };
 
-    /**
-     *
-     */
-
-
-    static {
-        final SaAddress <? extends SaAddress <?>> SA_NULL;
-        try {
-            SA_NULL = new SaAddress <>();
-        } catch (ValueError e) {
-            e.printStackTrace();
-        }
-    }
-
     private int number;
 
-    /**
-     * @param digits
-     */
-    public
-    SaAddress ( EnumSet <EDigits> digits ) throws ValueError {
-        super();
-        this.digits.addAll(digits);
-    }
+//    /**
+//     * @param digits
+//     */
+//    public
+//    SaAddress ( EnumSet <EDigits7> digits ) throws ValueError {
+//        super();
+//        this.digits.addAll(digits);
+//    }
 
+    /**
+     * @param number
+     * @throws ValueError
+     */
     public
     SaAddress ( int number ) throws ValueError {
         super();
         this.number = number;
     }
 
-    /**
-     * @param digits
-     */
-    SaAddress ( EDigits... digits ) throws ValueError {
-        super();
-        this.digits.addAll(Arrays.asList(digits));
-    }
-
-    public
-    SaAddress ( IAddressExpr <A> e ) {
-        super(e);
-
-    }
+//    /**
+//     * @param digits
+//     */
+//    @SuppressWarnings("unchecked")
+//    @SafeVarargs
+//    SaAddress ( E... digits ) throws ValueError {
+//        super();
+//        this.digits.addAll((Collection <? extends EDigits7>) Arrays.asList(digits));
+//    }
 
     /**
      * @throws ValueError
@@ -105,28 +99,19 @@ class SaAddress<A extends SaAddress <A>> extends Address <A> {
     @Override
     public
     int getIndex () {
-        return getAddressExpr().toNumber();
+        return address;//todo
     }
 
-    /**
-     * @return
-     */
-    @Override
-    public
-    IAddressExpr <A> getAddressExpr () {
-        return addressExpr;
-    }
-
-    /**
-     * @param result
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public
-    A newInstance ( EnumSet <EDigits> result ) throws ValueError {
-        return (A) new SaAddress <A>();
-    }
+//    /**
+//     * @param result
+//     * @return
+//     */
+//    @SuppressWarnings("unchecked")
+//    @Override
+//    public
+//    A newInstance ( EnumSet result ) throws ValueError {
+//        return (A) new SaAddress <A>();
+//    }
 
     /**
      * @param index
@@ -135,9 +120,9 @@ class SaAddress<A extends SaAddress <A>> extends Address <A> {
     @Override
     public
     A newInstance ( int index ) throws ValueError {
-        IAddressExpr <A> e = createExpr(index);
+//        IAddressExpr <A> e = createExpr(index);
 
-        return newInstance(e);
+        return null;//newInstance(index);
     }
 
 //    /**
@@ -172,16 +157,6 @@ class SaAddress<A extends SaAddress <A>> extends Address <A> {
 //    }
 
     /**
-     * @param e
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    private
-    A newInstance ( IAddressExpr <A> e ) {
-        return (A) new SaAddress <>(e);
-    }
-
-    /**
      * Based on <b>add table</b>, the sum of 57 and 8 can be computed as:
      * <p>
      * 1. first 7 and 8 added to obtain 72.
@@ -194,60 +169,63 @@ class SaAddress<A extends SaAddress <A>> extends Address <A> {
      * @param address2
      * @return
      */
+    @SuppressWarnings("unchecked")
     @Override
     public
     A plus ( A address1, A address2 ) throws ValueError {
-        int[][] table = getAddTable();
-        EnumSet <EDigits> digits1 = address1.getDigits();
-        EnumSet <EDigits> digits2 = address2.getDigits();
-        EnumSet <EDigits> result = EnumSet.noneOf(EDigits.class);
-
-        Iterator <EDigits> iterator1 = digits1.iterator();
-        Iterator <EDigits> iterator2 = digits2.iterator();
-        for (int i = 0; iterator1.hasNext() /*&& iterator2.hasNext()*/; i++) {
-            EDigits d1 = iterator1.next();
-            EDigits d2 = iterator2.next();
-
-            int r = table[d1.ordinal()][d2.ordinal()];
-            add(result, values()[r], i);
-        }
-
-        return newInstance(result);
+//        int[][] table = getAddTable();
+//        EnumSet <EDigits7> digits1 = (EnumSet <EDigits7>) address1.getDigits();
+//        EnumSet <EDigits7> digits2 = (EnumSet <EDigits7>) address2.getDigits();
+//        EnumSet <EDigits7> result = noneOf(EDigits7.class);
+//
+//        Iterator <EDigits7> iterator1 = digits1.iterator();
+//        Iterator <EDigits7> iterator2 = digits2.iterator();
+//        IntStream.iterate(0, i -> iterator1.hasNext(), i -> i + 1).forEachOrdered(i -> {
+//            EDigits7 d1 = iterator1.next();
+//            EDigits7 d2 = iterator2.next();
+//            int r = table[d1.ordinal()][d2.ordinal()];
+//            add(result, values()[r], i);
+//        });
+//
+//        return newInstance(result);
+        return null;
     }
 
-    /**
-     * @param result
-     * @param value
-     * @param i
-     */
-    public
-    void add ( EnumSet <EDigits> result, EDigits value, int i ) {
-        value.getOccurrences().set(i, result.add(value));
-    }
+//    /**
+//     * @param result
+//     * @param value
+//     * @param i
+//     */
+//    public
+//    void add ( EnumSet <EDigits7> result, EDigits7 value, int i ) {
+//         value.getOccurrences().set(i, result.add(value));
+//    }
 
     /**
      * @param address1
      * @param address2
      * @return
      */
+    @SuppressWarnings("unchecked")
     @Override
     public
     A minus ( A address1, A address2 ) throws ValueError {
-        int[][] table = getAddTable();
-        EnumSet <EDigits> digits1 = address1.getDigits();
-        EnumSet <EDigits> digits2 = address2.getDigits();
-        EnumSet <EDigits> result = EnumSet.noneOf(EDigits.class);
-
-        Iterator <EDigits> iterator1 = digits1.iterator();
-        Iterator <EDigits> iterator2 = digits2.iterator();
-        for (int i = 0; iterator1.hasNext() /*&& iterator2.hasNext()*/; i++) {
-            EDigits d1 = iterator1.next();
-            EDigits d2 = iterator2.next();
-            int r = table[d1.ordinal()][d2.ordinal()];
-            add(result, values()[r], i);
-        }
-
-        return newInstance(result);
+//        int[][] table = getAddTable();
+//        EnumSet <EDigits7> digits1 = (EnumSet <EDigits7>) address1.getDigits();
+//        EnumSet <EDigits7> digits2 = (EnumSet <EDigits7>) address2.getDigits();
+//        EnumSet <EDigits7> result = noneOf(EDigits7.class);
+//
+//        Iterator <EDigits7> iterator1 = digits1.iterator();
+//        Iterator <EDigits7> iterator2 = digits2.iterator();
+//        IntStream.iterate(0, i -> iterator1.hasNext(), i -> i + 1).forEachOrdered(i -> {
+//            EDigits7 d1 = iterator1.next();
+//            EDigits7 d2 = iterator2.next();
+//            int r = table[d1.ordinal()][d2.ordinal()];
+//            add(result, values()[r], i);
+//        });
+//
+//        return newInstance(result);
+        return null;
     }
 
     /**
@@ -255,24 +233,26 @@ class SaAddress<A extends SaAddress <A>> extends Address <A> {
      * @param address2
      * @return
      */
+    @SuppressWarnings("unchecked")
     @Override
     public
     A mult ( A address1, A address2 ) throws ValueError {
-        int[][] table = getMultTable();
-        EnumSet <EDigits> digits1 = address1.getDigits();
-        EnumSet <EDigits> digits2 = address2.getDigits();
-        EnumSet <EDigits> result = EnumSet.noneOf(EDigits.class);
-
-        Iterator <EDigits> iterator1 = digits1.iterator();
-        Iterator <EDigits> iterator2 = digits2.iterator();
-        for (int i = 0; iterator1.hasNext() /*&& iterator2.hasNext()*/; i++) {
-            EDigits d1 = iterator1.next();
-            EDigits d2 = iterator2.next();
-            int r = table[d1.ordinal()][d2.ordinal()];
-            add(result, values()[r], i);
-        }
-
-        return newInstance(result);
+//        int[][] table = getMultTable();
+//        EnumSet <EDigits7> digits1 = (EnumSet <EDigits7>) address1.getDigits();
+//        EnumSet <EDigits7> digits2 = (EnumSet <EDigits7>) address2.getDigits();
+//        EnumSet <EDigits7> result = noneOf(EDigits7.class);
+//
+//        Iterator <EDigits7> iterator1 = digits1.iterator();
+//        Iterator <EDigits7> iterator2 = digits2.iterator();
+//        IntStream.iterate(0, i -> iterator1.hasNext(), i -> i + 1).forEachOrdered(i -> {
+//            EDigits7 d1 = iterator1.next();
+//            EDigits7 d2 = iterator2.next();
+//            int r = table[d1.ordinal()][d2.ordinal()];
+//            add(result, values()[r], i);
+//        });
+//
+//        return newInstance(result);
+        return null;
     }
 
     /**
@@ -292,38 +272,44 @@ class SaAddress<A extends SaAddress <A>> extends Address <A> {
     int[][] getMultTable () {
         return multTable.clone();
     }
-
-    /**
-     * @return
-     */
-    @Override
-    public
-    EnumSet <EDigits> getDigits () {
-        return digits;
-    }
-
-    /**
-     * @param number
-     * @param radix
-     * @return
-     */
-    @Override
-    public
-    EnumSet <EDigits> toDigits ( int number, int radix ) {
-        EnumSet <EDigits> digits = EnumSet.noneOf(EDigits.class);
-        for (; number > 0; number /= radix) {
-            EDigits d = values()[number % radix];
-            digits.add(d);//todo
-        }
-
-        return digits;
-    }
-
-    @Override
-    public
-    A carryRule ( int number ) {
-        return null;
-    }
+//
+//    /**
+//     * @return
+//     */
+//    @SuppressWarnings("unchecked")
+//    @Override
+//    public
+////    EnumSet <E> getDigits () {
+////        return (EnumSet <E>) digits;
+////    }
+//
+//    /**
+//     * @param number
+//     * @param radix
+//     * @return
+//     */
+//    @SuppressWarnings("unchecked")
+//    @Override
+//    public
+//    EnumSet <E> toDigits ( int number, int radix ) {
+//        EnumSet <EDigits7> digits = noneOf(EDigits7.class);
+//        for (; number > 0; number /= radix) {
+//            EDigits7 d = values()[number % radix];
+//            digits.add(d);//todo
+//        }
+//
+//        return (EnumSet <E>) digits;
+//    }
+//
+//    /**
+//     * @param number
+//     * @return
+//     */
+//    @Override
+//    public
+//    A carryRule ( int number ) {
+//        return null;//todo
+//    }
 
     /**
      * @return
@@ -334,15 +320,9 @@ class SaAddress<A extends SaAddress <A>> extends Address <A> {
         return 7;
     }
 
-    /**
+        /**
      * @return
      */
-    @Override
-    public
-    List <A> getLayers () {
-        return null;
-    }
-
     public
     int getNumber () {
         return number;

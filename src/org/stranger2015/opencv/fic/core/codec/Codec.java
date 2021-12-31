@@ -7,16 +7,54 @@ import org.stranger2015.opencv.fic.transform.ImageTransform;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @param <N>
+ * @param <M>
+ * @param <A>
+ */
 public
-class Codec<N extends TreeNode <N>, M extends Image, C extends CompressedImage> implements IEncoder <N, M, C>, IDecoder <C, M> {
-//    private final IEncoder <M, C> encoder = new Encoder <>();
-//    private final IDecoder <C, M> decoder = new Decoder <>();
+class Codec<N extends TreeNodeBase <N, A>, M extends Image, A extends Address <A,?>>
+        implements IEncoder <N, M, A>, IDecoder < M> {
 
+    private final EPartitionScheme scheme;
+    private final EncodeAction action;
+
+    public
+    Codec ( EPartitionScheme scheme, EncodeAction action ) {
+        this.scheme = scheme;
+        this.action = action;
+    }
+
+    /**
+     * @param scheme
+     * @param action
+     * @param <N>
+     * @param <M>
+     * @param <A>
+     * @return
+     */
     public static
-    <N extends TreeNode <N>, M extends Image, C extends CompressedImage>
-    Codec <N, M, C> create ( EPartitionScheme scheme, EncodeAction action ) {
+    <N extends TreeNodeBase <N, A>, M extends Image,A extends Address <A,?>>
+    Codec <N, M, A> create ( EPartitionScheme scheme, EncodeAction action ) {
+        return new Codec <>(scheme, action);
+    }
 
-        return new Codec <>();
+    /**
+     * @param listener
+     */
+    @Override
+    public
+    void addListener ( IEncoderListener listener ) {
+
+    }
+
+    /**
+     * @param listener
+     */
+    @Override
+    public
+    void removeListener ( IEncoderListener listener ) {
+
     }
 
     /**
@@ -51,19 +89,19 @@ class Codec<N extends TreeNode <N>, M extends Image, C extends CompressedImage> 
 
     @Override
     public
-    M randomTransform ( M image, ImageTransform <M, C> transform ) {
+    M randomTransform ( M image, ImageTransform <M> transform ) {
         return null;
     }
 
     @Override
     public
-    M applyTransform ( M image, ImageTransform <M, C> transform ) {
+    M applyTransform ( M image, ImageTransform <M> transform ) {
         return null;
     }
 
     @Override
     public
-    M applyAffineTransform ( M image, AffineTransform <M, C> transform ) {
+    M applyAffineTransform ( M image, AffineTransform <M> transform ) {
         return null;
     }
 
@@ -360,9 +398,9 @@ class Codec<N extends TreeNode <N>, M extends Image, C extends CompressedImage> 
 //    return transformed_blocks
 
     public
-    List <ImageTransform <M, C>> compress ( M image, int sourceSize, int destinationSize, int step ) {
-        List <ImageTransform <M, C>> transformations = new ArrayList <>();
-        List <ImageBlock<M>> transformedBlocks = generateAllTransformedBlocks(image, sourceSize, destinationSize, step);
+    List <ImageTransform <M>> compress ( M image, int sourceSize, int destinationSize, int step ) {
+        List <ImageTransform <M>> transformations = new ArrayList <>();
+        List <ImageBlock <M>> transformedBlocks = generateAllTransformedBlocks(image, sourceSize, destinationSize, step);
 //    for (int i : range(image.shape[0])){ // destination_size):
 //            transformations.append([]);
 //        for(int j : range(image.shape[1] )){// destination_size):
@@ -386,7 +424,7 @@ class Codec<N extends TreeNode <N>, M extends Image, C extends CompressedImage> 
 
     @Override
     public
-    List <ImageBlock<M>> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
+    List <ImageBlock <M>> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
         return null;
     }
 
@@ -410,5 +448,42 @@ class Codec<N extends TreeNode <N>, M extends Image, C extends CompressedImage> 
     public
     M decode () {
         return null;
+    }
+
+    public
+    EPartitionScheme getScheme () {
+        return scheme;
+    }
+
+    public
+    EncodeAction getAction () {
+        return action;
+    }
+
+    /**
+     *
+     */
+    @Override
+    public
+    void onPreprocess () {
+
+    }
+
+    /**
+     *
+     */
+    @Override
+    public
+    void onProcess () {
+
+    }
+
+    /**
+     *
+     */
+    @Override
+    public
+    void onPostprocess () {
+
     }
 }

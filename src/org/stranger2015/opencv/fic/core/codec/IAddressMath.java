@@ -1,6 +1,5 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.stranger2015.opencv.fic.core.EDigits;
 import org.stranger2015.opencv.fic.core.ValueError;
 
 import java.util.EnumSet;
@@ -10,7 +9,7 @@ import java.util.List;
  * @param <A>
  */
 public
-interface IAddressMath<A extends IAddress <A>> {
+interface IAddressMath<A extends IAddress <A/*, E*/>/*, E extends Enum <E>*/> {
     /**
      * @param address1
      * @param address2
@@ -32,15 +31,10 @@ interface IAddressMath<A extends IAddress <A>> {
      */
     A mult ( A address1, A address2 ) throws ValueError;
 
-//    /**
-//     * @return
-//     */
-//    int radix ();
-
     /**
      * @return
      */
-    List <A> getLayers ();
+//    List <A> getLayers ();
 
     /**
      * @return
@@ -51,23 +45,23 @@ interface IAddressMath<A extends IAddress <A>> {
      * @return
      */
     int[][] getMultTable ();
-
-    /**
-     * @return
-     */
-    EnumSet <EDigits> getDigits ();
-
-    /**
-     * @param number
-     * @return
-     */
-    EnumSet <EDigits> toDigits ( int number, int radix );
-
-    /**
-     * @param number
-     * @return
-     */
-    IAddress <A> carryRule ( int number ) throws ValueError;
+//
+//    /**
+//     * @return
+////     */
+////    EnumSet <E> getDigits ();
+//
+//    /**
+//     * @param number
+//     * @return
+//     */
+//    EnumSet <E> toDigits ( int number, int radix );
+//
+//    /**
+//     * @param number
+//     * @return
+//     */
+//    IAddress <A, E> carryRule ( int number ) throws ValueError;
 
     /**
      * @return
@@ -113,6 +107,31 @@ interface IAddressMath<A extends IAddress <A>> {
                 throw new IllegalStateException("Unexpected value: " + intValue());
         }
 
-        return new int[0];
+        return v;
+    }
+
+    static
+    int pow ( int base, int pow ) {
+        int result = 1;
+        if (pow > 0) {
+            for (int i = 0; i < pow; i++) {
+                result *= base;
+            }
+        }
+
+        return result;
+    }
+
+    static
+    int log ( int base, int num ) {
+        int result = 0;
+        for (int i = 0; ; i++) {
+            if (pow(base, i) == num) {
+                result = i;
+                break;
+            }
+        }
+
+        return result;
     }
 }

@@ -11,7 +11,7 @@ enum ChildOrder {
     SE;
 
 
-    private CornerDirection cornerDirection;
+    private ECornerDirection cornerDirection;
 
     ChildOrder ( ) {
     }

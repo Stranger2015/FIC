@@ -3,13 +3,13 @@ package org.stranger2015.opencv.fic.core;
 import java.util.EnumSet;
 
 import static java.lang.String.format;
-import static org.stranger2015.opencv.fic.core.Direction.*;
+import static org.stranger2015.opencv.fic.core.EDirection.*;
 
 /**
  *
  */
 public
-enum CornerDirection implements ICornerDirection {
+enum ECornerDirection implements ICornerDirection {
     NORTH_WEST("NW", 4),
     NORTH_EAST("NE", 5),
     SOUTH_EAST("SE", 6),
@@ -22,7 +22,7 @@ enum CornerDirection implements ICornerDirection {
      * @param shortName
      * @param ord
      */
-    CornerDirection ( String shortName, int ord ) {
+    ECornerDirection ( String shortName, int ord ) {
         this.shortName = shortName;
         this.ord = ord;
     }
@@ -65,16 +65,16 @@ enum CornerDirection implements ICornerDirection {
 
     @Override
     public
-    Direction opQuad () {
+    EDirection opQuad () {
         switch (this) {
             case NORTH_EAST:
-                return Direction.SOUTH_WEST;
+                return EDirection.SOUTH_WEST;
             case SOUTH_EAST:
-                return Direction.NORTH_WEST;
+                return EDirection.NORTH_WEST;
             case SOUTH_WEST:
-                return Direction.NORTH_EAST;
+                return EDirection.NORTH_EAST;
             case NORTH_WEST:
-                return Direction.SOUTH_EAST;
+                return EDirection.SOUTH_EAST;
             default:
                 throw new IllegalStateException("Unexpected value: " + this);
         }
@@ -86,7 +86,7 @@ enum CornerDirection implements ICornerDirection {
      */
     @Override
     public
-    Direction commonSide ( Direction direction ) {
+    EDirection commonSide ( EDirection direction ) {
         switch (this) {
             case NORTH_EAST:
             case SOUTH_EAST:
@@ -116,7 +116,7 @@ enum CornerDirection implements ICornerDirection {
     }
 
     private
-    Direction sideN ( Direction quadrant, boolean isOne ) {
+    EDirection sideN ( EDirection quadrant, boolean isOne ) {
         switch (quadrant) {
             case NORTH_WEST:
                 if (isOne) {
@@ -147,13 +147,13 @@ enum CornerDirection implements ICornerDirection {
 
     @Override
     public
-    Direction side1 ( Direction quadrant ) {
+    EDirection side1 ( EDirection quadrant ) {
         return sideN(quadrant, true);
     }
 
     @Override
     public
-    Direction side2 ( Direction quadrant ) {
+    EDirection side2 ( EDirection quadrant ) {
         return sideN(quadrant, false);
     }
 
@@ -163,23 +163,13 @@ enum CornerDirection implements ICornerDirection {
      */
     @Override
     public
-    int width ( Direction quadrant ) {
+    int width ( EDirection quadrant ) {
         return 0;
     }//todo
 
     @Override
     public
-    int radius ( Direction quadrant ) {
-        return 0;
-    }//todo
-
-    /**
-     * @param quadrant
-     * @return
-     */
-    @Override
-    public
-    int xOf ( Direction quadrant ) {
+    int radius ( EDirection quadrant ) {
         return 0;
     }//todo
 
@@ -189,7 +179,7 @@ enum CornerDirection implements ICornerDirection {
      */
     @Override
     public
-    int yOf ( Direction quadrant ) {
+    int xOf ( EDirection quadrant ) {
         return 0;
     }//todo
 
@@ -199,7 +189,17 @@ enum CornerDirection implements ICornerDirection {
      */
     @Override
     public
-    Object value ( Direction quadrant ) {
+    int yOf ( EDirection quadrant ) {
+        return 0;
+    }//todo
+
+    /**
+     * @param quadrant
+     * @return
+     */
+    @Override
+    public
+    Object value ( EDirection quadrant ) {
         return null;
     }//todo
 
@@ -213,7 +213,7 @@ enum CornerDirection implements ICornerDirection {
      */
     @Override
     public
-    Direction insertReverseOrder ( int x, int y, int width, int color, int d ) {
+    EDirection insertReverseOrder ( int x, int y, int width, int color, int d ) {
         return null;
     }//todo
 
@@ -222,8 +222,8 @@ enum CornerDirection implements ICornerDirection {
      */
     @Override
     public
-    EnumSet <Direction> toSideDirection () {
-        EnumSet <Direction> set;
+    EnumSet <EDirection> toSideDirection () {
+        EnumSet <EDirection> set;
         switch (this) {
             case NORTH_EAST:
                 set = EnumSet.of(NORTH, EAST);

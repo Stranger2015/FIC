@@ -46,7 +46,7 @@ interface IDrawable<M extends Image> {
      * @param color
      */
     default
-    void triangle ( Image image, Triangle triangle, Scalar color ) {
+    void triangle ( M image, Triangle triangle, Scalar color ) {
         Point p0 = triangle.getVertices().get(0);
         Point p1 = triangle.getVertices().get(1);
         Point p2 = triangle.getVertices().get(2);

@@ -5,7 +5,7 @@ import org.opencv.core.Range;
 import org.stranger2015.opencv.fic.core.EPartitionScheme;
 import org.stranger2015.opencv.fic.core.ImagePartitionProcessor;
 import org.stranger2015.opencv.fic.core.PartitionScheme;
-import org.stranger2015.opencv.fic.core.TreeNode;
+import org.stranger2015.opencv.fic.core.TreeNodeBase;
 
 /**
  *   Algorithm for fractal image compression by applying Genetic Algorithm.
@@ -41,7 +41,7 @@ import org.stranger2015.opencv.fic.core.TreeNode;
  * @param <M>
  */
 public
-class ImagePartitionSegmenter<N extends TreeNode<N>, M extends Mat> extends ImagePartitionProcessor <N, M> {
+class ImagePartitionSegmenter<N extends TreeNodeBase <N>, M extends Mat> extends ImagePartitionProcessor <N, M> {
 
     public
     ImagePartitionSegmenter ( M image, EPartitionScheme scheme ) {

@@ -70,8 +70,8 @@ class FicApplication implements Runnable, Consumer <String> {
     @Override
     public
     void accept ( String filename ) {
-        ImageProcessor.create(filename);
-
+//        ImageProcessor.create(filename);
+//
     }
 
     /**

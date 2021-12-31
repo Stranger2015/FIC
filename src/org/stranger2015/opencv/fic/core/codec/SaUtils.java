@@ -1,13 +1,11 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.EDigits;
+import org.stranger2015.opencv.fic.core.EDigits7;
 import org.stranger2015.opencv.fic.core.SaAddress;
 import org.stranger2015.opencv.fic.core.ValueError;
 
 import java.util.EnumSet;
-
-import static org.stranger2015.opencv.fic.core.EDigits.values;
 
 /**
  *
@@ -29,8 +27,9 @@ class SaUtils {
      */
     @SuppressWarnings("unchecked")
     public static
-    <A extends IAddress <A>> A createAddress ( int number, int radix, EAddressKind addressKind ) throws ValueError {
-        EnumSet <EDigits> digits = EnumSet.noneOf(EDigits.class);
+    <A extends Address <A, E>, E extends Enum <E>> A createAddress ( int number, int radix, EAddressKind addressKind )
+            throws ValueError {
+        EnumSet <EDigits7> digits = EnumSet.noneOf(EDigits7.class);
         boolean loop = true;
         for (int i = 0; loop; i++) {
             int digit;
@@ -43,24 +42,18 @@ class SaUtils {
                 digit = number;
                 loop = false;
             }
-            add(values()[digit], i);
+            add(EDigits7.values()[digit], i);
         }
-        IAddress <?> result;
         switch (addressKind) {
             case ORDINARY:
-                result = new Address <>(digits);
-                break;
+                return (A) new Address <A, E>((EnumSet <E>) digits);
             case SPIRAL:
-                result = new SaAddress <>(digits);
-                break;
+                return (A) new SaAddress <A, E>(digits);
             case SQUIRAL:
-                result = new SipAddress <>(digits);
-                break;
+                return (A) new SipAddress <A, E>(digits);
             default:
                 throw new IllegalStateException("Unexpected value: " + addressKind);
         }
-
-        return (A) result;
     }
 
     /**
@@ -68,7 +61,7 @@ class SaUtils {
      * @param i
      */
     public static
-    void add ( EDigits value, int i ) {
+    void add ( EDigits7 value, int i ) {
         value.getOccurrences().set(i);
     }
 
@@ -77,25 +70,14 @@ class SaUtils {
      * @return
      */
     public static
-    int toNumber ( EnumSet <EDigits> digits, Class<?> clazz ) {
+    int toNumber ( EnumSet <EDigits7> digits/*, Class <?> clazz*/ ) {
         int number = 0;
         int i = 0;
-        for (EDigits next : digits) {
+        for (EDigits7 next : digits) {
             next.getOccurrences().set(i++);
-//            BitSet o = next.getOccurrences();
-//            for (int j = o.nextSetBit(0); j >= 0; j = o.nextSetBit(j + 1)) {
-//                 operate on index j here
-//                if (j == Integer.MAX_VALUE) {
-//                    break; // or (j+1) would overflow
-//                }
             number += 10;
         }
 
         return number;
-    }
-
-    public static
-    int toNumber ( EnumSet <EDigits> result ) {
-        return 0;
     }
 }

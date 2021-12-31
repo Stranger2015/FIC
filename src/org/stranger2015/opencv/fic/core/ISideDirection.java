@@ -29,33 +29,33 @@ interface ISideDirection {
     /**
      * @return
      */
-    Direction cSide ( );
+    EDirection cSide ( );
 
     /**
      * @return
      */
-    Direction ccSide ( );
+    EDirection ccSide ( );
 
     /**
      * @return
      */
-    Direction opSide ( );
+    EDirection opSide ( );
 
     /**
      * @param quadrant
      * @return
      */
-    Direction reflect ( Direction quadrant );
+    EDirection reflect ( EDirection quadrant );
 
     /**
      * @param side
      * @return
     */
-    Direction quadrant ( Direction side );
+    EDirection quadrant ( EDirection side );
 
     /**
      * @param cornerDirection
      * @return
      */
-    boolean adjacent ( Direction cornerDirection );
+    boolean adjacent ( EDirection cornerDirection );
 }

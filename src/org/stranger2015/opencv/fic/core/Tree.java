@@ -1,6 +1,8 @@
 package org.stranger2015.opencv.fic.core;
 
+import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Rect;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.EnumSet;
@@ -12,16 +14,17 @@ import static org.stranger2015.opencv.fic.core.Tree.EAffineTransform.*;
  * @param <M>
  */
 abstract public
-class Tree<N extends TreeNode <N, ?>, M extends Image, A extends Address <A>> {
+class Tree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image> {
 
     public static final int DEFAULT_DEPTH = Integer.MAX_VALUE;
     public static final Rect DEFAULT_BOUNDING_BOX = new Rect(0, 0, 0, 0);
 
-    protected final NodeList <N> leaves = new NodeList <>();
-    protected final NodeList <N> nodes = new NodeList <>();
+    protected final NodeList <N, A, M> leaves = new NodeList <>();
+    protected final NodeList <N, A, M> nodes = new NodeList <>();
 
     protected M image;
-    protected TreeNode <N, A> root;
+
+    protected TreeNode <N, A, M> root;
     protected TreeNodeAction <N> action;
 
     private Rect area;
@@ -44,7 +47,7 @@ class Tree<N extends TreeNode <N, ?>, M extends Image, A extends Address <A>> {
      * @param area
      */
     protected
-    Tree ( TreeNode <N,A> root, M image, TreeNodeAction <N> action, Rect area, int depth ) {
+    Tree ( TreeNode <N, A, M> root, M image, TreeNodeAction <N> action, Rect area, int depth ) {
         this.image = image;
         this.root = root;
         this.area = area;
@@ -59,7 +62,7 @@ class Tree<N extends TreeNode <N, ?>, M extends Image, A extends Address <A>> {
      * @param action
      */
     protected
-    Tree ( TreeNode <N, A> root, M image, TreeNodeAction <N> action ) {
+    Tree ( TreeNode <N, A, M> root, M image, TreeNodeAction <N> action ) {
         this(
                 root,
                 image,
@@ -71,13 +74,15 @@ class Tree<N extends TreeNode <N, ?>, M extends Image, A extends Address <A>> {
 
     @SuppressWarnings("unchecked")
     public static
-    <N extends TreeNode <N, ?>, M extends Image, A extends Address <A>>
-    Tree <N, M, A> create ( String className ) {
+    <N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+    @NotNull Tree <N, A, M> create ( String className ) {
         int rc = 0;
         try {
             Class <?> clazz = Class.forName(className);
-            Tree <N, M, A> tree = (Tree <N, M, A>) clazz.getDeclaredConstructor().newInstance();
+            Tree <N, A, M> tree = (Tree <N, A, M>) clazz.getDeclaredConstructor().newInstance();
             tree.initialize();
+
+            return tree;
         } catch (ClassNotFoundException |
                 NoSuchMethodException |
                 InvocationTargetException |
@@ -87,16 +92,20 @@ class Tree<N extends TreeNode <N, ?>, M extends Image, A extends Address <A>> {
             e.printStackTrace();
             rc = -1;
         }
-
-
-        return rc != 0 ? null : null;
+        throw new RuntimeException();
     }
 
+    /**
+     *
+     */
     protected
     void initialize () {
 
     }
 
+    /**
+     * @return
+     */
     public
     EnumSet <EAffineTransform> getTransforms () {
         return EnumSet.of(
@@ -112,7 +121,8 @@ class Tree<N extends TreeNode <N, ?>, M extends Image, A extends Address <A>> {
      * @return
      */
     abstract public
-    TreeNode <N,A> nodeInstance ( TreeNode <N, A> parent, Direction quadrant, Rect rect ) throws ValueError;
+    TreeNode <N, A, M> nodeInstance ( TreeNode <N, A, M> parent, EDirection quadrant, Rect rect )
+            throws ValueError;
 
     /**
      * @return
@@ -124,7 +134,7 @@ class Tree<N extends TreeNode <N, ?>, M extends Image, A extends Address <A>> {
      * @return
      */
     public
-    TreeNode <N, A> getRoot () {
+    TreeNode <N, A, M> getRoot () {
         return root;
     }
 
@@ -143,9 +153,9 @@ class Tree<N extends TreeNode <N, ?>, M extends Image, A extends Address <A>> {
      * @return
      */
     public
-    TreeTraverser <N> getTraverser ( Tree <N, M, A> tree,
-                                     int depth,
-                                     TreeNodeAction <N> action ) {
+    TreeTraverser <N, A, M> getTraverser ( Tree <N, A, M> tree,
+                                           int depth,
+                                           TreeNodeAction <N> action ) {
         return new TreeTraverser <>(tree, depth, action);
     }
 
@@ -161,7 +171,7 @@ class Tree<N extends TreeNode <N, ?>, M extends Image, A extends Address <A>> {
      * @return
      */
     public
-    NodeList <N> getNodes () {
+    NodeList <N, A, M> getNodes () {
         return nodes;
     }
 

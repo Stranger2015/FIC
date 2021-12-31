@@ -7,7 +7,7 @@ import org.stranger2015.opencv.fic.core.Triangle.TriangleTreeNode;
  * root --> rectangle diagonally divided into 2 triangles --> triangle tree nodes
  */
 public
-class TriangleTree<N extends TriangleTreeNode <N, A>, M extends Image, A extends Address <A>>
+class TriangleTree<N extends TriangleTreeNode <N, A>, M extends Image, A extends Address <A,?>>
         extends BinTree <N, M, A> {
     /**
      * Constructs a new object.
@@ -29,7 +29,7 @@ class TriangleTree<N extends TriangleTreeNode <N, A>, M extends Image, A extends
      */
 //    @Override
     public
-    TreeNode <N, A> nodeInstance ( TriangleTreeNode <N, A> parent, Direction quadrant, Rect rect ) {
+    TreeNodeBase <N, A> nodeInstance ( TriangleTreeNode <N, A> parent, EDirection quadrant, Rect rect ) {
         return new TriangleTreeNode <>(parent, rect);
     }
 

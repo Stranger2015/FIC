@@ -1,9 +1,9 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.stranger2015.opencv.fic.core.CompressedImage;
+import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.Image;
 import org.stranger2015.opencv.fic.core.ImageBlock;
-import org.stranger2015.opencv.fic.core.TreeNode;
+import org.stranger2015.opencv.fic.core.TreeNodeBase;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 
@@ -179,17 +179,37 @@ import java.util.List;
  * //
  */
 public
-interface IEncoder<N extends TreeNode<N>, M extends Image, C extends CompressedImage, A extends IAddress <A>> {
+interface IEncoder<N extends TreeNodeBase.TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+        extends IImageProcessorListener {
+
     /**
-     *
+     * @param listener
+     */
+    void addListener ( IEncoderListener listener );
+
+    /**
+     * @param listener
+     */
+    void removeListener ( IEncoderListener listener );
+
+    /**
      * @return
      */
-    M encode (M image);
+    M encode ( M image );
 
     /**
      *
      */
-    void segmentImage();
+    void segmentImage ();
+
+    /**
+     * @return
+     */
+    default
+    int getImageSizeBase () {
+        return 2;
+    }
+
 
     /**
      * @param image
@@ -203,21 +223,21 @@ interface IEncoder<N extends TreeNode<N>, M extends Image, C extends CompressedI
      * @param transform
      * @return
      */
-    M randomTransform ( M image, ImageTransform <M, C> transform );
+    M randomTransform ( M image, ImageTransform <M> transform );
 
     /**
      * @param image
      * @param transform
      * @return
      */
-    M applyTransform ( M image, ImageTransform <M, C> transform );
+    M applyTransform ( M image, ImageTransform <M> transform );
 
     /**
      * @param image
      * @param transform
      * @return
      */
-    M applyAffineTransform ( M image, AffineTransform <M, C> transform );
+    M applyAffineTransform ( M image, AffineTransform <M> transform );
 
 //    /**
 //     * Performs a random rotation of an image
@@ -467,7 +487,7 @@ interface IEncoder<N extends TreeNode<N>, M extends Image, C extends CompressedI
      * @param step
      * @return
      */
-    List <ImageTransform <M, C>> compress ( M image, int sourceSize, int destinationSize, int step );
+    List <ImageTransform <M>> compress ( M image, int sourceSize, int destinationSize, int step );
 
     /**
      * @param image
@@ -476,5 +496,5 @@ interface IEncoder<N extends TreeNode<N>, M extends Image, C extends CompressedI
      * @param step
      * @return
      */
-    List <ImageBlock<M>> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step );
+    List <ImageBlock <M>> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step );
 }

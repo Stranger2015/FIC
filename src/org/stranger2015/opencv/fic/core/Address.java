@@ -11,16 +11,15 @@ import java.util.List;
  *
  */
 public
-class Address<A extends Address <A>> implements IAddress <A> {
-    protected final List <A> layers = List.of();
-//    protected final EnumSet <EDigits> digits;
-
+class Address<A extends Address <A/*, E*/>/*, E extends Enum <E>*/> implements IAddress <A/*, E*/> {
+protected int address;
     /**
-     * @param number
+     * @param address
      */
     public
-    Address ( int number ) throws ValueError {
+    Address ( int address ) throws ValueError {
 //     return    SaUtils.createAddress(number, 10, EAddressKind.ORDINARY);
+        this.address = address;
     }
 
     /**
@@ -31,9 +30,9 @@ class Address<A extends Address <A>> implements IAddress <A> {
         this(0);
     }
 
-    public
-    Address ( EnumSet <EDigits> e ) {
-    }
+//    public
+//    Address ( EnumSet <E> e ) {
+//    }
 
     /**
      * Returns the value of the specified number as an {@code int}.
@@ -47,16 +46,16 @@ class Address<A extends Address <A>> implements IAddress <A> {
         return getIndex();
     }
 
-    /**
-     * @param result
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public
-    A newInstance ( EnumSet <EDigits> result ) throws ValueError {
-        return (A) new Address <A>(SaUtils.toNumber(result));
-    }
+//    /**
+//     * @param result
+//     * @return
+//     */
+//    @SuppressWarnings("unchecked")
+//    @Override
+//    public
+//    A newInstance ( EnumSet result ) throws ValueError {
+//        return (A) new Address <>(SaUtils.toNumber(result));
+//    }
 
     /**
      * @param index
@@ -78,7 +77,7 @@ class Address<A extends Address <A>> implements IAddress <A> {
     @Override
     public
     A plus ( A address1, A address2 ) throws ValueError {
-        return (A) new Address <A>(address1.getIndex() + address2.getIndex());
+        return (A) new Address <>(address1.getIndex() + address2.getIndex());
     }
 
     /**
@@ -102,7 +101,7 @@ class Address<A extends Address <A>> implements IAddress <A> {
     @Override
     public
     A mult ( A address1, A address2 ) throws ValueError {
-        return (A) new Address <A>(address1.getIndex() * address2.getIndex());
+        return (A) new Address <A/*, E*/>(address1.getIndex() * address2.getIndex());
     }
 
     /**
@@ -112,15 +111,6 @@ class Address<A extends Address <A>> implements IAddress <A> {
     public
     int radix () {
         return 10;
-    }
-
-    /**
-     * @return
-     */
-    @Override
-    public
-    List <A> getLayers () {
-        return layers;
     }
 
     /**
@@ -141,23 +131,23 @@ class Address<A extends Address <A>> implements IAddress <A> {
         return new int[0][];
     }
 
-    /**
-     * @return
-     */
-    @Override
-    public
-    EnumSet <EDigits> getDigits () {
-        return null;//todo
-    }
+//    /**
+//     * @return
+//     */
+//    @Override
+//    public
+//    EnumSet <E> getDigits () {
+//        return null;//todo
+//    }
 
-    /**
-     * @param number
-     * @param radix
-     * @return
-     */
-    @Override
-    public
-    EnumSet <EDigits> toDigits ( int number, int radix ) {
+//    /**
+//     * @param number
+//     * @param radix
+//     * @return
+//     */
+//    @Override
+//    public
+//    EnumSet <E> toDigits ( int number, int radix ) {
 //        for (EDigits next : getDigits()) {
 //            int digit = next.ordinal();
 //            BitSet occurrences = next.getOccurrences();
@@ -166,18 +156,18 @@ class Address<A extends Address <A>> implements IAddress <A> {
 //            }
 //        }
 
-        return null;
-    }
+//        return null;
+//    }
 
     /**
      * @param number
      * @return
      */
     @SuppressWarnings("unchecked")
-    @Override
+//    @Override
     public
     A carryRule ( int number ) throws ValueError {
-        return (A) new Address <A>(number);
+        return (A) new Address <>(number);
     }
 
     /**
@@ -186,15 +176,15 @@ class Address<A extends Address <A>> implements IAddress <A> {
     @Override
     public
     int getIndex () {
-        return toNumber();
+        return address;
     }
-
-    /**
-     * @return
-     */
-    @Override
-    public
-    int toNumber () {
-        return 0;
-    }//todo
+//
+//    /**
+//     * @return
+//     */
+////    @Override
+//    public
+//    int toNumber ( EnumSet <E> digits ) {
+//        return 0;
+//    }//todo
 }

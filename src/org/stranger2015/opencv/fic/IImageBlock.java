@@ -12,5 +12,4 @@ interface IImageBlock<M extends Image>{
      * @return
      */
     Size getSize ();
-
 }

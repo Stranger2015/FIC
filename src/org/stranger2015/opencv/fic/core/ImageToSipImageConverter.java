@@ -7,15 +7,17 @@ import org.stranger2015.opencv.fic.utils.ImageUtils;
 /**
  *
  */
+@Deprecated
 public
 class ImageToSipImageConverter implements IConverter <Image, SipImage> {
     /**
      * @param input
      * @return
      */
+    @SuppressWarnings("unchecked")
     @Override
     public
-    SipImage map ( Image input ) {
+    SipImage map ( Image input ) throws ValueError {
         return ImageUtils.imageToSipImage(input);
     }
 

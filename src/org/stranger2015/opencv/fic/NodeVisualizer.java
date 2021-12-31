@@ -2,12 +2,12 @@ package org.stranger2015.opencv.fic;
 
 import org.opencv.core.Rect;
 import org.stranger2015.opencv.fic.core.Image;
-import org.stranger2015.opencv.fic.core.TreeNode;
+import org.stranger2015.opencv.fic.core.TreeNodeBase;
 
 public
 class NodeVisualizer implements IDrawable<Image> {
 
-    private TreeNode<?> treeNode;
+    private TreeNodeBase <?> treeNode;
 
     @Override
     public
@@ -16,7 +16,7 @@ class NodeVisualizer implements IDrawable<Image> {
     }
 
     public
-    void setNode ( TreeNode<?> treeNode ) {
+    void setNode ( TreeNodeBase <?> treeNode ) {
         this.treeNode = treeNode;
     }
 }

@@ -9,9 +9,9 @@ import java.io.Serializable;
  * Produces transformed copies of a given input image.
  */
 public abstract
-class ImageTransform<M extends Image, C extends CompressedImage> implements ITransform <M, C>, Serializable {
+class ImageTransform<M extends Image> implements ITransform <M>, Serializable {
 
-    protected final C outputImage;
+    protected final M outputImage;
 
     public int dihedralAffineTransformerIndex;
 //    public double contrastScale;
@@ -30,12 +30,12 @@ class ImageTransform<M extends Image, C extends CompressedImage> implements ITra
 //        brightnessOffset = 0;
         originalDomainX = 0;
         originalDomainY = 0;
-        outputImage = (C) new CompressedImage(image);
+        outputImage = (M) new CompressedImage(image);
     }
 
     public static
-    <C extends CompressedImage, M extends Image>
-    ImageTransform <M, C> create (M image) {
+    <M extends Image>
+    ImageTransform <M> create (M image) {
         return new NoneTransform <>(image);
     }
 
@@ -43,7 +43,7 @@ class ImageTransform<M extends Image, C extends CompressedImage> implements ITra
      * @return
      */
     public
-    C getOutputImage () {
+    M getOutputImage () {
         return outputImage;
     }
 

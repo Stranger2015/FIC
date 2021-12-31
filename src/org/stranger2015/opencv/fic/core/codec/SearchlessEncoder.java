@@ -1,23 +1,18 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.opencv.core.Size;
-import org.stranger2015.opencv.fic.core.CompressedImage;
+import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.Image;
 import org.stranger2015.opencv.fic.core.ImageBlock;
-import org.stranger2015.opencv.fic.core.TreeNode;
+import org.stranger2015.opencv.fic.core.TreeNodeBase;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
-import org.stranger2015.opencv.fic.transform.AffineTransforms;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 
 import java.util.List;
 
-/**
- * @param <M>
- * @param <C>
- */
 public
-class SearchlessEncoder<N extends TreeNode <N>, M extends Image, C extends CompressedImage>
-        extends Encoder<N, M, C>{
+class SearchlessEncoder<N extends TreeNodeBase <N, A>, M extends Image, A extends Address <A, ?>>
+        extends Encoder <N, M, A> {
 
     /**
      * @param inputImage
@@ -31,31 +26,58 @@ class SearchlessEncoder<N extends TreeNode <N>, M extends Image, C extends Compr
 
     @Override
     public
-    M randomTransform ( M image, ImageTransform <M, C> transform ) {
+    M randomTransform ( M image, ImageTransform <M> transform ) {
+        return null;//todo
+    }
+
+    @Override
+    public
+    M applyTransform ( M image, ImageTransform <M> transform ) {
+        return null;//todo
+    }
+
+    @Override
+    public
+    M applyAffineTransform ( M image, AffineTransform <M> transform ) {
+        return null;//todo
+    }
+
+    @Override
+    public
+    List <ImageTransform <M>> compress ( M image, int sourceSize, int destinationSize, int step ) {
+        return null;//todo
+    }
+
+    @Override
+    public
+    List <ImageBlock <M>> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
         return null;//todo//todo
     }
 
+    /**
+     *
+     */
     @Override
     public
-    M applyTransform ( M image, ImageTransform <M, C> transform ) {
-        return null;//todo
+    void onPreprocess () {
+
     }
 
+    /**
+     *
+     */
     @Override
     public
-    M applyAffineTransform ( M image, AffineTransform <M, C> transform ) {
-        return null;//todo
+    void onProcess () {
+
     }
 
+    /**
+     *
+     */
     @Override
     public
-    List <ImageTransform <M, C>> compress ( M image, int sourceSize, int destinationSize, int step ) {
-        return null;//todo
-    }
+    void onPostprocess () {
 
-    @Override
-    public
-    List <ImageBlock<M>> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
-        return null;//todo//todo
     }
 }

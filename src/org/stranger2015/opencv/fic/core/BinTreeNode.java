@@ -1,24 +1,31 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.opencv.core.Mat;
+import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Rect;
-import org.stranger2015.opencv.fic.core.codec.IAddress;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 
 import java.util.HashMap;
 
+/**
+ * @param <N>
+ * @param <A>
+ */
 public
-class BinTreeNode<N extends TreeNode<N,?>, A extends IAddress <A>> extends TreeNode <N, A> {
+class BinTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image> extends TreeNode <N, A, M> {
 
     /**
-     *
-     *
      * @param parent
      * @param quadrant
      * @param rect
      */
     public
-    BinTreeNode (BinTreeNode<N,A> parent, Direction quadrant, Rect rect ) {
-        super(parent, quadrant, rect);
+    BinTreeNode ( TreeNode <N, A, M> parent, EDirection quadrant, Rect rect ) throws ValueError {
+        super(parent, rect);
+    }
+
+    public
+    BinTreeNode ( TreeNode <N, A, M> parent, Rect boundingBox ) throws ValueError {
+        super(parent, boundingBox);
     }
 
     /**
@@ -63,8 +70,41 @@ class BinTreeNode<N extends TreeNode<N,?>, A extends IAddress <A>> extends TreeN
 
     @Override
     public
-    TreeNode <N,A> createChild ( Direction quadrant, Rect boundingBox ) {
+    TreeNode <N, A, M> createChild ( EDirection quadrant, Rect boundingBox ) throws ValueError {
         return new BinTreeNode <>(this, quadrant, boundingBox);
+    }
+//
+//    /**
+//     * @param parent
+//     * @param boundingBox
+//     * @return
+//     */
+//    @Override
+//    public
+//    TreeNodeBase createNode ( TreeNodeBase parent, Rect boundingBox ) throws ValueError {
+//        return null;
+//    }
+
+    /**
+     * @param parent
+     * @param boundingBox
+     * @return
+     */
+    @Override
+    public
+    TreeNodeBase <N, A, M> createNode ( TreeNodeBase <N, A, M> parent, Rect boundingBox ) throws ValueError {
+        return null;
+    }
+
+    /**
+     * @param parent
+     * @param boundingBox
+     * @return
+     */
+//    @Override
+    public
+    TreeNodeBase <N, A, M> createNode ( TreeNode <N, A, M> parent, Rect boundingBox ) throws ValueError {
+        return new BinTreeNode <>(parent, boundingBox);
     }
 
     /**
@@ -73,21 +113,16 @@ class BinTreeNode<N extends TreeNode<N,?>, A extends IAddress <A>> extends TreeN
      * @param boundingBox
      * @return
      */
-    @Override
+//    @Override
     public
-    TreeNode <N, A> createNode ( TreeNode <N, A> parent, Direction quadrant, Rect boundingBox ) {
+    TreeNodeBase <N, A, M> createNode ( TreeNodeBase <N, A, M> parent, EDirection quadrant, Rect boundingBox ) throws ValueError {
         return null;
     }
-//
-//    @Override
-//    public
-//    TreeNode <N> createNode ( TreeNode <N> parent, Direction quadrant, Rect boundingBox ) {
-//        return null;
-//    }
 
     public
-    BinTreeNode <N,A> createNode ( BinTreeNode <N,A> parent, Direction quadrant, Rect boundingBox ) {
-        return new BinTreeNode<>(parent, quadrant, boundingBox);
+    BinTreeNode <N, A, M> createNode ( BinTreeNode <N, A, M> parent, EDirection quadrant, Rect boundingBox )
+            throws ValueError {
+        return new BinTreeNode <>(parent, quadrant, boundingBox);
     }
 
     /**
@@ -170,12 +205,105 @@ class BinTreeNode<N extends TreeNode<N,?>, A extends IAddress <A>> extends TreeN
     }
 
     /**
-     * @param image
-     * @param rect
+     * Compares this object with the specified object for order.  Returns a
+     * negative integer, zero, or a positive integer as this object is less
+     * than, equal to, or greater than the specified object.
+     *
+     * <p>The implementor must ensure
+     * {@code sgn(x.compareTo(y)) == -sgn(y.compareTo(x))}
+     * for all {@code x} and {@code y}.  (This
+     * implies that {@code x.compareTo(y)} must throw an exception iff
+     * {@code y.compareTo(x)} throws an exception.)
+     *
+     * <p>The implementor must also ensure that the relation is transitive:
+     * {@code (x.compareTo(y) > 0 && y.compareTo(z) > 0)} implies
+     * {@code x.compareTo(z) > 0}.
+     *
+     * <p>Finally, the implementor must ensure that {@code x.compareTo(y)==0}
+     * implies that {@code sgn(x.compareTo(z)) == sgn(y.compareTo(z))}, for
+     * all {@code z}.
+     *
+     * <p>It is strongly recommended, but <i>not</i> strictly required that
+     * {@code (x.compareTo(y)==0) == (x.equals(y))}.  Generally speaking, any
+     * class that implements the {@code Comparable} interface and violates
+     * this condition should clearly indicate this fact.  The recommended
+     * language is "Note: this class has a natural ordering that is
+     * inconsistent with equals."
+     *
+     * <p>In the foregoing description, the notation
+     * {@code sgn(}<i>expression</i>{@code )} designates the mathematical
+     * <i>signum</i> function, which is defined to return one of {@code -1},
+     * {@code 0}, or {@code 1} according to whether the value of
+     * <i>expression</i> is negative, zero, or positive, respectively.
+     *
+     * @param o the object to be compared.
+     * @return a negative integer, zero, or a positive integer as this object
+     * is less than, equal to, or greater than the specified object.
+     * @throws NullPointerException if the specified object is null
+     * @throws ClassCastException   if the specified object's type prevents it
+     *                              from being compared to this object.
      */
     @Override
     public
-    void draw ( Image image, Rect rect ) {
+    int compareTo ( @NotNull N o ) {
+        return 0;
+    }
 
+    public static
+    class BinLeafNode<N extends BinLeafNode <N, A, M>, A extends Address <A>, M extends Image>
+            extends LeafNode <N, A, M> {
+
+        protected
+        BinLeafNode ( TreeNode <N, A, M> parent, M image, Rect rect ) throws ValueError {
+            super(parent, image, rect);
+        }
+
+        @Override
+        public
+        TreeNode <N, A, M> createNode ( TreeNode <N, A, M> parent, M image, Rect boundingBox ) throws ValueError {
+            return new BinLeafNode <>(parent, image, boundingBox);
+        }
+
+        /**
+         * @param parent
+         * @param quadrant
+         * @param boundingBox
+         * @return
+         */
+//        @Override
+        public
+        TreeNodeBase <N, A, M> createNode ( TreeNodeBase <N, A, M> parent, EDirection quadrant, Rect boundingBox )
+                throws ValueError {
+            return null;//todo
+        }
+
+        /**
+         * @param parent
+         * @param boundingBox
+         * @return
+         */
+        @Override
+        public
+        TreeNodeBase <N, A, M> createNode ( TreeNodeBase <N, A, M> parent, Rect boundingBox ) throws ValueError {
+            return null;
+        }
+
+        @Override
+        public
+        M getMat () {
+            return null;
+        }
+
+        @Override
+        public
+        M getImage () {
+            return null;
+        }
+
+        @Override
+        public
+        Rect getBoundingBox () {
+            return null;
+        }
     }
 }

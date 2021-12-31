@@ -1,27 +1,41 @@
 package org.stranger2015.opencv.fic.core;
 
+import org.opencv.core.Rect;
+import org.stranger2015.opencv.fic.core.codec.SipImage;
+
 /**
  *
  */
 public
-class ImageBlock3x3 extends ImageBlock<Image>{
-    /**
-     * @param type
-     */
-    public
-    ImageBlock3x3 ( int type ) {
-        super(3, 3, type);
-    }
+class ImageBlock3x3<M extends Image> extends ImageBlock <M> {
+
+    protected int[] addresses;
+
+    protected int centerX;
+    protected int centerY;
 
     /**
      * @param x
      * @param y
      * @param width
      * @param height
-     * @param type
      */
     public
-    ImageBlock3x3 ( int x, int y, int width, int height, int type ) {
-        super(x, y, width, height, type);
+    ImageBlock3x3 ( int x, int y, int width, int height ) {
+        super(x, y, width, height);
+        centerX = x + width/2;
+        centerY = y + height/2;
+
+    }
+
+    /**
+     * @param image
+     * @param rect
+     */
+    @SuppressWarnings("unchecked")
+    public
+    ImageBlock3x3 ( M image, Rect rect ) {
+        this(rect.x, rect.y, rect.width, rect.height);
+        this.image = (M) image.submat(rect);
     }
 }

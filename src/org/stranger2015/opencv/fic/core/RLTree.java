@@ -1,9 +1,10 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.opencv.core.Rect;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 
 public
-class RLTree<N extends RLTreeNode <N, ?>, M extends Image, A extends Address <A>>
+class RLTree<N extends RLTreeNode <N, A>, M extends Image, A extends Address <A,?>>
         extends Tree <N, M, A> {
     /**
      * Constructs a new object.
@@ -37,10 +38,22 @@ class RLTree<N extends RLTreeNode <N, ?>, M extends Image, A extends Address <A>
      * @param rect
      * @return
      */
+//    @Override
+    public
+    TreeNodeBase <N, A> nodeInstance ( TreeNodeBase <N, A> parent, EDirection quadrant, Rect rect ) {
+        return new RLTreeNode <N, A>(parent, quadrant, rect);
+    }
+
+    /**
+     * @param parent
+     * @param quadrant
+     * @param rect
+     * @return
+     */
     @Override
     public
-    TreeNode <N, A> nodeInstance ( TreeNode <N, A> parent, Direction quadrant, Rect rect ) {
-        return new RLTreeNode <N, A>(parent, quadrant, rect);
+    TreeNode <N, A> nodeInstance ( TreeNode <N, A> parent, EDirection quadrant, Rect rect ) throws ValueError {
+        return null;
     }
 
     @SuppressWarnings("unchecked")

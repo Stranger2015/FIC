@@ -22,7 +22,7 @@ class CompressedImage extends Image {
      */
     public
     CompressedImage ( int rows, int cols, int type ) {
-        super(rows, cols, type);
+        super(rows, cols, type, pixelData);
     }
 
     public

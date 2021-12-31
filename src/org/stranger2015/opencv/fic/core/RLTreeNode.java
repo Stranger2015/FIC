@@ -1,37 +1,52 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.opencv.core.Rect;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 
 /**
  * @param <N>
  */
 public
-class RLTreeNode<N extends RLTreeNode <N,?>, A extends Address<A>> extends TreeNode <N, A> {
+class RLTreeNode<N extends RLTreeNode <N,A>, A extends Address<A,?>> extends TreeNode <N, A> {
 
-    @Override
+
+    /**
+     * @param parent
+     * @param quadrant
+     * @param rect
+     */
     public
-    TreeNode <N, A> createNode ( TreeNode <N, A> parent, Direction quadrant, Rect boundingBox ) {
+    RLTreeNode ( TreeNode<N, A> parent, EDirection quadrant, Rect rect ) throws ValueError {
+        super(parent, rect);
+    }
+
+    //    @Override
+public
+    TreeNodeBase <N, A> createNode ( TreeNode <N, A> parent, EDirection quadrant, Rect boundingBox )
+        throws ValueError {
         return new RLTreeNode<>(parent, quadrant, boundingBox);
     }
 
-    public
-    RLTreeNode ( TreeNode <N, A> parent, Direction quadrant, Rect rect ) {
-        super(parent, quadrant, rect);
-    }
-
-    @Override
-    public
-    RLTreeNode<N, A> createChild ( Direction quadrant, Rect boundingBox ) {
-        return new RLTreeNode <>(parent, quadrant, boundingBox);
-    }
-
     /**
-     * @param image
-     * @param rect
+     * @param quadrant
+     * @param boundingBox
+     * @return
+     * @throws ValueError
      */
     @Override
     public
-    void draw ( Image image, Rect rect ) {
+    TreeNodeBase <N, A> createChild ( EDirection quadrant, Rect boundingBox ) throws ValueError {
+        return new RLTreeNode <>((TreeNode <N, A>) parent, quadrant, boundingBox);
+    }
 
+    /**
+     * @param parent
+     * @param boundingBox
+     * @return
+     */
+    @Override
+    public
+    TreeNodeBase <N, A> createNode ( TreeNodeBase <N, A> parent, Rect boundingBox ) throws ValueError {
+        return null;
     }
 }

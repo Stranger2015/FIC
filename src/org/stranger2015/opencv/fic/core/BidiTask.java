@@ -16,11 +16,8 @@ class BidiTask<M extends Image> extends CompositeTask <M> {
      */
     public
     BidiTask ( List <Task <M>> tasks ) {
-        this.task = tasks.get(0);
-        this.inverseTask = tasks.get(1);
-        addTask(task);
-        addTask(inverseTask);
-    }
+        this(null, tasks);
+           }
 
     /**
      * @param tasks
@@ -28,6 +25,20 @@ class BidiTask<M extends Image> extends CompositeTask <M> {
     @SafeVarargs
     BidiTask (Task <M>... tasks ) {
         this(Arrays.asList(tasks));
+    }
+
+    /**
+     * @param image
+     * @param tasks
+     */
+    public
+    BidiTask ( M image, List <Task <M>> tasks ) {
+        super(image, tasks);
+        this.task = tasks.get(0);
+        this.inverseTask = tasks.get(1);
+        addTask(task);
+        addTask(inverseTask);
+
     }
 
     /**

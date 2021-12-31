@@ -7,10 +7,9 @@ import java.util.List;
 /**
  * @param <N>
  * @param <M>
- * @param <C>
  */
 public
-interface IImageProcessor<N extends TreeNode <N>, M extends Image, C extends CompressedImage>
+interface IImageProcessor<N extends TreeNodeBase <N, A>, M extends Image, A extends Address<A,?>>
         extends IProcessor <M> {
     /**
      *
@@ -30,7 +29,7 @@ interface IImageProcessor<N extends TreeNode <N>, M extends Image, C extends Com
     /**
      * @return
      */
-    Codec <N, M, C> getCodec ();
+    Codec <N, M, A> getCodec ();
 
     /**
      * @return

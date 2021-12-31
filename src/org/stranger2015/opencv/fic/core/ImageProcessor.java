@@ -5,9 +5,9 @@ import org.stranger2015.opencv.fic.core.LoadSaveImageTask.BidiImageColorModelTas
 import org.stranger2015.opencv.fic.core.LoadSaveImageTask.NormalizeImageShapeTask;
 import org.stranger2015.opencv.fic.core.codec.Codec;
 import org.stranger2015.opencv.fic.core.codec.EncodeAction;
+import org.stranger2015.opencv.fic.core.codec.IImageProcessorListener;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.stranger2015.opencv.fic.core.EPartitionScheme.QUAD_TREE;
@@ -16,57 +16,64 @@ import static org.stranger2015.opencv.fic.core.EPartitionScheme.QUAD_TREE;
  *
  */
 public
-class ImageProcessor<N extends TreeNode <N>, M extends Image, C extends CompressedImage>
+class ImageProcessor<N extends TreeNodeBase <N, A>, M extends Image, A extends Address <A, ?>>
         extends CompositeTask <M>
-        implements IImageProcessor <N, M, C> {
+        implements IImageProcessor <N, M, A> {
 
-    //    private final M image;
-    private final String imageFilename;
-    private final EPartitionScheme scheme;
-    private final Codec <N,M, C> codec;
+    private String imageFilename;
+    private EPartitionScheme scheme;
+    private Codec <N, M, A> codec;
+    private M image;
+    private EncodeAction action;
+    List <IImageProcessorListener> listeners = new ArrayList <>();
 
     /**
      * @param scheme
      * @param imageFilename
      */
+    @SuppressWarnings("unchecked")
     public
     ImageProcessor ( String imageFilename, EPartitionScheme scheme, List <Task <M>> tasks ) {
         super(tasks);
-
         this.scheme = scheme;
         this.imageFilename = imageFilename;
 
         final List <Task <M>> preprocTasks = new ArrayList <>();
         final List <Task <M>> postprocTasks = new ArrayList <>();
-//        BidiTask <N, M> task1 = new LoadSaveImageTask(imageFilename, tasks);
-        BidiTask < M> task1 = new NormalizeImageShapeTask <>(tasks);
-        BidiTask < M> task2 = new BidiImageColorModelTask <>(tasks);
+
+        BidiTask <M> task1 = new NormalizeImageShapeTask <>(tasks);
+        BidiTask <M> task2 = new BidiImageColorModelTask <>(tasks);
+
         preprocTasks.add(task1.getTask());
         preprocTasks.add(task2.getTask());
 
         postprocTasks.add(task1.getInverseTask());
         postprocTasks.add(task2.getInverseTask());
 
-        codec = (Codec <N,M, C>) create(scheme, new EncodeAction(imageFilename));
+//        EncodeAction action;
+        codec = new Codec <>(scheme, new EncodeAction(imageFilename));
     }
 
-    protected abstract
-    IImageProcessor <N, M, C> create ( EPartitionScheme scheme, EncodeAction action ) {
-        return null;
+    @SafeVarargs
+    public
+    ImageProcessor (M image, EPartitionScheme scheme, Task<M>... tasks) {
+        super(image);
     }
 
-//    public
-//    ImageProcessor ( String filename ) {
-//        super(filename);
-//    }
-
+    /**
+     * @param filename
+     * @param <N>
+     * @param <M>
+     * @param <A>
+     * @return
+     */
     public static
-    <N extends TreeNode <N>, M extends Image, C extends CompressedImage>
-    IImageProcessor <N, M, C> create ( String filename ) {
-        LoadSaveImageTask <M> loadSaveImageTask = new LoadSaveImageTask <>(filename, Collections.emptyList());
+    <N extends TreeNodeBase <N, A>, M extends Image, A extends Address <A, ?>>
+    IImageProcessor <N, M, A> create ( String filename, EPartitionScheme scheme, List <Task <M>> tasks ) {
+        LoadSaveImageTask <M> loadSaveImageTask = new LoadSaveImageTask <>(filename, List.of());
         loadSaveImageTask.execute();
 
-        return new ImageProcessor <N, M, C>(filename, Collections.emptyList());
+        return new ImageProcessor <>(filename, scheme, tasks);
     }
 
     /**
@@ -74,10 +81,11 @@ class ImageProcessor<N extends TreeNode <N>, M extends Image, C extends Compress
      */
     public
     M process ( M inImage ) {
-        M outImage = preprocessor.process(inImage);
-        outImage = execute();
-
-        return postprocessor.process(outImage);
+//        M outImage = preprocessor.process(inImage);
+//        outImage = execute();
+//
+//        return postprocessor.process(outImage);
+        return inImage;//todo
     }
 
     /**
@@ -86,6 +94,9 @@ class ImageProcessor<N extends TreeNode <N>, M extends Image, C extends Compress
     @Override
     public
     M process () {
+        for (IImageProcessorListener listener : listeners) {
+            listener.onProcess();
+        }
         return null;
     }
 
@@ -122,7 +133,7 @@ class ImageProcessor<N extends TreeNode <N>, M extends Image, C extends Compress
 
         System.out.println(imageOut.dump());
 
-        ImagePartitionProcessor <N, M, C> processor =
+        ImagePartitionProcessor <N, M, A> processor =
                 new ImagePartitionProcessor <>(
                         imageOut,
                         QUAD_TREE);
@@ -139,10 +150,10 @@ class ImageProcessor<N extends TreeNode <N>, M extends Image, C extends Compress
      * @return
      */
     public static
-    int getNearestGreaterPow2 ( int n ) {
+    int getNearestGreaterPowBase ( int n, int base ) {
         int ngp2 = 1;
-        for (; ngp2 < n; ngp2 *= 2) {
-
+        while (ngp2 < n) {
+            ngp2 *= base;
         }
 
         return ngp2;
@@ -157,7 +168,7 @@ class ImageProcessor<N extends TreeNode <N>, M extends Image, C extends Compress
     }
 
     public
-    Codec <N,M, C> getCodec () {
+    Codec <N, M, A> getCodec () {
         return codec;
     }
 
@@ -167,7 +178,7 @@ class ImageProcessor<N extends TreeNode <N>, M extends Image, C extends Compress
     @Override
     public
     M preprocess () {
-        return null;
+        return null;//todo
     }
 
     /**
@@ -176,39 +187,21 @@ class ImageProcessor<N extends TreeNode <N>, M extends Image, C extends Compress
     @Override
     public
     M postprocess () {
-        return null;
+        return null;//todo
     }
 
     /**
-     * @param image
-     * @return
-     */
-    @Override
-    public
-    M preprocess ( M image ) {
-        return null;
-    }
-
-    /**
-     * @param image
-     * @return
-     */
-    @Override
-    public
-    M postprocess ( M image ) {
-        return null;
-    }
-
-    /**
+     *
      */
     @Override
     public
     M execute () {
+        M outputImage = image;
         for (Task <M> task : tasks) {
-            image = task.execute();
+            outputImage = task.execute();
         }
 
-        return image;
+        return outputImage;
     }
 
     /**
@@ -229,5 +222,10 @@ class ImageProcessor<N extends TreeNode <N>, M extends Image, C extends Compress
     public
     M apply ( String s ) {
         return null;
+    }
+
+    public
+    EncodeAction getAction () {
+        return action;
     }
 }

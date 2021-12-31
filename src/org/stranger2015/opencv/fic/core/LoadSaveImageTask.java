@@ -6,7 +6,7 @@ import org.stranger2015.opencv.fic.core.codec.IConverter;
 
 import java.util.List;
 
-import static org.stranger2015.opencv.fic.core.ImageProcessor.getNearestGreaterPow2;
+import static org.stranger2015.opencv.fic.core.ImageProcessor.getNearestGreaterPowBase;
 
 /**
  * @param <M>
@@ -63,7 +63,6 @@ class LoadSaveImageTask<M extends Image> extends BidiTask <M> {
     @Override
     public
     M loadImage ( String fn ) {
-
         return null;//todo//todo
     }
 
@@ -116,14 +115,22 @@ class LoadSaveImageTask<M extends Image> extends BidiTask <M> {
          * @param filename function argument
          * @return the function result
          */
-        @SuppressWarnings("*")
+        @SuppressWarnings("unchecked")
         @Override
         public
         M apply ( String filename ) {
             M image = loadImage(filename);
-            int sideSize = getNearestGreaterPow2(Math.max(image.getHeight(), image.getWidth()));
+            int sideSize = getNearestGreaterPowBase(Math.max(image.getHeight(), image.getWidth()), 1/*base todo*/);
             return (M) new Image(image, new Size(sideSize, sideSize));
         }
+
+//        /**
+//         * @return
+//         */
+//        public
+//        int getBase () {
+//            return base;
+//        }
     }
 
     /**
@@ -265,7 +272,7 @@ class LoadSaveImageTask<M extends Image> extends BidiTask <M> {
                 Mat m = new Mat();
                 output.copyTo(m);
 
-                return (M) new Image(m);
+                return (M) new Image(m, addresses);
             }
 
             /**

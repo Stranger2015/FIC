@@ -1,10 +1,9 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.NotNull;
-import org.stranger2015.opencv.fic.DomainBlock;
 import org.stranger2015.opencv.fic.DomainPool;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -12,19 +11,19 @@ import static org.stranger2015.opencv.fic.DomainBlock.H;
 import static org.stranger2015.opencv.fic.DomainBlock.W;
 
 public
-class TreeNodeAction<N extends TreeNode<N,?>> implements Consumer <N> {
-//    private final DomainPool domainPool;
+class TreeNodeAction<N extends TreeNode <N,?,?>> implements Consumer <N> {
+    private final DomainPool domainPool;
     private final List <N> leaves;
+
+    public
+    TreeNodeAction ( DomainPool domainPool, List <N> leaves ) {
+        this.domainPool = domainPool;
+        this.leaves = leaves;
+    }
 
     public
     List <N> getLeaves () {
         return leaves;
-    }
-
-    public
-    TreeNodeAction ( /*DomainPool domainPool */) {
-//        this.domainPool = domainPool;
-        leaves = new ArrayList <>();
     }
 
     /**
@@ -41,7 +40,7 @@ class TreeNodeAction<N extends TreeNode<N,?>> implements Consumer <N> {
                     W == n.boundingBox.width &&
                     H == n.boundingBox.height
             ) {
-//                n = (N) new DomainBlock(n, ((Leaf) n).image, n.boundingBox);
+//                n = (N) new DomainBlock(n, ((LeafNode) n).image, n.boundingBox);
 //                domainPool.add((DomainBlock) n);//fixme is it meaningful
             }
             leaves.add(n);
@@ -65,5 +64,13 @@ class TreeNodeAction<N extends TreeNode<N,?>> implements Consumer <N> {
     public
     Consumer <N> andThen ( @NotNull Consumer <? super N> after ) {
         return Consumer.super.andThen(after);//todo default leaf action
+    }
+
+    /**
+     * @return
+     */
+    public
+    DomainPool getDomainPool () {
+        return domainPool;
     }
 }

@@ -46,6 +46,12 @@ class CompositeTask<M extends Image> extends Task <M> {
         this(null, tasks);
     }
 
+//    public
+//    CompositeTask ( M image, EPartitionScheme scheme, List <Task <M>> tasks, String s ) {
+//
+//        super(image);
+//    }
+
     /**
      * @return
      */
@@ -57,6 +63,7 @@ class CompositeTask<M extends Image> extends Task <M> {
     /**
      * @param task
      */
+    public
     void addTask ( Task <M> task ) {
         tasks.add(task);
     }

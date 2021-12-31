@@ -1,5 +1,7 @@
 package org.stranger2015.opencv.fic.core.codec;
 
+import org.stranger2015.opencv.fic.core.ValueError;
+
 /**
  * @param <I>
  * @param <O>
@@ -10,7 +12,7 @@ interface IConverter<I, O> {
      * @param input
      * @return
      */
-    O map ( I input );
+    O map ( I input ) throws ValueError;
 
     /**
      * @param output

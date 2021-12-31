@@ -11,6 +11,13 @@ class ImageBlock<M extends Image> extends Image implements IImageBlock<M> {
 
     public static final int[] EMPTY_ARRAY = new int[0];
 
+    public int x;
+    public int y;
+    public int width;
+    public int height;
+    public double beta;
+    public double meanPixelValue;
+    protected Image image;
     /**
      * @param rows
      * @param cols
@@ -20,6 +27,17 @@ class ImageBlock<M extends Image> extends Image implements IImageBlock<M> {
     public
     ImageBlock ( int rows, int cols, int blockWidth, int blockHeight ) {
         this(rows, cols, blockWidth, blockHeight, -1);//fixme
+    }
+
+    public
+    ImageBlock ( Image subImage ) {
+        super();
+        this.image = subImage;
+    }
+
+    public
+    ImageBlock () {
+
     }
 
     /**
@@ -54,14 +72,6 @@ class ImageBlock<M extends Image> extends Image implements IImageBlock<M> {
         return beta;
     }
 
-    public int x;
-    public int y;
-    public final int width;
-    public final int height;
-    //    public short[, ] pixelValues;
-    public double beta;
-    public double meanPixelValue;
-
     /**
      * @param width
      * @param height
@@ -77,7 +87,7 @@ class ImageBlock<M extends Image> extends Image implements IImageBlock<M> {
      */
     public
     ImageBlock ( int x, int y, int width, int height, int type ) {
-        super(x, y, type);
+        super(x, y, type, pixelData);
 
         this.x = x;
         this.y = y;

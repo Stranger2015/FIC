@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import static java.lang.String.*;
 
 public
-enum SideDirection implements ISideDirection {
+enum ESideDirection implements ISideDirection {
     NORTH("N", 0),
     EAST("E", 1),
     SOUTH("S", 2),
@@ -14,7 +14,7 @@ enum SideDirection implements ISideDirection {
     private final String shortName;
     private final int ord;
 
-    SideDirection ( String shortName, int ord ) {
+    ESideDirection ( String shortName, int ord ) {
         this.shortName = shortName;
         this.ord = ord;
     }
@@ -22,7 +22,7 @@ enum SideDirection implements ISideDirection {
     @NotNull
     @Override
     public
-    Direction reflect ( Direction quadrant ) {
+    EDirection reflect ( EDirection quadrant ) {
         switch (this) {
             case NORTH:
             case SOUTH:
@@ -32,7 +32,7 @@ enum SideDirection implements ISideDirection {
                     case SOUTH_WEST:
                         break;
                     case SOUTH_EAST:
-                        return Direction.NORTH_EAST;
+                        return EDirection.NORTH_EAST;
                 }
                 break;
             case EAST:
@@ -43,7 +43,7 @@ enum SideDirection implements ISideDirection {
                     case NORTH_WEST:
                         break;
                     case SOUTH_EAST:
-                        return Direction.SOUTH_WEST;
+                        return EDirection.SOUTH_WEST;
                 }
                 break;
             default:
@@ -58,7 +58,7 @@ enum SideDirection implements ISideDirection {
      */
     @Override
     public
-    Direction quadrant ( Direction side ) {
+    EDirection quadrant ( EDirection side ) {
         switch (this) {
             case NORTH:
                 switch (side) {
@@ -66,21 +66,21 @@ enum SideDirection implements ISideDirection {
                     case SOUTH:
                         throw new IllegalArgumentException(format("illegal input - %s, %s", this, side));
                     case EAST:
-                        return Direction.NORTH_EAST;
+                        return EDirection.NORTH_EAST;
                     case WEST:
-                        return Direction.NORTH_WEST;
+                        return EDirection.NORTH_WEST;
                     default:
                         throw new IllegalStateException(format("Unexpected value: %s", side));
                 }
             case EAST:
                 switch (side) {
                     case NORTH:
-                        return Direction.NORTH_EAST;
+                        return EDirection.NORTH_EAST;
                     case EAST:
                     case WEST:
                         throw new IllegalArgumentException(format("illegal input - %s, %s", this, side));
                     case SOUTH:
-                        return Direction.SOUTH_EAST;
+                        return EDirection.SOUTH_EAST;
                 }
                 throw new IllegalArgumentException(format("illegal input - %s, %s", this, side));
             case SOUTH:
@@ -89,21 +89,21 @@ enum SideDirection implements ISideDirection {
                     case SOUTH:
                         throw new IllegalArgumentException(format("illegal input - %s, %s", this, side));
                     case EAST:
-                        return Direction.SOUTH_EAST;
+                        return EDirection.SOUTH_EAST;
                     case WEST:
-                        return Direction.SOUTH_WEST;
+                        return EDirection.SOUTH_WEST;
                     default:
                         throw new IllegalStateException(format("Unexpected value: %s", side));
                 }
             case WEST:
                 switch (side) {
                     case NORTH:
-                        return Direction.NORTH_WEST;
+                        return EDirection.NORTH_WEST;
                     case EAST:
                     case WEST:
                         throw new IllegalArgumentException(format("illegal input - %s, %s", this, side));
                     case SOUTH:
-                        return Direction.SOUTH_WEST;
+                        return EDirection.SOUTH_WEST;
                     default:
                         throw new IllegalStateException(format("Unexpected value: %s", side));
                 }
@@ -121,7 +121,7 @@ enum SideDirection implements ISideDirection {
      */
     @Override
     public
-    boolean adjacent ( Direction cornerDirection ) {
+    boolean adjacent ( EDirection cornerDirection ) {
         return cornerDirection.toSideDirection().contains(this);
     }
 
@@ -160,16 +160,16 @@ enum SideDirection implements ISideDirection {
      */
     @Override
     public
-    Direction cSide () {
+    EDirection cSide () {
         switch (this) {
             case NORTH:
-                return Direction.EAST;
+                return EDirection.EAST;
             case EAST:
-                return Direction.SOUTH;
+                return EDirection.SOUTH;
             case SOUTH:
-                return Direction.WEST;
+                return EDirection.WEST;
             case WEST:
-                return Direction.NORTH;
+                return EDirection.NORTH;
             default:
                 throw new IllegalStateException(format("Unexpected value: %s", this));
         }
@@ -180,16 +180,16 @@ enum SideDirection implements ISideDirection {
      */
     @Override
     public
-    Direction ccSide () {
+    EDirection ccSide () {
         switch (this) {
             case NORTH:
-                return Direction.WEST;
+                return EDirection.WEST;
             case WEST:
-                return Direction.SOUTH;
+                return EDirection.SOUTH;
             case SOUTH:
-                return Direction.EAST;
+                return EDirection.EAST;
             case EAST:
-                return Direction.NORTH;
+                return EDirection.NORTH;
             default:
                 throw new IllegalStateException(format("Unexpected value: %s", this));
         }
@@ -200,16 +200,16 @@ enum SideDirection implements ISideDirection {
      */
     @Override
     public
-    Direction opSide () {
+    EDirection opSide () {
         switch (this) {
             case NORTH:
-                return Direction.EAST;
+                return EDirection.EAST;
             case EAST:
-                return Direction.SOUTH;
+                return EDirection.SOUTH;
             case SOUTH:
-                return Direction.WEST;
+                return EDirection.WEST;
             case WEST:
-                return Direction.NORTH;
+                return EDirection.NORTH;
             default:
                 throw new IllegalStateException(format("Unexpected value: %s", this));
         }

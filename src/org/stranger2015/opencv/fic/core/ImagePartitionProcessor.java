@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 import org.stranger2015.opencv.fic.core.codec.Codec;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -50,13 +49,13 @@ import java.util.List;
  * }// End function Quadtree()
  */
 public
-class ImagePartitionProcessor<N extends TreeNode <N>, M extends Image, C extends CompressedImage>
-        extends ImageProcessor <N, M, C> {
+class ImagePartitionProcessor<N extends TreeNodeBase <N, A>, M extends Image, A extends Address <A, ?>>
+        extends ImageProcessor <N, M, A> {
 
     protected final List <M> rangeBlocks = new ArrayList <>();
     protected final List <M> domainBlocks = new ArrayList <>();
 
-    protected final Tree <N, M> tree;
+    protected final Tree <N, M, A> tree;
 
     protected int row;
     protected int col;
@@ -67,8 +66,8 @@ class ImagePartitionProcessor<N extends TreeNode <N>, M extends Image, C extends
      * @param tree
      */
     public
-    ImagePartitionProcessor ( M image, EPartitionScheme scheme, Tree <N, M> tree ) {
-        super(image, scheme, Collections.emptyList(), "???");
+    ImagePartitionProcessor ( M image, EPartitionScheme scheme, Tree <N, M, A> tree ) {
+        super(image, scheme, List. <Task<M>>of(), "???");
         this.tree = tree;
     }
 
@@ -128,8 +127,8 @@ class ImagePartitionProcessor<N extends TreeNode <N>, M extends Image, C extends
 //                        image,
 //                        action);
 //
-//        final TreeNode <N> root = quadTree.getRoot();
-//        TreeNode <N> node = root.getChildren().get(0);
+//        final TreeNodeBase <N> root = quadTree.getRoot();
+//        TreeNodeBase <N> node = root.getChildren().get(0);
 //
 //        for (int i = 0, width = image.width(); i < width / w; i++, width /= 2) {
 //            for (int j = 0, height = image.height(); j < height / h; j++, height /= 2) {
@@ -173,14 +172,14 @@ class ImagePartitionProcessor<N extends TreeNode <N>, M extends Image, C extends
 //    private
 //    void decompose ( Tree <N, M> tree ) {
 //        row = col = 0;
-//        var parent = (TreeNode) tree;
+//        var parent = (TreeNodeBase) tree;
 //
 //        for (int wh = 1; wh < image.width(); wh *= 2) {
 //            int i = 0;
 //            tree.getRoot().getChildren().clear();
 //            for (; i < 4; i++) {
 //                if (currTreeNode.isLeaf()) {
-//                    currTreeNode.getChildren().add(new Leaf(parent, image, new Rect(col, row, wh, wh)));//fixme!!
+//                    currTreeNode.getChildren().add(new LeafNode(parent, image, new Rect(col, row, wh, wh)));//fixme!!
 //                }
 //                else {
 //                    currTreeNode.getChildren().add(new QuadTreeNode(parent, new Rect(0,0,0,0), nodes));
@@ -189,7 +188,7 @@ class ImagePartitionProcessor<N extends TreeNode <N>, M extends Image, C extends
 //
 //            currTreeNode.set(currQuads);
 //            if (Objects.equals(tree, currTreeNode)) {//fixme
-//                TreeNode<N> mergedLeaf = currTreeNode.merge();
+//                TreeNodeBase<N> mergedLeaf = currTreeNode.merge();
 //                currTreeNode.getChildren().clear();
 //                currTreeNode.getChildren().add(mergedLeaf);
 //                i=1;
@@ -199,12 +198,12 @@ class ImagePartitionProcessor<N extends TreeNode <N>, M extends Image, C extends
 //    }
 //
     private
-    boolean isLeaf ( TreeNode <N> treeNode ) {
+    boolean isLeaf ( TreeNodeBase <N, A> treeNode ) {
         return treeNode.getChildren().size() == 0;
     }
 
     private
-    TreeNode <N> merge ( TreeNode <N> treeNode ) {
+    TreeNodeBase <N, A> merge ( TreeNodeBase <N, A> treeNode ) {
         if (treeNode.isLeaf()) {
             return treeNode;
         }
@@ -458,25 +457,9 @@ class ImagePartitionProcessor<N extends TreeNode <N>, M extends Image, C extends
      */
     @Override
     public
-    Codec <M, C> getCodec () {
-        return null;
-    }
+    Codec <N, M, A>
 
-    /**
-     * @return
-     */
-    @Override
-    public
-    IImageProcessor <N, M, C> getPreprocessor () {
-        return null;
-    }
-
-    /**
-     * @return
-     */
-    @Override
-    public
-    IImageProcessor <N, M, C> getPostprocessor () {
+    getCodec () {
         return null;
     }
 }

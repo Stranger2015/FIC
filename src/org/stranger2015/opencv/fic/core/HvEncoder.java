@@ -10,11 +10,11 @@ import java.util.List;
 /**
  * @param <N>
  * @param <M>
- * @param <C>
+ * @param <A>
  */
 public
-class HvEncoder<N extends HvTreeNode <N,?>, M extends Image, C extends CompressedImage, A extends Address<A>>
-        extends Encoder <N, M, C, A> {
+class HvEncoder<N extends HvTreeNode <N, A>, M extends Image, A extends Address <A, ?>>
+        extends Encoder <N, M, A> {
 
     /**
      * @param inputImage
@@ -33,7 +33,7 @@ class HvEncoder<N extends HvTreeNode <N,?>, M extends Image, C extends Compresse
      */
     @Override
     public
-    M randomTransform ( M image, ImageTransform <M, C> transform ) {
+    M randomTransform ( M image, ImageTransform <M> transform ) {
         return null;//todo
     }
 
@@ -44,7 +44,7 @@ class HvEncoder<N extends HvTreeNode <N,?>, M extends Image, C extends Compresse
      */
     @Override
     public
-    M applyTransform ( M image, ImageTransform <M, C> transform ) {
+    M applyTransform ( M image, ImageTransform <M> transform ) {
         return null;//todo
     }
 
@@ -55,7 +55,7 @@ class HvEncoder<N extends HvTreeNode <N,?>, M extends Image, C extends Compresse
      */
     @Override
     public
-    M applyAffineTransform ( M image, AffineTransform <M, C> transform ) {
+    M applyAffineTransform ( M image, AffineTransform <M> transform ) {
         return null;//todo
     }
 
@@ -68,7 +68,7 @@ class HvEncoder<N extends HvTreeNode <N,?>, M extends Image, C extends Compresse
      */
     @Override
     public
-    List <ImageTransform <M, C>> compress ( M image, int sourceSize, int destinationSize, int step ) {
+    List <ImageTransform <M>> compress ( M image, int sourceSize, int destinationSize, int step ) {
         return null;//todo
     }
 
@@ -81,7 +81,34 @@ class HvEncoder<N extends HvTreeNode <N,?>, M extends Image, C extends Compresse
      */
     @Override
     public
-    List <ImageBlock<M>> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
+    List <ImageBlock <M>> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
         return null;//todo
+    }
+
+    /**
+     *
+     */
+    @Override
+    public
+    void onPreprocess () {
+
+    }
+
+    /**
+     *
+     */
+    @Override
+    public
+    void onProcess () {
+
+    }
+
+    /**
+     *
+     */
+    @Override
+    public
+    void onPostprocess () {
+
     }
 }

@@ -1,6 +1,7 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.NotNull;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -10,9 +11,10 @@ import java.util.List;
  *
  */
 public
-class NodeList<N extends TreeNode <N>> implements Iterable<N>{
+class NodeList<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+        implements Iterable <N> {
 
-    private final List <TreeNode <N>> list = new ArrayList <>();
+    private final List <TreeNode <N, A, M>> list = new ArrayList <>();
 
     /**
      *
@@ -25,7 +27,7 @@ class NodeList<N extends TreeNode <N>> implements Iterable<N>{
      * @param node
      */
     public
-    NodeList ( TreeNode <N> node ) {
+    NodeList ( TreeNode <N, A, M> node ) {
         list.add(node);
     }
 
@@ -49,7 +51,7 @@ class NodeList<N extends TreeNode <N>> implements Iterable<N>{
      * @param node
      */
     public
-    void add ( TreeNode <N> node ) {
+    void add ( TreeNode <N, A, M> node ) {
         addi(node.index, node);
     }
 
@@ -57,7 +59,7 @@ class NodeList<N extends TreeNode <N>> implements Iterable<N>{
      * @param node
      */
     public
-    void set ( TreeNode <N> node ) {
+    void set ( TreeNode <N, A, M> node ) {
         seti(node.index, node);
     }
 
@@ -66,7 +68,7 @@ class NodeList<N extends TreeNode <N>> implements Iterable<N>{
      * @param node
      */
     private
-    void seti ( int index, TreeNode <N> node ) {
+    void seti ( int index, TreeNode <N, A, M> node ) {
         list.set(index, node);
     }
 
@@ -75,7 +77,7 @@ class NodeList<N extends TreeNode <N>> implements Iterable<N>{
      * @param node
      */
     public
-    void add ( Direction direction, TreeNode <N> node ) {
+    void add ( EDirection direction, TreeNode <N, A, M> node ) {
         int index = direction.getOrd();
         addi(index, node);
     }
@@ -85,16 +87,17 @@ class NodeList<N extends TreeNode <N>> implements Iterable<N>{
      * @param node
      */
     public
-    void set ( Direction direction, TreeNode <N> node ) {
+    void set ( EDirection direction, TreeNode <N, A, M> node ) {
         int index = direction.getOrd();
         seti(index, node);
     }
+
     /**
      * @param index
      * @param node
      */
     public
-    void add ( int index, TreeNode <N> node ) {
+    void add ( int index, TreeNode <N, A, M> node ) {
         addi(index, node);
     }
 
@@ -103,7 +106,7 @@ class NodeList<N extends TreeNode <N>> implements Iterable<N>{
      * @param node
      */
     public
-    void set ( int index, TreeNode <N> node ) {
+    void set ( int index, TreeNode <N, A, M> node ) {
         list.set(index, node);
     }
 
@@ -112,7 +115,7 @@ class NodeList<N extends TreeNode <N>> implements Iterable<N>{
      * @param node
      */
     private
-    void addi ( int index, TreeNode <N> node ) {
+    void addi ( int index, TreeNode <N, A, M> node ) {
         if (index < list.size()) {
             list.set(index, node);
         }
@@ -126,7 +129,7 @@ class NodeList<N extends TreeNode <N>> implements Iterable<N>{
      * @return
      */
     public
-    TreeNode <N> get ( Direction dir ) {
+    TreeNode <N, A, M> get ( EDirection dir ) {
         return list.get(dir.getOrd());
     }
 
@@ -134,7 +137,7 @@ class NodeList<N extends TreeNode <N>> implements Iterable<N>{
      * @return
      */
     public
-    List <TreeNode <N>> getList () {
+    List <TreeNode <N, A, M>> getList () {
         return list;
     }
 
@@ -142,7 +145,7 @@ class NodeList<N extends TreeNode <N>> implements Iterable<N>{
      * @param node
      * @return
      */
-    NodeList <N> singleton ( TreeNode <N> node ) {
+    NodeList <N, A, M> singleton ( TreeNode <N, A, M> node ) {
         return new NodeList <>(node);
     }
 
@@ -151,6 +154,7 @@ class NodeList<N extends TreeNode <N>> implements Iterable<N>{
      *
      * @return an Iterator.
      */
+    @SuppressWarnings("unchecked")
     @NotNull
     @Override
     public
