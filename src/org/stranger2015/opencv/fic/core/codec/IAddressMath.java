@@ -1,15 +1,14 @@
 package org.stranger2015.opencv.fic.core.codec;
 
+import org.jetbrains.annotations.Contract;
+import org.opencv.core.Point;
 import org.stranger2015.opencv.fic.core.ValueError;
-
-import java.util.EnumSet;
-import java.util.List;
 
 /**
  * @param <A>
  */
 public
-interface IAddressMath<A extends IAddress <A/*, E*/>/*, E extends Enum <E>*/> {
+interface IAddressMath<A extends IAddress <A>> {
     /**
      * @param address1
      * @param address2
@@ -34,34 +33,12 @@ interface IAddressMath<A extends IAddress <A/*, E*/>/*, E extends Enum <E>*/> {
     /**
      * @return
      */
-//    List <A> getLayers ();
+    Point[] getAddTable ();
 
     /**
      * @return
      */
-    int[][] getAddTable ();
-
-    /**
-     * @return
-     */
-    int[][] getMultTable ();
-//
-//    /**
-//     * @return
-////     */
-////    EnumSet <E> getDigits ();
-//
-//    /**
-//     * @param number
-//     * @return
-//     */
-//    EnumSet <E> toDigits ( int number, int radix );
-//
-//    /**
-//     * @param number
-//     * @return
-//     */
-//    IAddress <A, E> carryRule ( int number ) throws ValueError;
+    Point[] getMultTable ();
 
     /**
      * @return
@@ -69,47 +46,11 @@ interface IAddressMath<A extends IAddress <A/*, E*/>/*, E extends Enum <E>*/> {
     int getIndex ();
 
     /**
+     * @param base
+     * @param pow
      * @return
      */
-    int
-    intValue ();
-
-    /**
-     * @return
-     */
-    default
-    int[] getCartesianCoords () {
-        int[] v = new int[]{0, 0};
-        switch (intValue()) {
-            case 0:
-                break;
-            case 1:
-                v[1] = -1;
-                break;
-            case 2:
-                v[0] = -1;
-                v[1] = -1;
-                break;
-            case 3:
-                v[0] = -1;
-                break;
-            case 4:
-                v[1] = 1;
-                break;
-            case 5:
-                v[0] = 1;
-                v[1] = 1;
-                break;
-            case 6:
-                v[0] = 1;
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + intValue());
-        }
-
-        return v;
-    }
-
+    @Contract(pure = true)
     static
     int pow ( int base, int pow ) {
         int result = 1;
@@ -122,10 +63,16 @@ interface IAddressMath<A extends IAddress <A/*, E*/>/*, E extends Enum <E>*/> {
         return result;
     }
 
+    /**
+     * @param base
+     * @param num
+     * @return
+     */
+    @Contract(pure = true)
     static
     int log ( int base, int num ) {
         int result = 0;
-        for (int i = 0; ; i++) {
+        for (int i = 0;; i++) {
             if (pow(base, i) == num) {
                 result = i;
                 break;
@@ -134,4 +81,43 @@ interface IAddressMath<A extends IAddress <A/*, E*/>/*, E extends Enum <E>*/> {
 
         return result;
     }
-}
+
+    /**
+     * @param address
+     * @param radix
+     * @return
+     */
+    Point getCartesianCoords ( int address, int radix)    {
+        Point v = new Point(0, 0);
+        switch (address) {
+            case 0:
+                break;
+            case 1:
+                v = new Point(0,-1);
+                break;
+            case 2:
+                v = new Point(-1,-1);
+                break;
+            case 3:
+                v = new Point(-1,0);
+                break;
+            case 4:
+                v = new Point(1, 0);
+                break;
+            case 5:
+                v= new Point(1,1);
+                break;
+            case 6:
+
+                v[0] = 1;
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + address);
+        }
+
+        return v;
+    }
+
+    }
+
+

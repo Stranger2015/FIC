@@ -1,7 +1,14 @@
 package org.stranger2015.opencv.fic.core;
 
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+
+/**
+ * @param <N>
+ * @param <A>
+ * @param <M>
+ */
 public
-class TreeFactory<N extends TreeNodeBase <N,A>,M extends Image, A extends Address<A,?>> {
+class TreeFactory<N extends TreeNode <N,A,M>, A extends Address<A>, M extends Image> {
 
     private
     TreeFactory () {

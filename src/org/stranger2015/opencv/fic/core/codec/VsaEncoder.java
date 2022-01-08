@@ -1,7 +1,9 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.opencv.core.Size;
-import org.stranger2015.opencv.fic.core.*;
+import org.stranger2015.opencv.fic.core.Image;
+import org.stranger2015.opencv.fic.core.ImageBlock;
+import org.stranger2015.opencv.fic.core.SaAddress;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
@@ -13,7 +15,7 @@ import java.util.List;
  */
 public
 class VsaEncoder<N extends TreeNode <N, A, M>, A extends SaAddress <A>, M extends Image>
-        extends Encoder <N, A,M> {
+        extends Encoder <N, A, M> {
 
     /**
      * @param inputImage
@@ -61,7 +63,7 @@ class VsaEncoder<N extends TreeNode <N, A, M>, A extends SaAddress <A>, M extend
      */
     @Override
     public
-    List <ImageBlock <M>> generateAllTransformedBlocks ( M image,
+    List <ImageBlock> generateAllTransformedBlocks ( M image,
                                                          int sourceSize,
                                                          int destinationSize,
                                                          int step ) {

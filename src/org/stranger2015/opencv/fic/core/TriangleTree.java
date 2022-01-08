@@ -1,14 +1,14 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.opencv.core.Rect;
-import org.stranger2015.opencv.fic.core.Triangle.TriangleTreeNode;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 
 /**
  * root --> rectangle diagonally divided into 2 triangles --> triangle tree nodes
  */
 public
-class TriangleTree<N extends TriangleTreeNode <N, A>, M extends Image, A extends Address <A,?>>
-        extends BinTree <N, M, A> {
+class TriangleTree<N extends TreeNode <N, A,M>,A extends Address <A>,  M extends Image>
+        extends BinTree <N, A,M> {
     /**
      * Constructs a new object.
      *
@@ -17,7 +17,7 @@ class TriangleTree<N extends TriangleTreeNode <N, A>, M extends Image, A extends
      * @param action
      */
     public
-    TriangleTree ( TriangleTreeNode <N, A> parent, M image, TreeNodeAction <N> action ) {
+    TriangleTree ( TreeNode <N, A,M> parent, M image, TreeNodeAction <N> action ) {
         super(parent, image, action);
     }
 
@@ -29,7 +29,7 @@ class TriangleTree<N extends TriangleTreeNode <N, A>, M extends Image, A extends
      */
 //    @Override
     public
-    TreeNodeBase <N, A> nodeInstance ( TriangleTreeNode <N, A> parent, EDirection quadrant, Rect rect ) {
+    TreeNode <N, A,M> nodeInstance ( TreeNode <N, A,M> parent, EDirection quadrant, Rect rect ) throws ValueError {
         return new TriangleTreeNode <>(parent, rect);
     }
 

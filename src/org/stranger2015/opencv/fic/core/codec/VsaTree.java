@@ -15,7 +15,7 @@ class VsaTree<N extends TreeNode <N, A, M>, A extends SaAddress <A>, M extends I
 
     public
     VsaTree ( TreeNode <N, A, M> root, M image, TreeNodeAction <N> action ) {
-        super(root,image,action);
+        super(root, image, action);
     }
 
     /**
@@ -27,7 +27,7 @@ class VsaTree<N extends TreeNode <N, A, M>, A extends SaAddress <A>, M extends I
     @Override
     public
     TreeNode <N, A, M> nodeInstance ( TreeNode <N, A, M> parent, EDirection quadrant, Rect rect ) {
-        return new VsaTreeNode<>();
+        return new VsaTreeNode <>();
     }
 
     /**

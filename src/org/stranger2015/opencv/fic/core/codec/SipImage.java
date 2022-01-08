@@ -1,29 +1,34 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.opencv.core.Mat;
-import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.Image;
-import org.stranger2015.opencv.fic.utils.ImageUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
  */
 public
 class SipImage extends Image {
+
     private int[] addresses;
 
     /**
      * @param rows
-     * @param cols
      * @param type
      */
     public
-    SipImage ( int rows, int cols, int type ) {
-        super(rows, cols, type);
+    SipImage ( int rows, int type ) {
+        super(rows, 1, type);
+    }
+
+    /**
+     * @param imread
+     * @param size
+     */
+    public
+    SipImage ( Mat imread, Size size, int[] addresses ) {
+        super(imread, size);
+        this.addresses = addresses;
     }
 
     /**
@@ -43,6 +48,16 @@ class SipImage extends Image {
 
     /**
      * @param row
+     * @return
+     */
+//    @Override
+    public
+    double[] get ( int row ) {
+        return super.get(row, 0);
+    }
+
+    /**
+     * @param row
      * @param col
      * @param data
      * @return
@@ -50,11 +65,9 @@ class SipImage extends Image {
     @Override
     public
     int put ( int row, int col, double... data ) {
-        int address = addresses[row + getWidth() * col];
+        int address = addresses[row + getWidth() * col];//??????????? fixme
 
-        int row1;
-        int col1;
-        return super.put(row1, col1, data);
+        return super.put(address, data);
     }
 
     /**
@@ -74,24 +87,9 @@ class SipImage extends Image {
         super(imread, size);
     }
 
-//    /**
-//     * @return
-//     */
-//    public
-//    List <Pixel> getPixels () {
-//        return pixels;
-//    }
-
     /**
      * @return
      */
-    public
-    Image toImage () {
-        Image image = new Image();
-
-        return image;
-    }
-
     public
     int[] getAddresses () {
         return addresses;

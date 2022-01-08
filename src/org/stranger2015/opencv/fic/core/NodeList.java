@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -29,6 +30,11 @@ class NodeList<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Im
     public
     NodeList ( TreeNode <N, A, M> node ) {
         list.add(node);
+    }
+
+    public
+    NodeList ( int i ) {
+
     }
 
     /**
@@ -160,5 +166,19 @@ class NodeList<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Im
     public
     Iterator <N> iterator () {
         return (Iterator <N>) list.iterator();
+    }
+
+    /**
+     * @param l
+     */
+    @SuppressWarnings("unchecked")
+    public
+    void add ( NodeList <N, A, M> l ) {
+        getList().addAll((Collection <? extends TreeNode <N, A, M>>) l);
+    }
+
+    public
+    TreeNode <N, A, M> get ( int ord ) {
+        return list.get(ord);
     }
 }

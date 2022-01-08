@@ -78,19 +78,13 @@ class Tree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
     @NotNull Tree <N, A, M> create ( String className ) {
         int rc = 0;
         try {
-            Class <?> clazz = Class.forName(className);
-            Tree <N, A, M> tree = (Tree <N, A, M>) clazz.getDeclaredConstructor().newInstance();
+            Class <Tree<N,A,M>> clazz = (Class <Tree <N, A, M>>) Class.forName(className);
+            Tree <N, A, M> tree = clazz.getDeclaredConstructor().newInstance();
             tree.initialize();
 
             return tree;
-        } catch (ClassNotFoundException |
-                NoSuchMethodException |
-                InvocationTargetException |
-                InstantiationException |
-                IllegalAccessException e) {
-
+        } catch (ReflectiveOperationException e){
             e.printStackTrace();
-            rc = -1;
         }
         throw new RuntimeException();
     }
@@ -185,6 +179,5 @@ class Tree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
         SCALE,
         // SKEW,//??????????
         // TRANSLATE,//?????????????
-        ;
     }
 }

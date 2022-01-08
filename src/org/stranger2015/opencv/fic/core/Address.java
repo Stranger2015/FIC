@@ -1,18 +1,19 @@
 package org.stranger2015.opencv.fic.core;
 
+import org.opencv.core.Point;
 import org.stranger2015.opencv.fic.core.codec.EAddressKind;
 import org.stranger2015.opencv.fic.core.codec.IAddress;
 import org.stranger2015.opencv.fic.core.codec.SaUtils;
 
 import java.util.EnumSet;
-import java.util.List;
 
 /**
  *
  */
 public
 class Address<A extends Address <A/*, E*/>/*, E extends Enum <E>*/> implements IAddress <A/*, E*/> {
-protected int address;
+    public final static int radix = 10;
+    protected int address;
     /**
      * @param address
      */
@@ -30,9 +31,10 @@ protected int address;
         this(0);
     }
 
-//    public
-//    Address ( EnumSet <E> e ) {
-//    }
+    public
+    Address ( EnumSet digits ) {
+
+    }
 
     /**
      * Returns the value of the specified number as an {@code int}.
@@ -40,7 +42,7 @@ protected int address;
      * @return the numeric value represented by this object after conversion
      * to type {@code int}.
      */
-    @Override
+//    @Override
     public
     int intValue () {
         return getIndex();
@@ -110,7 +112,7 @@ protected int address;
     @Override
     public
     int radix () {
-        return 10;
+        return Address.radix;
     }
 
     /**
@@ -178,13 +180,37 @@ protected int address;
     int getIndex () {
         return address;
     }
-//
-//    /**
-//     * @return
-//     */
-////    @Override
-//    public
-//    int toNumber ( EnumSet <E> digits ) {
-//        return 0;
-//    }//todo
+
+    public
+Point getCartesianCoords ( int i ) {
+    Point v = new Point(0,0);
+    switch (i) {
+        case 0:
+            break;
+        case 1:
+            v.setX = -1;
+            break;
+        case 2:
+            v[0] = -1;
+            v[1] = -1;
+            break;
+        case 3:
+            v[0] = -1;
+            break;
+        case 4:
+            v[1] = 1;
+            break;
+        case 5:
+            v[0] = 1;
+            v[1] = 1;
+            break;
+        case 6:
+            v[0] = 1;
+            break;
+        default:
+            throw new IllegalStateException("Unexpected value: " + i);
+    }
+
+    return v;
+}
 }

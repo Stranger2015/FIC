@@ -1,27 +1,24 @@
 package org.stranger2015.opencv.fic.core;
 
-import java.util.*;
-import java.util.stream.IntStream;
-
-import static java.util.EnumSet.noneOf;
-import static org.stranger2015.opencv.fic.core.EDigits7.values;
+import java.util.EnumSet;
 
 /**
  * sa addresses
  * 0,        1,      2,       3,      4,      5,      6
+ *
  * Cartesian coordinates
- * {0, 0}
- * {0, -1}
- * {-1, -1}
- * {-1, 0}
- * {0, 1}
- * {1, 1}
- * {1, 0}
+ * {  0,  0}
+ * {  0, -1}
+ * { -1, -1}
+ * { -1,  0}
+ * {  0,  1}
+ * {  1,  1}
+ * {  1,  0}
  */
 public
-class SaAddress<A extends Address <A/*, E*/>/*, E extends Enum <E>*/> extends Address <A/*, E*/> {
+class SaAddress<A extends Address <A>> extends Address <A> {
 
-//    public final EnumSet <EDigits7> digits = noneOf(EDigits7.class);
+    public final static int radix = 7;
 
     static final int[][] addTable = new int[][]{
             {0, +1, +2, +3, +4, +5, +6},
@@ -45,15 +42,6 @@ class SaAddress<A extends Address <A/*, E*/>/*, E extends Enum <E>*/> extends Ad
 
     private int number;
 
-//    /**
-//     * @param digits
-//     */
-//    public
-//    SaAddress ( EnumSet <EDigits7> digits ) throws ValueError {
-//        super();
-//        this.digits.addAll(digits);
-//    }
-
     /**
      * @param number
      * @throws ValueError
@@ -64,21 +52,12 @@ class SaAddress<A extends Address <A/*, E*/>/*, E extends Enum <E>*/> extends Ad
         this.number = number;
     }
 
-//    /**
-//     * @param digits
-//     */
-//    @SuppressWarnings("unchecked")
-//    @SafeVarargs
-//    SaAddress ( E... digits ) throws ValueError {
-//        super();
-//        this.digits.addAll((Collection <? extends EDigits7>) Arrays.asList(digits));
-//    }
-
     /**
      * @throws ValueError
+     * @param digits
      */
     public
-    SaAddress () throws ValueError {
+    SaAddress ( EnumSet <EDigits7> digits ) throws ValueError {
     }
 
     /**
@@ -102,17 +81,6 @@ class SaAddress<A extends Address <A/*, E*/>/*, E extends Enum <E>*/> extends Ad
         return address;//todo
     }
 
-//    /**
-//     * @param result
-//     * @return
-//     */
-//    @SuppressWarnings("unchecked")
-//    @Override
-//    public
-//    A newInstance ( EnumSet result ) throws ValueError {
-//        return (A) new SaAddress <A>();
-//    }
-
     /**
      * @param index
      * @return
@@ -120,41 +88,8 @@ class SaAddress<A extends Address <A/*, E*/>/*, E extends Enum <E>*/> extends Ad
     @Override
     public
     A newInstance ( int index ) throws ValueError {
-//        IAddressExpr <A> e = createExpr(index);
-
-        return null;//newInstance(index);
+        return null;
     }
-
-//    /**
-//     * An-1 ... A0 = Sum(i=0, n-1){ Ai X pow(10, i) }
-//     *
-//     * @param number
-//     * @return
-//     */
-////    @SuppressWarnings("unchecked")
-//    protected
-//    IAddressExpr <A> createExpr ( int number ) {
-//        int radix = radix();
-//        EnumSet <EDigits> digits = EnumSet.noneOf(EDigits.class);
-//        BitSet occurrences = new BitSet();
-//        boolean loop = true;
-//        for (int i = 0; loop; i++) {
-//            int digit;
-//            if (number >= radix) {
-//                digit = number % 10;
-//                number -= digit;
-//                number /= 10;
-//            }
-//            else {
-//                digit = number;
-//                loop = false;
-//            }
-//            occurrences.set(digit);
-//            add(digits, values()[digit], i);
-//        }
-//
-//        return new MultiDigitNumber <>(digits/*, occurrences*/);
-//    }
 
     /**
      * Based on <b>add table</b>, the sum of 57 and 8 can be computed as:
@@ -187,19 +122,9 @@ class SaAddress<A extends Address <A/*, E*/>/*, E extends Enum <E>*/> extends Ad
 //            add(result, values()[r], i);
 //        });
 //
-//        return newInstance(result);
+//        return newInstance(result);3
         return null;
     }
-
-//    /**
-//     * @param result
-//     * @param value
-//     * @param i
-//     */
-//    public
-//    void add ( EnumSet <EDigits7> result, EDigits7 value, int i ) {
-//         value.getOccurrences().set(i, result.add(value));
-//    }
 
     /**
      * @param address1
@@ -272,44 +197,6 @@ class SaAddress<A extends Address <A/*, E*/>/*, E extends Enum <E>*/> extends Ad
     int[][] getMultTable () {
         return multTable.clone();
     }
-//
-//    /**
-//     * @return
-//     */
-//    @SuppressWarnings("unchecked")
-//    @Override
-//    public
-////    EnumSet <E> getDigits () {
-////        return (EnumSet <E>) digits;
-////    }
-//
-//    /**
-//     * @param number
-//     * @param radix
-//     * @return
-//     */
-//    @SuppressWarnings("unchecked")
-//    @Override
-//    public
-//    EnumSet <E> toDigits ( int number, int radix ) {
-//        EnumSet <EDigits7> digits = noneOf(EDigits7.class);
-//        for (; number > 0; number /= radix) {
-//            EDigits7 d = values()[number % radix];
-//            digits.add(d);//todo
-//        }
-//
-//        return (EnumSet <E>) digits;
-//    }
-//
-//    /**
-//     * @param number
-//     * @return
-//     */
-//    @Override
-//    public
-//    A carryRule ( int number ) {
-//        return null;//todo
-//    }
 
     /**
      * @return
@@ -317,10 +204,10 @@ class SaAddress<A extends Address <A/*, E*/>/*, E extends Enum <E>*/> extends Ad
     @Override
     public
     int radix () {
-        return 7;
+        return radix;
     }
 
-        /**
+    /**
      * @return
      */
     public

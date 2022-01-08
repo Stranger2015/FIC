@@ -1,22 +1,24 @@
 package org.stranger2015.opencv.fic;
 
-import org.opencv.core.Rect;
-import org.stranger2015.opencv.fic.core.Image;
 import org.stranger2015.opencv.fic.core.TreeNodeBase;
 
 public
-class NodeVisualizer implements IDrawable<Image> {
+class NodeVisualizer /*implements IDrawable<Image> */ {
 
-    private TreeNodeBase <?> treeNode;
+    private TreeNodeBase <?, ?, ?> treeNode;
 
-    @Override
     public
-    void draw ( Image image, Rect rect ) {
-        treeNode.draw(image, rect);
+    void setNode ( TreeNodeBase <?, ?, ?> treeNode ) {
+        this.treeNode = treeNode;
     }
 
     public
-    void setNode ( TreeNodeBase <?> treeNode ) {
+    TreeNodeBase <?, ?, ?> getTreeNode () {
+        return treeNode;
+    }
+
+    public
+    void setTreeNode ( TreeNodeBase <?, ?, ?> treeNode ) {
         this.treeNode = treeNode;
     }
 }

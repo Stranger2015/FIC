@@ -3,26 +3,29 @@ package org.stranger2015.opencv.fic.core;
 import org.opencv.highgui.HighGui;
 import org.stranger2015.opencv.fic.core.LoadSaveImageTask.BidiImageColorModelTask;
 import org.stranger2015.opencv.fic.core.LoadSaveImageTask.NormalizeImageShapeTask;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.Codec;
 import org.stranger2015.opencv.fic.core.codec.EncodeAction;
 import org.stranger2015.opencv.fic.core.codec.IImageProcessorListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.stranger2015.opencv.fic.core.EPartitionScheme.QUAD_TREE;
+import static org.stranger2015.opencv.fic.core.codec.IAddressMath.pow;
 
 /**
  *
  */
 public
-class ImageProcessor<N extends TreeNodeBase <N, A>, M extends Image, A extends Address <A, ?>>
+class ImageProcessor<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
         extends CompositeTask <M>
-        implements IImageProcessor <N, M, A> {
+        implements IImageProcessor <N, A, M> {
 
     private String imageFilename;
     private EPartitionScheme scheme;
-    private Codec <N, M, A> codec;
+    private Codec <N, A, M> codec;
     private M image;
     private EncodeAction action;
     List <IImageProcessorListener> listeners = new ArrayList <>();
@@ -35,6 +38,7 @@ class ImageProcessor<N extends TreeNodeBase <N, A>, M extends Image, A extends A
     public
     ImageProcessor ( String imageFilename, EPartitionScheme scheme, List <Task <M>> tasks ) {
         super(tasks);
+
         this.scheme = scheme;
         this.imageFilename = imageFilename;
 
@@ -51,12 +55,22 @@ class ImageProcessor<N extends TreeNodeBase <N, A>, M extends Image, A extends A
         postprocTasks.add(task2.getInverseTask());
 
 //        EncodeAction action;
-        codec = new Codec <>(scheme, new EncodeAction(imageFilename));
+        codec = new Codec <>(scheme, new EncodeAction(imageFilename, "??<--------------!!!!!"));
     }
 
+    /**
+     * @param image
+     * @param scheme
+     * @param tasks
+     */
     @SafeVarargs
     public
-    ImageProcessor (M image, EPartitionScheme scheme, Task<M>... tasks) {
+    ImageProcessor ( M image, EPartitionScheme scheme, Task <M>... tasks ) {
+        this(image, scheme,Arrays.asList(tasks), "?????????");
+    }
+
+    public
+    ImageProcessor ( M image, EPartitionScheme scheme, List<Task<M>> of, String s ) {
         super(image);
     }
 
@@ -68,8 +82,8 @@ class ImageProcessor<N extends TreeNodeBase <N, A>, M extends Image, A extends A
      * @return
      */
     public static
-    <N extends TreeNodeBase <N, A>, M extends Image, A extends Address <A, ?>>
-    IImageProcessor <N, M, A> create ( String filename, EPartitionScheme scheme, List <Task <M>> tasks ) {
+    <N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+    IImageProcessor <N, A, M> create ( String filename, EPartitionScheme scheme, List <Task <M>> tasks ) {
         LoadSaveImageTask <M> loadSaveImageTask = new LoadSaveImageTask <>(filename, List.of());
         loadSaveImageTask.execute();
 
@@ -133,10 +147,7 @@ class ImageProcessor<N extends TreeNodeBase <N, A>, M extends Image, A extends A
 
         System.out.println(imageOut.dump());
 
-        ImagePartitionProcessor <N, M, A> processor =
-                new ImagePartitionProcessor <>(
-                        imageOut,
-                        QUAD_TREE);
+        ImagePartitionProcessor <N, A, M> processor = new ImagePartitionProcessor <>(imageOut, QUAD_TREE);
         HighGui.destroyAllWindows();
 
         image.release();
@@ -151,6 +162,8 @@ class ImageProcessor<N extends TreeNodeBase <N, A>, M extends Image, A extends A
      */
     public static
     int getNearestGreaterPowBase ( int n, int base ) {
+
+       // pow(base, n);
         int ngp2 = 1;
         while (ngp2 < n) {
             ngp2 *= base;
@@ -168,7 +181,7 @@ class ImageProcessor<N extends TreeNodeBase <N, A>, M extends Image, A extends A
     }
 
     public
-    Codec <N, M, A> getCodec () {
+    Codec <N, A, M> getCodec () {
         return codec;
     }
 

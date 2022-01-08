@@ -2,8 +2,10 @@ package org.stranger2015.opencv.fic.utils;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.opencv.core.Point;
 import org.stranger2015.opencv.fic.core.Image;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.ValueError;
 import org.stranger2015.opencv.fic.core.codec.IAddressMath;
 import org.stranger2015.opencv.fic.core.codec.Pixel;
 import org.stranger2015.opencv.fic.core.codec.SipAddress;
@@ -11,6 +13,9 @@ import org.stranger2015.opencv.fic.core.codec.SipImage;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.stranger2015.opencv.fic.core.codec.IAddressMath.*;
+import static org.stranger2015.opencv.fic.core.codec.SipAddress.radix;
 
 /**
  *
@@ -29,12 +34,13 @@ class ImageUtils {
      * @param <A>
      */
     private static
-    class ImageFiller<A extends SipAddress <A>> {
+    class ImageFiller<A extends SipAddress <A>> implements IAddressMath<A>{
 
         /**
          *
          */
         private final int[] addresses;
+        
         private final Image input;
         private final int pixelAmount;
         private final List <Pixel> pixels;
@@ -45,7 +51,7 @@ class ImageUtils {
         protected int rowDelta;
         protected int colDelta;
 
-        protected int layerno;
+        protected int layerIndex;
 
 
         /**
@@ -70,46 +76,46 @@ class ImageUtils {
             rowDelta = 0;
             colDelta = 0;
 
-            layerno = 0;
+            layerIndex = 0;
         }
 
         /**
          * @param row
          * @param col
-         * @param addrBase
-         * @param addrOfs
+         * @param addressBase
+         * @param addressOffset
          */
-        void setAddress ( int row, int col, int addrBase, int addrOfs ) {
+        void setAddress ( int row, int col, int addressBase, int addressOffset ) {
             if (row < 0 || col < 0) {
                 throw new IllegalStateException("Error: row or col < 0");
             }
             int cols = input.cols();
-            addresses[row + cols * col] = addrBase + addrOfs;
+            addresses[row + cols * col] = addressBase + addressOffset;
         }
 
         /**
-         * @param layerno
+         * @param layerindex
          * @param size
-         * @param addrBase
-         * @param addrOfs
+         * @param addressBase
+         * @param addressOffset
          * @return
          */
-        int fillCluster ( int layerno, int size, int addrBase, int addrOfs ) {
-            rowDelta *= layerno;
-            colDelta *= layerno;
-            setAddress(row(), col(), addrBase, addrOfs++);
-            setAddress(row(), col() - 1, addrBase, addrOfs++);
-            setAddress(row() - 1, col() - 1, addrBase, addrOfs++);
-            setAddress(row() - 1, col(), addrBase, addrOfs++);
-            setAddress(row() - 1, col() + 1, addrBase, addrOfs++);
-            setAddress(row(), col() + 1, addrBase, addrOfs++);
-            setAddress(row() + 1, col() + 1, addrBase, addrOfs++);
-            setAddress(row() + 1, col(), addrBase, addrOfs++);
-            setAddress(row() + 1, col() - 1, addrBase, addrOfs++);
+        int fillCluster ( int layerindex, int size, int addressBase, int addressOffset ) {
+            rowDelta *= layerindex;
+            colDelta *= layerindex;
+            setAddress(row(), col(), addressBase, addressOffset++);
+            setAddress(row(), col() - 1, addressBase, addressOffset++);
+            setAddress(row() - 1, col() - 1, addressBase, addressOffset++);
+            setAddress(row() - 1, col(), addressBase, addressOffset++);
+            setAddress(row() - 1, col() + 1, addressBase, addressOffset++);
+            setAddress(row(), col() + 1, addressBase, addressOffset++);
+            setAddress(row() + 1, col() + 1, addressBase, addressOffset++);
+            setAddress(row() + 1, col(), addressBase, addressOffset++);
+            setAddress(row() + 1, col() - 1, addressBase, addressOffset++);
 
-            addrBase = fillClusters(++layerno, size, addrBase, addrOfs);
+            addressBase = fillClusters(++layerindex, size, addressBase, addressOffset);
 
-            return addrBase + addrOfs;
+            return addressBase + addressOffset;
         }
 
         int row () {
@@ -122,64 +128,64 @@ class ImageUtils {
 
         /**
          * @param size
-         * @param addrBase
-         * @param addrOfs
+         * @param addressBase
+         * @param addressOffset
          * @return
          */
-        int fillLayer ( int layerno, int size, int addrBase, int addrOfs ) {
+        int fillLayer ( int layerIndex, int size, int addressBase, int addressOffset ) {
             try {
-                addrBase = fillClusters(layerno, size, addrBase, addrOfs);
+                addressBase = fillClusters(layerIndex, size, addressBase, addressOffset);
             } catch (Exception e) {
                 return -1;
             }
 
-            return addrBase;
+            return addressBase;
         }
 
         /**
-         * @param layerno
+         * @param layerIndex
          * @param size
-         * @param addrBase
-         * @param addrOfs
+         * @param addressBase
+         * @param addressOffset
          * @return
          */
         private
-        int fillClusters ( int layerno, int size, int addrBase, int addrOfs ) {
-            fillCluster(layerno, size, addrBase, addrOfs);
+        int fillClusters ( int layerIndex, int size, int addressBase, int addressOffset ) {
+            fillCluster(layerIndex, size, addressBase, addressOffset);
 
             rowDelta = 0;
             colDelta = -3;
-            fillCluster(layerno, size, addrBase += 9, addrOfs);
+            fillCluster(layerIndex, size, addressBase += radix, addressOffset);
 
             rowDelta = 3;
             colDelta = -3;
-            fillCluster(layerno, size, addrBase += 9, addrOfs);
+            fillCluster(layerIndex, size, addressBase += radix, addressOffset);
 
             rowDelta = 3;
             colDelta = 0;
-            fillCluster(layerno, size, addrBase += 9, addrOfs);
+            fillCluster(layerIndex, size, addressBase += radix, addressOffset);
 
             rowDelta = 3;
             colDelta = 3;
-            fillCluster(layerno, size, addrBase += 9, addrOfs);
+            fillCluster(layerIndex, size, addressBase += radix, addressOffset);
 
             rowDelta = 0;
             colDelta = 3;
-            fillCluster(layerno, size, addrBase += 9, addrOfs);
+            fillCluster(layerIndex, size, addressBase += radix, addressOffset);
 
             rowDelta = -3;
             colDelta = 3;
-            fillCluster(layerno, size, addrBase += 9, addrOfs);
+            fillCluster(layerIndex, size, addressBase += radix, addressOffset);
 
             rowDelta = -3;
             colDelta = 0;
-            fillCluster(layerno, size, addrBase += 9, addrOfs);
+            fillCluster(layerIndex, size, addressBase += radix, addressOffset);
 
             rowDelta = -3;
             colDelta = -3;
-            fillCluster(layerno, size, addrBase += 9, addrOfs);
+            fillCluster(layerIndex, size, addressBase += radix, addressOffset);
 
-            return addrBase;
+            return addressBase;
         }
 
         /**
@@ -197,6 +203,72 @@ class ImageUtils {
         List <Pixel> getPixels () {
             return pixels;
         }
+
+        /**
+         * @param address1
+         * @param address2
+         * @return
+         */
+        @Override
+        public
+        A plus ( A address1, A address2 ) throws ValueError {
+            return null;
+        }
+
+        /**
+         * @param address1
+         * @param address2
+         * @return
+         */
+        @Override
+        public
+        A minus ( A address1, A address2 ) throws ValueError {
+            return null;
+        }
+
+        /**
+         * @param address1
+         * @param address2
+         * @return
+         */
+        @Override
+        public
+        A mult ( A address1, A address2 ) throws ValueError {
+            return null;
+        }
+
+        /**
+         * @return
+         */
+        @Override
+        public
+        int[][] getAddTable () {
+            return new int[0][];
+        }
+
+        /**
+         * @return
+         */
+        @Override
+        public
+        int[][] getMultTable () {
+            return new int[0][];
+        }
+
+        /**
+         * @return
+         */
+        @Override
+        public
+        int getIndex () {
+            return 0;
+        }
+
+        @Override
+        public
+        Point getCartesianCoords ( int i ) {
+            return null;
+        }
     }
 
     /**
@@ -205,19 +277,17 @@ class ImageUtils {
      */
     public static
     <N extends TreeNode <N, A, M>, A extends SipAddress <A>, M extends Image>
-    SipImage imageToSipImage ( M input ) {
-
+    @NotNull SipImage convertImageToSipImage ( M input ) {
         ImageFiller <A> af = new ImageFiller <>(input);
-        int addrBase = 0;
-        int addrOfs = 0;
+        int addressBase = 0;
+        int addressOffset = 0;
 
         for (int i = 0, size = input.cols(); ; i++) {
-//            int pow3 = IAddressMath.pow(3, i);
-            int ss = nextSize(i);
+            int ss = nextPixelCapacity(i);
             if (ss >= size) {
                 break;
             }
-            addrOfs = af.fillLayer(af.layerno, ss, addrBase, addrOfs);
+            addressOffset = af.fillLayer(af.layerIndex, ss, addressBase, addressOffset);
         }
 
         return relocatePixelData(input, af);
@@ -233,28 +303,11 @@ class ImageUtils {
     private static
     <M extends Image, A extends SipAddress <A>>
     @NotNull SipImage relocatePixelData ( M input, ImageFiller <A> af ) {
-        int w = input.getWidth();
-        SipImage sipImage = new SipImage(input,af.getAddresses());
+        SipImage sipImage = new SipImage(input, af.getAddresses());
         for (int i = 0; i < input.getWidth(); i++) {
             for (int j = 0; j < input.getHeight(); j++) {
                 double[] pixelData = input.get(i, j);
-//                af.getPixels().add(addresses[i + w * j], new Pixel(pixelData));
-
-                sipImage.put(i, j, pixelData);
-            }
-        }
-
-        return sipImage;
-    }
-
-    private static
-    <M extends Image>
-    SipImage relocatePixelData ( M input ) {
-        SipImage sipImage = new SipImage(input);
-        for (int i = 0; i < input.getWidth(); i++) {
-            for (int j = 0; j < input.getHeight(); j++) {
-                double[] pixelData = input.get(i, j);
-
+                sipImage.put(af.getAddresses()[i], pixelData);
             }
         }
 
@@ -262,24 +315,12 @@ class ImageUtils {
     }
 
     /**
-     * @param layerno
+     * @param layerIndex
      * @return
      */
     @Contract(pure = true)
-    private static
-    int nextSize ( int layerno ) {
-//        switch (layerno) {
-//            case 0:
-//                return 1;
-//            case 1:
-//                return 3;
-//            case 2:
-//                return 9;
-//            case 3:
-//                return 15;
-//            default:
-//                throw new IllegalStateException("Unexpected value: " + layerno);
-//        }
-        return IAddressMath.pow(9, layerno);
+    public static
+    int nextPixelCapacity ( int layerIndex ) {
+        return pow(radix, layerIndex);
     }
 }

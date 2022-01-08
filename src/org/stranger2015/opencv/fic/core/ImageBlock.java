@@ -7,7 +7,7 @@ import org.stranger2015.opencv.fic.IImageBlock;
  *
  */
 public
-class ImageBlock<M extends Image> extends Image implements IImageBlock<M> {
+class ImageBlock extends Image implements IImageBlock {
 
     public static final int[] EMPTY_ARRAY = new int[0];
 
@@ -28,10 +28,21 @@ class ImageBlock<M extends Image> extends Image implements IImageBlock<M> {
     ImageBlock ( int rows, int cols, int blockWidth, int blockHeight ) {
         this(rows, cols, blockWidth, blockHeight, -1);//fixme
     }
+//
+//    /**
+//     * @param rows
+//     * @param blockWidth
+//     * @param blockHeight
+//     */
+//    public
+//    ImageBlock ( int rows, int blockWidth, int blockHeight ) {
+//        this(rows, 1, blockWidth, blockHeight, -1);//fixme
+//    }
+//
 
     public
-    ImageBlock ( Image subImage ) {
-        super();
+    ImageBlock (Image subImage, int rows, int cols,int type ) {
+        super(rows, cols, type);
         this.image = subImage;
     }
 
@@ -87,7 +98,7 @@ class ImageBlock<M extends Image> extends Image implements IImageBlock<M> {
      */
     public
     ImageBlock ( int x, int y, int width, int height, int type ) {
-        super(x, y, type, pixelData);
+        super(x, y, type);
 
         this.x = x;
         this.y = y;

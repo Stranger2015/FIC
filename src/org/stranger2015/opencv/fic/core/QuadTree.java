@@ -2,6 +2,7 @@ package org.stranger2015.opencv.fic.core;
 
 import org.opencv.core.Rect;
 import org.stranger2015.opencv.fic.DomainBlock;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 
 import java.util.function.Consumer;
 
@@ -10,8 +11,8 @@ import java.util.function.Consumer;
  * @param <M>
  */
 public
-class QuadTree<N extends QuadTreeNode <N, A>, M extends Image, A extends Address <A, ?>>
-        extends BinTree <N, M, A> {
+class QuadTree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+        extends BinTree <N, A, M> {
 
     /**
      * @param root
@@ -19,7 +20,7 @@ class QuadTree<N extends QuadTreeNode <N, A>, M extends Image, A extends Address
      * @param action
      */
     public
-    QuadTree ( TreeNodeBase <N, A> root, M image, TreeNodeAction <N> action ) {
+    QuadTree ( TreeNode <N, A, M> root, M image, TreeNodeAction <N> action ) {
         super(root, image, action);
     }
 
@@ -39,14 +40,14 @@ class QuadTree<N extends QuadTreeNode <N, A>, M extends Image, A extends Address
      * @return
      */
     protected static
-    <N extends DomainBlock <N, A, M>, A extends Address <A, ?>, M extends Image>
-    NodeList <N,A> getDomainBlocks ( NodeList <N, A> leaves, int w, int h ) throws ValueError {
-        NodeList <N, A> l = new NodeList <>();
+    <N extends DomainBlock <N, A, M>, A extends Address <A>, M extends Image>
+    NodeList <N, A, M> collectDomainBlocks ( NodeList <N, A, M> leaves, int w, int h ) throws ValueError {
+        NodeList <N, A, M> l = new NodeList <>();
         if (!leaves.isEmpty()) {
             for (ILeaf <N, A, M> leaf : leaves) {
                 M image = leaf.getImage();
                 if (image.width() == w && image.height() == h) {
-                    l.add(new DomainBlock <>(null, image, leaf.getBoundingBox()));//fixme
+                    l.add(new DomainBlock <>(null, image, leaf.getBoundingBox()));
                 }
             }
         }
@@ -61,7 +62,8 @@ class QuadTree<N extends QuadTreeNode <N, A>, M extends Image, A extends Address
      * @return
      */
     public
-    TreeNodeBase <N, A> nodeInstance ( QuadTreeNode <N, A> parent, EDirection quadrant, Rect rect ) throws ValueError {
+    TreeNode <N, A, M> nodeInstance ( TreeNode <N, A, M> parent, EDirection quadrant, Rect rect )
+            throws ValueError {
         return new QuadTreeNode <>(parent, quadrant, rect);
     }
 

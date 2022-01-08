@@ -1,22 +1,24 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.opencv.core.Rect;
-import org.stranger2015.opencv.fic.DomainBlock;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 
 /**
  * @param <N>
  * @param <A>
  */
 public
-class HvTreeNode<N extends HvTreeNode <N, A>, A extends Address <A, ?>> extends TreeNodeBase <N, A> {
+class HvTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+        extends TreeNodeBase <N, A, M> {
     /**
      * @param parent
      * @param quadrant
      * @param rect
      */
     public
-    HvTreeNode ( TreeNodeBase <N, A> parent, EDirection quadrant, Rect rect ) throws ValueError {
-        super(parent,null, rect);
+    HvTreeNode ( TreeNode <N, A, M> parent, EDirection quadrant, Rect rect ) throws ValueError {
+        super(parent, null, rect);
     }
 
     /**
@@ -24,22 +26,11 @@ class HvTreeNode<N extends HvTreeNode <N, A>, A extends Address <A, ?>> extends 
      * @param boundingBox
      * @return
      */
-    @Override
     public
-    HvTreeNode <N, A> createChild ( EDirection quadrant, Rect boundingBox ) throws ValueError {
+    HvTreeNode <N, A, M> createChild ( EDirection quadrant, Rect boundingBox ) throws ValueError {
         return new HvTreeNode <>(null, quadrant, boundingBox);
     }
 
-    /**
-     * @param parent
-     * @param boundingBox
-     * @return
-     */
-    @Override
-    public
-    TreeNodeBase <N, A> createNode ( TreeNodeBase <N, A> parent, Rect boundingBox ) throws ValueError {
-        return null;
-    }
 
     /**
      * @param parent
@@ -49,9 +40,32 @@ class HvTreeNode<N extends HvTreeNode <N, A>, A extends Address <A, ?>> extends 
      */
 //    @Override
     public
-    HvTreeNode <N, A> createNode ( TreeNodeBase <N, A> parent, EDirection quadrant, Rect boundingBox )
+    HvTreeNode <N, A, M> createNode ( TreeNode <N, A, M> parent, EDirection quadrant, Rect boundingBox )
             throws ValueError {
         return new HvTreeNode <>(parent, quadrant, boundingBox);
+    }
+
+    @Override
+    public
+    TreeNode <N, A, M> createChild ( int address ) throws ValueError {
+      throw new UnsupportedOperationException();//  return new HvTreeNode<N, A,M>();
+    }
+
+    @Override
+    public
+    TreeNode <N, A, M> createChild ( int layerIndex, int imageBlock, int address ) throws ValueError {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * @param parent
+     * @param boundingBox
+     * @return
+     */
+    @Override
+    public
+    TreeNode<N, A, M> createNode ( TreeNode <N, A, M> parent, Rect boundingBox ) throws ValueError {
+        return null;
     }
 
     /**
@@ -59,11 +73,9 @@ class HvTreeNode<N extends HvTreeNode <N, A>, A extends Address <A, ?>> extends 
      * @param <A>
      */
     public static
-    class HvLeafNode<N extends HvLeafNode <N, A, M>, A extends Address <A, ?>, M extends Image>
-            extends LeafNode<N, A,M>
+    class HvLeafNode<N extends HvLeafNode <N, A, M>, A extends Address <A>, M extends Image>
+            extends LeafNode <N, A, M>
             implements ILeaf <N, A, M> {
-
-//        private ImageBlock <M> imageBlock;
 
         /**
          * @param parent
@@ -72,7 +84,7 @@ class HvTreeNode<N extends HvTreeNode <N, A>, A extends Address <A, ?>> extends 
          * @throws ValueError
          */
         protected
-        HvLeafNode ( TreeNodeBase <N, A> parent, Image image, Rect rect ) throws ValueError {
+        HvLeafNode ( TreeNode <N, A, M> parent, M image, Rect rect ) throws ValueError {
             super(parent, null, rect);//fixme
         }
 
@@ -84,23 +96,16 @@ class HvTreeNode<N extends HvTreeNode <N, A>, A extends Address <A, ?>> extends 
          */
 //        @Override
         public
-        HvLeafNode <N, A,M> createNode ( TreeNodeBase <N, A> parent, EDirection quadrant, Rect boundingBox ) throws ValueError {
-            return new HvLeafNode <>(parent,null, boundingBox);//fixme
+        HvLeafNode <N, A, M> createNode ( TreeNode<N, A, M> parent, EDirection quadrant, Rect boundingBox )
+                throws ValueError {
+            return new HvLeafNode <>(parent, null, boundingBox);//fixme
         }
 
-//        /**
-//         * @return
-//         */
-//        @Override
-//        public
-//        ImageBlock <M> getImageBlock () {
-//            return imageBlock;
-//        }
-
-        @Override
+        //        @Override
         public
-        TreeNodeBase <N, A> createNode ( TreeNodeBase <N, A> parent, M image, Rect boundingBox ) throws ValueError {
-            return new HvLeafNode<>(parent,image,boundingBox);
+        HvLeafNode <N, A, M> createNode ( TreeNode <N, A, M> parent, M image, Rect boundingBox )
+                throws ValueError {
+            return new HvLeafNode <>(parent, image, boundingBox);
         }
 
         /**
@@ -110,7 +115,41 @@ class HvTreeNode<N extends HvTreeNode <N, A>, A extends Address <A, ?>> extends 
          */
         @Override
         public
-        TreeNodeBase <N, A> createNode ( TreeNodeBase <N, A> parent, Rect boundingBox ) throws ValueError {
+        TreeNodeBase <N, A, M> createNode ( TreeNode <N, A, M> parent, Rect boundingBox )
+                throws ValueError {
+            return null;
+        }
+
+        /**
+         * @return
+         */
+        @Override
+        public
+        M getMat () {
+            return null;
+        }
+
+        /**
+         * @return
+         */
+        @Override
+        public
+        M getImage () {
+            return null;
+        }
+
+        /**
+         * @return
+         */
+        @Override
+        public
+        Rect getBoundingBox () {
+            return null;
+        }
+
+        @Override
+        public
+        TreeNode <N, A, M> createChild ( int layerIndex, int imageBlock, int address ) throws ValueError {
             return null;
         }
     }

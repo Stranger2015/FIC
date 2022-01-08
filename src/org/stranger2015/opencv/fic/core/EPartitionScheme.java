@@ -1,38 +1,48 @@
 package org.stranger2015.opencv.fic.core;
 
+import org.jetbrains.annotations.Contract;
+import org.stranger2015.opencv.fic.core.codec.IEncoder;
 import org.stranger2015.org.enumus.Hierarchy;
 
 /**
  *
  */
 public
-enum EPartitionScheme {
+enum EPartitionScheme implements IEncoders {
     
-    FIXED_SIZE("org.stranger2015.opencv.fic.core.codec.Encoder"),
-    BIN_TREE("org.stranger2015.opencv.fic.core.codec.Encoder"),
-    CONST_SIZE_DOMAIN_POOL("org.stranger2015.opencv.fic.core.codec.ConstSizeDomainPoolEncoder"),
-    ABP("org.stranger2015.opencv.fic.core.codec.Encoder", BIN_TREE),
-    HV("org.stranger2015.opencv.fic.core.codec.HvEncoder"),
-    IRREGULAR("org.stranger2015.opencv.fic.core.codec.Encoder"),
+    FIXED_SIZE(ENCODER),
+    BIN_TREE(ENCODER),
+    CONST_SIZE_DOMAIN_POOL(CSDP_ENCODER),
+    ABP(ENCODER, BIN_TREE),
+    HV(HV_ENCODER),
+    IRREGULAR(ENCODER),
     QUADRILATERAL(""),
-    QUAD_TREE("org.stranger2015.opencv.fic.core.codec.QuadTreeEncoder"),
+    QUAD_TREE(QUAD_TREE_ENCODER),
     TRIANGULAR(""),
     SPLIT_AND_MERGE_0("", QUAD_TREE),
     SPLIT_AND_MERGE_1("", ABP),
 
-    SEARCHLESS("org.stranger2015.opencv.fic.core.codec.SearchlessEncoder"),
+    SEARCHLESS(SEARCHLESS_ENCODER),
     UNIFORM_SQUARE(""),
     TWO_LEVEL_SQUARE(""),
-    VSA_0("org.stranger2015.opencv.fic.core.codec.VsaEncoder", null, QUAD_TREE),
-    SABVR("org.stranger2015.opencv.fic.core.codec.SabvrEncoder", VSA_0),
-    SQUIRAL("org.stranger2015.opencv.fic.core.codec.SipEncoder"),
+    VSA_0(VSA_ENCODER, null, QUAD_TREE),
+    SABVR(SABVR_ENCODER, VSA_0),
+    SIP(SIP_ENCODER),
     ;
-    
+
     private final EPartitionScheme parent;
     private final EPartitionScheme backend;
 
     private final String encoderClassName;
 
+    /**
+     *
+     *
+     * @param encoderClassName
+     * @param parent
+     * @param backend
+     */
+    @Contract(pure = true)
     EPartitionScheme ( String encoderClassName, EPartitionScheme parent, EPartitionScheme backend ) {
         this.encoderClassName= encoderClassName;
         this.parent = parent;

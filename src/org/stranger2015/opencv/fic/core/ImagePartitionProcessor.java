@@ -1,6 +1,7 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.NotNull;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.Codec;
 
 import java.util.ArrayList;
@@ -49,13 +50,13 @@ import java.util.List;
  * }// End function Quadtree()
  */
 public
-class ImagePartitionProcessor<N extends TreeNodeBase <N, A>, M extends Image, A extends Address <A, ?>>
-        extends ImageProcessor <N, M, A> {
+class ImagePartitionProcessor<N extends TreeNode <N, A,M>, A extends Address <A>, M extends Image>
+        extends ImageProcessor <N, A, M> {
 
     protected final List <M> rangeBlocks = new ArrayList <>();
     protected final List <M> domainBlocks = new ArrayList <>();
 
-    protected final Tree <N, M, A> tree;
+    protected final Tree <N, A, M> tree;
 
     protected int row;
     protected int col;
@@ -66,7 +67,7 @@ class ImagePartitionProcessor<N extends TreeNodeBase <N, A>, M extends Image, A 
      * @param tree
      */
     public
-    ImagePartitionProcessor ( M image, EPartitionScheme scheme, Tree <N, M, A> tree ) {
+    ImagePartitionProcessor ( M image, EPartitionScheme scheme, Tree <N, A, M> tree ) {
         super(image, scheme, List. <Task<M>>of(), "???");
         this.tree = tree;
     }
@@ -198,17 +199,17 @@ class ImagePartitionProcessor<N extends TreeNodeBase <N, A>, M extends Image, A 
 //    }
 //
     private
-    boolean isLeaf ( TreeNodeBase <N, A> treeNode ) {
-        return treeNode.getChildren().size() == 0;
+    boolean isLeaf ( TreeNode<N, A,M> treeNode ) {
+        return treeNode.isLeaf();
     }
 
-    private
-    TreeNodeBase <N, A> merge ( TreeNodeBase <N, A> treeNode ) {
-        if (treeNode.isLeaf()) {
-            return treeNode;
-        }
-        return tree.getRoot().getChildren().get(0);
-    }
+//    private
+//    TreeNode<N, A,M> merge ( TreeNode<N, A,M> treeNode ) {
+//        if (treeNode.isLeaf()) {
+//            return treeNode;
+//        }
+//        return tree.getRoot().getChildren().get(0);
+//    }
 
     private
     Color getColor ( M image, int i ) {
@@ -457,9 +458,7 @@ class ImagePartitionProcessor<N extends TreeNodeBase <N, A>, M extends Image, A 
      */
     @Override
     public
-    Codec <N, M, A>
-
-    getCodec () {
+    Codec <N, A, M> getCodec () {
         return null;
     }
 }

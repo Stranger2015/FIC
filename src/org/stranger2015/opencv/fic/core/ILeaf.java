@@ -13,7 +13,7 @@ interface ILeaf<N extends TreeNode <N, A, M>, A extends Address <A>, M extends I
     /**
      * @return
      */
-    ImageBlock <M> getImageBlock ();
+    ImageBlock getImageBlock ();
 
     /**
      * @return

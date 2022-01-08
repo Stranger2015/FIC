@@ -4,15 +4,20 @@ import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.Image;
 import org.stranger2015.opencv.fic.core.ImageBlock;
-import org.stranger2015.opencv.fic.core.TreeNodeBase;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 
 import java.util.List;
 
+/**
+ * @param <N>
+ * @param <A>
+ * @param <M>
+ */
 public
-class SearchlessEncoder<N extends TreeNodeBase <N, A>, M extends Image, A extends Address <A, ?>>
-        extends Encoder <N, M, A> {
+class SearchlessEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+        extends Encoder <N, A, M> {
 
     /**
      * @param inputImage
@@ -50,7 +55,7 @@ class SearchlessEncoder<N extends TreeNodeBase <N, A>, M extends Image, A extend
 
     @Override
     public
-    List <ImageBlock <M>> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
+    List <ImageBlock> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
         return null;//todo//todo
     }
 

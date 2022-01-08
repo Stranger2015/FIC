@@ -1,8 +1,5 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.opencv.core.Rect;
-import org.stranger2015.opencv.fic.core.QuadTreeNode;
-
 /**
  *
  */

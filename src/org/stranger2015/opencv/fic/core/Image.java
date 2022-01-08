@@ -10,6 +10,7 @@ import org.opencv.core.Size;
  */
 public
 class Image extends MatOfDouble {
+
     public int originalImageWidth;
     public int originalImageHeight;
 
@@ -40,16 +41,16 @@ class Image extends MatOfDouble {
 
     /**
      *
+     * @return
      */
     @SuppressWarnings("unchecked")
-    public ImageBlock<Image> subImage(){
-
-        return (ImageBlock <Image>) submat(0,0,0,0);
+    public
+    ImageBlock subImage () {
+        return (ImageBlock) submat(0, 0, 0, 0);//fixme
     }
 
     /**
      * @param imread
-     *
      */
     public
     Image ( Mat imread ) {
@@ -133,5 +134,15 @@ class Image extends MatOfDouble {
     public
     Image convertTo ( Image image ) {
         return image;
+    }
+
+    /**
+     * @param address
+     * @param data
+     * @return
+     */
+    public
+    int put ( int address, double... data ) {
+        return put(address, 0, data);
     }
 }

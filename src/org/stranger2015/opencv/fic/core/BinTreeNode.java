@@ -11,7 +11,8 @@ import java.util.HashMap;
  * @param <A>
  */
 public
-class BinTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image> extends TreeNode <N, A, M> {
+class BinTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+        extends TreeNode <N, A, M> {
 
     /**
      * @param parent
@@ -19,13 +20,27 @@ class BinTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends
      * @param rect
      */
     public
-    BinTreeNode ( TreeNode <N, A, M> parent, EDirection quadrant, Rect rect ) throws ValueError {
+    BinTreeNode ( TreeNode <N, A, M> parent, EDirection quadrant, Rect rect )
+            throws ValueError {
         super(parent, rect);
     }
 
     public
     BinTreeNode ( TreeNode <N, A, M> parent, Rect boundingBox ) throws ValueError {
         super(parent, boundingBox);
+    }
+
+    @Override
+    public
+    TreeNode <N, A, M> createChild ( int address ) throws ValueError {
+        return null;
+    }
+
+    @Override
+    public
+    TreeNode <N, A, M> createChild ( int layerIndex, int clusteIndex, int address )
+            throws ValueError {
+        return null;
     }
 
     /**
@@ -83,18 +98,6 @@ class BinTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends
 //    public
 //    TreeNodeBase createNode ( TreeNodeBase parent, Rect boundingBox ) throws ValueError {
 //        return null;
-//    }
-
-    /**
-     * @param parent
-     * @param boundingBox
-     * @return
-     */
-    @Override
-    public
-    TreeNodeBase <N, A, M> createNode ( TreeNodeBase <N, A, M> parent, Rect boundingBox ) throws ValueError {
-        return null;
-    }
 
     /**
      * @param parent
@@ -114,13 +117,14 @@ class BinTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends
      * @return
      */
 //    @Override
-    public
-    TreeNodeBase <N, A, M> createNode ( TreeNodeBase <N, A, M> parent, EDirection quadrant, Rect boundingBox ) throws ValueError {
-        return null;
-    }
+//    public
+//    TreeNodeBase <N, A, M> createNode ( TreeNode <N, A, M> parent, EDirection quadrant, Rect boundingBox ) throws ValueError {
+//        return null;
+//    }
 
     public
-    BinTreeNode <N, A, M> createNode ( BinTreeNode <N, A, M> parent, EDirection quadrant, Rect boundingBox )
+    BinTreeNode <N, A, M> createNode ( BinTreeNode <N, A, M> parent,
+                                       EDirection quadrant, Rect boundingBox )
             throws ValueError {
         return new BinTreeNode <>(parent, quadrant, boundingBox);
     }
@@ -250,12 +254,31 @@ class BinTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends
     }
 
     public static
-    class BinLeafNode<N extends BinLeafNode <N, A, M>, A extends Address <A>, M extends Image>
+    class BinLeafNode<N extends LeafNode <N, A, M>, A extends Address <A>, M extends Image>
             extends LeafNode <N, A, M> {
 
         protected
         BinLeafNode ( TreeNode <N, A, M> parent, M image, Rect rect ) throws ValueError {
-            super(parent, image, rect);
+            super(parent, (ImageBlock) image, rect);
+        }
+
+        @Override
+        public
+        TreeNode <N, A, M> createChild ( int layerIndex, int clusterIndex, int address )
+                throws ValueError {
+            return null;
+        }
+
+        /**
+         * @param parent
+         * @param boundingBox
+         * @return
+         */
+        @Override
+        public
+        TreeNode <N, A, M> createNode ( TreeNode <N, A, M> parent, Rect boundingBox )
+                throws ValueError {
+            return null;
         }
 
         @Override
@@ -272,20 +295,11 @@ class BinTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends
          */
 //        @Override
         public
-        TreeNodeBase <N, A, M> createNode ( TreeNodeBase <N, A, M> parent, EDirection quadrant, Rect boundingBox )
+        TreeNode<N, A, M> createNode ( TreeNode <N, A, M> parent,
+                                       EDirection quadrant,
+                                       Rect boundingBox )
                 throws ValueError {
             return null;//todo
-        }
-
-        /**
-         * @param parent
-         * @param boundingBox
-         * @return
-         */
-        @Override
-        public
-        TreeNodeBase <N, A, M> createNode ( TreeNodeBase <N, A, M> parent, Rect boundingBox ) throws ValueError {
-            return null;
         }
 
         @Override

@@ -27,7 +27,7 @@ class SaUtils {
      */
     @SuppressWarnings("unchecked")
     public static
-    <A extends Address <A, E>, E extends Enum <E>> A createAddress ( int number, int radix, EAddressKind addressKind )
+    <A extends Address <A>> A createAddress ( int number, int radix, EAddressKind addressKind )
             throws ValueError {
         EnumSet <EDigits7> digits = EnumSet.noneOf(EDigits7.class);
         boolean loop = true;
@@ -46,11 +46,11 @@ class SaUtils {
         }
         switch (addressKind) {
             case ORDINARY:
-                return (A) new Address <A, E>((EnumSet <E>) digits);
+                return (A) new Address <A>((EnumSet ) digits);
             case SPIRAL:
-                return (A) new SaAddress <A, E>(digits);
+                return (A) new SaAddress <A>(digits);
             case SQUIRAL:
-                return (A) new SipAddress <A, E>(digits);
+                return (A) new SipAddress <A>(digits);
             default:
                 throw new IllegalStateException("Unexpected value: " + addressKind);
         }

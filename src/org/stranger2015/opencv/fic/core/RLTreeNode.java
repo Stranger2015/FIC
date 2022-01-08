@@ -7,7 +7,7 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
  * @param <N>
  */
 public
-class RLTreeNode<N extends RLTreeNode <N,A>, A extends Address<A,?>> extends TreeNode <N, A> {
+class RLTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image> extends TreeNode <N, A, M> {
 
 
     /**
@@ -16,15 +16,16 @@ class RLTreeNode<N extends RLTreeNode <N,A>, A extends Address<A,?>> extends Tre
      * @param rect
      */
     public
-    RLTreeNode ( TreeNode<N, A> parent, EDirection quadrant, Rect rect ) throws ValueError {
+    RLTreeNode ( TreeNode <N, A, M> parent, EDirection quadrant, Rect rect )
+            throws ValueError {
         super(parent, rect);
     }
 
     //    @Override
-public
-    TreeNodeBase <N, A> createNode ( TreeNode <N, A> parent, EDirection quadrant, Rect boundingBox )
-        throws ValueError {
-        return new RLTreeNode<>(parent, quadrant, boundingBox);
+    public
+    TreeNode <N, A, M> createNode ( TreeNode <N, A, M> parent, EDirection quadrant, Rect boundingBox )
+            throws ValueError {
+        return new RLTreeNode <>(parent, quadrant, boundingBox);
     }
 
     /**
@@ -33,10 +34,10 @@ public
      * @return
      * @throws ValueError
      */
-    @Override
+//    @Override
     public
-    TreeNodeBase <N, A> createChild ( EDirection quadrant, Rect boundingBox ) throws ValueError {
-        return new RLTreeNode <>((TreeNode <N, A>) parent, quadrant, boundingBox);
+    TreeNode <N, A, M> createChild ( EDirection quadrant, Rect boundingBox ) throws ValueError {
+        return new RLTreeNode <>((TreeNode<N, A, M>) parent, quadrant, boundingBox);
     }
 
     /**
@@ -46,7 +47,21 @@ public
      */
     @Override
     public
-    TreeNodeBase <N, A> createNode ( TreeNodeBase <N, A> parent, Rect boundingBox ) throws ValueError {
+    TreeNode <N, A, M> createNode ( TreeNode<N, A, M> parent, Rect boundingBox )
+            throws ValueError {
+        return null;
+    }
+
+    @Override
+    public
+    TreeNode <N, A, M> createChild ( int address ) throws ValueError {
+        return null;
+    }
+
+    @Override
+    public
+    TreeNode <N, A, M> createChild ( int layerIndex, int clusterIndex, int address )
+            throws ValueError {
         return null;
     }
 }

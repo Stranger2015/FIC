@@ -1,5 +1,6 @@
 package org.stranger2015.opencv.fic.core.codec;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.*;
@@ -20,8 +21,8 @@ import static org.stranger2015.opencv.fic.core.ImageBlock.EMPTY_ARRAY;
  * @param <M>
  */
 public abstract
-class Encoder<N extends TreeNodeBase.TreeNode <N, A,M>, A extends Address <A>,M extends Image>
-        implements IEncoder <N,A,M>, IConstants, IImageProcessorListener {
+class Encoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+        implements IEncoder <N, A, M>, IConstants, IImageProcessorListener {
 
     public static final Size ZERO_SIZE = new Size(0, 0);
 
@@ -33,7 +34,7 @@ class Encoder<N extends TreeNodeBase.TreeNode <N, A,M>, A extends Address <A>,M 
      * @return
      */
     public
-    List <ImageBlock <M>> getRangeBlocks () {
+    List <ImageBlock> getRangeBlocks () {
         return rangeBlocks;
     }
 
@@ -41,7 +42,7 @@ class Encoder<N extends TreeNodeBase.TreeNode <N, A,M>, A extends Address <A>,M 
      * @return
      */
     public
-    List <ImageBlock <M>> getDomainBlocks () {
+    List <ImageBlock> getDomainBlocks () {
         return domainBlocks;
     }
 
@@ -61,8 +62,8 @@ class Encoder<N extends TreeNodeBase.TreeNode <N, A,M>, A extends Address <A>,M 
         return outputImage;
     }
 
-    protected final List <ImageBlock <M>> rangeBlocks = new ArrayList <>();
-    protected final List <ImageBlock <M>> domainBlocks = new ArrayList <>();
+    protected final List <ImageBlock> rangeBlocks = new ArrayList <>();
+    protected final List <ImageBlock> domainBlocks = new ArrayList <>();
 
     protected M inputImage;
     protected M outputImage;
@@ -78,7 +79,7 @@ class Encoder<N extends TreeNodeBase.TreeNode <N, A,M>, A extends Address <A>,M 
     protected
     Encoder ( M inputImage, Size rangeSize, Size domainSize ) {
         this.inputImage = inputImage;
-        outputImage = (M) new Image(inputImage, addresses);
+        outputImage = (M) new Image(inputImage);
         outputImage.originalImageWidth = inputImage.getWidth();
         outputImage.originalImageHeight = inputImage.getHeight();
 
@@ -100,7 +101,7 @@ class Encoder<N extends TreeNodeBase.TreeNode <N, A,M>, A extends Address <A>,M 
      */
     public static
     <N extends TreeNodeBase.TreeNode <N, A, M>, A extends Address <A>, M extends Image>
-    @NotNull IEncoder <N,A,M> create ( EPartitionScheme scheme, EncodeAction action ) {
+    @NotNull IEncoder <N, A, M> create ( EPartitionScheme scheme, EncodeAction action ) {
         return create(scheme, action, new LoadSaveImageTask <>("???"));
     }
 
@@ -122,14 +123,23 @@ class Encoder<N extends TreeNodeBase.TreeNode <N, A,M>, A extends Address <A>,M 
         return new SquareImageBlockGenerator(rangeSize, domainSize);
     }
 
+    /**
+     * @param scheme
+     * @param action
+     * @param lit
+     * @param <N>
+     * @param <A>
+     * @param <M>
+     * @return
+     */
     @SuppressWarnings("unchecked")
     public static
-    <N extends TreeNode <N, A,M>, A extends Address <A>,M extends Image>
-    IEncoder <N,A,M> create ( EPartitionScheme scheme, EncodeAction action, LoadSaveImageTask <M> lit ) {
+    <N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+    @NotNull IEncoder <N, A, M> create ( EPartitionScheme scheme, EncodeAction action, LoadSaveImageTask <M> lit ) {
         try {
-            Class <IEncoder <N,A,M>> encoderClass =
-                    (Class <IEncoder <N,A,M>>) Class.forName(scheme.getEncoderClassName());
-            Constructor <IEncoder <N,A,M>> ctor = encoderClass.getDeclaredConstructor(
+            Class <IEncoder <N, A, M>> encoderClass =
+                    (Class <IEncoder <N, A, M>>) Class.forName(scheme.getEncoderClassName());
+            Constructor <IEncoder <N, A, M>> ctor = encoderClass.getDeclaredConstructor(
                     Image.class,
                     Size.class,
                     Size.class);
@@ -246,11 +256,19 @@ class Encoder<N extends TreeNodeBase.TreeNode <N, A,M>, A extends Address <A>,M 
         return (M) outputImage;
     }
 
+    /**
+     *
+     */
+    @Contract(pure = true)
     private
     void createDomainPool () {
 
     }
 
+    /**
+     *
+     */
+    @Contract(pure = true)
     private
     void createCodeBook () {
 
@@ -310,7 +328,7 @@ class Encoder<N extends TreeNodeBase.TreeNode <N, A,M>, A extends Address <A>,M 
      * @return
      */
     public
-    int getDistance ( ImageBlock <M> range, ImageBlock <M> domain ) {
+    int getDistance ( ImageBlock range, ImageBlock domain ) {
         double error = 0;
         for (int i = 0; i < range.width; i++) {
             for (int j = 0; j < range.height; j++) {

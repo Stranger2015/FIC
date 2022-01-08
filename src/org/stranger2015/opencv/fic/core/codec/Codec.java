@@ -1,6 +1,7 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.stranger2015.opencv.fic.core.*;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 
@@ -13,8 +14,8 @@ import java.util.List;
  * @param <A>
  */
 public
-class Codec<N extends TreeNodeBase <N, A>, M extends Image, A extends Address <A,?>>
-        implements IEncoder <N, M, A>, IDecoder < M> {
+class Codec<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+        implements IEncoder <N, A, M>, IDecoder <M> {
 
     private final EPartitionScheme scheme;
     private final EncodeAction action;
@@ -34,8 +35,8 @@ class Codec<N extends TreeNodeBase <N, A>, M extends Image, A extends Address <A
      * @return
      */
     public static
-    <N extends TreeNodeBase <N, A>, M extends Image,A extends Address <A,?>>
-    Codec <N, M, A> create ( EPartitionScheme scheme, EncodeAction action ) {
+    <N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+    Codec <N, A, M> create ( EPartitionScheme scheme, EncodeAction action ) {
         return new Codec <>(scheme, action);
     }
 
@@ -77,35 +78,46 @@ class Codec<N extends TreeNodeBase <N, A>, M extends Image, A extends Address <A
     }
 
     /**
-     * @param x
+     * @param image
      * @param axis
      * @return
      */
-    @Override
     public
-    M flipAxis ( M x, int axis ) {
+    M flipAxis ( M image, int axis ) {
         return null;
     }
 
-    @Override
+    /**
+     * @param image
+     * @param transform
+     * @return
+     */
     public
     M randomTransform ( M image, ImageTransform <M> transform ) {
         return null;
     }
 
-    @Override
+    /**
+     * @param image
+     * @param transform
+     * @return
+     */
     public
     M applyTransform ( M image, ImageTransform <M> transform ) {
         return null;
     }
 
-    @Override
+    /**
+     * @param image
+     * @param transform
+     * @return
+     */
     public
     M applyAffineTransform ( M image, AffineTransform <M> transform ) {
         return null;
     }
 
-//    /**
+//      /**
 //     * Performs a random rotation of an image
 //     *
 //     * @param x                  Input tensor. Must be 3D.?????????????
@@ -400,7 +412,7 @@ class Codec<N extends TreeNodeBase <N, A>, M extends Image, A extends Address <A
     public
     List <ImageTransform <M>> compress ( M image, int sourceSize, int destinationSize, int step ) {
         List <ImageTransform <M>> transformations = new ArrayList <>();
-        List <ImageBlock <M>> transformedBlocks = generateAllTransformedBlocks(image, sourceSize, destinationSize, step);
+        List <ImageBlock> transformedBlocks = generateAllTransformedBlocks(image, sourceSize, destinationSize, step);
 //    for (int i : range(image.shape[0])){ // destination_size):
 //            transformations.append([]);
 //        for(int j : range(image.shape[1] )){// destination_size):
@@ -424,7 +436,7 @@ class Codec<N extends TreeNodeBase <N, A>, M extends Image, A extends Address <A
 
     @Override
     public
-    List <ImageBlock <M>> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
+    List <ImageBlock> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
         return null;
     }
 

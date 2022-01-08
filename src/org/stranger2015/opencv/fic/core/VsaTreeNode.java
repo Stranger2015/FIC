@@ -8,7 +8,9 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
  */
 @SuppressWarnings("unchecked")
 public
-class VsaTreeNode<N extends TreeNode <N, A, M>, A extends SaAddress <A>, M extends Image> extends TreeNode <N, A, M> {
+class VsaTreeNode<N extends TreeNode <N, A, M>, A extends SaAddress <A>, M extends Image>
+        extends TreeNode <N, A, M> {
+
     /**
      * @param parent
      * @param hexant
@@ -30,32 +32,41 @@ class VsaTreeNode<N extends TreeNode <N, A, M>, A extends SaAddress <A>, M exten
         super(parent, boundingBox);
     }
 
+    /**
+     * @param parent
+     * @param image
+     * @param boundingBox
+     */
     public
-    VsaTreeNode ( TreeNode <N, A,M> parent, M image, Rect boundingBox ) {
+    VsaTreeNode ( TreeNode <N, A, M> parent, M image, Rect boundingBox ) {
         super(parent, image, boundingBox);
-
-
     }
 
+    /**
+     *
+     */
     public
     VsaTreeNode () {
     }
 
-//    /**
-//     * @param parent
-//     * @param image
-//     * @param boundingBox
-//     * @throws ValueError
-//     */
-//    public
-//    VsaTreeNode ( TreeNodeBase <N, A> parent, Image image, Rect boundingBox ) throws ValueError {
-//        super(parent, image, boundingBox);
-//    }
+    @Override
+    public
+    TreeNode <N, A, M> createChild ( int address ) throws ValueError {
+        return new VsaLayerClusterNode <>();
+    }
+
+    @Override
+    public
+    TreeNode <N, A, M> createChild ( int clusterIndex, int address, int layerIndex ) throws ValueError {
+        TreeNode <N, A, M> n = createChild(address);
+        return n;
+    }
 
     /**
      * @param index
      * @return
      */
+    @Deprecated
     @Override
     protected
     A newAddress ( int index ) throws ValueError {
@@ -67,7 +78,7 @@ class VsaTreeNode<N extends TreeNode <N, A, M>, A extends SaAddress <A>, M exten
      * @param boundingBox
      * @return
      */
-    @Override
+//    @Override
     public
     TreeNodeBase <N, A, M> createChild ( EDirection hexant, Rect boundingBox ) throws ValueError {
         return new VsaTreeNode <>(this, hexant, boundingBox);
@@ -105,7 +116,7 @@ class VsaTreeNode<N extends TreeNode <N, A, M>, A extends SaAddress <A>, M exten
     class VsaLayerClusterNode<N extends TreeNode <N, A, M>, A extends SaAddress <A>, M extends Image>
             extends LeafNode <N, A, M> {
 
-        protected int layerno;
+        protected int layerIndex;
 
         /**
          * @param parent
@@ -117,7 +128,8 @@ class VsaTreeNode<N extends TreeNode <N, A, M>, A extends SaAddress <A>, M exten
         VsaLayerClusterNode ( TreeNode <N, A, M> parent, M image, Rect rect, int address, int layerno )
                 throws ValueError {
             super(parent, image, rect, address);
-            this.layerno = layerno;
+
+            this.layerIndex = layerno;
         }
 
         /**
@@ -128,7 +140,45 @@ class VsaTreeNode<N extends TreeNode <N, A, M>, A extends SaAddress <A>, M exten
          */
         public
         VsaLayerClusterNode ( TreeNode <N, A, M> parent, M image, Rect boundingBox ) throws ValueError {
-            super(parent, image, boundingBox);
+            super(parent, (ImageBlock) image, boundingBox);
+        }
+
+        /**
+         * @param parent
+         * @param image
+         * @param boundingBox
+         * @param layerIndex
+         * @param clusterIndex
+         * @param address
+         */
+        public
+        VsaLayerClusterNode ( TreeNode <N, A, M> parent,
+                              Image image,
+                              Rect boundingBox,
+                              int layerIndex,
+                              int clusterIndex,
+                              int address ) {
+            super(parent, (M) image, boundingBox, layerIndex, clusterIndex, address);
+        }
+
+        /**
+         *
+         */
+        public
+        VsaLayerClusterNode () {
+        }
+
+        /**
+         * @param layerIndex
+         * @param clusterIndex
+         * @param address
+         * @return
+         * @throws ValueError
+         */
+        @Override
+        public
+        TreeNode <N, A, M> createChild ( int layerIndex, int clusterIndex, int address ) throws ValueError {
+            return new VsaLayerClusterNode<>();//fixme
         }
 
         /**
@@ -137,7 +187,6 @@ class VsaTreeNode<N extends TreeNode <N, A, M>, A extends SaAddress <A>, M exten
          * @param boundingBox
          * @return
          */
-//        @Override
         public
         TreeNode <N, A, M> createNode ( TreeNode <N, A, M> parent, M image, Rect boundingBox )
                 throws ValueError {
@@ -148,19 +197,22 @@ class VsaTreeNode<N extends TreeNode <N, A, M>, A extends SaAddress <A>, M exten
          * @return
          */
         public
-        int getLayerno () {
-            return layerno;
+        int getLayerIndex () {
+            return layerIndex;
         }
 
         /**
+         *
+         *
+         *
          * @param parent
          * @param boundingBox
          * @return
          */
-//        @Override
+        @Override
         public
         TreeNode <N, A, M> createNode ( TreeNode <N, A, M> parent, Rect boundingBox ) throws ValueError {
-            return null;
+            return new VsaTreeNode <>(parent, boundingBox);
         }
 
         @Override

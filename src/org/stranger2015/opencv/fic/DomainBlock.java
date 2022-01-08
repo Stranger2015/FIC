@@ -4,14 +4,15 @@ import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Rect;
 import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.*;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 
 /**
  * 8 X 8
  */
 public
-class DomainBlock<N extends DomainBlock <N, A, M>, A extends Address <A, ?>, M extends Image>
-        extends TreeNodeBase.LeafNode <N, A, M>
-        implements IImageBlock <M> {
+class DomainBlock<N extends DomainBlock <N, A, M>, A extends Address <A>, M extends Image>
+        extends LeafNode <N, A, M>
+        implements IImageBlock {
 
     public final static int W = 8;
     public final static int H = 8;
@@ -22,15 +23,35 @@ class DomainBlock<N extends DomainBlock <N, A, M>, A extends Address <A, ?>, M e
      * @param rect
      */
     public
-    DomainBlock ( TreeNodeBase <N, A> parent, M image, Rect rect ) throws ValueError {
-        super(parent, image, rect);
+    DomainBlock ( TreeNode <N, A, M> parent, M image, Rect rect ) throws ValueError {
+        super(parent, (ImageBlock) image, rect);
     }
 
+    /**
+     * @param imageBlock
+     * @param address      * @param layerno
+     * @return
+     * @throws ValueError
+     */
+    @Override
     public
-    DomainBlock ( TreeNodeBase <N, A> parent, Rect boundingBox ) throws ValueError {
-        super(parent, null,boundingBox);
+    TreeNode <N, A, M> createChild ( int layerIndex, int imageBlock, int address ) throws ValueError {
+        return new DomainBlock <>(null, null);//fixme
     }
 
+    /**
+     * @param parent
+     * @param boundingBox
+     * @throws ValueError
+     */
+    public
+    DomainBlock ( TreeNode <N, A, M> parent, Rect boundingBox ) throws ValueError {
+        super(parent, null, boundingBox);
+    }
+
+    /**
+     * @return
+     */
     @Override
     public
     Size getSize () {
@@ -45,24 +66,12 @@ class DomainBlock<N extends DomainBlock <N, A, M>, A extends Address <A, ?>, M e
      */
 //    @Override
     public
-    LeafNode <N, A, M> createNode ( TreeNodeBase <N, A> parent, EDirection quadrant, Rect boundingBox ) throws ValueError {
-//        return new DomainBlock <>(parent, null, boundingBox);
+    LeafNode <N, A, M> createNode ( TreeNode<N, A, M> parent, EDirection quadrant, Rect boundingBox )
+            throws ValueError {
         throw new IllegalStateException();
     }
 
-    /**
-     * @param parent
-     * @param boundingBox
-     * @return
-     */
-    @Override
-    public
-    TreeNodeBase <N, A> createNode ( TreeNodeBase <N, A> parent, Rect boundingBox ) throws ValueError {
-
-        return new DomainBlock <>(parent, boundingBox);
-    }
-
-    /**
+      /**
      * Compares this object with the specified object for order.  Returns a
      * negative integer, zero, or a positive integer as this object is less
      * than, equal to, or greater than the specified object.
@@ -102,14 +111,59 @@ class DomainBlock<N extends DomainBlock <N, A, M>, A extends Address <A, ?>, M e
      *                              from being compared to this object.
      */
     @Override
-    public
+    public                              //todo
     int compareTo ( @NotNull N o ) {
-        return 0;
+        return super.compareTo(o);
     }
 
+    /**
+     * @param parent
+     * @param boundingBox
+     * @return
+     */
     @Override
     public
-    TreeNodeBase <N, A> createNode ( TreeNodeBase <N, A> parent, M image, Rect boundingBox ) throws ValueError {
+    TreeNode <N, A, M> createNode ( TreeNode <N, A, M> parent, Rect boundingBox ) throws ValueError {
+        return null;
+    }
+
+    /**
+     * @param parent
+     * @param image
+     * @param boundingBox
+     * @return
+     * @throws ValueError
+     */
+    @Override
+    public
+    TreeNode <N, A, M> createNode ( TreeNode <N, A, M> parent, M image, Rect boundingBox ) throws ValueError {
+        return null;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    M getMat () {
+        return null;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    M getImage () {
+        return null;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    Rect getBoundingBox () {
         return null;
     }
 }

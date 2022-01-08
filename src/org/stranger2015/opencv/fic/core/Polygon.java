@@ -1,8 +1,6 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.stranger2015.opencv.fic.IDrawable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,7 +10,7 @@ import java.util.List;
  *
  */
 public abstract
-class Polygon implements IShape, IDrawable <Image> {
+class Polygon implements IShape{
     protected int sides;
     protected double side;
 
@@ -47,19 +45,19 @@ class Polygon implements IShape, IDrawable <Image> {
         sides = i;
         side = size;
     }
-
-    /**
-     * @param image
-     * @param rect
-     */
-    @Override
-    public
-    void draw ( Image image, Rect rect ) {
-        for (int i = 0; i < sides; i++) {
-            double x1 = x + side * Math.cos(i * 2 * Math.PI / sides);
-            double y1 = y + side * Math.sin(i * 2 * Math.PI / sides);
-            vertices.add(new Point(x1, y1));
-//            ....todo
-        }
-    }
+//
+//    /**
+//     * @param image
+//     * @param rect
+//     */
+//    @Override
+//    public
+//    void draw ( Image image, Rect rect ) {
+//        for (int i = 0; i < sides; i++) {
+//            double x1 = x + side * Math.cos(i * 2 * Math.PI / sides);
+//            double y1 = y + side * Math.sin(i * 2 * Math.PI / sides);
+//            vertices.add(new Point(x1, y1));
+////            ....todo
+//        }
+//    }
 }

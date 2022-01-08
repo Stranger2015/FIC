@@ -1,9 +1,9 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.stranger2015.opencv.fic.core.CompressedImage;
+import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.Image;
 import org.stranger2015.opencv.fic.core.ImageBlock;
-import org.stranger2015.opencv.fic.core.TreeNodeBase;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 
@@ -11,15 +11,29 @@ import java.util.List;
 
 import static org.stranger2015.opencv.fic.core.EPartitionScheme.FIXED_SIZE;
 
-/**
- * @param <N>
- * @param <M>
- * @param <C>
- */
 public
-class DefaultCodec<N extends TreeNodeBase <N>, M extends Image, C extends CompressedImage> implements IEncoder <N, M, C>, IConstants {
-    private final IEncoder <N, M, C> encoder = Encoder.create(FIXED_SIZE, new EncodeAction(null));
-    private final IDecoder <C, M> decoder = new Decoder <>();
+class DefaultCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+        implements IEncoder <N, A, M>, IConstants {
+    private final IEncoder <N, A, M> encoder = Encoder.create(FIXED_SIZE, new EncodeAction(null, ""));
+    private final IDecoder <M> decoder = new Decoder <>();
+
+    /**
+     * @param listener
+     */
+    @Override
+    public
+    void addListener ( IEncoderListener listener ) {
+
+    }
+
+    /**
+     * @param listener
+     */
+    @Override
+    public
+    void removeListener ( IEncoderListener listener ) {
+
+    }
 
     /**
      * @return
@@ -43,31 +57,31 @@ class DefaultCodec<N extends TreeNodeBase <N>, M extends Image, C extends Compre
 
     @Override
     public
-    M randomTransform ( M image, ImageTransform <M, C> transform ) {
+    M randomTransform ( M image, ImageTransform <M> transform ) {
         return encoder.randomTransform(image, transform);
     }
 
     @Override
     public
-    M applyTransform ( M image, ImageTransform <M, C> transform ) {
+    M applyTransform ( M image, ImageTransform <M> transform ) {
         return encoder.applyTransform(image, transform);
     }
 
     @Override
     public
-    M applyAffineTransform ( M image, AffineTransform <M, C> transform ) {
+    M applyAffineTransform ( M image, AffineTransform <M> transform ) {
         return encoder.applyAffineTransform(image, transform);
     }
 
     @Override
     public
-    List <ImageTransform <M, C>> compress ( M image, int sourceSize, int destinationSize, int step ) {
+    List <ImageTransform <M>> compress ( M image, int sourceSize, int destinationSize, int step ) {
         return encoder.compress(image, sourceSize, destinationSize, step);
     }
 
     @Override
     public
-    List <ImageBlock <M>> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
+    List <ImageBlock> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
         return encoder.generateAllTransformedBlocks(image, sourceSize, destinationSize, step);
     }
 
@@ -78,6 +92,33 @@ class DefaultCodec<N extends TreeNodeBase <N>, M extends Image, C extends Compre
     public
     void segmentImage () {
         encoder.segmentImage();
+    }
+
+    /**
+     *
+     */
+    @Override
+    public
+    void onPreprocess () {
+
+    }
+
+    /**
+     *
+     */
+    @Override
+    public
+    void onProcess () {
+
+    }
+
+    /**
+     *
+     */
+    @Override
+    public
+    void onPostprocess () {
+
     }
 
 //    /**

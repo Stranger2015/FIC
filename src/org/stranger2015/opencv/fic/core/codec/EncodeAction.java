@@ -13,10 +13,11 @@ class EncodeAction extends Task<Image> implements Consumer <String> {
     private final String fn;
 
     /**
+     * @param image
      * @param fn
      */
     public
-    EncodeAction ( String fn) {
+    EncodeAction ( String image, String fn ) {
         super(image);
         this.fn = fn;
     }

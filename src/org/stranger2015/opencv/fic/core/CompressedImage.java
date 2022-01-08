@@ -12,8 +12,8 @@ class CompressedImage extends Image {
     public int originalImageWidth;
     public int originalImageHeight;
 
-    public List <ImageBlock<Image>> rangeBlocks = new ArrayList <>();
-    public List <ImageBlock<Image>> domainBlocks = new ArrayList <>();
+    public List <ImageBlock> rangeBlocks = new ArrayList <>();
+    public List <ImageBlock> domainBlocks = new ArrayList <>();
 
     /**
      * @param rows
@@ -22,7 +22,7 @@ class CompressedImage extends Image {
      */
     public
     CompressedImage ( int rows, int cols, int type ) {
-        super(rows, cols, type, pixelData);
+        super(rows, cols, type);
     }
 
     public

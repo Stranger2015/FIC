@@ -11,14 +11,4 @@ class Rectangle extends Rect implements IShape {
     Rectangle ( int x, int y, int width, int height ) {
         super(x, y, width, height);
     }
-
-    /**
-     * @param image
-     * @param rect
-     */
-    @Override
-    public
-    void draw ( Image image, Rect rect ) {
-
-    }
 }

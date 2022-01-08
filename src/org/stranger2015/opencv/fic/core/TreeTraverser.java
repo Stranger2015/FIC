@@ -1,10 +1,8 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.NotNull;
-import org.opencv.core.Rect;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 
-import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -165,6 +163,7 @@ class TreeTraverser<N extends TreeNode <N, A, M>, A extends Address <A>, M exten
      * @param action
      * @throws DepthLimitExceeded
      */
+    @SuppressWarnings("unchecked")
     public
     void traverse ( TreeNode <N, A, M> node,
                     int depth,
@@ -379,23 +378,20 @@ class TreeTraverser<N extends TreeNode <N, A, M>, A extends Address <A>, M exten
     @SuppressWarnings("unchecked")
     private static
     <N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
-    @NotNull List <N> addFourWhiteChildren ( TreeNode <N, A, M> node ) {
-        final List <N> l = new ArrayList <>(4);
+    @NotNull NodeList <N, A, M> addFourWhiteChildren ( TreeNode <N, A, M> node ) {
+        final NodeList <N, A, M> l = new NodeList <>(4);
         node.setType(GRAY);
         QUADRANTS.forEach(quadrant -> {
             int w = node.boundingBox.width / 2;
             int h = node.boundingBox.height / 2;
             TreeNode <N, A, M> ch = null;
-            try {
-                ch = (TreeNode <N, A, M>) node.createChild(quadrant,
-                        new Rect(node.boundingBox.x,
-                                node.boundingBox.y,
-                                w,
-                                h));
-            } catch (ValueError e) {
-                e.printStackTrace();
-            }
-            l.add((N) ch);
+            ch = node.createChild(
+                    quadrant.getOrd(),
+                    new Rectangle(node.boundingBox.x,
+                            node.boundingBox.y,
+                            w,
+                            h));
+            l.add(ch);
             for (EDirection q1 : QUADRANTS) {
                 ch.setChild(q1, null);
             }
