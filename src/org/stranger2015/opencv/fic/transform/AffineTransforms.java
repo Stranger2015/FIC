@@ -10,7 +10,7 @@ import java.util.ArrayList;
  *
  */
 public
-class AffineTransforms<M extends Image, C extends CompressedImage> extends ArrayList<ImageTransform<M, C>> {
+class AffineTransforms<M extends Image> extends ArrayList<ImageTransform<M>> {
     /**
      * @param x
      * @param axis

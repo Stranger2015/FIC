@@ -3,7 +3,7 @@ package org.stranger2015.opencv.fic.core.codec;
 import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.Image;
 import org.stranger2015.opencv.fic.core.ImageBlock;
-import org.stranger2015.opencv.fic.core.TreeNodeBase;
+import org.stranger2015.opencv.fic.core.NodeList;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
@@ -109,45 +109,45 @@ import java.util.List;
  *5. To  increase  encoding  speed  classification  of  sub-image
  *into  upper  right,  upper  left,  lower  ri
 
- * * A Proposed Hybrid Fractal Image Compression Based on Graph Theory and Isosceles Triangle Segmentation
- * * <p>
- * * Proposed algorithms encoding steps as following:
- * * <p>
- * *
- * * Step 1: Segment the initial image with graph-based image segmentation algorithm, and set label for all pixels;
- * *
- * * Step 2: Divide initial image into different R blocks with non-overlapping, each R block is 8*8 size, and set
- * * label for each R block, classify R block based on isosceles triangle segmentation rather than rectangles;
- * *
- * * Step 3: Divide image into different D blocks allowing some overlapping, the size is four times as R block,
- * * and set label for each D block, classify D block based on isosceles triangle segmentation rather than rectangles;
- * *
- * * Step 4: Shrink D block to R block’s size;
- * *
- * * Step 5: Calculate D block’s variance, and for D blocks in the same class, sort them according to their variance;
- * *
- * * Step 6: Choose one R block; calculate its variance and matching threshold;
- * *
- * * Step 7: In the search space where R block located in, find a D block which has the closest variance to
- * * current R block;
- * *
- * * Step 8: Define a searching window; the ratio between the number of blocks which located in the searching
- * * window and the number of total blocks is W%, and half of blocks in the searching window have a larger
- * * variance than the D block mentioned in step 7, others have a smaller variance.
- * * Step 9: In the searching window, after affine transformation and gray migration, find the best-match D
- * * block;
- * * Step 10: Calculate the matching error between best-match D block and R block, if the error is larger than
- * * threshold ‘bias’, divide R block into four sub-blocks, add them to the corresponding search space according
- * * to their labels, and slide certain steps, divide some new D blocks, add them to corresponding search space
- * * according to their labels too. If the error is smaller than threshold bias, storage affine transformation parameters;
- * * now, calculate the variance of range and domain blocks by the equation below. The variance of block I is
- * * defined as,
- * * <p>
- * * Var(I)  =  ()()2* * 2
- * * Where n is the size of the block and Xi is the pixel value of the range blocks.
- * * Step 11: For all R blocks, repeat Step 6-10;
- * * Step 12: Write out the compressed data in the form of a local IFS code;
- * * Step 13: Apply a fractal compression algorithm to obtain a compressed IFS code.
+ * A Proposed Hybrid Fractal Image Compression Based on Graph Theory and Isosceles Triangle Segmentation
+ * <p>
+ * Proposed algorithms encoding steps as following:
+ * <p>
+ *
+ * Step 1: Segment the initial image with graph-based image segmentation algorithm, and set label for all pixels;
+ *
+ * Step 2: Divide initial image into different R blocks with non-overlapping, each R block is 8*8 size, and set
+ * label for each R block, classify R block based on isosceles triangle segmentation rather than rectangles;
+ *
+ * Step 3: Divide image into different D blocks allowing some overlapping, the size is four times as R block,
+ * and set label for each D block, classify D block based on isosceles triangle segmentation rather than rectangles;
+ *
+ * Step 4: Shrink D block to R block’s size;
+ *
+ * Step 5: Calculate D block’s variance, and for D blocks in the same class, sort them according to their variance;
+ *
+ * Step 6: Choose one R block; calculate its variance and matching threshold;
+ *
+ * Step 7: In the search space where R block located in, find a D block which has the closest variance to
+ * current R block;
+ *
+ * Step 8: Define a searching window; the ratio between the number of blocks which located in the searching
+ * window and the number of total blocks is W%, and half of blocks in the searching window have a larger
+ * variance than the D block mentioned in step 7, others have a smaller variance.
+ * Step 9: In the searching window, after affine transformation and gray migration, find the best-match D
+ * block;
+ * Step 10: Calculate the matching error between best-match D block and R block, if the error is larger than
+ * threshold ‘bias’, divide R block into four sub-blocks, add them to the corresponding search space according
+ * to their labels, and slide certain steps, divide some new D blocks, add them to corresponding search space
+ * according to their labels too. If the error is smaller than threshold bias, storage affine transformation parameters;
+ * now, calculate the variance of range and domain blocks by the equation below. The variance of block I is
+ * defined as,
+ * <p>
+ * Var(I)  =  ()()2* 2
+ * Where n is the size of the block and Xi is the pixel value of the range blocks.
+ * Step 11: For all R blocks, repeat Step 6-10;
+ * Step 12: Write out the compressed data in the form of a local IFS code;
+ * Step 13: Apply a fractal compression algorithm to obtain a compressed IFS code.
  *
  */
 public
@@ -171,8 +171,9 @@ interface IEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
 
     /**
      *
+     * @return
      */
-    void segmentImage ();
+    void segmentImage ( M image);
 
     /**
      * @return
@@ -210,247 +211,6 @@ interface IEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
      * @return
      */
     M applyAffineTransform ( M image, AffineTransform <M> transform );
-
-//    /**
-//     * Performs a random rotation of an image
-//     *
-//     * @param x                  Input tensor. Must be 3D.?????????????
-//     * @param rg                 Rotation range, in degrees.
-//     * @param rowAxis            Index of axis for rows in the input tensor.
-//     * @param colAxis            Index of axis for columns in the input tensor.
-//     * @param channelAxis
-//     * @param fillMode           Points outside the boundaries of the input are filled according to the given mode
-//     * @param cval
-//     * @param interpolationOrder
-//     * @return
-//     */
-//    M randomRotation ( M x,
-//                       Range rg,
-//                       int rowAxis,
-//                       int colAxis,
-//                       int channelAxis,
-//                       EFillMode fillMode,
-//                       double cval,
-//                       int interpolationOrder );
-////    # Arguments
-//        channel_axis:
-//        fill_mode:
-//            (one of `{'constant', 'nearest', 'reflect', 'wrap'}`).
-//        cval: Value used for points outside the boundaries
-//            of the input if `mode='constant'`.
-//        interpolation_order: int, order of spline interpolation.
-//            see `ndimage.interpolation.affine_transform`
-//    # Returns
-
-//    """
-//    theta = np.random.uniform(-rg, rg)
-//    x = apply_affine_transform(x, theta=theta, channel_axis=channel_axis,
-//                               fill_mode=fill_mode, cval=cval,
-//                               order=interpolation_order)
-//    return x
-//
-
-//    /**
-//     * @param x                  Input image
-//     * @param wrg                Width shift range, as a float fraction of the width.
-//     * @param hrg                Height shift range, as a float fraction of the height.
-//     * @param rowAxis            Index of axis for rows in the input tensor.
-//     * @param colAxis            Index of axis for cols in the input tensor.
-//     * @param channelAxis        Index of axis for channels in the input tensor.
-//     * @param fillMode           Points outside the boundaries of the input
-//     *                           are filled according to the given mode
-//     *                           (one of CONSTANT, NEAREST, REFLECT, WRAP ).
-//     * @param cval
-//     * @param interpolationOrder
-//     * @return Shifted image tensor.
-//     */
-//    M randomShift ( M x,
-//                    Range wrg,
-//                    Range hrg,
-//                    int rowAxis,
-//                    int colAxis,
-//                    int channelAxis,
-//                    EFillMode fillMode,
-//                    double cval,
-//                    int interpolationOrder );
-////        x: Input tensor. Must be 3D.
-////        wrg:
-////        hrg:
-////        row_axis:
-////        col_axis: Index of axis for columns in the input tensor.
-////        channel_axis: Index of axis for channels in the input tensor.
-////        fill_mode:
-////        cval: Value used for points outside the boundaries
-////            of the input if `mode='constant'`.
-////        interpolation_order: int, order of spline interpolation.
-////            see `ndimage.interpolation.affine_transform`
-////    # Returns
-////
-////    """
-////    h, w = x.shape[row_axis], x.shape[col_axis]
-////    tx = np.random.uniform(-hrg, hrg) * h
-////            ty = np.random.uniform(-wrg, wrg) * w
-////    x = apply_affine_transform(x, tx=tx, ty=ty, channel_axis=channel_axis,
-////                               fill_mode=fill_mode, cval=cval,
-////                               order=interpolation_order)
-////    return x
-//
-//    /**
-//     * Performs a random spatial shear of an image tensor.
-//     *
-//     * @param image
-//     * @param intensity
-//     * @param rowAxis
-//     * @param colAxis
-//     * @param channelAxis
-//     * @param fillMode
-//     * @param cval
-//     * @return Sheared image tensor.
-//     */
-//    M randomShear ( M image,
-//                    int intensity,
-//                    int rowAxis,
-//                    int colAxis,
-//                    int channelAxis,
-//                    EFillMode fillMode,
-//                    double cval );
-//    # Arguments
-//        x: Input tensor. Must be 3D.
-//        intensity: Transformation intensity.
-//        row_axis: Index of axis for rows in the input tensor.
-//        col_axis: Index of axis for columns in the input tensor.
-//        channel_axis: Index of axis for channels in the input tensor.
-//        fill_mode: Points outside the boundaries of the input
-//            are filled according to the given mode
-//            (one of `{'constant', 'nearest', 'reflect', 'wrap'}`).
-//        cval: Value used for points outside the boundaries
-//            of the input if `mode='constant'`.
-//
-//    shear = random.uniform(-intensity, intensity)
-//
-//
-//    h, w = x.shape[row_axis], x.shape[col_axis]
-//    transform_matrix = transform_matrix_offset_center(shear_matrix, h, w)
-//    x = apply_transform(x, transform_matrix, channel_axis, fill_mode, cval)
-//    return x
-
-//    /**
-//     * @param x
-//     * @param zoomRange
-//     * @param rowAxis
-//     * @param colAxis
-//     * @param channelAxis
-//     * @param fillMode
-//     * @param cval
-//     * @return Zoomed image tensor.//////
-//     */
-//    M randomZoom ( M x,
-//                   Mat.Tuple2 <Float> zoomRange,
-//                   int rowAxis/*=1*/,
-//                   int colAxis/*=2*/,
-//                   int channelAxis/*=0*/,
-//                   EFillMode fillMode/*='nearest'*/,
-//                   double cval/*=0.*/ );
-////            """Performs a random spatial zoom of a Numpy image tensor.
-//    # Arguments
-//        x: Input tensor. Must be 3D.
-//        zoom_range: Tuple of floats; zoom range for width and height.
-//        row_axis: Index of axis for rows in the input tensor.
-//        col_axis: Index of axis for columns in the input tensor.
-//        channel_axis: Index of axis for channels in the input tensor.
-//        fill_mode: Points outside the boundaries of the input
-//            are filled according to the given mode
-//            (one of `{'constant', 'nearest', 'reflect', 'wrap'}`).
-//        cval: Value used for points outside the boundaries
-//            of the input if `mode='constant'`.
-//    # Returns
-//    # Raises
-//        ValueError: if `zoom_range` isn't a tuple.
-//    """
-//            if len(zoom_range) != 2:
-//    raise ValueError('`zoom_range` should be a tuple or list of two floats. '
-//                             'Received arg: ', zoom_range)
-//
-//    if zoom_range[0] == 1 and zoom_range[1] == 1:
-//    zx, zy = 1, 1
-//            else:
-//    zx, zy = np.random.uniform(zoom_range[0], zoom_range[1], 2)
-//    zoom_matrix = np.array([[zx, 0, 0],
-//            [0, zy, 0],
-//            [0, 0, 1]])
-//
-//    h, w = x.shape[row_axis], x.shape[col_axis]
-//    transform_matrix = transform_matrix_offset_center(zoom_matrix, h, w)
-//    x = apply_transform(x, transform_matrix, channel_axis, fill_mode, cval)
-//    return x
-
-//    M randomChannelShift ( M x, int intensity, int channelAxis/*=0*/ );
-//    x = np.rollaxis(x, channel_axis, 0)
-//    min_x, max_x = np.min(x), np.max(x)
-//    channel_images = [np.clip(x_channel + np.random.uniform(-intensity, intensity), min_x, max_x)
-//            for x_channel in x]
-//    x = np.stack(channel_images, axis=0)
-//    x = np.rollaxis(x, 0, channel_axis + 1)
-//            return x
-//
-//
-//    /**
-//     * @param image       Input image.
-//     * @param theta       Rotation angle, in degrees.
-//     * @param tx          Width shift.
-//     * @param ty          Height shift.
-//     * @param shear       Shear angle, in degrees.
-//     * @param zx          Zoom in x direction.
-//     * @param zy          Zoom in y direction
-//     * @param rowAxis     Index of axis for rows in the input image.
-//     * @param colAxis     Index of axis for columns in the input image.
-//     * @param channelAxis Index of axis for channels in the input image.
-//     * @param fillMode    Points outside the boundaries of the input are filled according to the given mode
-//     *                    (one of `{'constant', 'nearest', 'reflect', 'wrap'}`).
-//     * @param cval        Value used for points outside the boundaries of the input if `mode='constant'`.
-//     * @param order       Order
-//     * @return Value used for points outside the boundaries of the input if `mode='constant'`.
-//     */
-//    M applyAffineTransform ( M image,
-//                             double theta,
-//                             double tx,
-//                             double ty,
-//                             double shear,
-//                             double zx,
-//                             double zy,
-//                             int rowAxis,
-//                             int colAxis,
-//                             int channelAxis,
-//                             EFillMode fillMode,
-//                             double cval,
-//                             int order );
-//
-//    /**
-//     * @param matrix
-//     * @param x
-//     * @param y
-//     * @return
-//     */
-//    M transformMatrixOffsetCenter ( M matrix, int x, int y );
-//
-//    /**
-//     * Performs a brightness shift.
-//     *
-//     * @param image
-//     * @param brightness
-//     * @return image tensor.
-//     * @throws ValueError if `brightness_range` isn't a tuple.
-//     */
-//    M applyBrightnessShift ( M image, Range brightness );
-//
-//    /**
-//     * Performs a random brightness shift.
-//     *
-//     * @param image
-//     * @param brightnessRange
-//     * @return
-//     */
-//    M randomBrightness ( M image, Range brightnessRange );
 
     /**
      * @param image

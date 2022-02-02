@@ -1,13 +1,12 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.stranger2015.opencv.fic.core.CompressedImage;
 import org.stranger2015.opencv.fic.core.Image;
 
 /**
  * functor class to affineFlip an image
  */
 public
-class FlipTransform<M extends Image, C extends CompressedImage> extends PreserveAlphaTransform <M, C> {
+class FlipTransform<M extends Image> extends PreserveAlphaTransform <M> {
 
     /**
      * @param preserveAlpha

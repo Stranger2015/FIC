@@ -1,6 +1,7 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.opencv.core.Size;
+import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.Image;
 import org.stranger2015.opencv.fic.core.SaAddress;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
@@ -37,15 +38,16 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
  * @param <A>
  */
 public
-class SabVsrEncoder<N extends TreeNode <N, A, M>, A extends SaAddress <A>, M extends Image>
-        extends VsaEncoder <N, A, M> {
+class SabVrEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+        extends SaEncoder <N, A, M> {
+
     /**
      * @param inputImage
      * @param rangeSize
      * @param domainSize
      */
     public
-    SabVsrEncoder ( M inputImage, Size rangeSize, Size domainSize ) {
+    SabVrEncoder ( M inputImage, Size rangeSize, Size domainSize ) {
         super(inputImage, rangeSize, domainSize);
     }
 }

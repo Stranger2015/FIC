@@ -56,7 +56,7 @@ class Polygon implements IShape{
 //        for (int i = 0; i < sides; i++) {
 //            double x1 = x + side * Math.cos(i * 2 * Math.PI / sides);
 //            double y1 = y + side * Math.sin(i * 2 * Math.PI / sides);
-//            vertices.add(new Point(x1, y1));
+//            vertices.add(new AddressedPoint(x1, y1));
 ////            ....todo
 //        }
 //    }

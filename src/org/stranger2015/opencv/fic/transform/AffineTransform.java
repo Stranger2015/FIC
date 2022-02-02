@@ -3,7 +3,7 @@ package org.stranger2015.opencv.fic.transform;
 import org.stranger2015.opencv.fic.core.Image;
 
 public abstract
-class AffineTransform<M extends Image> extends ImageTransform<M>{
+class AffineTransform<M extends Image> extends ImageTransform <M> {
 
     private final EInterpolationType type;
 
@@ -11,7 +11,7 @@ class AffineTransform<M extends Image> extends ImageTransform<M>{
      * @param image
      */
     protected
-    AffineTransform ( M image, EInterpolationType type) {
+    AffineTransform ( M image, EInterpolationType type ) {
         super(image);
         this.type = type;
     }

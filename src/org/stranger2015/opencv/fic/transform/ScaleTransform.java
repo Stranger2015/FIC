@@ -14,6 +14,11 @@ class ScaleTransform<M extends Image> extends PreserveAlphaTransform<M> {
     private final double scaleX;
     private final double scaleY;
 
+    /**
+     * @param image
+     * @param scaleX
+     * @param scaleY
+     */
     public
     ScaleTransform ( M image, double scaleX, double scaleY ) {
         this(image, scaleX, scaleY, false);

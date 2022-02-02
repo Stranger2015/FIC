@@ -1,16 +1,13 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.stranger2015.opencv.fic.core.CompressedImage;
 import org.stranger2015.opencv.fic.core.Image;
-
-import java.awt.image.AffineTransformOp;
 
 import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
 
 /**
  * functor class to affineShear an image
  */
-public class AffineShearTransform<M extends Image, C extends CompressedImage> extends AffineTransform <M, C> {
+public class AffineShearTransform<M extends Image> extends AffineTransform <M> {
 
     private final double shearX;
     private final double shearY;
@@ -22,7 +19,8 @@ public class AffineShearTransform<M extends Image, C extends CompressedImage> ex
      * direction of the positive Y axis as a factor of their X coordinate
      * @param interpolationType
      */
-    public AffineShearTransform(M image, double shearX,
+    public AffineShearTransform(M image,
+                                double shearX,
                                 final double shearY,
                                 final EInterpolationType interpolationType) {
         super(image,interpolationType);

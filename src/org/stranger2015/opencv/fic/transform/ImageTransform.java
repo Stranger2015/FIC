@@ -14,10 +14,11 @@ class ImageTransform<M extends Image> implements ITransform <M>, Serializable {
     protected final M outputImage;
 
     public int dihedralAffineTransformerIndex;
-//    public double contrastScale;
-//    public int brightnessOffset;
+
     public int originalDomainX;
     public int originalDomainY;
+    public int brightnessOffset;
+    public double contrastScale;
 
     /**
      * @param image
@@ -26,8 +27,8 @@ class ImageTransform<M extends Image> implements ITransform <M>, Serializable {
     protected
     ImageTransform (M image) {
         dihedralAffineTransformerIndex = -1;
-//        contrastScale = 0;
-//        brightnessOffset = 0;
+        contrastScale = 0;
+        brightnessOffset = 0;
         originalDomainX = 0;
         originalDomainY = 0;
         outputImage = (M) new CompressedImage(image);

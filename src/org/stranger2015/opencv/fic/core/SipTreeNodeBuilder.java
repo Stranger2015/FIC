@@ -1,19 +1,22 @@
 package org.stranger2015.opencv.fic.core;
 
+import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Rect;
+import org.stranger2015.opencv.fic.DomainPool;
 import org.stranger2015.opencv.fic.core.SipTreeNode.SipLayerClusterNode;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.SipAddress;
 import org.stranger2015.opencv.fic.core.codec.SipImage;
+import org.stranger2015.opencv.fic.utils.Point;
+import org.stranger2015.opencv.fic.utils.SipLibrary;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import static org.stranger2015.opencv.fic.core.codec.IAddressMath.pow;
+import static org.stranger2015.opencv.fic.core.SipImageBlock.blockSideSize;
 import static org.stranger2015.opencv.fic.core.codec.SipAddress.radix;
-import static org.stranger2015.opencv.fic.utils.ImageUtils.convertImageToSipImage;
-import static org.stranger2015.opencv.fic.utils.ImageUtils.nextPixelCapacity;
 
 /**
  * @param <N>
@@ -21,170 +24,177 @@ import static org.stranger2015.opencv.fic.utils.ImageUtils.nextPixelCapacity;
  * @param <M>
  */
 public
-class SipTreeNodeBuilder<N extends TreeNode <N, A, M>, A extends SipAddress <A>, M extends SipImage>
+class SipTreeNodeBuilder<N extends TreeNode <N, A, M>, A extends SipAddress <A>, M extends Image>
         implements ITreeNodeBuilder <N, A, M> {
 
-    public final static Rect BB = new Rectangle(0, 0, 3, 3);
-    protected final List <ImageBlock> blocks = new ArrayList <>();
+    public final static Rect BB = new Rectangle(0, 0, blockSideSize, blockSideSize);
 
-    M sipImage;
+    /**
+     * maps block coordinate (point(x,y)) to image blk instance
+     */
+    protected final Map <Point, SipImageBlock> blocks = new DualHashBidiMap <>();
+    protected final List <SipImageBlock> blockList = new ArrayList <>();
 
-    int layerIndex;
-    int address;
-
-    int layersAmount;
-
-    int pixelCapacity;
-    int pixelAmount;//pixels may or may not occupy the whole cluster of the outermost layer
-    int clustersAmount;
-    int clusterIndex;
+    public final int sideSize;
+    public final SipImage sipImage;
+    public final SipLibrary <A> sipLib;
 
     TreeNode <N, A, M> lastNode;
     SipLayerClusterNode <N, A, M> lastCluster;
 
-    int nextPixelCapacity;
-    int pixelAmountRemains;
+    NodeList <N, A, M> clusters = new NodeList <>();
+//    protected final List <Point> pixelShiftAddresses;
 
     /**
      *
      */
     public
-    SipTreeNodeBuilder () {
-        layerIndex = 0;
-        address = 0;
-
-        layersAmount = 0;
-
-        pixelCapacity = pow(radix, layersAmount);
-        pixelAmount = 0;//pixels may or may not occupy the whole cluster of the outermost layer
-        clustersAmount = 0;
-        clusterIndex = 0;
+    SipTreeNodeBuilder ( M image ) throws ValueError {
+        sipLib = new SipLibrary <>();
+        sideSize = image.getWidth();
+        sipImage = sipLib.convertImageToSipImage( buildTree(), image);
     }
 
     /**
      * @return
      */
     public
-    List <ImageBlock> getBlocks () {
+    Map <Point, SipImageBlock> getBlocks () {
         return blocks;
     }
 
+
     /**
-     * @param image
      * @return
      */
     @SuppressWarnings("unchecked")
     public
-    SipTree <N, A, M> buildTree ( M image ) throws ValueError {
-        sipImage = (M) convertImageToSipImage(image);
-        SipTreeNode <N, A, M> root = new SipTreeNode <>(null, image, BB);
-        SipTree <N, A, M> tree = new SipTree <>(root, (M) sipImage, new TreeNodeAction <>(null, List.of()));
+    SipTree <N, A, M> buildTree () throws ValueError {
+        SipTreeNode <N, A, M> root = new SipTreeNode <>(null, (M) sipImage, BB);
+        SipTree <N, A, M> tree = new SipTree <>(root, (M) sipImage, null);
         tree.getNodes().add(root);
-        tree.getNodes().add(buildLayers(tree.getNodes(), sipImage, root));
+        tree.getNodes().add(buildLayers(root));
 
         return tree;
     }
 
     /**
-     * @param layerIndex
-     * @param clusterIndex
-     * @param address
-     * @throws ValueError
+     *
      */
-    void onNewLayer ( int layerIndex, int clusterIndex, int address ) throws ValueError {
-        onNewCluster(layerIndex, clusterIndex, address);
-    }
-
-    /**
-     * @param layerIndex
-     * @param clusterIndex
-     * @param address
-     * @throws ValueError
-     */
-    void onNewCluster ( int layerIndex, int clusterIndex, int address ) throws ValueError {
-        if (address % radix == 0) {
-            onNewAddress(layerIndex, clusterIndex, address);
+    void onNewCluster () {
+        if (sipLib.clusterIndex == sipLib.clustersAmount) {
+            if (sipLib.layersAmount == sipLib.layerIndex) {
+                sipLib.layersAmount++;
+            }
+//            onNewLayer(++layerIndex, clusterIndex, address);
         }
-    }
-
-    /**
-     * @param layerIndex
-     * @param clusterIndex
-     * @param address
-     * @throws ValueError
-     */
-    void onNewAddress ( int layerIndex, int clusterIndex, int address ) throws ValueError {
-        lastCluster = createNewClusterNode0(layerIndex, clusterIndex, address, radix);
+        if (sipLib.address % radix == 0) {
+            sipLib.clusterIndex++;
+        }
     }
 
     /**
      * @param layerIndex
      * @return
      */
-    private
+    public
     int calcClustersAmount ( int layerIndex ) {
-        return nextPixelCapacity(layerIndex) / radix;
+        return sipLib.calcPixelCapacity(layerIndex) / radix;
     }
 
-    SipLayerClusterNode <N, A, M> createNewClusterNode0 ( int layerIndex, int clusterIndex, int address, int radix )
-            throws ValueError {
-        lastCluster = new SipLayerClusterNode <N, A, M>(lastNode, layerIndex, clusterIndex, address);
-        pixelAmountRemains = radix;
-        nextPixelCapacity = nextPixelCapacity(layerIndex);
-        lastCluster.getChildren().add(buildChildrenOf(lastCluster));
-        clusterIndex++;
+    /**
+     * @param sipImage
+     * @param layerIndex
+     * @param clusterIndex
+     * @param address
+     * @return
+     */
+    SipLayerClusterNode <N, A, M> createNewClusterNode0 ( SipImage sipImage,
+                                                          int layerIndex,
+                                                          int clusterIndex,
+                                                          int address ) {
+        lastCluster = new SipLayerClusterNode <>(
+                lastNode,
+                sipImage,
+                null,
+                layerIndex,
+                clusterIndex,
+                address);
+        sipLib.clusterIndex++;
 
         return lastCluster;
     }
 
     /**
-     * @param nodes
-     * @param image
      * @param root
      * @return
      */
-    @SuppressWarnings("unchecked")
     private
-    NodeList <N, A, M> buildLayers ( NodeList <N, A, M> nodes, SipImage image, SipTreeNode <N, A, M> root )
-            throws ValueError {
-        blocks.addAll(splitSipImageToBlocks(image));
-        for (layersAmount = calcLayersAmount(image.cols()); layerIndex < layersAmount; layerIndex++) {
-            ImageBlock imageBlock = blocks.get(clusterIndex);//fixme
-            switch (layerIndex) {
+    NodeList <N, A, M> buildLayers ( SipTreeNode <N, A, M> root ) throws ValueError {
+        blocks.putAll(splitSipImageToBlocks(sipImage, blockSideSize));
+        sipLib.layersAmount = sipLib.calcLayersAmount(sideSize);
+        int startAddress = 0;
+        int endAddress = 0;
+        while (sipLib.layerIndex++ < sipLib.layersAmount) {
+            sipLib.clustersAmount = calcClustersAmount(sipLib.layerIndex);
+            switch (sipLib.layerIndex) {
                 case 0:
                     continue;
                 case 1:
-                    onNewLayer(layerIndex, clusterIndex, address);
-                    lastNode = createNewClusterNode(root, imageBlock, layerIndex, address, radix);
-                    nodes.add(lastNode);
+                    clusters = createNewClusterNodes(root, sipLib.layerIndex, startAddress, radix - 1);
                     break;
                 default:
                     try {
-                        NodeList <N, A, M> l = getRestNodes(
-                                lastNode,
-                                imageBlock,
-                                layerIndex,
-                                address,
-                                clusterIndex
-                        );
-                        nodes.add(l);
+                        startAddress = endAddress + 1;
+                        endAddress = startAddress + sipLib.clustersAmount * radix;
+                        NodeList <N, A, M> l = createNewClusterNodes(root, sipLib.layerIndex, startAddress, endAddress);
+                        clusters.add(l);
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                     break;
-            }
-        }
+            }//switch
+        }//while
 
-        return nodes;
+        return clusters;
     }
 
     /**
-     * @param w
+     * @param parent
+     * @param layerIndex
+     * @param startAddress
+     * @param endAddress
      * @return
+     * @throws ValueError
      */
     private
-    int calcLayersAmount ( int w ) {
-        return (int) (2 * Math.log10(w) / Math.log10(radix));
+    NodeList <N, A, M> createNewClusterNodes ( SipTreeNode <N, A, M> parent,
+                                               int layerIndex,
+                                               int startAddress,
+                                               int endAddress ) throws ValueError {
+        NodeList <N, A, M> l = new NodeList <>();
+        List <Point> ccs = sipLib.getCartesianCoordinates(radix);
+        for (int i = 0, amount = endAddress - startAddress; i < amount; i++) {
+            DomainPool domainPool = new DomainPool();
+            List <N> leaves=new ArrayList <>();
+            List <Point> shifts = sipLib.derivePixelShifts(
+                    new SipTree <>(parent, blocks, new TreeNodeAction <>(domainPool, leaves)),
+                    ccs,
+                    sipLib.pixelCapacity,
+                    startAddress,
+                    i);
+            lastNode = lastCluster = createNewClusterNode(
+                    parent,
+                    sipImage,//fixme loc var
+                    layerIndex,
+                    i);
+            l.add(lastNode);
+            parent = (SipTreeNode <N, A, M>) lastNode;
+            onNewCluster();
+        }
+
+        return l;
     }
 
     /**
@@ -192,95 +202,51 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, M>, A extends SipAddress <A>,
      * @param image
      * @param layerIndex
      * @param address
-     * @param radix
      * @return
-     * @throws ValueError
      */
     @SuppressWarnings("unchecked")
     private
-    TreeNode <N, A, M> createNewClusterNode ( TreeNode <N, A, M> parent,
-                                              ImageBlock image,
-                                              int layerIndex,
-                                              int address,
-                                              int radix ) throws ValueError {
+    SipLayerClusterNode <N, A, M> createNewClusterNode (
+            TreeNode <N, A, M> parent,
+            SipImage image,
+            int layerIndex,
+            int address ) {
 
-        lastCluster = createNewClusterNode0(layerIndex, clusterIndex, address, radix);
+        lastNode = lastCluster = createNewClusterNode0(image, layerIndex, sipLib.clusterIndex, address);
         parent.setChild(0, (N) lastCluster);
-        lastCluster.imageBlock = image;
 
         return lastCluster;
     }
 
     /**
-     * children
-     *
-     * @param
      * @param image
-     * @param layerIndex
-     * @param address
-     * @return
-     */
-//    @SuppressWarnings("unchecked")
-    private
-    NodeList <N, A, M> getRestNodes (
-            TreeNode <N, A, M> parent,
-            ImageBlock image,
-            int layerIndex,
-            int clusterIndex,
-            int address
-    ) throws ValueError {
-
-        final NodeList <N, A, M> list = new NodeList <>();
-        boolean loop = true;
-        while (loop) {
-            lastNode = createNewClusterNode(parent, image, layerIndex, address, clusterIndex);
-            parent = (TreeNode <N, A, M>) lastNode.parent;
-            list.add(lastNode);
-            loop = lastNode != null;
-        }
-
-        return list;
-    }
-
-    /**
-     * @param node
-     * @return
-     * @throws ValueError
-     */
-    NodeList <N, A, M> buildChildrenOf ( TreeNode <N, A, M> node ) throws ValueError {
-        NodeList <N, A, M> list = new NodeList <>();
-        lastNode = node.createChild(
-                layerIndex, clusterIndex++, address
-        );
-        lastNode.parent = lastNode;
-        list.add(lastNode);
-        NodeList <N, A, M> children = new NodeList <>();
-        lastNode.getChildren().add(children);
-
-        return list;
-    }
-
-    /**
-     * @param image
+     * @param blockSideSize
      * @return
      */
     private @NotNull
-    List <ImageBlock> splitSipImageToBlocks ( SipImage image ) {
-        List <ImageBlock> blocks = new ArrayList <>();
-        for (int i = 0; i < image.cols(); i += 3) {
-            for (int j = 0; j < image.rows(); j += 3) {
-                blocks.add(new SipImageBlock3x3(image, i, i + 3, j, j + 3));
+    Map <Point, SipImageBlock> splitSipImageToBlocks ( SipImage image, int blockSideSize ) {
+        Map <Point, SipImageBlock> map = new DualHashBidiMap <>();
+        for (int x = 0; x < sideSize; x += blockSideSize) {
+            for (int y = 0; y < sideSize; y += blockSideSize) {
+                SipImageBlock sipImageBlock = (SipImageBlock) image.submat(
+                        new Rect(
+                                x,
+                                y,
+                                blockSideSize,
+                                blockSideSize)
+                );
+                map.put(new Point (x, y), sipImageBlock);//fixme
             }
         }
 
-        return blocks;
+        return map;
     }
 
     /**
      * @return
      */
     public
-    int getLayerAmount () {
-        return layersAmount;
+    int getSideSize () {
+        return sideSize;
     }
 }

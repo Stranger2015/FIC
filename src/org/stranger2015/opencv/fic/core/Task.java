@@ -1,33 +1,41 @@
 package org.stranger2015.opencv.fic.core;
 
-import java.util.function.Function;
+import java.util.function.Consumer;
+import java.util.logging.Logger;
 
 /**
  *
  */
 public abstract
-class Task<M extends Image> implements Function <String, M> {
-    private final M image;
+class Task implements Consumer <String> {
+    Logger logger = Logger.getLogger(String.valueOf(getClass()));
+
+    protected final String filename;
 
     /**
-     *
-     * @param image
+     * @param filename
      */
     protected
-    Task ( M image ) {
-        this.image = image;
+    Task ( String filename ) {
+        this.filename = filename;
     }
 
     /**
+     * @return
      */
     public
-    M execute () {
-//        return apply(image);
-        return image;
+    String getFilename () {
+        return filename;
     }
 
+    /**
+     * Performs this operation on the given argument.
+     *
+     * @param s the input argument
+     */
+    @Override
     public
-    M getImage () {
-        return image;
+    void accept ( String s ) {
+        logger.info("Performing task " + getClass());
     }
 }

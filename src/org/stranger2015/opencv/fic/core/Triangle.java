@@ -5,7 +5,6 @@ package org.stranger2015.opencv.fic.core;
  */
 public
 class Triangle extends Polygon {
-//    protected final Point p;
 
     /**
      * @param x

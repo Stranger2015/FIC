@@ -37,7 +37,7 @@ class TreeTraverser<N extends TreeNode <N, A, M>, A extends Address <A>, M exten
             EnumSet.allOf(EDirection.class);
 
     protected final Tree <N, A, M> tree;
-    protected final TreeNodeAction <N> action;
+    protected final TreeNodeAction <N, A, M> action;
 
     protected final ESearchType searchType = DEPTH_FIRST;
     protected final NodeList <N, A, M> nodes;
@@ -55,7 +55,7 @@ class TreeTraverser<N extends TreeNode <N, A, M>, A extends Address <A>, M exten
     public
     TreeTraverser ( Tree <N, A, M> tree,
                     int depth,
-                    TreeNodeAction <N> action ) {
+                    TreeNodeAction <N, A, M> action ) {
         this.tree = tree;
         this.depth = depth;
         this.action = action;
@@ -168,7 +168,7 @@ class TreeTraverser<N extends TreeNode <N, A, M>, A extends Address <A>, M exten
     void traverse ( TreeNode <N, A, M> node,
                     int depth,
                     NodeList <N, A, M> neighbors,
-                    TreeNodeAction <N> action )
+                    TreeNodeAction <N, A, M> action )
             throws DepthLimitExceeded {
         if (--depth == 0) {
             throw new DepthLimitExceeded();

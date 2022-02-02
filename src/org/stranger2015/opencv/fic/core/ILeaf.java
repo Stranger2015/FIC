@@ -10,6 +10,22 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
  */
 public
 interface ILeaf<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image> {
+
+    /**
+     * @return
+     */
+    int getX();
+
+    /**
+     * @return
+     */
+    int getY();
+
+    /**
+     * @return
+     */
+    int getAddress();
+
     /**
      * @return
      */

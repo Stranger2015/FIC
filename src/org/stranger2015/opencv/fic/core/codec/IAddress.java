@@ -1,5 +1,6 @@
 package org.stranger2015.opencv.fic.core.codec;
 
+import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.ValueError;
 
 import java.util.EnumSet;
@@ -8,7 +9,7 @@ import java.util.EnumSet;
  *
  */
 public
-interface IAddress<A extends IAddress <A/*, E*/>/*, E extends Enum<E>*/> extends IAddressMath <A/*, E*/> {
+interface IAddress<A extends Address <A>> extends IAddressMath <A> {
 
     /**
      * @return

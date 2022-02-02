@@ -14,7 +14,7 @@ class RLTree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Imag
      * @param action
      */
     public
-    RLTree ( TreeNode <N, A, M> root, M image, TreeNodeAction <N> action ) {
+    RLTree ( TreeNode <N, A, M> root, M image, TreeNodeAction <N, A, M> action ) {
         this(root, image, action, DEFAULT_BOUNDING_BOX, DEFAULT_DEPTH);
     }
 
@@ -28,7 +28,7 @@ class RLTree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Imag
      * @param depth
      */
     protected
-    RLTree ( TreeNode <N, A, M> root, M image, TreeNodeAction <N> action, Rect area, int depth ) {
+    RLTree ( TreeNode <N, A, M> root, M image, TreeNodeAction <N, A, M> action, Rect area, int depth ) {
         super(root, image, action, area, depth);
     }
 
@@ -47,7 +47,7 @@ class RLTree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Imag
     @SuppressWarnings("unchecked")
     @Override
     public
-    Class <N> getNodeClass () {
-        return (Class <N>) RLTreeNode.class;
+    Class <? extends TreeNode <N, A, M>> getNodeClass ( TreeNode <N, A, M> clazz ) {
+        return (Class <? extends TreeNode <N, A, M>>) clazz.getClass();
     }
 }

@@ -9,5 +9,5 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
  */
 public
 interface ITreeNodeBuilder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image> {
-    Tree <N, A, M> buildTree ( M image ) throws ValueError;
+    Tree <N, A, M> buildTree () throws ValueError;
 }

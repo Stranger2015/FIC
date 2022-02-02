@@ -5,15 +5,15 @@ import java.util.EnumSet;
 /**
  * sa addresses
  * 0,        1,      2,       3,      4,      5,      6
- *
+ * <p>
  * Cartesian coordinates
- * {  0,  0}
- * {  0, -1}
- * { -1, -1}
- * { -1,  0}
- * {  0,  1}
- * {  1,  1}
- * {  1,  0}
+ * {  0,  0 } 0
+ * {  0, -1 } 1
+ * { -1, -1 } 2
+ * { -1,  0 } 3
+ * {  0,  1 } 4
+ * {  1,  1 } 5
+ * {  1,  0 } 6
  */
 public
 class SaAddress<A extends Address <A>> extends Address <A> {
@@ -52,12 +52,9 @@ class SaAddress<A extends Address <A>> extends Address <A> {
         this.number = number;
     }
 
-    /**
-     * @throws ValueError
-     * @param digits
-     */
     public
-    SaAddress ( EnumSet <EDigits7> digits ) throws ValueError {
+    SaAddress () throws ValueError {
+        super();
     }
 
     /**
@@ -98,7 +95,7 @@ class SaAddress<A extends Address <A>> extends Address <A> {
      * 2. The 7 is then carried and added to 5 to produce 6.
      * The result is thus 62.
      * <p>
-     * todo test!!!!!!!!!!!!!!!
+     * todo test!!!
      *
      * @param address1
      * @param address2
@@ -185,7 +182,7 @@ class SaAddress<A extends Address <A>> extends Address <A> {
      */
     @Override
     public
-    int[][] getAddTable () {
+    int[][] getPlusTable () {
         return addTable.clone();
     }
 
@@ -214,4 +211,23 @@ class SaAddress<A extends Address <A>> extends Address <A> {
     int getNumber () {
         return number;
     }
+
+    /*
+     * sa addresses
+     * 0,        1,      2,       3,      4,      5,      6
+     *
+     * Cartesian coordinates
+     * {  0,  0 }  0
+     * {  0, -1 }  1
+     * { -1, -1 }  2
+     * { -1,  0 }  3
+     * {  0,  1 }  4
+     * {  1,  1 }  5
+     * {  1,  0 }  6
+     */
+
+//    @Override
+//    public
+//    AddressedPoint getCartesianCoords ( int addressBase, int radix, int scale ) {
+//        AddressedPoint p = CENTER;
 }

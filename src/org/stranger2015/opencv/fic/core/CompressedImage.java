@@ -1,5 +1,8 @@
 package org.stranger2015.opencv.fic.core;
 
+import org.stranger2015.opencv.fic.core.codec.ICompressedImage;
+import org.stranger2015.opencv.fic.transform.ImageTransform;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,13 +10,10 @@ import java.util.List;
  *
  */
 public
-class CompressedImage extends Image {
+class CompressedImage extends Image implements ICompressedImage {
 
     public int originalImageWidth;
     public int originalImageHeight;
-
-    public List <ImageBlock> rangeBlocks = new ArrayList <>();
-    public List <ImageBlock> domainBlocks = new ArrayList <>();
 
     /**
      * @param rows
@@ -25,8 +25,30 @@ class CompressedImage extends Image {
         super(rows, cols, type);
     }
 
+    /**
+     * @param inputImage
+     */
     public
     CompressedImage ( Image inputImage ) {
+
+    }
+
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    List <ImageTransform <Image>> getTransforms () {
+        return t;
+    }
+
+    /**
+     * @param transforms
+     */
+    @Override
+    public
+    void setTransforms ( List <ImageTransform <Image>> transforms ) {
 
     }
 }

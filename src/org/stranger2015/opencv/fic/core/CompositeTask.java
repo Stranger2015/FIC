@@ -1,62 +1,44 @@
 package org.stranger2015.opencv.fic.core;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-/**
- * @param <M>
- */
+import static java.util.Arrays.asList;
+
 public abstract
-class CompositeTask<M extends Image> extends Task <M> {
-    protected final List <Task <M>> tasks = new ArrayList <>();
+class CompositeTask extends Task {
+    protected final List <Task> tasks = new ArrayList <>();
+
+    /**
+     * @param tasks
+     */
+    @SafeVarargs
+    CompositeTask ( String fn, Task... tasks ) {
+        this(fn, asList(tasks));
+    }
 
     /**
      * @param tasks
      */
     public
-    CompositeTask ( M image, List <Task <M>> tasks ) {
-        super(image);
-
+    CompositeTask ( String fn, List <Task> tasks ) {
+        this(fn);
         this.tasks.addAll(tasks);
     }
 
     /**
-     * @param image
-     * @param tasks
+     * @param filename
      */
-    @SafeVarargs
-    CompositeTask ( M image, Task <M>... tasks ) {
-        this(image, Arrays.asList(tasks));
+    protected
+    CompositeTask ( String filename ) {
+        super(filename);
     }
-
-    /**
-     * @param image
-     */
-    public
-    CompositeTask ( M image ) {
-        super(image);
-    }
-
-    /**
-     * @param tasks
-     */
-    public
-    CompositeTask ( List <Task <M>> tasks ) {
-        this(null, tasks);
-    }
-
-//    public
-//    CompositeTask ( M image, EPartitionScheme scheme, List <Task <M>> tasks, String s ) {
-//
-//        super(image);
-//    }
 
     /**
      * @return
      */
     public
-    List <Task <M>> getTasks () {
+    List <Task> getTasks () {
         return tasks;
     }
 
@@ -64,7 +46,7 @@ class CompositeTask<M extends Image> extends Task <M> {
      * @param task
      */
     public
-    void addTask ( Task <M> task ) {
+    void addTask ( Task task ) {
         tasks.add(task);
     }
 }

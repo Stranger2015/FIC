@@ -62,109 +62,26 @@ class ImagePartitionProcessor<N extends TreeNode <N, A,M>, A extends Address <A>
     protected int col;
 
     /**
-     * @param image
+     * @param fn
      * @param scheme
      * @param tree
      */
     public
-    ImagePartitionProcessor ( M image, EPartitionScheme scheme, Tree <N, A, M> tree ) {
-        super(image, scheme, List. <Task<M>>of(), "???");
+    ImagePartitionProcessor ( String fn, EPartitionScheme scheme, Tree <N, A, M> tree ) {
+        super(fn, scheme, List.of());
+
         this.tree = tree;
     }
 
     /**
-     * @param image
      * @param scheme
      */
     public
-    ImagePartitionProcessor ( M image, EPartitionScheme scheme ) {
-        this(image, scheme, null);
+    ImagePartitionProcessor ( String fn, EPartitionScheme scheme ) {
+        this(fn, scheme, null);
     }
 
-    /**
-     * 1. Divide the image into range block.
-     * <p>
-     * 2. Divide  the  image  into  non-overlapping  domain  blocks,  Di.
-     * <p>
-     * The  union  of  the  domain  blocks  must  cover  the  entire
-     * image, G, but they can be any size or shape [1].
-     * <p>
-     * 3. Define  a  finite  set  of  contractive  affine  transformations,  wi
-     * (which map from a range block R to a domain block Di).
-     * <p>
-     * 4. For each domain block {
-     * <p>
-     * For each range block {
-     * For each transformation {
-     * Calculate the Hausdorff distance h(wi(R  G), Di  G) (or use another metric)
-     * }
-     * }
-     * <p>
-     * 5. Record the transformed domain block which is found to be the best approximation for
-     * the current range block is assigned to that range block.
-     * <p>
-     * 6. Next domain block [1].
-     */
-    @SuppressWarnings("unchecked")
-    public
-    M process ( M image ) {
-//        List <M> rangeBlocks = createRangeBlocks(image, 4, 4);
-//        List <M> domainBlocks = createDomainBlocks(image, 8, 8);
-
-        return (M) new CompressedImage(image);
-    }
-
-//    protected
-//    List <M> createDomainBlocks ( M image, int w, int h ) {
-//        List <M> l = new ArrayList <>();
-//        TreeNodeAction <N> action = new TreeNodeAction <>(new DomainPool());
-//        final Tree <N, M> tree = Tree.create();
-////                new QuadTree <>(
-//                        new QuadTreeNode <>(
-//                                null,
-//                                NORTH_WEST,
-//                                DEFAULT_BOUNDING_BOX
-//                        ),
-//                        image,
-//                        action);
 //
-//        final TreeNodeBase <N> root = quadTree.getRoot();
-//        TreeNodeBase <N> node = root.getChildren().get(0);
-//
-//        for (int i = 0, width = image.width(); i < width / w; i++, width /= 2) {
-//            for (int j = 0, height = image.height(); j < height / h; j++, height /= 2) {
-//
-//            }
-//        }
-//
-//        return l;
-//    }
-
-
-    /**
-     * @param image
-     * @param w
-     * @param h
-     * @return
-     */
-    private @NotNull
-    List <M> createRangeBlocks ( M image, int w, int h ) {
-        return createBlocks(image, w, h);
-    }
-
-    @SuppressWarnings("unchecked")
-    private
-    List <M> createBlocks ( M image, int w, int h ) {
-        List <M> l = new ArrayList <>();
-        for (int i = 0, width = image.width(); i < width; i += w) {
-            for (int j = 0, height = image.height(); j < height; j += h) {
-                l.add((M) image.submat(i, j, i + w, j + h));
-            }
-        }
-
-        return l;
-    }
-
     /**
      * image mat is of the square shape so, width and height are equal and are of power of two
      *

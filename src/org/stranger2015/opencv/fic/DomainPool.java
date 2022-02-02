@@ -1,10 +1,17 @@
 package org.stranger2015.opencv.fic;
 
-import java.util.ArrayList;
+import org.stranger2015.opencv.fic.core.Address;
+import org.stranger2015.opencv.fic.core.Image;
+import org.stranger2015.opencv.fic.core.NodeList;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 
+/**
+ *
+ */
+@Deprecated
 public
-class DomainPool extends ArrayList<DomainBlock<?,?,?>> {
-
+class DomainPool<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+        extends NodeList <N, A, M> {
     /**
      * Constructs an empty list with an initial capacity of ten.
      */

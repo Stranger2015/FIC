@@ -6,7 +6,7 @@ import org.stranger2015.opencv.fic.core.codec.IAddress;
 import java.util.BitSet;
 import java.util.EnumSet;
 import java.util.List;
-
+@Deprecated
 /**
  *
  */

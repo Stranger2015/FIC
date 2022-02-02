@@ -2,6 +2,7 @@ package org.stranger2015.opencv.fic.core;
 
 import org.opencv.core.Rect;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.utils.Point;
 
 /**
  * @param <N>
@@ -58,7 +59,24 @@ class RLTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends 
         return null;
     }
 
+    /**
+     * @param point
+     * @param layerIndex
+     * @param clusteIndex
+     * @param x
+     * @param y
+     * @param address
+     * @return
+     * @throws ValueError
+     */
     @Override
+    public
+    TreeNode <N, A, M> createChild ( Point point, int layerIndex, int clusteIndex, int x, int y, int address )
+            throws ValueError {
+        return null;
+    }
+
+//    @Override
     public
     TreeNode <N, A, M> createChild ( int layerIndex, int clusterIndex, int address )
             throws ValueError {

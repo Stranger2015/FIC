@@ -1,14 +1,12 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.stranger2015.opencv.fic.core.CompressedImage;
 import org.stranger2015.opencv.fic.core.Image;
 
 /**
  * @param <M>
- * @param <C>
  */
 public abstract
-class ShiftTransform<M extends Image, C extends CompressedImage> extends ImageTransform<M,C>{
+class ShiftTransform<M extends Image> extends ImageTransform<M>{
     private final float intensity;
     private final int channelAxis;
 

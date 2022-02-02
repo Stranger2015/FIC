@@ -1,31 +1,36 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.opencv.osgi.OpenCVNativeLoader;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.codec.DefaultCodec;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.function.Consumer;
-
-import static org.stranger2015.opencv.fic.core.EPartitionScheme.FIXED_SIZE;
-import static org.stranger2015.opencv.fic.core.EPartitionScheme.valueOf;
+import java.util.logging.Logger;
 
 /**
  *
  */
 public
 class FicApplication implements Runnable, Consumer <String> {
-    //    private final Tree <?, Mat> tree;
+    Logger logger = Logger.getLogger(String.valueOf(getClass()));
+
     private final Consumer <String> action = this;
-    private final String filename;
+    private EPartitionScheme scheme;
+    private String filename;
 
     /**
      * @param args
      */
     public
-    FicApplication (  String[] args){
+    FicApplication ( String[] args ) {
         switch (args[0]) {
             case "-e":
+                scheme = EPartitionScheme.valueOf(args[1]);
+                filename = args[2];
+                break;
             case "-d":
-                filename = args[1];
+//                filename = args[1];
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + args[0]);
@@ -52,9 +57,10 @@ class FicApplication implements Runnable, Consumer <String> {
      * @see Thread#run()
      */
     @Override
-    public void run () {
+    public
+    void run () {
         init();
-        action.accept(filename);//fixme
+        action.accept(filename);
     }
 
     public
@@ -70,8 +76,11 @@ class FicApplication implements Runnable, Consumer <String> {
     @Override
     public
     void accept ( String filename ) {
-//        ImageProcessor.create(filename);
-//
+
+        ImageProcessor<?,?,?> processor = ImageProcessor.create(filename, scheme, new ArrayList <>(2));
+        processor.preprocess();
+        processor.process();
+        processor.postprocess();
     }
 
     /**
@@ -80,5 +89,10 @@ class FicApplication implements Runnable, Consumer <String> {
     public
     String getFilename () {
         return filename;
+    }
+
+    public
+    EPartitionScheme getScheme () {
+        return scheme;
     }
 }

@@ -12,7 +12,7 @@ import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
 /**
  * functor class to rotate an image by the given degrees
  */
-public class AffineRotateTransform<M extends Image, C extends CompressedImage> extends AffineTransform<M,C> {
+public class AffineRotateTransform<M extends Image> extends AffineTransform<M> {
 
     private final double degrees;
 
@@ -42,7 +42,7 @@ public class AffineRotateTransform<M extends Image, C extends CompressedImage> e
     @Override
     public
     M transform ( M src, M transformMatrix, EInterpolationType interpolationType ) {
-        // Creating a Point object
+        // Creating a AddressedPoint object
         Point point = new Point(300, 200);//todo
 
         // Creating the transformation matrix M

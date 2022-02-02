@@ -1,37 +1,44 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.opencv.core.Point;
-import org.stranger2015.opencv.fic.core.codec.EAddressKind;
+import org.jetbrains.annotations.Contract;
+import org.stranger2015.opencv.fic.core.codec.DecAddress;
 import org.stranger2015.opencv.fic.core.codec.IAddress;
-import org.stranger2015.opencv.fic.core.codec.SaUtils;
+import org.stranger2015.opencv.fic.utils.Point;
 
 import java.util.EnumSet;
+import java.util.List;
+
+import static org.stranger2015.opencv.fic.core.codec.EAddressKind.ORDINARY;
+import static org.stranger2015.opencv.fic.core.codec.SaUtils.createAddress;
 
 /**
  *
  */
-public
-class Address<A extends Address <A/*, E*/>/*, E extends Enum <E>*/> implements IAddress <A/*, E*/> {
+public abstract
+class Address<A extends Address <A>> implements IAddress <A> {
+
     public final static int radix = 10;
+
     protected int address;
+
     /**
      * @param address
      */
-    public
-    Address ( int address ) throws ValueError {
-//     return    SaUtils.createAddress(number, 10, EAddressKind.ORDINARY);
+    @Contract(pure = true)
+    protected
+    Address ( int address) throws ValueError {
         this.address = address;
     }
 
     /**
      * @throws ValueError
      */
-    public
+    protected
     Address () throws ValueError {
-        this(0);
+        this(0);//fixme
     }
 
-    public
+    protected
     Address ( EnumSet digits ) {
 
     }
@@ -48,26 +55,15 @@ class Address<A extends Address <A/*, E*/>/*, E extends Enum <E>*/> implements I
         return getIndex();
     }
 
-//    /**
-//     * @param result
-//     * @return
-//     */
-//    @SuppressWarnings("unchecked")
-//    @Override
-//    public
-//    A newInstance ( EnumSet result ) throws ValueError {
-//        return (A) new Address <>(SaUtils.toNumber(result));
-//    }
-
     /**
      * @param index
      * @return
      */
-//    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
     @Override
     public
     A newInstance ( int index ) throws ValueError {
-        return SaUtils.createAddress(index, 10, EAddressKind.ORDINARY);
+        return (A) new DecAddress<A>(index, 10, ORDINARY);
     }
 
     /**
@@ -79,7 +75,7 @@ class Address<A extends Address <A/*, E*/>/*, E extends Enum <E>*/> implements I
     @Override
     public
     A plus ( A address1, A address2 ) throws ValueError {
-        return (A) new Address <>(address1.getIndex() + address2.getIndex());
+        return (A) new DecAddress <A>(address1.getIndex() + address2.getIndex());
     }
 
     /**
@@ -91,7 +87,7 @@ class Address<A extends Address <A/*, E*/>/*, E extends Enum <E>*/> implements I
     @Override
     public
     A minus ( A address1, A address2 ) throws ValueError {
-        return (A) new Address <>(address1.getIndex() - address2.getIndex());
+        return (A) new DecAddress <>(address1.getIndex() - address2.getIndex());
     }
 
     /**
@@ -103,7 +99,7 @@ class Address<A extends Address <A/*, E*/>/*, E extends Enum <E>*/> implements I
     @Override
     public
     A mult ( A address1, A address2 ) throws ValueError {
-        return (A) new Address <A/*, E*/>(address1.getIndex() * address2.getIndex());
+        return null;//(A) new Address <A>(address1.getIndex() * address2.getIndex());
     }
 
     /**
@@ -120,7 +116,16 @@ class Address<A extends Address <A/*, E*/>/*, E extends Enum <E>*/> implements I
      */
     @Override
     public
-    int[][] getAddTable () {
+    int[][] getPlusTable () {
+        return new int[0][];
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    int[][] getMinusTable () {
         return new int[0][];
     }
 
@@ -133,45 +138,6 @@ class Address<A extends Address <A/*, E*/>/*, E extends Enum <E>*/> implements I
         return new int[0][];
     }
 
-//    /**
-//     * @return
-//     */
-//    @Override
-//    public
-//    EnumSet <E> getDigits () {
-//        return null;//todo
-//    }
-
-//    /**
-//     * @param number
-//     * @param radix
-//     * @return
-//     */
-//    @Override
-//    public
-//    EnumSet <E> toDigits ( int number, int radix ) {
-//        for (EDigits next : getDigits()) {
-//            int digit = next.ordinal();
-//            BitSet occurrences = next.getOccurrences();
-//            if(occurrences.isEmpty()){
-//continue;
-//            }
-//        }
-
-//        return null;
-//    }
-
-    /**
-     * @param number
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-//    @Override
-    public
-    A carryRule ( int number ) throws ValueError {
-        return (A) new Address <>(number);
-    }
-
     /**
      * @return
      */
@@ -181,36 +147,78 @@ class Address<A extends Address <A/*, E*/>/*, E extends Enum <E>*/> implements I
         return address;
     }
 
+    /**
+     * L( 0 ) = (  0,  0 )   0
+     * L( 1 ) = ( -1,  0 ),  1 layer-1:
+     * L( 2 ) = ( -1,  1 ),  2
+     * L( 3 ) = (  0,  1 ),  3
+     * L( 4 ) = (  1,  1 ),  4
+     * L( 5 ) = (  1,  0 ),  5
+     * L( 6 ) = (  1,  -1 ), 6
+     * L( 7 ) = (  0,  -1 ), 7
+     * L( 8 ) = ( -1,  -1 )  8
+     *
+     * @param radix
+     * @return
+     */
+    @Override
     public
-Point getCartesianCoords ( int i ) {
-    Point v = new Point(0,0);
-    switch (i) {
-        case 0:
-            break;
-        case 1:
-            v.setX = -1;
-            break;
-        case 2:
-            v[0] = -1;
-            v[1] = -1;
-            break;
-        case 3:
-            v[0] = -1;
-            break;
-        case 4:
-            v[1] = 1;
-            break;
-        case 5:
-            v[0] = 1;
-            v[1] = 1;
-            break;
-        case 6:
-            v[0] = 1;
-            break;
-        default:
-            throw new IllegalStateException("Unexpected value: " + i);
+    List <Point> getCartesianCoordinates ( int radix ) {
+        return null;
     }
 
-    return v;
-}
-}
+    /**
+     * @param radix
+     * @return
+     */
+    public
+    Point getCartesianCoordinate ( int radix ) {
+        return null;
+    }
+
+    @Override
+    public
+    A divide () throws ValueError {
+        return null;
+    }
+
+    /**
+     * L( 0 ) = (  0,  0 )   0
+     * L( 1 ) = ( -1,  0 ),  1 layer-1:
+     * L( 2 ) = ( -1,  1 ),  2
+     * L( 3 ) = (  0,  1 ),  3
+     * L( 4 ) = (  1,  1 ),  4
+     * L( 5 ) = (  1,  0 ),  5
+     * L( 6 ) = (  1,  -1 ), 6
+     * L( 7 ) = (  0,  -1 ), 7
+     * L( 8 ) = ( -1,  -1 )  8
+     *
+     * @param radix
+     * @param scale
+     * @return
+     */
+
+    /**
+     * L( 0 ) = (  0,  0 )   0
+     * L( 1 ) = ( -1,  0 ),  1 layer-1:
+     * L( 2 ) = ( -1,  1 ),  2
+     * L( 3 ) = (  0,  1 ),  3
+     * L( 4 ) = (  1,  1 ),  4
+     * L( 5 ) = (  1,  0 ),  5
+     * L( 6 ) = (  1,  -1 ), 6
+     * L( 7 ) = (  0,  -1 ), 7
+     * L( 8 ) = ( -1,  -1 )  8
+     *
+     *
+     * @param radix
+     * @param scale
+     * @return
+     */
+//        Xscr = result from mapping cartesian to screen
+//                Xc = half of screen size
+//                X = X cartesian coordinate
+//        Pcx = centre of the screen in cartesian coordinates
+//        S = Scale Factor
+
+//        return new AddressedPoint(xScreen, yScreen );
+    }

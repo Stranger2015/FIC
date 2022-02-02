@@ -13,7 +13,7 @@ class Main {
         if (args.length == 0) {
             System.exit(-1);
         }
-        new FicApplication(processor, args).run();
+        new FicApplication(args).run();
     }
 
 }

@@ -3,6 +3,7 @@ package org.stranger2015.opencv.fic.core;
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Rect;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.utils.Point;
 
 import java.util.Objects;
 
@@ -53,14 +54,31 @@ class TreeNodeBase<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
     TreeNodeBase ( EDirection quadrant, Rect boundingBox ) {
     }
 
+    /**
+     * @param parent
+     * @param image
+     * @param boundingBox
+     */
     public
     TreeNodeBase ( TreeNode <N, A, M> parent, M image, Rect boundingBox ) {
 
     }
 
+    /**
+     *
+     */
     protected
     TreeNodeBase () {
     }
+
+    /**
+     * @return
+     */
+    public
+    int getAddress () {
+        return address;
+    }
+
 
     /**
      * @return
@@ -78,11 +96,27 @@ class TreeNodeBase<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
         this.type = type;
     }
 
+    /**
+     * @param address
+     * @return
+     * @throws ValueError
+     */
     public abstract
     TreeNode <N, A, M> createChild ( int address ) throws ValueError;
 
+    /**
+     * @param point
+     * @param layerIndex
+     * @param clusteIndex
+     * @param x
+     * @param y
+     * @param address
+     * @return
+     * @throws ValueError
+     */
     public abstract
-    TreeNode <N, A, M> createChild ( int layerIndex, int clusteIndex, int address ) throws ValueError;
+    TreeNode <N, A, M> createChild ( Point point, int layerIndex, int clusteIndex, int x, int y, int address )
+            throws ValueError;
 
     /**
      *
@@ -188,17 +222,6 @@ class TreeNodeBase<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
     public
     String toString () {
         return format("TreeNodeBase{index=%s}", index);
-    }
-
-    /**
-     * @param index
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    protected
-    A newAddress ( int index ) throws ValueError {
-        return (A) new Address <>(index);
     }
 
     /**
@@ -316,9 +339,10 @@ class TreeNodeBase<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
          * @param dir
          * @return
          */
+        @SuppressWarnings("unchecked")
         public
-        N getChild ( EDirection dir ) {
-            return (N) children.get(dir.getOrd());
+        N getChild ( int dir ) {
+            return (N) children.get(dir);
         }
 
         /**
@@ -362,6 +386,11 @@ class TreeNodeBase<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
             return null;
         }
 
+        public
+        N getChild ( EDirection dir ) {
+            return null;
+        }
+
         /**
          * @param <N>
          * @param <A>
@@ -374,32 +403,67 @@ class TreeNodeBase<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
 
             protected ImageBlock imageBlock;
 
+            public
+           LeafNode ( TreeNode <N, A, M> parent, M image, Rect rect ) {
+                super(parent, image, rect);
+            }
+
+            public
+            LeafNode ( int address ) {
+
+            }
+
+            protected
+            <N extends TreeNode <N, A, M>, M extends Image>
+            LeafNode () {
+            }
+
+//            public
+//            <A extends SipAddress <A>, M extends Image>
+//            LeafNode ( TreeNode <N, A, M> parent, M image, int width, int height ) {
+//
+//
+//            }
+//
+//            public
+//            <A extends SipAddress <A>, M extends Image>
+//            LeafNode ( TreeNode<N,A,M> parent, M image, int width, int height ) {
+//            }
+
+            /**
+             * @return
+             */
+            @Override
+            public
+            int getAddress () {
+                return address;
+            }
+
             /**
              * @param parent
              * @param image
              * @param rect
              * @throws ValueError
              */
-            @SuppressWarnings("unchecked")
+//            @SuppressWarnings("unchecked")
             protected
-            LeafNode ( TreeNode <N, A, M> parent, ImageBlock image, Rect rect ) throws ValueError {
+            LeafNode ( TreeNode <N, A, M> parent, Point point, ImageBlock image, Rect rect ) throws ValueError {
                 super(parent, rect);
 
                 this.imageBlock = image;
+                this.imageBlock.setX(point.getX());
+                this.imageBlock.setY(point.getY());
             }
-//
 
             /**
              * @param parent
              * @param image
-             * @param x
-             * @param y
              * @param width
              * @param height
              */
             public
-            LeafNode ( TreeNode <N, A, M> parent, M image, int x, int y, int width, int height ) throws ValueError {
-                this(parent, (ImageBlock) image, new Rect(x, y, width, height));
+            LeafNode ( TreeNode <N, A, M> parent, Point point, M image, int width, int height ) throws ValueError {
+                this(parent, point, (ImageBlock) image, new Rect(point.getX(), point.getY(), width, height));
             }
 
             /**
@@ -407,29 +471,21 @@ class TreeNodeBase<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
              * @param image
              * @param rect
              * @param address
-             * @throws ValueError
              */
             public
-            LeafNode ( TreeNode <N, A, M> parent, M image, Rect rect, int address )
-                    throws ValueError {
-                this(parent, image, rect.x, rect.y, rect.width, rect.height);
+            LeafNode ( TreeNode <N, A, M> parent, M image, Rect rect, int address ) {
+                this(parent, image, rect.width, rect.height);
                 this.address = address;
             }
 
+            /**
+             * @param parent
+             * @param image
+             * @param width
+             * @param height
+             */
             protected
-            LeafNode () {
-            }
-
-            public
-            LeafNode ( TreeNode <N, A, M> parent,
-                       M image,
-                       Rect boundingBox,
-                       int layerIndex,
-                       int clusterIndex,
-                       int address
-                       ) {
-
-
+            LeafNode ( TreeNode <N, A, M> parent, M image, int width, int height ) {
             }
 
             /**

@@ -2,6 +2,7 @@ package org.stranger2015.opencv.fic.core;
 
 import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.codec.DefaultCodec;
 import org.stranger2015.opencv.fic.core.codec.Encoder;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
@@ -15,8 +16,8 @@ import java.util.List;
  * @param <M>
  */
 public
-class HvEncoder<N extends TreeNode <N, A, M>,  A extends Address<A>,  M extends Image>
-        extends Encoder <N, A,M> {
+class HvEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+        extends Encoder <N, A, M> {
 
     /**
      * @param inputImage
@@ -26,6 +27,18 @@ class HvEncoder<N extends TreeNode <N, A, M>,  A extends Address<A>,  M extends 
     protected
     HvEncoder ( M inputImage, Size rangeSize, Size domainSize ) {
         super(inputImage, rangeSize, domainSize);
+    }
+
+    /**
+     * @param image
+     * @return
+     */
+    @Override
+    public
+    void segmentImage ( M image ) {
+        blockGenerator.generateRangeBlocks(image);
+        blockGenerator.generateDomainBlocks(image);
+        blockGenerator.createCodebookBlocks(image);
     }
 
     /**

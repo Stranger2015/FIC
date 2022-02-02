@@ -28,44 +28,6 @@ class QuadTreeEncoder<N extends TreeNode <N, A, M>,  A extends Address <A>, M ex
     QuadTreeEncoder ( M inputImage, Size rangeSize, Size domainSize ) {
         super(inputImage, rangeSize, domainSize);
     }
-//
-//    /**
-//     * @param address
-//     * @return
-//     */
-//    @Override
-//    public
-//    <A extends IAddress <A>> A plus ( A address ) {
-//        return (A) SaUtils.plus(this, address);
-//    }
-//
-//    /**
-//     * @param address
-//     * @return
-//     */
-//    @Override
-//    public
-//    <A extends IAddress <A>> A mult ( A address ) {
-//        return null;
-//    }
-//
-//    /**
-//     * @return
-//     */
-//    @Override
-//    public
-//    int[][] getAddTable () {
-//        return new int[0][];
-//    }
-//
-//    /**
-//     * @return
-//     */
-//    @Override
-//    public
-//    int[][] getMultTable () {
-//        return new int[0][];
-//    }
 
     /**
      * @param blockGenerator

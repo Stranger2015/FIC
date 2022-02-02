@@ -40,13 +40,29 @@ class Image extends MatOfDouble {
     }
 
     /**
-     *
+     * @param image
+     * @param x
+     * @param y
+     * @param w
+     * @param h
+     */
+    public
+    Image ( Image image, int x, int y, int w, int h ) {
+//todo
+    }
+
+    public
+    Image ( Image image, int address, int blockSize ) {
+     //todo
+    }
+
+    /**
      * @return
      */
     @SuppressWarnings("unchecked")
     public
-    ImageBlock subImage () {
-        return (ImageBlock) submat(0, 0, 0, 0);//fixme
+    Image subImage ( int rowStart, int rowEnd, int colStart, int colEnd ) {
+        return (Image) submat(rowStart, rowEnd, colStart, colEnd);
     }
 
     /**
@@ -144,5 +160,23 @@ class Image extends MatOfDouble {
     public
     int put ( int address, double... data ) {
         return put(address, 0, data);
+    }
+
+    /**
+     * @return
+     */
+    public
+    Image createInputImage (Image image) {
+        return new Image(image);
+    }
+
+    /**
+     *
+     * @param image
+     * @return
+     */
+    public
+    Image createOutputImage(Image image){
+        return new CompressedImage(image);
     }
 }

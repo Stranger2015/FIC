@@ -1,13 +1,12 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.stranger2015.opencv.fic.core.CompressedImage;
 import org.stranger2015.opencv.fic.core.Image;
 
 /**
  * functor class to rotate an image by the given degrees
  */
 public
-class RotationTransform<M extends Image, C extends CompressedImage> extends PreserveAlphaTransform <M, C> {
+class RotationTransform<M extends Image> extends PreserveAlphaTransform <M> {
 
     private final double degrees;
     private final double pointX;
@@ -56,7 +55,7 @@ class RotationTransform<M extends Image, C extends CompressedImage> extends Pres
                         double pointY,
                         boolean preserveAlpha ) {
 
-        super(degrees,preserveAlpha);
+        super(null,preserveAlpha);
 
         this.degrees = degrees;
         this.pointX = pointX;
@@ -110,6 +109,6 @@ class RotationTransform<M extends Image, C extends CompressedImage> extends Pres
     public
     M transform ( M inputImage, M transformMatrix, EInterpolationType interpolationType ) {
 
-        return (M) outputImage;
+        return outputImage;
     }
 }

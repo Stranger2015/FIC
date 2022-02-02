@@ -1,20 +1,29 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.jetbrains.annotations.Contract;
-import org.opencv.core.Point;
+import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.ValueError;
+import org.stranger2015.opencv.fic.utils.IPartible;
+import org.stranger2015.opencv.fic.utils.Point;
+
+import java.util.List;
 
 /**
  * @param <A>
  */
 public
-interface IAddressMath<A extends IAddress <A>> {
+interface IAddressMath<A extends Address <A>> extends IPartible <A> {
     /**
      * @param address1
      * @param address2
      * @return
      */
     A plus ( A address1, A address2 ) throws ValueError;
+
+    default
+    Point plus ( Point point1, Point point2 ) {
+        return new Point(point1.getX() + point2.getX(), point1.getY() + point2.getY());
+    }
 
     /**
      * @param address1
@@ -30,15 +39,26 @@ interface IAddressMath<A extends IAddress <A>> {
      */
     A mult ( A address1, A address2 ) throws ValueError;
 
-    /**
-     * @return
-     */
-    Point[] getAddTable ();
+
+    default
+    Point mult ( Point point1, int number ) {
+        return new Point(point1.getX() * number, point1.getY() * number);
+    }
 
     /**
      * @return
      */
-    Point[] getMultTable ();
+    int[][] getPlusTable ();
+
+    /**
+     * @return
+     */
+    int[][] getMinusTable ();
+
+    /**
+     * @return
+     */
+    int[][] getMultTable ();
 
     /**
      * @return
@@ -72,7 +92,7 @@ interface IAddressMath<A extends IAddress <A>> {
     static
     int log ( int base, int num ) {
         int result = 0;
-        for (int i = 0;; i++) {
+        for (int i = 0; ; i++) {
             if (pow(base, i) == num) {
                 result = i;
                 break;
@@ -83,41 +103,26 @@ interface IAddressMath<A extends IAddress <A>> {
     }
 
     /**
-     * @param address
+     * L( 0 ) = (  0,  0 )   0
+     * L( 1 ) = ( -1,  0 ),  1 layer-1:
+     * L( 2 ) = ( -1,  1 ),  2
+     * L( 3 ) = (  0,  1 ),  3
+     * L( 4 ) = (  1,  1 ),  4
+     * L( 5 ) = (  1,  0 ),  5
+     * L( 6 ) = (  1,  -1 ), 6
+     * L( 7 ) = (  0,  -1 ), 7
+     * L( 8 ) = ( -1,  -1 )  8
+     *
      * @param radix
      * @return
      */
-    Point getCartesianCoords ( int address, int radix)    {
-        Point v = new Point(0, 0);
-        switch (address) {
-            case 0:
-                break;
-            case 1:
-                v = new Point(0,-1);
-                break;
-            case 2:
-                v = new Point(-1,-1);
-                break;
-            case 3:
-                v = new Point(-1,0);
-                break;
-            case 4:
-                v = new Point(1, 0);
-                break;
-            case 5:
-                v= new Point(1,1);
-                break;
-            case 6:
+    List <Point> getCartesianCoordinates ( int radix ) throws ValueError;
 
-                v[0] = 1;
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + address);
-        }
 
-        return v;
+    static
+    int pow3 ( int pow ) {
+        return 0;
     }
-
-    }
+}
 
 

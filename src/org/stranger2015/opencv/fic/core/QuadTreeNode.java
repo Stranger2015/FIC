@@ -3,6 +3,7 @@ package org.stranger2015.opencv.fic.core;
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Rect;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.utils.Point;
 
 /**
  *
@@ -30,7 +31,7 @@ class QuadTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
     @SuppressWarnings("*")
     public
     TreeNode <N, A, M> createChild ( EDirection quadrant, Rect rect ) throws ValueError {
-        return new QuadTreeNode <N, A, M>(this, quadrant, rect);
+        return new QuadTreeNode <>(this, quadrant, rect);
     }
 
     /**
@@ -48,10 +49,27 @@ class QuadTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
          */
         protected
         QuadLeafNode ( TreeNode <N, A, M> parent, M image, Rect rect ) throws ValueError {
-            super(parent, (ImageBlock) image, rect);
+            super(parent, image, rect);
         }
 
+        /**
+         * @param point
+         * @param layerIndex
+         * @param clusteIndex
+         * @param x
+         * @param y
+         * @param address
+         * @return
+         * @throws ValueError
+         */
         @Override
+        public
+        TreeNode <N, A, M> createChild ( Point point, int layerIndex, int clusteIndex, int x, int y, int address )
+                throws ValueError {
+            return null;
+        }
+
+//        @Override
         public
         TreeNode <N, A, M> createChild ( int layerIndex, int clusteIndex, int address ) throws ValueError {
             return null;
@@ -136,6 +154,24 @@ class QuadTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
         public
         int compareTo ( @NotNull N o ) {
             return this.boundingBox.x - o.boundingBox.x;//todo
+        }
+
+        /**
+         * @return
+         */
+        @Override
+        public
+        int getX () {
+            return 0;
+        }
+
+        /**
+         * @return
+         */
+        @Override
+        public
+        int getY () {
+            return 0;
         }
 
         public

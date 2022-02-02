@@ -4,6 +4,7 @@ import org.opencv.core.Rect;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.SipAddress;
 import org.stranger2015.opencv.fic.core.codec.SipImage;
+import org.stranger2015.opencv.fic.utils.Point;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +16,8 @@ import static org.stranger2015.opencv.fic.core.SipTreeNodeBuilder.BB;
  * @param <A>
  */
 public
-class SipTreeNode<N extends TreeNode <N, A, M>, A extends SipAddress <A>, M extends Image>
-        extends VsaTreeNode <N, A, M> {
+class SipTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+        extends SaTreeNode <N, A, M> {
 
     /**
      * @param parent
@@ -60,7 +61,7 @@ class SipTreeNode<N extends TreeNode <N, A, M>, A extends SipAddress <A>, M exte
      * @return
      */
     @SuppressWarnings("unchecked")
-    @Override
+//    @Override
     protected
     A newAddress ( int index ) throws ValueError {
         return (A) new SipAddress <>(index);
@@ -80,11 +81,11 @@ class SipTreeNode<N extends TreeNode <N, A, M>, A extends SipAddress <A>, M exte
      * @param <N>
      * @param <A>
      */
-    static
+    public static
     class SipLayerClusterNode<N extends TreeNode <N, A, M>, A extends SipAddress <A>, M extends Image>
-            extends VsaLayerClusterNode <N, A, M> {
+            extends SaLayerClusterNode <N, A, M> {
 
-        protected final List <SipImageBlock> blocks = new ArrayList <>();
+        protected static final List <SipImageBlock> blocks = new ArrayList <>();
 
         private int address;
         private int layerIndex;
@@ -92,21 +93,18 @@ class SipTreeNode<N extends TreeNode <N, A, M>, A extends SipAddress <A>, M exte
 
         /**
          * @param parent
+         * @param imageBlock
+         * @param boundingBox
          */
 //        @SuppressWarnings("unchecked")
         public
         SipLayerClusterNode ( TreeNode <N, A, M> parent,
-//                              M image,
-//                              Rect boundingBox,
-                              int address,
-                              int layerIndex,
-                              int clusterIndex ) {
-            super(parent,
-                    null,
-                    BB,
-                    address,
-                    clusterIndex, layerIndex
-            );
+                              SipImage imageBlock, Rect boundingBox, int layerIndex,
+                              int clusterIndex,
+                              int x,
+                              int y,
+                              int address ) {
+            super(parent, layerIndex, clusterIndex, x, y, address);
         }
 
         /**
@@ -115,28 +113,33 @@ class SipTreeNode<N extends TreeNode <N, A, M>, A extends SipAddress <A>, M exte
          * @param boundingBox
          */
         public
-        SipLayerClusterNode ( TreeNode <N, A, M> parent, SipImage image, Rect boundingBox ) {
-            super(parent, image, boundingBox, 0, 0, 0);
+        SipLayerClusterNode ( TreeNode <N, A, M> parent, M image, Rect boundingBox )
+                throws ValueError {
+            super(parent, image, boundingBox, 0, 0);
         }
 
         /**
          * @param node
          * @param image
          * @param boundingBox
-         * @param address
          * @param layerIndex
          * @param clusterIndex
+         * @param address
          */
         public
         SipLayerClusterNode ( TreeNode <N, A, M> node,
-                              SipImage image,
+                              ImageBlock image,
                               Rect boundingBox,
                               int layerIndex,
                               int clusterIndex,
-                              int address) {
+                              int x,
+                              int y,
+                              int address ) throws ValueError {
 
-            this(node, image, boundingBox);
+            this(node, (M) image, boundingBox);
 
+            imageBlock.setX(x);
+            imageBlock.setY(y);
             this.address = address;
             this.layerIndex = layerIndex;
             this.clusterIndex = clusterIndex;
@@ -144,48 +147,64 @@ class SipTreeNode<N extends TreeNode <N, A, M>, A extends SipAddress <A>, M exte
 
         /**
          * @param node
+         * @param imageBlock
          * @param boundingBox
          * @param layerIndex
          * @param clusterIndex
          * @param address
-         * @throws ValueError
          */
         public
         SipLayerClusterNode ( TreeNode <N, A, M> node,
+                              SipImage imageBlock,
                               Rect boundingBox,
                               int layerIndex,
                               int clusterIndex,
-                              int address ) throws ValueError {
+                              int address ) {
 
-            this(node, null, boundingBox, layerIndex, clusterIndex, address);
+            this(node, imageBlock, boundingBox,layerIndex, clusterIndex, 0, 0, address);
         }
-/**
+
+        public
+        SipLayerClusterNode ( TreeNode <N, A, M> node, SipImage image, Rect boundingBox ) {
+            this(node, image,boundingBox, 0,0,0,0,0);
+        }
+
+        /**
          * @param parent
          * @param quadrant
          * @param boundingBox
          * @return
          */
         public
-        TreeNode <N, A, ? extends Image> createNode ( TreeNode <N, A, ? extends Image> parent,
-                                                      EDirection quadrant,
-                                                      Rect boundingBox )
+        TreeNode <N, A, M> createNode ( TreeNode <N, A, M> parent,
+                                        EDirection quadrant,
+                                        Rect boundingBox )
                 throws ValueError {
             throw new IllegalStateException("in SipLayerClusterNode::createNode()");
         }
 
         /**
-         * @param address
+         * @param imageBlock
          * @param layerIndex
+         * @param clusterIndex
+         * @param x
+         * @param y
+         * @param address
          * @return
+         * @throws ValueError
          */
-//        @SuppressWarnings("unchecked")
-        @Override
         public
-        TreeNode <N, A, M> createChild ( int clusterIndex, int address, int layerIndex ) throws ValueError {
+        TreeNode <N, A, M> createChild ( ImageBlock imageBlock, int layerIndex, int clusterIndex, int x, int y, int address )
+                throws ValueError {
             TreeNode <N, A, M> n = new SipLayerClusterNode <>(
                     this,
+                    imageBlock,
                     BB,
-                    clusterIndex, address, layerIndex
+                    layerIndex,
+                    clusterIndex,
+                    x, y,
+                    address
+
             );
 
             this.children.add(n);
@@ -204,6 +223,25 @@ class SipTreeNode<N extends TreeNode <N, A, M>, A extends SipAddress <A>, M exte
         /**
          * @return
          */
+        @Override
+        public
+        int getX () {
+            return imageBlock.getX();
+        }
+
+        /**
+         * @return
+         */
+        @Override
+        public
+        int getY () {
+            return imageBlock.getY();
+        }
+
+        /**
+         * @return
+         */
+        @Override
         public
         int getAddress () {
             return address;
@@ -212,7 +250,35 @@ class SipTreeNode<N extends TreeNode <N, A, M>, A extends SipAddress <A>, M exte
         /**
          * @return
          */
+        @SuppressWarnings("unchecked")
         @Override
+        public
+        M getMat () {
+            return (M) imageBlock.image;
+        }
+
+        /**
+         * @return
+         */
+        @Override
+        public
+        M getImage () {
+            return null;
+        }
+
+        /**
+         * @return
+         */
+        @Override
+        public
+        Rect getBoundingBox () {
+            return null;
+        }
+
+        /**
+         * @return
+         */
+//        @Override
         public
         int getLayerIndex () {
             return layerIndex;
@@ -224,6 +290,31 @@ class SipTreeNode<N extends TreeNode <N, A, M>, A extends SipAddress <A>, M exte
         public
         int getClusterIndex () {
             return clusterIndex;
+        }
+
+        /**
+         * @param point
+         * @param layerIndex
+         * @param clusteIndex
+         * @param address
+         * @return
+         * @throws ValueError
+         */
+        @Override
+        public
+        TreeNode <N, A, M> createChild ( Point point, int layerIndex, int clusteIndex, int x, int y, int address ) throws ValueError {
+            return null;
+        }
+
+        /**
+         * @param parent
+         * @param boundingBox
+         * @return
+         */
+        @Override
+        public
+        TreeNodeBase <N, A, M> createNode ( TreeNode <N, A, M> parent, Rect boundingBox ) throws ValueError {
+            return null;
         }
     }
 }

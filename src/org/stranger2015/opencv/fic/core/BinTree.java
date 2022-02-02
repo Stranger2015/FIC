@@ -7,8 +7,8 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
  *
  */
 public
-class BinTree<N extends TreeNode <N, A,M>, A extends Address <A>,  M extends Image>
-        extends Tree <N, A,M> {
+class BinTree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+        extends Tree <N, A, M> {
 
     /**
      * Constructs a new object.
@@ -16,7 +16,7 @@ class BinTree<N extends TreeNode <N, A,M>, A extends Address <A>,  M extends Ima
      * @param image
      */
     public
-    BinTree ( M image, TreeNodeAction <N> action ) {
+    BinTree ( M image, TreeNodeAction <N, A, M> action ) {
         this(null, image, action);
     }
 
@@ -26,7 +26,7 @@ class BinTree<N extends TreeNode <N, A,M>, A extends Address <A>,  M extends Ima
      * @param action
      */
     public
-    BinTree ( TreeNode <N, A,M> root, M image, TreeNodeAction <N> action ) {
+    BinTree ( TreeNode <N, A, M> root, M image, TreeNodeAction<N, A, M> action ) {
         super(root, image, action);
     }
 
@@ -42,13 +42,13 @@ class BinTree<N extends TreeNode <N, A,M>, A extends Address <A>,  M extends Ima
         return null;
     }
 
-    /**
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public
-    Class <N> getNodeClass () {
-        return (Class <N>) BinTreeNode.class;
-    }
+//    /**
+//     * @return
+//     */
+////    @SuppressWarnings("unchecked")
+//    @Override
+//    public
+//    Class <TreeNode <N, A, M>> getNodeClass () {
+//        return ( Class <TreeNode <N, A, M>>) BinTreeNode.class;
+//    }
 }

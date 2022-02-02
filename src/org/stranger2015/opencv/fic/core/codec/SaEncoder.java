@@ -1,9 +1,9 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.opencv.core.Size;
+import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.Image;
 import org.stranger2015.opencv.fic.core.ImageBlock;
-import org.stranger2015.opencv.fic.core.SaAddress;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
@@ -14,7 +14,7 @@ import java.util.List;
  *
  */
 public
-class VsaEncoder<N extends TreeNode <N, A, M>, A extends SaAddress <A>, M extends Image>
+class SaEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
         extends Encoder <N, A, M> {
 
     /**
@@ -23,7 +23,7 @@ class VsaEncoder<N extends TreeNode <N, A, M>, A extends SaAddress <A>, M extend
      * @param domainSize
      */
     public
-    VsaEncoder ( M inputImage, Size rangeSize, Size domainSize ) {
+    SaEncoder ( M inputImage, Size rangeSize, Size domainSize ) {
         super(inputImage, rangeSize, domainSize);
     }
 
@@ -50,7 +50,10 @@ class VsaEncoder<N extends TreeNode <N, A, M>, A extends SaAddress <A>, M extend
      */
     @Override
     public
-    List <ImageTransform <M>> compress ( M image, int sourceSize, int destinationSize, int step ) {
+    List <ImageTransform <M>> compress ( M image,
+                                         int sourceSize,
+                                         int destinationSize,
+                                         int step ) {
         return null;
     }
 
@@ -64,9 +67,9 @@ class VsaEncoder<N extends TreeNode <N, A, M>, A extends SaAddress <A>, M extend
     @Override
     public
     List <ImageBlock> generateAllTransformedBlocks ( M image,
-                                                         int sourceSize,
-                                                         int destinationSize,
-                                                         int step ) {
+                                                     int sourceSize,
+                                                     int destinationSize,
+                                                     int step ) {
         return null;
     }
 

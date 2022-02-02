@@ -17,7 +17,7 @@ class SipTreeTraverser<N extends TreeNode <N, A, M>, A extends SipAddress <A>, M
      * @param action
      */
     public
-    SipTreeTraverser ( SipTree <N, A, M> tree, int depth, TreeNodeAction <N> action ) {
+    SipTreeTraverser ( SipTree <N, A, M> tree, int depth, TreeNodeAction <N, A, M> action ) {
         super(tree, depth, action);
     }
 
@@ -32,7 +32,7 @@ class SipTreeTraverser<N extends TreeNode <N, A, M>, A extends SipAddress <A>, M
      */
     @Override
     public
-    void traverse ( TreeNode <N, A, M> node, int depth, NodeList <N, A, M> neighbors, TreeNodeAction <N> action )
+    void traverse ( TreeNode <N, A, M> node, int depth, NodeList <N, A, M> neighbors, TreeNodeAction <N, A, M> action )
             throws DepthLimitExceeded {
         super.traverse(node, depth, neighbors, action);
     }

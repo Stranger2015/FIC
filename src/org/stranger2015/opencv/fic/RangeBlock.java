@@ -1,13 +1,13 @@
 package org.stranger2015.opencv.fic;
 
-import org.opencv.core.Mat;
 import org.opencv.core.Size;
+import org.stranger2015.opencv.fic.core.ImageBlock;
 
 /**
  * 4 X 4
  */
 public
-class RangeBlock extends Mat implements  IImageBlock {
+class RangeBlock extends ImageBlock {
 
     /**
      * @return
@@ -15,7 +15,6 @@ class RangeBlock extends Mat implements  IImageBlock {
     @Override
     public
     Size getSize () {
-//        return super.size();
-        return 0;//fixme
+        return null;//fixme
     }
 }

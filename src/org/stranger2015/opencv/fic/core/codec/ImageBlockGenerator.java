@@ -38,11 +38,11 @@ class ImageBlockGenerator {
         int numOfBlocksPerRow = inputImage.getWidth() / blockWidth;
         int numOfBlocksPerCol = inputImage.getHeight() / blockHeight;
 
-        List <ImageBlock> blocks = List.of();
+        List <ImageBlock> blocks = new ArrayList <>();
 
         for (int i = 0; i < numOfBlocksPerRow; i++) {
             for (int j = 0; j < numOfBlocksPerCol; j++) {
-                ImageBlock block = new ImageBlock(i, j, blockWidth, blockHeight);
+                ImageBlock block = new ImageBlock(inputImage, i, j, blockWidth, blockHeight);//checkme
                 double sumOfPixelValues = 0;
                 for (int x = 0; x < blockWidth; x++) {
                     for (int y = 0; y < blockHeight; y++) {
@@ -55,6 +55,7 @@ class ImageBlockGenerator {
                 blocks.add(block);
             }
         }
+
         return blocks;
     }
 
@@ -63,16 +64,16 @@ class ImageBlockGenerator {
      * @return
      */
     public
-    List <ImageBlock> generateDomainBlocks ( /*Grayscale*/Image inputImage ) {
+    List <ImageBlock> generateDomainBlocks ( Image inputImage ) {
         int blockWidth = (int) domainSize.width;
         int blockHeight = (int) domainSize.height;
         int numOfBlocksPerRow = inputImage.getWidth() - blockWidth + 1;
         int numOfBlocksPerCol = inputImage.getHeight() - blockHeight + 1;
-        List <ImageBlock> blocks = List.of();
+        List <ImageBlock> blocks = new ArrayList <>();
 
         for (int i = 0; i < numOfBlocksPerRow; i++) {
             for (int j = 0; j < numOfBlocksPerCol; j++) {
-                ImageBlock block = new ImageBlock(i, j, blockWidth, blockHeight);
+                ImageBlock block = new ImageBlock(inputImage, i, j, blockWidth, blockHeight);
                 double sumOfPixelValues = 0;
                 for (int x = 0; x < blockWidth; x++) {
                     for (int y = 0; y < blockHeight; y++) {
@@ -93,5 +94,10 @@ class ImageBlockGenerator {
         }
 
         return blocks;
+    }
+
+    public
+    void createCodebookBlocks ( Image inputImage ) {
+        List <ImageBlock> blocks = new ArrayList <>();
     }
 }

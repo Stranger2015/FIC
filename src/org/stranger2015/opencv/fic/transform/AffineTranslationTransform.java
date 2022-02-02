@@ -13,7 +13,7 @@ import static org.opencv.imgproc.Imgproc.warpAffine;
  * @param <M>
  */
 public
-class AffineTranslationTransform<M extends Image, C extends CompressedImage> extends AffineTransform <M,C> {
+class AffineTranslationTransform<M extends Image> extends AffineTransform <M> {
     /**
      *
      */

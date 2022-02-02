@@ -1,16 +1,14 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.stranger2015.opencv.fic.core.CompressedImage;
 import org.stranger2015.opencv.fic.core.Image;
 
 import static org.stranger2015.opencv.fic.transform.IfsTransform.SYM.*;
 
 /**
  * @param <M>
- * @param <C>
  */
 public
-class IfsTransform<M extends Image, C extends CompressedImage> extends ImageTransform <M, C> {
+class IfsTransform<M extends Image> extends ImageTransform <M> {
 
     private final static int[] ia = new int[0];
 

@@ -9,7 +9,8 @@ import java.util.List;
  * @param <N>
  */
 public
-class BuildAction<N extends TreeNode <N,?,?>> extends TreeNodeAction<N> {
+class BuildAction<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+        extends TreeNodeAction <N, A, M> {
     /**
      * @param domainPool
      */

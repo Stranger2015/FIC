@@ -1,28 +1,26 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.stranger2015.opencv.fic.core.CompressedImage;
 import org.stranger2015.opencv.fic.core.Image;
-
-import java.awt.image.AffineTransformOp;
 
 import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
 
 /**
  * functor class to rotate an image by the given quadrant
  */
-public class AffineRotateQuadrantsTransform<M extends Image, C extends CompressedImage> extends AffineTransform<M, C> {
+public class AffineRotateQuadrantsTransform<M extends Image>
+        extends AffineTransform<M> {
 
     private final int quadrants;
-    private final EInterpolationType interpolationType;
+//    private final EInterpolationType interpolationType;
 
     /**
      * @param quadrants the number of 90 degree arcs to rotate by
      * @param interpolationType  
      */
-    public AffineRotateQuadrantsTransform(M image, int quadrants, EInterpolationType interpolationType) {
-        super(image);
+    public AffineRotateQuadrantsTransform( M image, int quadrants, EInterpolationType interpolationType) {
+        super(image, interpolationType);
         this.quadrants = quadrants;
-        this.interpolationType = interpolationType;
+//        this.interpolationType = interpolationType;
     }
 
     public AffineRotateQuadrantsTransform(M image, int quadrants) {
@@ -40,11 +38,11 @@ public class AffineRotateQuadrantsTransform<M extends Image, C extends Compresse
     int getQuadrants () {
         return quadrants;
     }
-
-    public
-    EInterpolationType getInterpolationType () {
-        return interpolationType;
-    }
+//
+//    public
+//    EInterpolationType getInterpolationType () {
+//        return interpolationType;
+//    }
 
     /**
      * @param inputImage

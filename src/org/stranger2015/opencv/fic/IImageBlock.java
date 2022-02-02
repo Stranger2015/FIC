@@ -11,5 +11,24 @@ interface IImageBlock {
     /**
      * @return
      */
+    int getX();
+
+    /**
+     * @return
+     */
+    int getY();
+
+    /**
+     * @return
+     */
+    int getWidth();
+
+    /**
+     * @return
+     */
+    int getHeight();
+    /**
+     * @return
+     */
     Size getSize ();
 }

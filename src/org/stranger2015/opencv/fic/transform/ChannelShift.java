@@ -4,7 +4,7 @@ import org.stranger2015.opencv.fic.core.CompressedImage;
 import org.stranger2015.opencv.fic.core.Image;
 
 public
-class ChannelShift<M extends Image, C extends CompressedImage> extends ShiftTransform<M,C>{
+class ChannelShift<M extends Image> extends ShiftTransform<M>{
     protected
     ChannelShift ( M image, float intensity, int channelAxis ) {
         super(image, intensity, channelAxis);

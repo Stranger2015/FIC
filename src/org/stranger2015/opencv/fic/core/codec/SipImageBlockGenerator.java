@@ -6,13 +6,14 @@ import org.opencv.core.Size;
  *
  */
 public
-class VsaImageBlockGenerator extends ImageBlockGenerator {
+class SipImageBlockGenerator extends SquareImageBlockGenerator {
+
     /**
      * @param rangeSize
      * @param domainSize
      */
     public
-    VsaImageBlockGenerator ( Size rangeSize, Size domainSize ) {
+    SipImageBlockGenerator ( Size rangeSize, Size domainSize ) {
         super(rangeSize, domainSize);
     }
 }

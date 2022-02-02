@@ -3,44 +3,19 @@ package org.stranger2015.opencv.fic.core.codec;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.Image;
+import org.stranger2015.opencv.fic.transform.ImageTransform;
+
+import java.util.List;
 
 /**
  *
  */
 public
 class SipImage extends Image {
-
-    private int[] addresses;
-
-    /**
-     * @param rows
-     * @param type
-     */
-    public
-    SipImage ( int rows, int type ) {
-        super(rows, 1, type);
-    }
-
-    /**
-     * @param imread
-     * @param size
-     */
-    public
-    SipImage ( Mat imread, Size size, int[] addresses ) {
-        super(imread, size);
-        this.addresses = addresses;
-    }
-
-    /**
-     * @param n
-     */
-    public
-    SipImage ( double... n ) {
-        super(n);
-    }
+    protected int[] addresses;
 
     public
-    <M extends Image, A extends SipAddress <A>>
+    <M extends Image>
     SipImage ( M input, int[] addresses ) {
         super(input);
         this.addresses = addresses;
@@ -50,10 +25,40 @@ class SipImage extends Image {
      * @param row
      * @return
      */
-//    @Override
     public
     double[] get ( int row ) {
         return super.get(row, 0);
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    Image createInputImage (Image image) {
+        return new SipImage(image, new int[0]);//fixme
+    }
+
+    /**
+     * @param image
+     * @return
+     */
+    @Override
+    public
+    Image createOutputImage ( Image image ) {
+        return new CompressedSipImage(image, new int[0], new ICompressedImage() {
+            @Override
+            public
+            List <ImageTransform <Image>> getTransforms () {
+                return null;
+            }
+
+            @Override
+            public
+            void setTransforms ( List <ImageTransform <Image>> transforms ) {
+
+            }
+        });//fixme
     }
 
     /**
@@ -65,7 +70,7 @@ class SipImage extends Image {
     @Override
     public
     int put ( int row, int col, double... data ) {
-        int address = addresses[row + getWidth() * col];//??????????? fixme
+        int address = addresses[row + getWidth() * col];//??? fixme
 
         return super.put(address, data);
     }

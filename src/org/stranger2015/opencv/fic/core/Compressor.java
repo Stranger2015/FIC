@@ -19,7 +19,7 @@ class Compressor extends Observable {
 
     private final ScaleTransform <Image> scaleTransform;
     private final Tiler <BufferedImage> tiler;
-    private final ThreadLocal <Distanceator <BufferedImage>> comparator = new ThreadLocal <>();
+    private final ThreadLocal <Distanceator /*<BufferedImage>*/> comparator = new ThreadLocal <>();
     private final Set <ImageTransform <Image>> transforms;
     private final Set <BufferedImageOp> filters;
 
@@ -36,7 +36,7 @@ class Compressor extends Observable {
     public
     Compressor ( final ScaleTransform <Image> scaleTransform,
                  final Tiler <BufferedImage> tiler,
-                 final Distanceator <BufferedImage> comparator,
+                 final Distanceator /*<BufferedImage>*/ comparator,
                  final Set <ImageTransform <Image>> transforms,
                  final Observer observer )
             throws NullPointerException {
@@ -58,7 +58,7 @@ class Compressor extends Observable {
     public
     Compressor ( final ScaleTransform <Image> scaleTransform,
                  final Tiler <BufferedImage> tiler,
-                 final Distanceator <BufferedImage> comparator,
+                 final Distanceator /*<BufferedImage>*/ comparator,
                  final Set <ImageTransform <Image>> transforms,
                  final Set <BufferedImageOp> filters,
                  Observer observer ) throws NullPointerException {

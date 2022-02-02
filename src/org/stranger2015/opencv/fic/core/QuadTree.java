@@ -20,19 +20,19 @@ class QuadTree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Im
      * @param action
      */
     public
-    QuadTree ( TreeNode <N, A, M> root, M image, TreeNodeAction <N> action ) {
+    QuadTree ( TreeNode <N, A, M> root, M image, TreeNodeAction <N, A, M> action ) {
         super(root, image, action);
     }
 
-    /**
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public
-    Class <N> getNodeClass () {
-        return (Class <N>) QuadTreeNode.class;
-    }
+//    /**
+//     * @return
+//     */
+//    @SuppressWarnings("unchecked")
+//    @Override
+//    public
+//    Class <TreeNode <N, A, M>> getNodeClass () {
+//        return (Class <N>) QuadTreeNode.class;
+//    }
 
     /**
      * @param w

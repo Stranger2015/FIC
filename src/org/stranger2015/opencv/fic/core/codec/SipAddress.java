@@ -13,23 +13,22 @@ import java.util.EnumSet;
  * HIP conversion relies on use of a resampling scheme
  * [3, 5] to match the location of points in the square and
  * hexagonal images. As SIP is based on square images,
- * no re-sampling scheme is needed. We need only to
+ * no resampling scheme is needed. We need only to
  * convert the lattice of a square image to the new SIP
  * format based on the spiral addressing scheme. The
  * steps are as following:
  *
  * For a given image with size M × N , the number of SIP layers λ
- * can be found by λ = ( logM + logN )/log( 9 ); then the length of the SIP image is 9λ.
+ * can be found by λ = ( logM + logN )/log( 9 ); then the length of the SIP image is 9^λ.
  * Because the SIP address scheme is base 9, the conversion
  * between the SIP address and a decimal number
- * can be found by (an an−1...a1) = an × 9n−1 + an−1 × 9n−2 + ...
+ * can be found by (an, an−1 ... a1) = an × 9^n−1 + an−1 × 9^n−2 + ...
  * ... + a1, where the values ai of a SIP address are
  * 0 ≤ ai < 9. We can adapt the spiral addressing scheme
  * for HIP [9] and the SIP address can be represented as:
- * an an−1...a1 =
- * n∑
- * i=1
- * ai × 10i−1 (1)
+ * an, an−1 ...a1 =
+ * n ∑ i=1
+ * ai × 10^i−1 (1)
  * where ∑ denotes Spiral Addition and × indicates Spiral Multiplication [5].
  * For example, the point at SIP address 867 can be located by finding the addresses of
  * 800, 60 and 7. Next, we explain how to locate these
@@ -50,9 +49,6 @@ import java.util.EnumSet;
 public
 class SipAddress<A extends Address <A>> extends SaAddress <A> {
 
-    /**
-     *
-     */
     protected static final int[][] addTable = new int[][]{
             {0, +1, +2, +3, +4, +5, +6, +7, +8},
             {1, 15, 14, +2, +3, +0, +7, +8, 16},
@@ -92,7 +88,6 @@ class SipAddress<A extends Address <A>> extends SaAddress <A> {
     }
 
     /**
-     *
      * @param digits
      */
     public
@@ -100,12 +95,23 @@ class SipAddress<A extends Address <A>> extends SaAddress <A> {
         this(0);
     }
 
+    public
+    SipAddress () throws ValueError {
+        super();
+    }
+
+    public
+    SipAddress ( A divident ) throws ValueError {
+        super();
+
+    }
+
     /**
      * @return
      */
     @Override
     public
-    int[][] getAddTable () {
+    int[][] getPlusTable () {
         return addTable.clone();
     }
 
@@ -126,4 +132,65 @@ class SipAddress<A extends Address <A>> extends SaAddress <A> {
     int radix () {
         return radix;
     }
+
+    /**
+     * L( 0 ) = (  0,  0 )   0
+     * L( 1 ) = ( -1,  0 ),  1 layer-1:
+     * L( 2 ) = ( -1,  1 ),  2
+     * L( 3 ) = (  0,  1 ),  3
+     * L( 4 ) = (  1,  1 ),  4
+     * L( 5 ) = (  1,  0 ),  5
+     * L( 6 ) = (  1,  -1 ), 6
+     * L( 7 ) = (  0,  -1 ), 7
+     * L( 8 ) = ( -1,  -1 )  8
+     *
+     *
+     * @param addressBase
+     * @param radix
+     * @param scale
+     * @return
+     */
+//    @Override
+//    public
+//    AddressedPoint getCartesianCoords ( int addressBase, int radix, int scale ) {
+//        AddressedPoint v=CENTER;
+//        /*
+//         * L( 0 ) = (  0,  0 )   0
+//         * L( 1 ) = ( -1,  0 ),  1 layer-1:
+//         * L( 2 ) = ( -1,  1 ),  2
+//         * L( 3 ) = (  0,  1 ),  3
+//         * L( 4 ) = (  1,  1 ),  4
+//         * L( 5 ) = (  1,  0 ),  5
+//         * L( 6 ) = (  1,  -1 ), 6
+//         * L( 7 ) = (  0,  -1 ), 7
+//         * L( 8 ) = ( -1,  -1 )  8
+//         */
+//        switch (addressBase) {
+//            case 0:
+//                v = new AddressedPoint(0, 0);
+//                break;
+//            case 1:
+//                v = new AddressedPoint(-1, 0);
+//                break;
+//            case 2:
+//                v = new AddressedPoint(-1, 1);
+//                break;
+//            case 3:
+//                v = new AddressedPoint(0, 1);
+//                break;
+//            case 4:
+//                v = new AddressedPoint(1, 1);
+//                break;
+//            case 5:
+//                v = new AddressedPoint(1, 0);
+//                break;
+//            case 6:
+//                v = new AddressedPoint(1, -1);//fixme
+//                break;
+//            default:
+//                throw new IllegalStateException("Unexpected value: " + scale);
+//        }
+//
+//        return v;
+//    }
 }

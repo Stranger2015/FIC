@@ -1,5 +1,6 @@
 package org.stranger2015.opencv.fic.core;
 
+@Deprecated
 public
 interface IDigits7 {
 

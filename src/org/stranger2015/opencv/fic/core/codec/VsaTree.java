@@ -14,7 +14,7 @@ class VsaTree<N extends TreeNode <N, A, M>, A extends SaAddress <A>, M extends I
 
 
     public
-    VsaTree ( TreeNode <N, A, M> root, M image, TreeNodeAction <N> action ) {
+    VsaTree ( TreeNode <N, A, M> root, M image, TreeNodeAction <N, A, M> action ) {
         super(root, image, action);
     }
 
@@ -27,7 +27,7 @@ class VsaTree<N extends TreeNode <N, A, M>, A extends SaAddress <A>, M extends I
     @Override
     public
     TreeNode <N, A, M> nodeInstance ( TreeNode <N, A, M> parent, EDirection quadrant, Rect rect ) {
-        return new VsaTreeNode <>();
+        return new SaTreeNode <>();
     }
 
     /**
@@ -35,8 +35,8 @@ class VsaTree<N extends TreeNode <N, A, M>, A extends SaAddress <A>, M extends I
      */
     @SuppressWarnings("unchecked")
     @Override
-    public
-    Class <N> getNodeClass () {
-        return (Class <N>) VsaTreeNode.class;
+    public//fixme
+    Class <? extends TreeNode<N,A,M>> getNodeClass (TreeNode<N,A,M> clazz){
+        return (Class <? extends TreeNode <N, A, M>>) clazz.getClass();
     }
 }

@@ -4,7 +4,7 @@ import org.stranger2015.opencv.fic.core.CompressedImage;
 import org.stranger2015.opencv.fic.core.Image;
 
 public
-class ZoomTransform<M extends Image, C extends CompressedImage> extends ImageTransform<M,C>{
+class ZoomTransform<M extends Image> extends ImageTransform<M>{
 
     public
     ZoomTransform (M image) {

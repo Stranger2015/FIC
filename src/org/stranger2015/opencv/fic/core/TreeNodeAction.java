@@ -4,25 +4,31 @@ import org.jetbrains.annotations.NotNull;
 import org.stranger2015.opencv.fic.DomainPool;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 import static org.stranger2015.opencv.fic.DomainBlock.H;
 import static org.stranger2015.opencv.fic.DomainBlock.W;
 
 public
-class TreeNodeAction<N extends TreeNode <N,?,?>> implements Consumer <N> {
-    private final DomainPool domainPool;
-    private final List <N> leaves;
+class TreeNodeAction<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+        implements Consumer <N> {
+
+    private final DomainPool <N, A, M> domainPool = new DomainPool <>();
+    private final NodeList <N, A, M> leaves = new NodeList <>();
 
     public
-    TreeNodeAction ( DomainPool domainPool, List <N> leaves ) {
-        this.domainPool = domainPool;
-        this.leaves = leaves;
+    TreeNodeAction ( DomainPool <N, A, M> domainPool, NodeList <N, A, M> leaves ) {
+        this.domainPool.add(domainPool);
+        this.leaves.add(leaves);
     }
 
     public
-    List <N> getLeaves () {
+    TreeNodeAction ( DomainPool <N, A, M> domainPool ) {
+        this(domainPool, new NodeList <>());
+    }
+
+    public
+    NodeList <N, A, M> getLeaves () {
         return leaves;
     }
 
@@ -38,7 +44,7 @@ class TreeNodeAction<N extends TreeNode <N,?,?>> implements Consumer <N> {
         if (n.isLeaf()) {
             if (
                     W == n.boundingBox.width &&
-                    H == n.boundingBox.height
+                            H == n.boundingBox.height
             ) {
 //                n = (N) new DomainBlock(n, ((LeafNode) n).image, n.boundingBox);
 //                domainPool.add((DomainBlock) n);//fixme is it meaningful
@@ -70,7 +76,7 @@ class TreeNodeAction<N extends TreeNode <N,?,?>> implements Consumer <N> {
      * @return
      */
     public
-    DomainPool getDomainPool () {
+    DomainPool <N, A, M> getDomainPool () {
         return domainPool;
     }
 }

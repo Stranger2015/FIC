@@ -45,5 +45,5 @@ interface IImageProcessor<N extends TreeNode <N, A, M>, A extends Address <A>, M
     /**
      * @return
      */
-    List <Task <M>> getTasks ();
+    List <Task> getTasks ();
 }

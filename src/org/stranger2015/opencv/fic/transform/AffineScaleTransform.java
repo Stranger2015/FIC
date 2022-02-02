@@ -10,7 +10,7 @@ import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
 /**
  * 
  */
-public class AffineScaleTransform<M extends Image, C extends CompressedImage> extends AffineTransform<M, C>{
+public class AffineScaleTransform<M extends Image> extends AffineTransform<M>{
 
     private final double scaleX;
     private final double scaleY;

@@ -1,20 +1,17 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Size;
-import org.stranger2015.opencv.fic.core.*;
+import org.stranger2015.opencv.fic.core.Address;
+import org.stranger2015.opencv.fic.core.CompressedImage;
+import org.stranger2015.opencv.fic.core.Image;
+import org.stranger2015.opencv.fic.core.ImageBlock;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-
-import static org.stranger2015.opencv.fic.core.ImageBlock.EMPTY_ARRAY;
-
-//=====================================================================================
 
 /**
  * @param <N>
@@ -29,6 +26,15 @@ class Encoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Ima
     protected final ImageBlockGenerator blockGenerator;
 
     protected final List <IEncoderListener> listeners = new ArrayList <>();
+
+    protected M inputImage;
+    protected M outputImage;
+
+    protected final List <ImageBlock> rangeBlocks = new ArrayList <>();
+    protected final List <ImageBlock> domainBlocks = new ArrayList <>();
+    protected final List <ImageBlock> codebookBlocks = new ArrayList <>();
+
+    protected final List <ImageTransform <M>> transforms = new ArrayList <>();
 
     /**
      * @return
@@ -50,6 +56,14 @@ class Encoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Ima
      * @return
      */
     public
+    List <ImageBlock> getCodebookBlocks () {
+        return codebookBlocks;
+    }
+
+    /**
+     * @return
+     */
+    public
     M getInputImage () {
         return inputImage;
     }
@@ -62,14 +76,6 @@ class Encoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Ima
         return outputImage;
     }
 
-    protected final List <ImageBlock> rangeBlocks = new ArrayList <>();
-    protected final List <ImageBlock> domainBlocks = new ArrayList <>();
-
-    protected M inputImage;
-    protected M outputImage;
-
-    private final List <ImageTransform <M>> transforms = new ArrayList <>();
-
     /**
      * @param inputImage
      * @param rangeSize
@@ -79,38 +85,22 @@ class Encoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Ima
     protected
     Encoder ( M inputImage, Size rangeSize, Size domainSize ) {
         this.inputImage = inputImage;
-        outputImage = (M) new Image(inputImage);
+        outputImage = (M) new CompressedImage(inputImage);
+
         outputImage.originalImageWidth = inputImage.getWidth();
         outputImage.originalImageHeight = inputImage.getHeight();
 
         blockGenerator = createBlockGenerator(rangeSize, domainSize);
-//        rangeBlocks = blockGenerator.generateRangeBlocks(inputImage);
-//        domainBlocks = blockGenerator.generateDomainBlocks(inputImage);
-
-//        outputImage.rangeBlocks = rangeBlocks;
-//        outputImage.domainBlocks = domainBlocks;
     }
 
     /**
-     * @param scheme
-     * @param action
-     * @param <N>
-     * @param <A>
-     * @param <M>
      * @return
      */
-    public static
-    <N extends TreeNodeBase.TreeNode <N, A, M>, A extends Address <A>, M extends Image>
-    @NotNull IEncoder <N, A, M> create ( EPartitionScheme scheme, EncodeAction action ) {
-        return create(scheme, action, new LoadSaveImageTask <>("???"));
-    }
-
-    /**
-     *
-     */
     public
-    void segmentImage () {
+    void segmentImage ( M inputImage ) {
         blockGenerator.generateRangeBlocks(inputImage);
+        blockGenerator.generateDomainBlocks(inputImage);
+        blockGenerator.createCodebookBlocks(inputImage);
     }
 
     /**
@@ -121,48 +111,6 @@ class Encoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Ima
     protected
     ImageBlockGenerator createBlockGenerator ( Size rangeSize, Size domainSize ) {
         return new SquareImageBlockGenerator(rangeSize, domainSize);
-    }
-
-    /**
-     * @param scheme
-     * @param action
-     * @param lit
-     * @param <N>
-     * @param <A>
-     * @param <M>
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    public static
-    <N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
-    @NotNull IEncoder <N, A, M> create ( EPartitionScheme scheme, EncodeAction action, LoadSaveImageTask <M> lit ) {
-        try {
-            Class <IEncoder <N, A, M>> encoderClass =
-                    (Class <IEncoder <N, A, M>>) Class.forName(scheme.getEncoderClassName());
-            Constructor <IEncoder <N, A, M>> ctor = encoderClass.getDeclaredConstructor(
-                    Image.class,
-                    Size.class,
-                    Size.class);
-
-            return ctor.newInstance(lit.loadImage(action.getFn()), ZERO_SIZE, ZERO_SIZE);//fixme
-        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException |
-                InvocationTargetException e) {
-            e.printStackTrace();
-            System.exit(0);
-        }
-
-        throw new IllegalStateException();
-    }
-
-    /**
-     * @param imageFn
-     * @return
-     */
-    M loadImage ( String imageFn ) {
-        List <Task <M>> tasks = new ArrayList <>();//todo
-        LoadSaveImageTask <M> lit = new LoadSaveImageTask <>(imageFn, tasks);
-
-        return lit.loadImage(imageFn);
     }
 
     /**
@@ -188,90 +136,112 @@ class Encoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Ima
      */
     public
     M encode ( M image ) {
-        segmentImage();
-        createDomainPool();
-        createCodeBook();
+        segmentImage(image);
 
-//        for (ImageBlock rangeBlock : rangeBlocks) {
-//            int percent = 100 * (rangeBlocks.indexOf(rangeBlock) + 1) / rangeBlocks.size();
-//            System.err.printf("%d%%", percent);
-//            ImageTransform <M, C> bestTransform = ImageTransform.create(image);
-//            int minDistance = Integer.MAX_VALUE;
-//
-//            for (ImageBlock domainBlock : domainBlocks) {
-//                double alpha = 0;
-//                for (int i = 0; i < domainBlock.width; i++) {
-//                    for (int j = 0; j < domainBlock.height; j++) {
-//                        int[] data = new int[0];//fixme
-//                        alpha += (domainBlock.get(i, j, data) - domainBlock.meanPixelValue);
-////                        (rangeBlock.get(i,j,data) - rangeBlock.meanPixelValue);
-//                    }
-//                }
-//
-//                double contrast = alpha / domainBlock.beta;
-//                int brightness = (int) (rangeBlock.meanPixelValue - contrast * domainBlock.meanPixelValue);
-//
-//                for (int index = 0; index < 8; index++) {
-//                    ImageBlock transformedDomainBlock = new ImageBlock(
-//                            domainBlock.x,
-//                            domainBlock.y,
-//                            domainBlock.width,
-//                            domainBlock.height);
-//
-//                    for (int x = 0; x < domainBlock.width; x++) {
-//                        for (int y = 0; y < domainBlock.height; y++) {
-//                            int newX = x * dihedralAffineTransforms[index][0] + y * dihedralAffineTransforms[index][1];
-//                            int newY = x * dihedralAffineTransforms[index][2] + y * dihedralAffineTransforms[index][3];
-//                            if (newX < 0) {
-//                                newX += domainBlock.width;
-//                            }
-//                            if (newY < 0) {
-//                                newY += domainBlock.height;
-//                            }
-//                            short newPixelValue = (short) (contrast * domainBlock.put(x, y) + brightness);
-//                            transformedDomainBlock.put(newX, newY, ((newPixelValue < MAX_PIXEL_VALUE) &&
-//                                    (newPixelValue >= 0))
-//                                    ? newPixelValue :
-//                                    (MAX_PIXEL_VALUE / 2.0));
-//                        }
-//                    }
-//
-//                    int distance = getDistance(rangeBlock, transformedDomainBlock);
-//                    if ((distance < minDistance) && (distance != 0)) {
-//                        minDistance = distance;
-//                        bestTransform.dihedralAffineTransformerIndex = index;
-//                        bestTransform.originalDomainX = domainBlock.x;
-//                        bestTransform.originalDomainY = domainBlock.y;
-////                        bestTransform.brightnessOffset = brightness;
-////                        bestTransform.contrastScale = contrast;
-//                    }
-//                }
-//            }
-//
-//            getTransforms().add(bestTransform);
-//        }
-//
-////        outputImage.transforms = transforms;
-//
-        return (M) outputImage;
+        return findBestTransform(image);
+    }
+
+    /**
+     *
+     * @param image
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    protected
+    M findBestTransform ( M image ) {
+        for (ImageBlock rangeBlock : rangeBlocks) {
+            int percent = 100 * (rangeBlocks.indexOf(rangeBlock) + 1) / rangeBlocks.size();
+            System.err.printf("%d%%", percent);
+            ImageTransform <M> bestTransform = ImageTransform.create(image);
+            int minDistance = Integer.MAX_VALUE;
+            iterateDomainBlocks(rangeBlock, bestTransform, minDistance);
+
+            getTransforms().add(bestTransform);
+        }
+        ((ICompressedImage) outputImage).getTransforms()
+                .addAll((Collection <? extends ImageTransform <Image>>) transforms);
+
+        return outputImage;
+    }
+
+    protected
+    void iterateDomainBlocks ( ImageBlock rangeBlock, ImageTransform <M> bestTransform, int minDistance ) {
+        for (ImageBlock domainBlock : domainBlocks) {
+            double alpha = 0;
+            for (int i = 0; i < domainBlock.width; i++) {
+                for (int j = 0; j < domainBlock.height; j++) {
+                    int[] data = new int[0];//fixme
+                    alpha += (domainBlock.get(i, j, data) - domainBlock.meanPixelValue);
+                }
+            }
+
+            double contrast = alpha / domainBlock.beta;
+            int brightness = (int) (rangeBlock.meanPixelValue - contrast * domainBlock.meanPixelValue);
+
+            for (int index = 0; index < 8; index++) {
+                ImageBlock transformedDomainBlock = new ImageBlock(
+                        inputImage,
+                        domainBlock.x,
+                        domainBlock.y,
+                        domainBlock.width,
+                        domainBlock.height);
+
+                for (int x = 0; x < domainBlock.width; x++) {
+                    for (int y = 0; y < domainBlock.height; y++) {
+                        int newX = x * dihedralAffineTransforms[index][0] + y * dihedralAffineTransforms[index][1];
+                        int newY = x * dihedralAffineTransforms[index][2] + y * dihedralAffineTransforms[index][3];
+                        if (newX < 0) {
+                            newX += domainBlock.width;
+                        }
+                        if (newY < 0) {
+                            newY += domainBlock.height;
+                        }
+                        short newPixelValue = (short) (contrast * domainBlock.put(x, y) + brightness);
+                        transformedDomainBlock.put(newX, newY, ((newPixelValue < MAX_PIXEL_VALUE) &&
+                                (newPixelValue >= 0))
+                                ? newPixelValue :
+                                (MAX_PIXEL_VALUE / 2.0));
+                    }
+                }
+
+                int distance = getDistance(rangeBlock, transformedDomainBlock);
+                if ((distance < minDistance) && (distance != 0)) {
+                    minDistance = distance;
+                    bestTransform.dihedralAffineTransformerIndex = index;
+                    bestTransform.originalDomainX = domainBlock.x;
+                    bestTransform.originalDomainY = domainBlock.y;
+                    bestTransform.brightnessOffset = brightness;
+                    bestTransform.contrastScale = contrast;
+                }
+            }
+        }
+    }
+
+    /**
+     * @param range
+     * @param domain
+     * @return
+     */
+    public
+    int getDistance ( ImageBlock range, ImageBlock domain ) {
+        double error = 0;
+        for (int i = 0; i < range.getWidth(); i++) {
+            for (int j = 0; j < range.getHeight(); j++) {
+//                error += Math.pow(range.get(i, j), EMPTY_ARRAY) - domain.get(i, j, EMPTY_ARRAY), 2);///fixme
+            }
+        }
+        error = error / (double) (range.getWidth() * range.getWidth());
+
+        return (int) error;
     }
 
     /**
      *
      */
     @Contract(pure = true)
-    private
-    void createDomainPool () {
-
-    }
-
-    /**
-     *
-     */
-    @Contract(pure = true)
-    private
-    void createCodeBook () {
-
+    protected
+    void createCodebookBlocks ( M image ) {
+//domainBlocks
     }
 
     /**
@@ -294,52 +264,6 @@ class Encoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Ima
 //        x = x.swapaxes(0, axis);
         return x;
     }
-//    /**
-
-//     * Performs a brightness shift.
-//     *
-//     * @param x
-//     * @param brightness
-//     * @return Numpy image tensor.
-//     * @throws ValueError if `brightness_range` isn't a tuple.
-//     */
-//    @Override
-//    public
-//    Image applyBrightnessShift ( Image x, Mat.Tuple2 <Float> brightness ) {
-//        return null;
-//    }
-
-//    /**
-//     * Performs a random brightness shift.
-//     *
-//     * @param x
-//     * @param brightnessRange
-//     * @return
-//     */
-//    @Override
-//    public
-//    M randomBrightness ( M x, Range brightnessRange ) {
-//        return null;
-//    }
-
-    /**
-     * @param range
-     * @param domain
-     * @return
-     */
-    public
-    int getDistance ( ImageBlock range, ImageBlock domain ) {
-        double error = 0;
-        for (int i = 0; i < range.width; i++) {
-            for (int j = 0; j < range.height; j++) {
-                error += Math.pow(range.get(i, j, EMPTY_ARRAY) - domain.get(i, j, EMPTY_ARRAY), 2);///fixme
-            }
-        }
-        error = error / (double) (range.width * range.height);
-
-        return (int) error;
-    }
-
 
     /*
     public class SimpleEncoder implements Constants{
@@ -353,7 +277,7 @@ class Encoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Ima
         GrayscaleImage inputImage;
     //	CompressedImage outputImage;
 
-        public SimpleEncoder(GrayscaleImage inputImage, Point rangeSize, Point domainSize) {
+        public SimpleEncoder(GrayscaleImage inputImage, AddressedPoint rangeSize, AddressedPoint domainSize) {
             this.inputImage = inputImage;
             outputImage = new CompressedImage();
             outputImage.originalImageWidth = inputImage.getWidth();
@@ -426,7 +350,7 @@ class Encoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Ima
                 }
                 transforms.add(bestTransform);
             }
-            outputImage.transforms = transforms;
+            outputImage.transforms =  ;
             return outputImage;
         }
 

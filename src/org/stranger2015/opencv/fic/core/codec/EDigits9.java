@@ -2,6 +2,7 @@ package org.stranger2015.opencv.fic.core.codec;
 
 import org.stranger2015.opencv.fic.core.IDigits9;
 
+@Deprecated
 public
 enum EDigits9 implements IDigits9 {
     ;

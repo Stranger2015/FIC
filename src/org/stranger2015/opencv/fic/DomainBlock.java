@@ -5,6 +5,7 @@ import org.opencv.core.Rect;
 import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
+import org.stranger2015.opencv.fic.utils.Point;
 
 /**
  * 8 X 8
@@ -23,23 +24,50 @@ class DomainBlock<N extends DomainBlock <N, A, M>, A extends Address <A>, M exte
      * @param rect
      */
     public
-    DomainBlock ( TreeNode <N, A, M> parent, M image, Rect rect ) throws ValueError {
-        super(parent, (ImageBlock) image, rect);
+    DomainBlock ( TreeNode <N, A, M> parent, M image, Rect rect ) {
+        super(parent, image, rect);
     }
 
     /**
-     * @param imageBlock
-     * @param address      * @param layerno
+     * @param address
+     */
+    public
+    DomainBlock ( int address ) {
+        super(address);
+    }
+
+    /**
+     * @param point
+     * @param layerIndex
+     * @param clusteIndex
+     * @param x
+     * @param y
+     * @param address
      * @return
      * @throws ValueError
      */
     @Override
     public
+    TreeNode <N, A, M> createChild ( Point point, int layerIndex, int clusteIndex, int x, int y, int address )
+            throws ValueError {
+        return new DomainBlock <>(address);
+    }
+
+    /**
+     * @param layerIndex
+     * @param imageBlock
+     * @param address
+     * @return
+     * @throws ValueError
+     */
+//    @Override
+    public//todo fixme
     TreeNode <N, A, M> createChild ( int layerIndex, int imageBlock, int address ) throws ValueError {
         return new DomainBlock <>(null, null);//fixme
     }
 
     /**
+     *
      * @param parent
      * @param boundingBox
      * @throws ValueError
@@ -50,6 +78,52 @@ class DomainBlock<N extends DomainBlock <N, A, M>, A extends Address <A>, M exte
     }
 
     /**
+     *
+     *
+     * @return
+     */
+    @Override
+    public
+    int getX () {
+        return imageBlock.getX();
+    }
+
+    /**
+     *
+     *
+     * @return
+     */
+    @Override
+    public
+    int getY () {
+        return imageBlock.getY();
+    }
+
+    /**
+     *
+     *
+     * @return
+     */
+    @Override
+    public
+    int getWidth () {
+        return imageBlock.getWidth();
+    }
+
+    /**
+     *
+     *
+     * @return
+     */
+    @Override
+    public
+    int getHeight () {
+        return imageBlock.getHeight();
+    }
+
+    /**
+     *
+     *
      * @return
      */
     @Override

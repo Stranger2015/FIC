@@ -22,7 +22,8 @@
     <orderEntry type="library" exported="" name="jenetics-4.1.0" level="project" />
     <orderEntry type="library" exported="" name="fic" level="project" />
     <orderEntry type="library" name="locationtech.jts.core" level="project" />
-    <orderEntry type="library" exported="" name="ijblob1.2" level="project" />
-    <orderEntry type="module" module-name="enumus" exported="" />
+    <orderEntry type="module" module-name="enumus" />
+    <orderEntry type="library" exported="" name="commons-collections4-4.4" level="project" />
+    <orderEntry type="library" exported="" name="slf4j" level="project" />
   </component>
 </module>

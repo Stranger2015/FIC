@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Rect;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.EnumSet;
 
 import static org.stranger2015.opencv.fic.core.Tree.EAffineTransform.*;
@@ -25,13 +24,14 @@ class Tree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
     protected M image;
 
     protected TreeNode <N, A, M> root;
-    protected TreeNodeAction <N> action;
+    protected TreeNodeAction <N, A, M> action;
 
     private Rect area;
+
     /**
      *
      */
-    protected int depth;          // The depth of the tree... vsa/sip layer????????????
+    protected int depth;          // The depth of the tree... sa/sip layer??
 
     /**
      *
@@ -47,7 +47,7 @@ class Tree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
      * @param area
      */
     protected
-    Tree ( TreeNode <N, A, M> root, M image, TreeNodeAction <N> action, Rect area, int depth ) {
+    Tree ( TreeNode <N, A, M> root, M image, TreeNodeAction <N, A, M> action, Rect area, int depth ) {
         this.image = image;
         this.root = root;
         this.area = area;
@@ -62,7 +62,7 @@ class Tree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
      * @param action
      */
     protected
-    Tree ( TreeNode <N, A, M> root, M image, TreeNodeAction <N> action ) {
+    Tree ( TreeNode <N, A, M> root, M image, TreeNodeAction <N, A, M> action ) {
         this(
                 root,
                 image,
@@ -78,12 +78,12 @@ class Tree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
     @NotNull Tree <N, A, M> create ( String className ) {
         int rc = 0;
         try {
-            Class <Tree<N,A,M>> clazz = (Class <Tree <N, A, M>>) Class.forName(className);
+            Class <Tree <N, A, M>> clazz = (Class <Tree <N, A, M>>) Class.forName(className);
             Tree <N, A, M> tree = clazz.getDeclaredConstructor().newInstance();
             tree.initialize();
 
             return tree;
-        } catch (ReflectiveOperationException e){
+        } catch (ReflectiveOperationException e) {
             e.printStackTrace();
         }
         throw new RuntimeException();
@@ -121,8 +121,11 @@ class Tree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
     /**
      * @return
      */
-    public abstract
-    Class <N> getNodeClass ();
+    @SuppressWarnings("unchecked")
+    public
+    Class <? extends TreeNode <N, A, M>> getNodeClass ( TreeNode <N, A, M> clazz ) {
+        return (Class <? extends TreeNode <N, A, M>>) clazz.getClass();
+    }
 
     /**
      * @return
@@ -149,7 +152,7 @@ class Tree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
     public
     TreeTraverser <N, A, M> getTraverser ( Tree <N, A, M> tree,
                                            int depth,
-                                           TreeNodeAction <N> action ) {
+                                           TreeNodeAction <N, A, M> action ) {
         return new TreeTraverser <>(tree, depth, action);
     }
 
@@ -177,7 +180,7 @@ class Tree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
         FLIP, // flip/flop
         ROTATE,
         SCALE,
-        // SKEW,//??????????
-        // TRANSLATE,//?????????????
+        // SKEW,//???
+        // TRANSLATE,//???
     }
 }
