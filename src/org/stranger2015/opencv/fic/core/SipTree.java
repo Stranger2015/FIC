@@ -2,7 +2,7 @@ package org.stranger2015.opencv.fic.core;
 
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.SipAddress;
-import org.stranger2015.opencv.fic.core.codec.VsaTree;
+import org.stranger2015.opencv.fic.core.codec.SaTree;
 import org.stranger2015.opencv.fic.utils.Point;
 
 import java.util.Map;
@@ -13,8 +13,8 @@ import java.util.Map;
  * @param <A>
  */
 public
-class SipTree<N extends TreeNode <N, A, M>, A extends SipAddress <A>, M extends Image>
-        extends VsaTree <N, A, M> {
+class SipTree<N extends TreeNode <N, A, M>, A extends SipAddress <A>, M extends IImage>
+        extends SaTree <N, A, M> {
 
     public
     SipTree ( SipTreeNode <N, A, M> parent,

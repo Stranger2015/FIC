@@ -2,6 +2,7 @@ package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Rect;
+
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.utils.Point;
 
@@ -9,7 +10,7 @@ import org.stranger2015.opencv.fic.utils.Point;
  *
  */
 public
-class QuadTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+class QuadTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
         extends BinTreeNode <N, A, M> {
 
     /**
@@ -39,7 +40,7 @@ class QuadTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
      * @param <A>
      */
     public static
-    class QuadLeafNode<N extends LeafNode <N, A, M>, A extends Address <A>, M extends Image>
+    class QuadLeafNode<N extends LeafNode <N, A, M>, A extends Address <A>, M extends IImage>
             extends LeafNode <N, A, M> {
         /**
          * @param parent

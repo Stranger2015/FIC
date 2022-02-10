@@ -1,5 +1,6 @@
 package org.stranger2015.opencv.fic.transform;
 
+import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.Image;
 
 import static org.stranger2015.opencv.fic.transform.IfsTransform.SYM.*;
@@ -8,7 +9,7 @@ import static org.stranger2015.opencv.fic.transform.IfsTransform.SYM.*;
  * @param <M>
  */
 public
-class IfsTransform<M extends Image> extends ImageTransform <M> {
+class IfsTransform<M extends IImage> extends ImageTransform <M> {
 
     private final static int[] ia = new int[0];
 
@@ -81,7 +82,7 @@ class IfsTransform<M extends Image> extends ImageTransform <M> {
      */
     public
     M downSample ( M src, /*int srcWidth,*/ int startX, int startY, int targetSize ) {
-        Image out = new Image();
+        IImage out = new Image(src);
         //        PixelValue* dest = new PixelValue[targetSize * targetSize];
 //        int srcWidth = src.width();
         int destX = 0;

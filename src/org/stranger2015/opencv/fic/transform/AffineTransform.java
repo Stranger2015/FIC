@@ -1,9 +1,12 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.stranger2015.opencv.fic.core.Image;
+import org.stranger2015.opencv.fic.core.IImage;
 
+/**
+ * @param <M>
+ */
 public abstract
-class AffineTransform<M extends Image> extends ImageTransform <M> {
+class AffineTransform<M extends IImage> extends ImageTransform <M> {
 
     private final EInterpolationType type;
 

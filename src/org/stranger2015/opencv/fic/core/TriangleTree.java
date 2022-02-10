@@ -7,7 +7,7 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
  * root --> rectangle diagonally divided into 2 triangles --> triangle tree nodes
  */
 public
-class TriangleTree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+class TriangleTree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
         extends BinTree <N, A, M> {
     /**
      * Constructs a new object.

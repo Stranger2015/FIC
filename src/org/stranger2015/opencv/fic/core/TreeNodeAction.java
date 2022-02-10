@@ -1,29 +1,30 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.NotNull;
-import org.stranger2015.opencv.fic.DomainPool;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 import static org.stranger2015.opencv.fic.DomainBlock.H;
 import static org.stranger2015.opencv.fic.DomainBlock.W;
 
 public
-class TreeNodeAction<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+class TreeNodeAction<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
         implements Consumer <N> {
 
-    private final DomainPool <N, A, M> domainPool = new DomainPool <>();
+    private final List <ImageBlock> domainPool = new ArrayList <>();
     private final NodeList <N, A, M> leaves = new NodeList <>();
 
     public
-    TreeNodeAction ( DomainPool <N, A, M> domainPool, NodeList <N, A, M> leaves ) {
-        this.domainPool.add(domainPool);
+    TreeNodeAction ( List <ImageBlock> domainPool, NodeList <N, A, M> leaves ) {
+        this.domainPool.addAll(domainPool);
         this.leaves.add(leaves);
     }
 
     public
-    TreeNodeAction ( DomainPool <N, A, M> domainPool ) {
+    TreeNodeAction ( List <ImageBlock> domainPool ) {
         this(domainPool, new NodeList <>());
     }
 
@@ -76,7 +77,7 @@ class TreeNodeAction<N extends TreeNode <N, A, M>, A extends Address <A>, M exte
      * @return
      */
     public
-    DomainPool <N, A, M> getDomainPool () {
+    List <ImageBlock> getDomainPool () {
         return domainPool;
     }
 }

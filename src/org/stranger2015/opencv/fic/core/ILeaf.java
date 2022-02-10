@@ -1,6 +1,7 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.opencv.core.Rect;
+
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 
 /**
@@ -9,7 +10,7 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
  * @param <M>
  */
 public
-interface ILeaf<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image> {
+interface ILeaf<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage> {
 
     /**
      * @return

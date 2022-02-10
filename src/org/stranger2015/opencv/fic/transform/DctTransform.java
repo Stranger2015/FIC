@@ -9,7 +9,7 @@ import org.stranger2015.opencv.fic.core.Image;
  * @param <M>
  */
 public
-class DctTransform<M extends Image> extends ImageTransform <M> {
+class DctTransform<M extends IImage> extends ImageTransform <M> {
 
     /**
      * @param image

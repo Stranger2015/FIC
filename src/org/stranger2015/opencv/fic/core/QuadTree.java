@@ -11,7 +11,7 @@ import java.util.function.Consumer;
  * @param <M>
  */
 public
-class QuadTree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+class QuadTree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
         extends BinTree <N, A, M> {
 
     /**
@@ -40,7 +40,7 @@ class QuadTree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Im
      * @return
      */
     protected static
-    <N extends DomainBlock <N, A, M>, A extends Address <A>, M extends Image>
+    <N extends DomainBlock <N, A, M>, A extends Address <A>, M extends IImage>
     NodeList <N, A, M> collectDomainBlocks ( NodeList <N, A, M> leaves, int w, int h ) throws ValueError {
         NodeList <N, A, M> l = new NodeList <>();
         if (!leaves.isEmpty()) {

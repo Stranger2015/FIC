@@ -1,6 +1,7 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.opencv.core.Size;
+
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
@@ -15,10 +16,11 @@ import java.util.List;
  * @param <M>
  */
 public
-class SipEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+class SipEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
         extends SaEncoder <N, A, M> {
 
     /**
+     *
      * @param inputImage
      * @param rangeSize
      * @param domainSize
@@ -29,12 +31,13 @@ class SipEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends 
     }
 
     /**
+     *
      * @return
      */
     @Override
     public
     int getImageSizeBase () {
-        return 3;
+        return 9;
     }
 
     /**
@@ -121,14 +124,20 @@ class SipEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends 
     }
 
     /**
+     *
+     * @param encoder
+     * @param image
      * @param rangeSize
-     * @param domainSize
      * @return
      */
     @Override
-    protected
-    ImageBlockGenerator createBlockGenerator ( Size rangeSize, Size domainSize ) {
-        return new SipImageBlockGenerator(rangeSize, domainSize);
+    public
+    SipImageBlockGenerator createBlockGenerator ( IEncoder <N, A, M> encoder, IImage image, Size rangeSize, Size domainSize ) {
+        return new SipImageBlockGenerator(
+                encoder,
+                image,
+                rangeSize,
+                domainSize);
     }
 
     /**

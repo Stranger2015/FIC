@@ -1,13 +1,14 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.NotNull;
-import org.opencv.core.Size;
 import org.opencv.highgui.HighGui;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stranger2015.opencv.fic.DomainPool;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.core.codec.*;
+import org.stranger2015.opencv.fic.core.codec.Codec;
+import org.stranger2015.opencv.fic.core.codec.EncodeAction;
+import org.stranger2015.opencv.fic.core.codec.IEncoder;
+import org.stranger2015.opencv.fic.core.codec.IImageProcessorListener;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ import static org.stranger2015.opencv.fic.core.Tree.DEFAULT_BOUNDING_BOX;
  *
  */
 public
-class ImageProcessor<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+class ImageProcessor<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
         extends CompositeTask
         implements IImageProcessor <N, A, M> {
 
@@ -33,15 +34,17 @@ class ImageProcessor<N extends TreeNode <N, A, M>, A extends Address <A>, M exte
     List <IImageProcessorListener> listeners = new ArrayList <>();
 
     /**
-     * @param scheme
      * @param imageFilename
+     * @param scheme
+     * @param codec
      */
 //    @SuppressWarnings("unchecked")
     public
-    ImageProcessor ( String imageFilename, EPartitionScheme scheme, List <Task> tasks ) {
+    ImageProcessor ( String imageFilename, EPartitionScheme scheme, List <Task> tasks, Codec <N, A, M> codec ) {
         super(imageFilename, tasks);
 
         this.scheme = scheme;
+        this.codec = codec;
         BidiTask task1 = new NormalizeImageShapeTask(filename, scheme, tasks);//############
         BidiTask task2 = new BidiImageColorModelTask(filename, scheme, tasks);
 
@@ -56,7 +59,7 @@ class ImageProcessor<N extends TreeNode <N, A, M>, A extends Address <A>, M exte
         LoadSaveImageTask loadSaveImageTask = new LoadSaveImageTask(filename, scheme, tasks);
         loadSaveImageTask.accept(filename);
 
-        Codec.
+//        Codec.create()
 //        codec = new DefaultCodec<>(scheme, new EncodeAction(filename), getFilename());
     }
 
@@ -68,10 +71,13 @@ class ImageProcessor<N extends TreeNode <N, A, M>, A extends Address <A>, M exte
      * @return
      */
     public static
-    <N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
-    ImageProcessor <N, A, M> create ( String filename, EPartitionScheme scheme, List <Task> tasks ) {
+    <N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
+    ImageProcessor <N, A, M> create ( String filename,
+                                      EPartitionScheme scheme,
+                                      List <Task> tasks,
+                                      Codec <N, A, M> codec ) {
 
-        return new ImageProcessor <>(filename, scheme, tasks);
+        return new ImageProcessor <>(filename, scheme, tasks, codec);
     }
 
     /**
@@ -100,12 +106,10 @@ class ImageProcessor<N extends TreeNode <N, A, M>, A extends Address <A>, M exte
      */
     @SuppressWarnings("unchecked")
     public
-    M process ( M image ) {
+    M process ( M image ) throws ValueError {
 //        List <M> rangeBlocks = createRangeBlocks(image, 4, 4);
 //        List <M> domainBlocks = createDomainBlocks(image, 8, 8);
-        IEncoder <N, A, M> encoder = codec.getEncoder(image,
-                createRangeBlocks(image, 4, 4),
-                createDomainBlocks(image, 8, 8));
+        IEncoder <N, A, M> encoder = codec.getEncoder();
         List <ImageTransform <M>> img = encoder.compress(image, -1, -1, -2);
 
         return (M) new CompressedImage(image);
@@ -117,13 +121,19 @@ class ImageProcessor<N extends TreeNode <N, A, M>, A extends Address <A>, M exte
      * @param h
      * @return
      */
-    private @NotNull
+    protected @NotNull
     List <M> createRangeBlocks ( M image, int w, int h ) {
         return createBlocks(image, w, h);
     }
 
+    /**
+     * @param image
+     * @param w
+     * @param h
+     * @return
+     */
     @SuppressWarnings("unchecked")
-    private
+    private @NotNull
     List <M> createBlocks ( M image, int w, int h ) {
         List <M> l = new ArrayList <>();
         for (int i = 0, width = image.width(); i < width; i += w) {
@@ -138,19 +148,20 @@ class ImageProcessor<N extends TreeNode <N, A, M>, A extends Address <A>, M exte
     protected
     List <M> createDomainBlocks ( M image, int w, int h ) throws ValueError {
         List <M> l = new ArrayList <>();
-        TreeNodeAction <N, A, M> action = new TreeNodeAction <>(new DomainPool<>(), new NodeList <>());
-        final Tree <N, A, M> tree = Tree.create();
-                new QuadTree <>(
-                        new QuadTreeNode <>(
-                                null,
-                                NORTH_WEST,
-                                DEFAULT_BOUNDING_BOX
-                        ),
-                        image,
-                        action);
+        TreeNodeAction <N, A, M> action =
+                new TreeNodeAction <>(new ArrayList <>(), new NodeList <>());
+        final Tree <N, A, M> tree = Tree.create("??");//fixme
+        new QuadTree <>(
+                new QuadTreeNode <>(
+                        null,
+                        NORTH_WEST,
+                        DEFAULT_BOUNDING_BOX
+                ),
+                image,
+                action);
 
-        final TreeNode <N> root = quadTree.getRoot();
-        TreeNodeBase <N> node = root.getChildren().get(0);
+        final TreeNode <N, A, M> root = tree.getRoot();
+        TreeNodeBase <N, A, M> node = root.getChildren().get(0);
 
         for (int i = 0, width = image.width(); i < width / w; i++, width /= 2) {
             for (int j = 0, height = image.height(); j < height / h; j++, height /= 2) {

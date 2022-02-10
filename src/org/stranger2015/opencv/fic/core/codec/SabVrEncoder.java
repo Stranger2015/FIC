@@ -1,9 +1,9 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.opencv.core.Size;
+
 import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.Image;
-import org.stranger2015.opencv.fic.core.SaAddress;
+import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 
 /**
@@ -38,7 +38,7 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
  * @param <A>
  */
 public
-class SabVrEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+class SabVrEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
         extends SaEncoder <N, A, M> {
 
     /**
@@ -49,5 +49,24 @@ class SabVrEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
     public
     SabVrEncoder ( M inputImage, Size rangeSize, Size domainSize ) {
         super(inputImage, rangeSize, domainSize);
+    }
+
+    @Override
+    public
+    SaImageBlockGenerator createBlockGenerator ( IEncoder <N, A, M> encoder,
+                                                 IImage image,
+                                                 Size rangeSize,
+                                                 Size domainSize ) {
+
+        return new SaImageBlockGenerator(encoder, image,rangeSize,domainSize);
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    int getImageSizeBase () {
+        return 7;
     }
 }

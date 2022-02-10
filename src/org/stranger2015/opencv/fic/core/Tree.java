@@ -2,6 +2,7 @@ package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Rect;
+
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 
 import java.util.EnumSet;
@@ -13,7 +14,7 @@ import static org.stranger2015.opencv.fic.core.Tree.EAffineTransform.*;
  * @param <M>
  */
 abstract public
-class Tree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image> {
+class Tree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage> {
 
     public static final int DEFAULT_DEPTH = Integer.MAX_VALUE;
     public static final Rect DEFAULT_BOUNDING_BOX = new Rect(0, 0, 0, 0);
@@ -74,7 +75,7 @@ class Tree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
 
     @SuppressWarnings("unchecked")
     public static
-    <N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+    <N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
     @NotNull Tree <N, A, M> create ( String className ) {
         int rc = 0;
         try {

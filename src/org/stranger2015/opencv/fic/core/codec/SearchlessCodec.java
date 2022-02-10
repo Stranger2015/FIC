@@ -3,6 +3,7 @@ package org.stranger2015.opencv.fic.core.codec;
 import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.EPartitionScheme;
+import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.Image;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 
@@ -12,7 +13,7 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
  * @param <M>
  */
 public
-class SearchlessCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+class SearchlessCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
         extends Codec <N, A, M> {
     /**
      * @param scheme
@@ -27,16 +28,6 @@ class SearchlessCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M ext
 
     /**
      * @param image
-     * @return
-     */
-    @Override
-    public
-    M encode ( M image ) {
-        return null;
-    }
-
-    /**
-     * @param image
      * @param rangeSize
      * @param domainSize
      * @return
@@ -45,5 +36,33 @@ class SearchlessCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M ext
     public
     IEncoder <N, A, M> getEncoder ( M image, Size rangeSize, Size domainSize ) {
         return new SearchlessEncoder <>(image, rangeSize, domainSize);
+    }
+
+    /**
+     *
+     * @return
+     */
+    @Override
+    public
+    IEncoder <N, A, M> getEncoder () {
+        return null;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    IDecoder <M> getDecoder () {
+        return null;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    int getImageSizeBase () {
+        return 2;
     }
 }

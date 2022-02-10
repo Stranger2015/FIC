@@ -1,10 +1,12 @@
 package org.stranger2015.opencv.fic.core;
 
+
+
 /**
  *
  */
 public
-interface IProcessor<M extends Image> {
+interface IProcessor<M extends IImage> {
     /**
      * @return
      */

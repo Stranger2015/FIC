@@ -3,7 +3,6 @@ package org.stranger2015.opencv.fic.core;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Rect;
-import org.stranger2015.opencv.fic.DomainPool;
 import org.stranger2015.opencv.fic.core.SipTreeNode.SipLayerClusterNode;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.SipAddress;
@@ -24,7 +23,7 @@ import static org.stranger2015.opencv.fic.core.codec.SipAddress.radix;
  * @param <M>
  */
 public
-class SipTreeNodeBuilder<N extends TreeNode <N, A, M>, A extends SipAddress <A>, M extends Image>
+class SipTreeNodeBuilder<N extends TreeNode <N, A, M>, A extends SipAddress <A>, M extends IImage>
         implements ITreeNodeBuilder <N, A, M> {
 
     public final static Rect BB = new Rectangle(0, 0, blockSideSize, blockSideSize);
@@ -176,10 +175,12 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, M>, A extends SipAddress <A>,
         NodeList <N, A, M> l = new NodeList <>();
         List <Point> ccs = sipLib.getCartesianCoordinates(radix);
         for (int i = 0, amount = endAddress - startAddress; i < amount; i++) {
-            DomainPool domainPool = new DomainPool();
+            List<ImageBlock> domainPool = new ArrayList <>();
             List <N> leaves=new ArrayList <>();
             List <Point> shifts = sipLib.derivePixelShifts(
-                    new SipTree <>(parent, blocks, new TreeNodeAction <>(domainPool, leaves)),
+                    new SipTree <>(parent,
+                            blocks,
+                            new TreeNodeAction <>(domainPool, (NodeList <N, A, M>) leaves)),
                     ccs,
                     sipLib.pixelCapacity,
                     startAddress,

@@ -1,13 +1,14 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.opencv.core.Rect;
+
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 
 /**
  *
  */
 public
-class BinTree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+class BinTree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
         extends Tree <N, A, M> {
 
     /**

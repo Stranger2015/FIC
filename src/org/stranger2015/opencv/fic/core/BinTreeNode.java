@@ -2,6 +2,7 @@ package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Rect;
+
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.utils.Point;
 
@@ -12,7 +13,7 @@ import java.util.HashMap;
  * @param <A>
  */
 public
-class BinTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+class BinTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
         extends TreeNode <N, A, M> {
 
     /**
@@ -40,7 +41,7 @@ class BinTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends
     /**
      * @param point
      * @param layerIndex
-     * @param clusteIndex
+     * @param clusterIndex
      * @param x
      * @param y
      * @param address
@@ -49,14 +50,14 @@ class BinTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends
      */
     @Override
     public
-    TreeNode <N, A, M> createChild ( Point point, int layerIndex, int clusteIndex, int x, int y, int address )
+    TreeNode <N, A, M> createChild ( Point point, int layerIndex, int clusterIndex, int x, int y, int address )
             throws ValueError {
         return null;
     }
 
 //    @Override
     public
-    TreeNode <N, A, M> createChild ( int layerIndex, int clusteIndex, int address )
+    TreeNode <N, A, M> createChild ( int layerIndex, int clusterIndex, int address )
             throws ValueError {
         return null;
     }
@@ -262,7 +263,7 @@ class BinTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends
     }
 
     public static
-    class BinLeafNode<N extends LeafNode <N, A, M>, A extends Address <A>, M extends Image>
+    class BinLeafNode<N extends LeafNode <N, A, M>, A extends Address <A>, M extends IImage>
             extends LeafNode <N, A, M> {
 
         protected
@@ -273,7 +274,7 @@ class BinTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends
         /**
          * @param point
          * @param layerIndex
-         * @param clusteIndex
+         * @param clusterIndex
          * @param x
          * @param y
          * @param address
@@ -282,7 +283,9 @@ class BinTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends
          */
         @Override
         public
-        TreeNode <N, A, M> createChild ( Point point, int layerIndex, int clusteIndex, int x, int y, int address ) throws ValueError {
+        TreeNode <N, A, M> createChild ( Point point, int layerIndex, int clusterIndex, int x, int y, int address )
+                throws ValueError {
+
             return null;
         }
 

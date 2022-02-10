@@ -1,10 +1,8 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.opencv.core.Size;
-import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.Image;
-import org.stranger2015.opencv.fic.core.ImageBlock;
-import org.stranger2015.opencv.fic.core.TreeNodeBase;
+
+import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
@@ -17,7 +15,7 @@ import java.util.List;
  * @param <A>
  */
 public
-class ConstSizeDomainPoolEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+class ConstSizeDomainPoolEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
         extends Encoder <N, A, M> {
     /**
      * @param inputImage
@@ -48,7 +46,6 @@ class ConstSizeDomainPoolEncoder<N extends TreeNode <N, A, M>, A extends Address
     M randomTransform ( M image, ImageTransform <M> transform ) {
         return null;
     }
-
 
     /**
      * @param image

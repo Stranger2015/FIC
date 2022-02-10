@@ -2,7 +2,6 @@ package org.stranger2015.opencv.fic.transform;
 
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-import org.stranger2015.opencv.fic.core.CompressedImage;
 import org.stranger2015.opencv.fic.core.Image;
 
 import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
@@ -10,7 +9,7 @@ import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
 /**
  * 
  */
-public class AffineScaleTransform<M extends Image> extends AffineTransform<M>{
+public class AffineScaleTransform<M extends IImage> extends AffineTransform<M>{
 
     private final double scaleX;
     private final double scaleY;
@@ -37,7 +36,7 @@ public class AffineScaleTransform<M extends Image> extends AffineTransform<M>{
         // Creating the Size object
         Size size = new Size(src.rows()*2, src.rows()*2);
 
-        M out= (M) new Image();
+        M out= (M) new Image(image);
         // Scaling the Image
         Imgproc.resize(src, out, size, 0, 0, Imgproc.INTER_AREA);
 

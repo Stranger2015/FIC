@@ -1,6 +1,7 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.opencv.core.Rect;
+
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.utils.Point;
 
@@ -9,7 +10,7 @@ import org.stranger2015.opencv.fic.utils.Point;
  */
 @SuppressWarnings("unchecked")
 public
-class SaTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+class SaTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
         extends TreeNode <N, A, M> {
 
     protected int layerIndex;
@@ -129,7 +130,7 @@ class SaTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends 
      * @param <M>
      */
     public static
-    class SaLayerClusterNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+    class SaLayerClusterNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
             extends LeafNode <N, A, M> {
 
         protected int layerIndex;
@@ -175,7 +176,7 @@ class SaTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends 
          * @param address
          */
         public
-//        <N extends TreeNode <N, A, M>, A extends SipAddress <A>, M extends Image>
+//        <N extends TreeNode <N, A, M>, A extends SipAddress <A>, M extends IImage>
         SaLayerClusterNode ( TreeNode <N, A, M> parent,
                               M image,
                               Rect boundingBox,
@@ -187,7 +188,7 @@ class SaTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends 
         }
 
         public
-//        <M extends Image, A extends SipAddress <A>, N extends TreeNode <N, A, M>>
+//        <M extends IImage, A extends SipAddress <A>, N extends TreeNode <N, A, M>>
         SaLayerClusterNode ( TreeNode <N, A, M> parent,
                              M image,
                              int layerIndex,
@@ -200,13 +201,13 @@ class SaTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends 
         }
 
         public
-//        <N extends TreeNode <N, A, M>, A extends SipAddress <A>, M extends Image>
+//        <N extends TreeNode <N, A, M>, A extends SipAddress <A>, M extends IImage>
         SaLayerClusterNode ( TreeNode <N, A, M> parent, Rect boundingBox, int layerIndex, int clusterIndex, int address ) {
             this(parent, layerIndex, clusterIndex, 0, 0, address);
         }
 
         public
-//        <N extends TreeNode <N, A, M>, A extends SipAddress <A>, M extends Image>
+//        <N extends TreeNode <N, A, M>, A extends SipAddress <A>, M extends IImage>
         SaLayerClusterNode ( TreeNode <N, A, M> parent,
                              M image,
                              int layerIndex,
@@ -218,7 +219,7 @@ class SaTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends 
         }
 
         public
-//        <M extends Image, N extends TreeNode <N, A, M>, A extends SipAddress <A>>
+//        <M extends IImage, N extends TreeNode <N, A, M>, A extends SipAddress <A>>
         SaLayerClusterNode ( TreeNode <N, A, M> parent, int layerIndex, int clusterIndex, int i, int i1, int address ) {
 
 

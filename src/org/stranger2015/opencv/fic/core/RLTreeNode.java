@@ -1,6 +1,7 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.opencv.core.Rect;
+
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.utils.Point;
 
@@ -8,7 +9,7 @@ import org.stranger2015.opencv.fic.utils.Point;
  * @param <N>
  */
 public
-class RLTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image> extends TreeNode <N, A, M> {
+class RLTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage> extends TreeNode <N, A, M> {
 
 
     /**

@@ -1,9 +1,8 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.Image;
+import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.ImageBlock;
-import org.stranger2015.opencv.fic.core.NodeList;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
@@ -108,7 +107,7 @@ import java.util.List;
  *particular R block.
  *5. To  increase  encoding  speed  classification  of  sub-image
  *into  upper  right,  upper  left,  lower  ri
-
+*=======================================================================================================================
  * A Proposed Hybrid Fractal Image Compression Based on Graph Theory and Isosceles Triangle Segmentation
  * <p>
  * Proposed algorithms encoding steps as following:
@@ -151,7 +150,7 @@ import java.util.List;
  *
  */
 public
-interface IEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+interface IEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
         extends IImageProcessorListener {
 
     /**
@@ -183,7 +182,6 @@ interface IEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
         return 2;
     }
 
-
     /**
      * @param image
      * @param axis
@@ -213,6 +211,7 @@ interface IEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
     M applyAffineTransform ( M image, AffineTransform <M> transform );
 
     /**
+     *
      * @param image
      * @param sourceSize
      * @param destinationSize
@@ -222,6 +221,7 @@ interface IEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
     List <ImageTransform <M>> compress ( M image, int sourceSize, int destinationSize, int step );
 
     /**
+     *
      * @param image
      * @param sourceSize
      * @param destinationSize
@@ -229,4 +229,26 @@ interface IEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
      * @return
      */
     List <ImageBlock> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step );
+
+    /**
+     * @return
+     */
+    List<ImageBlock> getRangeBlocks();
+
+    /**
+     * @return
+     */
+    List<ImageBlock> getDomainBlocks();
+
+    /**
+     * @return
+     */
+    List<ImageBlock> getCodebookBlocks();
+
+    /**
+     * @return
+     */
+    List<ImageTransform<M>> getTransforms();
+
+    M getInputImage();
 }

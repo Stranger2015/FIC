@@ -1,10 +1,9 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.stranger2015.opencv.fic.core.CompressedImage;
-import org.stranger2015.opencv.fic.core.Image;
+import org.stranger2015.opencv.fic.core.IImage;
 
 public
-class ZoomTransform<M extends Image> extends ImageTransform<M>{
+class ZoomTransform<M extends IImage> extends ImageTransform<M>{
 
     public
     ZoomTransform (M image) {

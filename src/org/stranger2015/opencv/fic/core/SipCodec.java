@@ -10,7 +10,7 @@ import org.stranger2015.opencv.fic.core.codec.*;
  * @param <M>
  */
 public
-class SipCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+class SipCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
         extends Codec <N, A, M> {
 
     /**

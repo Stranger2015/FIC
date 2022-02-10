@@ -1,13 +1,14 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.stranger2015.opencv.fic.core.Image;
+
+import org.stranger2015.opencv.fic.core.IImage;
 
 /**
  * The 'None' transform -- makes no change to the given image.
  * This is useful to traverse the transforms without special casing
  * the comparison with the normal (non-transformed) image.
  */
-public class NoneTransform<M extends Image> extends ImageTransform<M> {
+public class NoneTransform<M extends IImage> extends ImageTransform<M> {
 
     /**
      * @param image

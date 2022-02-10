@@ -2,6 +2,7 @@ package org.stranger2015.opencv.fic.core.codec;
 
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
+import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.Image;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 
@@ -12,13 +13,13 @@ import java.util.List;
  */
 public
 class SipImage extends Image {
-    protected int[] addresses;
+    protected Pixel[] pixels;
 
     public
-    <M extends Image>
-    SipImage ( M input, int[] addresses ) {
+    <M extends IImage>
+    SipImage ( M input, Pixel[] pixels ) {
         super(input);
-        this.addresses = addresses;
+        this.pixels = pixels;
     }
 
     /**
@@ -35,8 +36,8 @@ class SipImage extends Image {
      */
     @Override
     public
-    Image createInputImage (Image image) {
-        return new SipImage(image, new int[0]);//fixme
+    IImage createInputImage ( IImage image ) {
+        return new SipImage(image, new Pixel[image.width() * image.height()]);
     }
 
     /**
@@ -45,17 +46,141 @@ class SipImage extends Image {
      */
     @Override
     public
-    Image createOutputImage ( Image image ) {
-        return new CompressedSipImage(image, new int[0], new ICompressedImage() {
+    CompressedSipImage createOutputImage ( IImage image ) {
+        return new CompressedSipImage(image, new Pixel[0], new ICompressedImage() {
+            /**
+             * @return
+             */
             @Override
             public
-            List <ImageTransform <Image>> getTransforms () {
+            int getX () {
+                return 0;
+            }
+
+            /**
+             * @return
+             */
+            @Override
+            public
+            int getY () {
+                return 0;
+            }
+
+            /**
+             * @return
+             */
+            @Override
+            public
+            int getWidth () {
+                return 0;
+            }
+
+            /**
+             * @return
+             */
+            @Override
+            public
+            int getHeight () {
+                return 0;
+            }
+
+            /**
+             * @return
+             */
+            @Override
+            public
+            Size getSize () {
                 return null;
+            }
+
+            /**
+             * @param contractivity
+             */
+            @Override
+            public
+            IImage contract ( int contractivity ) {
+                return null;
+            }
+
+            /**
+             * @return
+             */
+            @Override
+            public
+            int width () {
+                return 0;
+            }
+
+            /**
+             * @return
+             */
+            @Override
+            public
+            int height () {
+                return 0;
+            }
+
+            /**
+             * @param rowStart
+             * @param rowEnd
+             * @param colStart
+             * @param colEnd
+             * @return
+             */
+            @Override
+            public
+            Mat submat ( int rowStart, int rowEnd, int colStart, int colEnd ) {
+                return null;
+            }
+
+            /**
+             * @return
+             */
+            @Override
+            public
+            int getOriginalImageWidth () {
+                return 0;
+            }
+
+            /**
+             * @param originalImageWidth
+             */
+            @Override
+            public
+            void setOriginalImageWidth ( int originalImageWidth ) {
+
+            }
+
+            /**
+             * @param originalImageHeight
+             */
+            @Override
+            public
+            void setOriginalImageHeight ( int originalImageHeight ) {
+
+            }
+
+            /**
+             * @return
+             */
+            @Override
+            public
+            int getOriginalImageHeight () {
+                return 0;
             }
 
             @Override
             public
-            void setTransforms ( List <ImageTransform <Image>> transforms ) {
+            List <ImageTransform <IImage>> getTransforms () {
+                return null;
+            }
+
+            /**
+             * @param transforms
+             */
+            @Override
+            public
+            void setTransforms ( List <ImageTransform <IImage>> transforms ) {
 
             }
         });//fixme
@@ -70,7 +195,7 @@ class SipImage extends Image {
     @Override
     public
     int put ( int row, int col, double... data ) {
-        int address = addresses[row + getWidth() * col];//??? fixme
+        int address = row + width() * col;//??? fixme
 
         return super.put(address, data);
     }
@@ -80,7 +205,7 @@ class SipImage extends Image {
      */
     public
     SipImage ( Mat imread ) {
-        super(imread.rows(), imread.cols(), imread.type());
+        super(new SipImage(imread), imread.rows(), imread.cols(), imread.type());
     }
 
     /**
@@ -92,11 +217,16 @@ class SipImage extends Image {
         super(imread, size);
     }
 
+    public
+    Pixel getPixelValue ( int address ) {
+        return pixels[address];
+    }
+
     /**
      * @return
      */
     public
-    int[] getAddresses () {
-        return addresses;
+    Pixel[] getPixels () {
+        return pixels;
     }
 }

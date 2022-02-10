@@ -1,14 +1,13 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.opencv.core.Size;
-import org.stranger2015.opencv.fic.IImageBlock;
+
 
 /**
  *
  */
 public
-class ImageBlock extends Image implements IImageBlock {
-    public static final int[] EMPTY_INT_ARRAY = new int[0];
+class ImageBlock extends Image  {
 
     public int x;
     public int y;
@@ -19,7 +18,7 @@ class ImageBlock extends Image implements IImageBlock {
     public double beta;
     public double meanPixelValue;
 
-    protected /*final*/ Image image;
+    protected IImage image;
 
     /**
      * @param subImage
@@ -28,8 +27,8 @@ class ImageBlock extends Image implements IImageBlock {
      * @param type
      */
     public
-    ImageBlock ( Image subImage, int rows, int cols, int type ) {
-        super(rows, cols, type);
+    ImageBlock ( IImage subImage, int rows, int cols, int type ) {
+        super(subImage, rows, cols, type);
         this.image = subImage;
     }
 
@@ -49,28 +48,15 @@ class ImageBlock extends Image implements IImageBlock {
      * @param h
      */
     public
-    ImageBlock ( Image image, int x, int y, int w, int h ) {
-        super( x, y, w, h);
+    ImageBlock ( IImage image, int x, int y, int w, int h ) {
+        super(image, x, y, w, h);
 
         this.image = image;
     }
 
-    /**
-     * @param image
-     * @param address
-     * @param x
-     * @param y
-     * @param w
-     * @param h
-     */
-    public
-    ImageBlock ( Image image, int address, int x, int y, int w, int h ) {
-        this(image, x, y, w, h);
-
-    }
 
     public
-    ImageBlock ( Image image, int blockSize, int address ) {
+    ImageBlock ( IImage image, int blockSize, int address ) {
         super(image, address, blockSize);
     }
 
@@ -122,7 +108,7 @@ class ImageBlock extends Image implements IImageBlock {
      */
     public
     ImageBlock ( int x, int y, int width, int height, int type ) {
-        super(x, y, type);
+        super(null, x, y, type);//fixme
 
         this.x = x;
         this.y = y;
@@ -151,24 +137,30 @@ class ImageBlock extends Image implements IImageBlock {
         this.y = y;
     }
 
-    /**
-     * @param contractivity
-     */
-    public
-    void resize ( int contractivity ) {
-        int newWidth = width / contractivity;
-        int newHeight = height / contractivity;
-
-        for (int i = 0; i < newWidth; i++) {
-            for (int j = 0; j < newHeight; j++) {
-                put(i, j, plus(get(i * 2, j * 2, EMPTY_INT_ARRAY),//fixme!!!
-                        get(i * 2, j * 2 + 1, EMPTY_INT_ARRAY),
-                        get(i * 2 + 1, j * 2, EMPTY_INT_ARRAY),
-                        get(i * 2 + 1, j * 2, EMPTY_INT_ARRAY)
-                ) / (1.0f * contractivity * contractivity));
-            }
-        }
-    }
+//    /**
+//     * @param contractivity
+//     */
+//    public
+//    void resize ( int contractivity ) {
+//        int newWidth = width / contractivity;
+//        int newHeight = height / contractivity;
+//
+//        for (int i = 0; i < newWidth; i++) {
+//            for (int j = 0; j < newHeight; j++) {
+//                Pixel[] pixels = new Pixel[4];
+//                pixels[0] = new Pixel(get(i * 2, j * 2));
+//                pixels[1] = new Pixel(get(i * 2, j * 2 + 1));
+//                pixels[2] = new Pixel(get(i * 2 + 1, j * 2));
+//                pixels[3] = new Pixel(get(i * 2 + 1, j * 2 + 1));
+//            }
+//        }
+//
+//      // /(1.0f * contractivity * contractivity));
+//
+//
+//
+//            //             put(i, j, Pixel.plus(
+//        }
 
     /**
      * @param n
@@ -189,7 +181,7 @@ class ImageBlock extends Image implements IImageBlock {
      */
     @Override
     public
-    Image subImage ( int rowStart, int rowEnd, int colStart, int colEnd ) {
+    IImage subImage ( int rowStart, int rowEnd, int colStart, int colEnd ) {
         return super.subImage(rowStart, rowEnd, colStart, colEnd);
     }
 

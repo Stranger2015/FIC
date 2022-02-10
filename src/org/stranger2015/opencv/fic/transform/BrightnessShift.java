@@ -3,7 +3,7 @@ package org.stranger2015.opencv.fic.transform;
 import org.stranger2015.opencv.fic.core.Image;
 
 public
-class BrightnessShift<M extends Image> extends ShiftTransform <M> {
+class BrightnessShift<M extends IImage> extends ShiftTransform <M> {
     public
     BrightnessShift (M image, float brightness) {
         super(image,  brightness);

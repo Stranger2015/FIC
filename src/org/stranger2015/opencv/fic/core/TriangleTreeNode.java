@@ -1,6 +1,7 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.opencv.core.Rect;
+
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.utils.Point;
 
@@ -9,7 +10,7 @@ import org.stranger2015.opencv.fic.utils.Point;
  * @param <A>
  */
 public
-class TriangleTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+class TriangleTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
         extends TreeNode <N, A, M> {
     /**
      * @param parent
@@ -90,7 +91,7 @@ class TriangleTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M ex
     }
 
     public static
-    class TriangleLeafNode<N extends LeafNode <N, A, M>, A extends Address <A>, M extends Image>
+    class TriangleLeafNode<N extends LeafNode <N, A, M>, A extends Address <A>, M extends IImage>
             extends LeafNode <N, A, M> {
 
         /**
@@ -106,7 +107,7 @@ class TriangleTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M ex
         /**
          * @param point
          * @param layerIndex
-         * @param clusteIndex
+         * @param clusterIndex
          * @param x
          * @param y
          * @param address
@@ -115,20 +116,22 @@ class TriangleTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M ex
          */
         @Override
         public
-        TreeNode <N, A, M> createChild ( Point point, int layerIndex, int clusteIndex, int x, int y, int address ) throws ValueError {
+        TreeNode <N, A, M> createChild ( Point point, int layerIndex, int clusterIndex, int x, int y, int address )
+                throws ValueError {
+
             return null;
         }
 
         /**
          * @param layerIndex
-         * @param clusteIndex
+         * @param clusterIndex
          * @param address
          * @return
          * @throws ValueError
          */
 //        @Override
         public
-        TreeNode <N, A, M> createChild ( int layerIndex, int clusteIndex, int address ) throws ValueError {
+        TreeNode <N, A, M> createChild ( int layerIndex, int clusterIndex, int address ) throws ValueError {
             return null;
         }
 

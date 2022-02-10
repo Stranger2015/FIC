@@ -9,7 +9,7 @@ import org.stranger2015.opencv.fic.core.codec.SipAddress;
  * @param <N>
  */
 public
-class SipTreeTraverser<N extends TreeNode <N, A, M>, A extends SipAddress <A>, M extends Image>
+class SipTreeTraverser<N extends TreeNode <N, A, M>, A extends SipAddress <A>, M extends IImage>
         extends TreeTraverser <N, A, M> {
     /**
      * @param tree

@@ -17,10 +17,10 @@ import java.util.Set;
 public
 class Compressor extends Observable {
 
-    private final ScaleTransform <Image> scaleTransform;
+    private final ScaleTransform <IImage> scaleTransform;
     private final Tiler <BufferedImage> tiler;
     private final ThreadLocal <Distanceator /*<BufferedImage>*/> comparator = new ThreadLocal <>();
-    private final Set <ImageTransform <Image>> transforms;
+    private final Set <ImageTransform <IImage>> transforms;
     private final Set <BufferedImageOp> filters;
 
     /**
@@ -34,10 +34,10 @@ class Compressor extends Observable {
      * @see Observer#update(java.util.Observable, java.lang.Object)
      */
     public
-    Compressor ( final ScaleTransform <Image> scaleTransform,
+    Compressor ( final ScaleTransform <IImage> scaleTransform,
                  final Tiler <BufferedImage> tiler,
                  final Distanceator /*<BufferedImage>*/ comparator,
-                 final Set <ImageTransform <Image>> transforms,
+                 final Set <ImageTransform <IImage>> transforms,
                  final Observer observer )
             throws NullPointerException {
         this(scaleTransform, tiler, comparator, transforms,
@@ -56,10 +56,10 @@ class Compressor extends Observable {
      * @see Observer#update(java.util.Observable, java.lang.Object)
      */
     public
-    Compressor ( final ScaleTransform <Image> scaleTransform,
+    Compressor ( final ScaleTransform <IImage> scaleTransform,
                  final Tiler <BufferedImage> tiler,
                  final Distanceator /*<BufferedImage>*/ comparator,
-                 final Set <ImageTransform <Image>> transforms,
+                 final Set <ImageTransform <IImage>> transforms,
                  final Set <BufferedImageOp> filters,
                  Observer observer ) throws NullPointerException {
         assert (comparator != null) && (transforms != null) && (filters != null)
@@ -77,7 +77,7 @@ class Compressor extends Observable {
     }
 
     public
-    ScaleTransform <Image> getScaleTransform () {
+    ScaleTransform <IImage> getScaleTransform () {
         return scaleTransform;
     }
 
@@ -87,7 +87,7 @@ class Compressor extends Observable {
     }
 
     public
-    Set <ImageTransform <Image>> getTransforms () {
+    Set <ImageTransform <IImage>> getTransforms () {
         return transforms;
     }
 

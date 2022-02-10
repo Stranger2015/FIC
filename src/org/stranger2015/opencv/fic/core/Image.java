@@ -1,41 +1,82 @@
 package org.stranger2015.opencv.fic.core;
 
+import org.jetbrains.annotations.Contract;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfDouble;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
+
+import org.stranger2015.opencv.fic.core.codec.Pixel;
+
+import java.awt.*;
 
 /**
  *
  */
 public
-class Image extends MatOfDouble {
+class Image extends MatOfDouble implements IImage {
 
-    public int originalImageWidth;
+    /**
+     *
+     */
+enum EColorType {
+    GRAYSCALE(0),
+    TRUE_COLOR(2),
+    INDEXED_COLOR(3),
+    GRAYSCALE_WITH_ALPHA(4),
+    TRUE_COLOR_WITH_ALPHA(6);
+
+    private final int cType;
+
+        /**
+         * @param cType
+         */
+    @Contract(pure = true)
+    EColorType ( int cType ) {
+        this.cType = cType;
+    }
+
+        /**
+         * @return
+         */
+    @Contract(pure = true)
+    public
+    int getCType () {
+        return cType;
+    }
+}
+
+    public /*final fixme */ EColorType cType;
+
+       public int originalImageWidth;
     public int originalImageHeight;
 
     /**
      * @param rows
      * @param cols
-     * @param type
+     * @param cType
      * @param pixelData
      */
     public
-    Image ( int rows, int cols, int type, Scalar pixelData ) {
+    Image ( int rows, int cols, EColorType/*int*/ cType, Scalar pixelData ) {
         super(rows,
                 cols,
-                type,
+                cType.getCType(),//FIXME
                 pixelData.val[0],
                 pixelData.val[1],
                 pixelData.val[2],
-                pixelData.val[3]);
+                pixelData.val[3]
+        );
+        this.cType=cType;
     }
 
     /**
+     * @param image
      * @param n
      */
     public
-    Image ( double... n ) {
+    Image ( IImage image, double... n ) {
         super(n);
     }
 
@@ -45,24 +86,27 @@ class Image extends MatOfDouble {
      * @param y
      * @param w
      * @param h
+     * @param cType
      */
     public
-    Image ( Image image, int x, int y, int w, int h ) {
+    Image ( IImage image, int x, int y, int w, int h, EColorType cType ) {
 //todo
+        this.cType = cType;
     }
 
     public
-    Image ( Image image, int address, int blockSize ) {
+    Image ( IImage image, int address, int blockSize, EColorType cType ) {
      //todo
+        this.cType = cType;
     }
 
     /**
      * @return
      */
-    @SuppressWarnings("unchecked")
+//    @SuppressWarnings("unchecked")
     public
-    Image subImage ( int rowStart, int rowEnd, int colStart, int colEnd ) {
-        return (Image) submat(rowStart, rowEnd, colStart, colEnd);
+    IImage subImage ( int rowStart, int rowEnd, int colStart, int colEnd ) {
+        return (IImage) submat(rowStart, rowEnd, colStart, colEnd);
     }
 
     /**
@@ -84,6 +128,24 @@ class Image extends MatOfDouble {
     /**
      * @return
      */
+    @Override
+    public
+    int getX () {
+        return 0;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    int getY () {
+        return 0;
+    }
+
+    /**
+     * @return
+     */
     public
     int getWidth () {
         return width();
@@ -95,6 +157,15 @@ class Image extends MatOfDouble {
     public
     int getHeight () {
         return height();
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    Size getSize () {
+        return size();
     }
 
     /**
@@ -121,13 +192,15 @@ class Image extends MatOfDouble {
     }
 
     /**
+     *
+     *
      * @param inputImage
      * @param outputImage
      * @param factor
      * @return
      */
     public
-    Image reduce ( Image inputImage, Image outputImage, int factor ) {
+    IImage reduce ( IImage inputImage, IImage outputImage, int factor ) {
         return outputImage;
     }
 
@@ -148,7 +221,7 @@ class Image extends MatOfDouble {
      * @return
      */
     public
-    Image convertTo ( Image image ) {
+    IImage convertTo ( IImage image ) {
         return image;
     }
 
@@ -166,7 +239,7 @@ class Image extends MatOfDouble {
      * @return
      */
     public
-    Image createInputImage (Image image) {
+    IImage createInputImage (IImage image) {
         return new Image(image);
     }
 
@@ -176,7 +249,73 @@ class Image extends MatOfDouble {
      * @return
      */
     public
-    Image createOutputImage(Image image){
+    IImage createOutputImage(IImage image){
         return new CompressedImage(image);
+    }
+
+    /**
+     * @param row
+     * @param col
+     * @return
+     */
+    public
+    Pixel getPixel ( int row, int col ) {
+        return new Pixel(get(row, col));
+    }
+
+    /**
+     * @param contractivity
+     * @return
+     */
+    @Override
+    public
+    IImage contract ( int contractivity){
+
+        IImage image = new Image(this);
+
+        int newWidth = image.width()/contractivity;
+        int newHeight = image.height()/contractivity;
+
+        Imgproc.resize(this, (Mat) image, new Size(newWidth, newHeight));
+
+        return image;
+    }
+
+    @Override
+    public
+    int getOriginalImageWidth () {
+        return originalImageWidth;
+    }
+
+    @Override
+    public
+    void setOriginalImageWidth ( int originalImageWidth ) {
+        this.originalImageWidth = originalImageWidth;
+    }
+
+    @Override
+    public
+    int getOriginalImageHeight () {
+        return originalImageHeight;
+    }
+
+
+    @Override
+    public
+    void setOriginalImageHeight ( int originalImageHeight ) {
+        this.originalImageHeight = originalImageHeight;
+    }
+
+
+    @Override
+    public
+    void put ( int destX, int destY, int pixel ) {
+
+    }
+
+    @Override
+    public
+    void put ( Pixel[] pixels, double v, double v1, double v2, double v3 ) {
+
     }
 }

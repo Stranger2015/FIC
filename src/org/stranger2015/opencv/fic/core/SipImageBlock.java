@@ -77,13 +77,30 @@ public
     @Override
     public
     boolean equals ( Object o ) {
-        if (this == o) return true;
-        if (!(o instanceof SipImageBlock)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SipImageBlock)) {
+            return false;
+        }
 
         SipImageBlock that = (SipImageBlock) o;
 
-        if (getCenterX() != that.getCenterX()) return false;
+        if (getCenterX() != that.getCenterX()) {
+            return false;
+        }
+
         return getCenterY() == that.getCenterY();
+    }
+
+    /**
+     * @param contractivity
+     * @return
+     */
+    @Override
+    public
+    Image contract ( int contractivity ) {
+        return super.contract(contractivity);
     }
 
     @Override
@@ -91,6 +108,7 @@ public
     int hashCode () {
         int result = getCenterX();
         result = 31 * result + getCenterY();
+
         return result;
     }
 }

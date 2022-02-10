@@ -3,10 +3,8 @@ package org.stranger2015.opencv.fic.core.codec;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Size;
-import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.EPartitionScheme;
-import org.stranger2015.opencv.fic.core.Image;
-import org.stranger2015.opencv.fic.core.LoadSaveImageTask;
+
+import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 
 import java.lang.reflect.Constructor;
@@ -20,7 +18,7 @@ import static org.stranger2015.opencv.fic.core.codec.Encoder.ZERO_SIZE;
  * @param <A>
  */
 public abstract
-class Codec<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+class Codec<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
         implements ICodec <N, A, M> {
 
     private final EPartitionScheme scheme;
@@ -51,8 +49,10 @@ class Codec<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image
      * @param action
      * @return
      */
-    public abstract
-    Codec <N, A, M> create ( EPartitionScheme scheme, EncodeAction action );
+    public
+    Codec <N, A, M> create ( EPartitionScheme scheme, EncodeAction action ) {
+        return null;
+    }
 
     /**
      * @return
@@ -90,7 +90,7 @@ class Codec<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image
      */
     @SuppressWarnings("unchecked")
     public static
-    <N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+    <N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
     @NotNull Codec <N, A, M> create ( EPartitionScheme scheme, EncodeAction action, LoadSaveImageTask lit ) {
         try {
             Class <Codec <N, A, M>> codecClass =

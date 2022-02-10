@@ -2,9 +2,8 @@ package org.stranger2015.opencv.fic.core.codec;
 
 import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.Image;
+import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.ImageBlock;
-import org.stranger2015.opencv.fic.core.TreeNodeBase;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
@@ -17,8 +16,8 @@ import java.util.List;
  * @param <A>
  */
 public
-class QuadTreeEncoder<N extends TreeNode <N, A, M>,  A extends Address <A>, M extends Image>
-        extends Encoder <N, A,M> {
+class QuadTreeEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
+        extends Encoder <N, A, M> {
     /**
      * @param inputImage
      * @param rangeSize

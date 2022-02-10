@@ -1,9 +1,10 @@
 package org.stranger2015.opencv.fic.transform;
 
+import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Size;
-import org.stranger2015.opencv.fic.core.CompressedImage;
+import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.Image;
 
 import static org.opencv.imgproc.Imgproc.getAffineTransform;
@@ -13,7 +14,7 @@ import static org.opencv.imgproc.Imgproc.warpAffine;
  * @param <M>
  */
 public
-class AffineTranslationTransform<M extends Image> extends AffineTransform <M> {
+class AffineTranslationTransform<M extends IImage> extends AffineTransform <M> {
     /**
      *
      */
@@ -51,14 +52,15 @@ class AffineTranslationTransform<M extends Image> extends AffineTransform <M> {
 
         // Creating object of the class Size
         Size size = new Size(src.cols(), src.cols());
-        M out= (M) new Image();
+        M out= (M) new Image(src);
         // Applying Wrap Affine
-        warpAffine(src, out, transformMatrix1, size);
+        warpAffine((Mat) src, (Mat)out, (Mat) transformMatrix1, size);
 
         // Writing the image
 //        Imgcodecs.imwrite("E:/OpenCV/chap24/Affinetranslate.jpg", dst);
 
-        System.out.println("Image Processed");
+        System.out.println("Image processed");
+
         return out;
     }
 }

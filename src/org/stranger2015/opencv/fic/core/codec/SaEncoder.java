@@ -2,7 +2,7 @@ package org.stranger2015.opencv.fic.core.codec;
 
 import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.Image;
+import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.ImageBlock;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
@@ -14,7 +14,7 @@ import java.util.List;
  *
  */
 public
-class SaEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+class SaEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
         extends Encoder <N, A, M> {
 
     /**
@@ -37,10 +37,6 @@ class SaEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends I
         return super.encode(image);
     }
 
-//****************** encoder math ********************
-
-//**********************************************************
-
     /**
      * @param image
      * @param sourceSize
@@ -57,6 +53,16 @@ class SaEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends I
         return null;
     }
 
+    @Override
+    protected
+    SaImageBlockGenerator createBlockGenerator ( IEncoder <N, A, M> encoder,
+                                                 IImage image,
+                                                 Size rangeSize,
+                                                 Size domainSize ) {
+
+        return new SaImageBlockGenerator(encoder, image, rangeSize, domainSize);
+    }
+
     /**
      * @param image
      * @param sourceSize
@@ -71,6 +77,15 @@ class SaEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends I
                                                      int destinationSize,
                                                      int step ) {
         return null;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    List <ImageTransform <M>> getTransforms () {
+        return transforms;
     }
 
     /**

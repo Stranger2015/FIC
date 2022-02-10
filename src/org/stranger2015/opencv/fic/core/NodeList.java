@@ -1,6 +1,7 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.NotNull;
+
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ import java.util.List;
  *
  */
 public
-class NodeList<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+class NodeList<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
         implements Iterable <N>{
 
     private final List <TreeNode <N, A, M>> list = new ArrayList <>();

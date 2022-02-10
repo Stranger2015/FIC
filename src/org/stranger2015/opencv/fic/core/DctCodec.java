@@ -13,7 +13,8 @@ import org.stranger2015.opencv.fic.core.codec.IEncoder;
  * @param <M>
  */
 public
-class DctCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image> extends Codec<N, A, M> {
+class DctCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
+        extends Codec<N, A, M> {
     /**
      * @param scheme
      * @param action

@@ -4,9 +4,15 @@ package org.stranger2015.opencv.fic.core.search;
  *
  */
 public
-interface ISearchProcessor {
+interface ISearchProcessor<T> {
+//    Population generateRandomPopulation();
     /**
      *
      */
-    void search();
+    T search();
+
+    /**
+     * @return
+     */
+    int evaluate();
 }

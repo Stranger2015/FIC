@@ -1,12 +1,13 @@
 package org.stranger2015.opencv.fic.transform;
 
+import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.Image;
 
 /**
  * functor class to rotate an image by the given degrees
  */
 public
-class RotationTransform<M extends Image> extends PreserveAlphaTransform <M> {
+class RotationTransform<M extends IImage> extends PreserveAlphaTransform <M> {
 
     private final double degrees;
     private final double pointX;

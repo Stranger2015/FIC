@@ -2,14 +2,13 @@ package org.stranger2015.opencv.fic.utils;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
-import org.stranger2015.opencv.fic.core.Image;
-import org.stranger2015.opencv.fic.core.SipTree;
-import org.stranger2015.opencv.fic.core.SipTreeNode;
+import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.SipTreeNode.SipLayerClusterNode;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.core.ValueError;
 import org.stranger2015.opencv.fic.core.codec.IAddressMath;
+import org.stranger2015.opencv.fic.core.codec.Pixel;
 import org.stranger2015.opencv.fic.core.codec.SipAddress;
 import org.stranger2015.opencv.fic.core.codec.SipImage;
 
@@ -299,7 +298,7 @@ class SipLibrary<A extends SipAddress <A>> implements IAddressMath <A> {
      * @return
      */
     public
-    <M extends Image>
+    <M extends IImage>
     @NotNull
             SipImage convertImageToSipImage ( SipTree <?, ?, ?> tree, @NotNull M input ) throws ValueError {
         int addressBase = 0;
@@ -326,19 +325,19 @@ class SipLibrary<A extends SipAddress <A>> implements IAddressMath <A> {
      * @return
      */
     public
-    <M extends Image>
+    <M extends IImage>
     @NotNull SipImage relocatePixelData ( M input, List <Point> pixelShifts ) {
-        SipImage sipImage = new SipImage(input);
+        SipImage sipImage = new SipImage((Mat) input);
         List <Scalar> scalars = new ArrayList <>();
         for (int i = 0; i < input.getWidth(); i++) {
             for (int j = 0; j < input.getHeight(); j++) {
-                scalars.add(new Scalar(input.get(i, j)));
+                scalars.add(new Scalar(((Mat) input).get(i, j)));
             }
         }
-        SipImage output = new SipImage(input);
+        SipImage output = new SipImage((Mat) input);
+        //            getPixelShiftAddresses().addAll(pixelShifts);
         for (Scalar scalar : scalars) {
-            output.put(output.getAddresses(), scalar.val[0], scalar.val[1], scalar.val[2], scalar.val[3]);
-//            getPixelShiftAddresses().addAll(pixelShifts);
+            output.put(output.getPixels(), scalar.val[0], scalar.val[1], scalar.val[2], scalar.val[3]);
         }
 
         return sipImage;

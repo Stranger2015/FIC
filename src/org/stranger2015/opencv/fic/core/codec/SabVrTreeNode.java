@@ -1,6 +1,7 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.opencv.core.Rect;
+
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 
@@ -10,7 +11,7 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
  * @param <M>
  */
 public
-class SabVrTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+class SabVrTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
         extends SaTreeNode <N, A, M> {
     /**
      * @param parent

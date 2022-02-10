@@ -6,7 +6,7 @@ import org.stranger2015.opencv.fic.core.Image;
  * functor class to affineFlip an image
  */
 public
-class FlipTransform<M extends Image> extends PreserveAlphaTransform <M> {
+class FlipTransform<M extends IImage> extends PreserveAlphaTransform <M> {
 
     /**
      * @param preserveAlpha
@@ -25,7 +25,7 @@ class FlipTransform<M extends Image> extends PreserveAlphaTransform <M> {
     @Override
     public
     M transform ( M inputImage, M transformMatrix, EInterpolationType interpolationType ) {
-        M out = (M) new Image();
+        M out = (M) new Image(image);
         return out;
     }
 

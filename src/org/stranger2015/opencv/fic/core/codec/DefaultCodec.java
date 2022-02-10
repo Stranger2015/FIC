@@ -1,10 +1,7 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.opencv.core.Size;
-import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.EPartitionScheme;
-import org.stranger2015.opencv.fic.core.Image;
-import org.stranger2015.opencv.fic.core.ImageBlock;
+import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
@@ -17,7 +14,7 @@ import java.util.List;
  * @param <M>
  */
 public
-class DefaultCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+class DefaultCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
         extends Codec <N, A, M>
         implements IConstants {
 

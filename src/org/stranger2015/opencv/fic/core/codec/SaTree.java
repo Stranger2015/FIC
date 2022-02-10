@@ -9,12 +9,12 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
  * @param <M>
  */
 public
-class VsaTree<N extends TreeNode <N, A, M>, A extends SaAddress <A>, M extends Image>
+class SaTree<N extends TreeNode <N, A, M>, A extends SaAddress <A>, M extends IImage>
         extends Tree <N, A, M> {
 
 
     public
-    VsaTree ( TreeNode <N, A, M> root, M image, TreeNodeAction <N, A, M> action ) {
+    SaTree ( TreeNode <N, A, M> root, M image, TreeNodeAction <N, A, M> action ) {
         super(root, image, action);
     }
 
@@ -36,7 +36,7 @@ class VsaTree<N extends TreeNode <N, A, M>, A extends SaAddress <A>, M extends I
     @SuppressWarnings("unchecked")
     @Override
     public//fixme
-    Class <? extends TreeNode<N,A,M>> getNodeClass (TreeNode<N,A,M> clazz){
+    Class <? extends TreeNode <N, A, M>> getNodeClass ( TreeNode <N, A, M> clazz ) {
         return (Class <? extends TreeNode <N, A, M>>) clazz.getClass();
     }
 }

@@ -7,7 +7,7 @@ import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
 /**
  * functor class to affineShear an image
  */
-public class AffineShearTransform<M extends Image> extends AffineTransform <M> {
+public class AffineShearTransform<M extends IImage> extends AffineTransform <M> {
 
     private final double shearX;
     private final double shearY;
@@ -42,7 +42,7 @@ public class AffineShearTransform<M extends Image> extends AffineTransform <M> {
     public
     M transform ( M inputImage, M transformMatrix,EInterpolationType interpolationType ) {
 
-        M outputImage= (M) new Image();
+        M outputImage= (M) new Image(image);
 
         return outputImage;
     }

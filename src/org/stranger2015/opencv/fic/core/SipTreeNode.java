@@ -1,6 +1,7 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.opencv.core.Rect;
+
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.SipAddress;
 import org.stranger2015.opencv.fic.core.codec.SipImage;
@@ -16,7 +17,7 @@ import static org.stranger2015.opencv.fic.core.SipTreeNodeBuilder.BB;
  * @param <A>
  */
 public
-class SipTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+class SipTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
         extends SaTreeNode <N, A, M> {
 
     /**
@@ -82,7 +83,7 @@ class SipTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends
      * @param <A>
      */
     public static
-    class SipLayerClusterNode<N extends TreeNode <N, A, M>, A extends SipAddress <A>, M extends Image>
+    class SipLayerClusterNode<N extends TreeNode <N, A, M>, A extends SipAddress <A>, M extends IImage>
             extends SaLayerClusterNode <N, A, M> {
 
         protected static final List <SipImageBlock> blocks = new ArrayList <>();

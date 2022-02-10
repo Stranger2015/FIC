@@ -1,19 +1,21 @@
 package org.stranger2015.opencv.fic;
 
 import org.jetbrains.annotations.NotNull;
+import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
+import org.stranger2015.opencv.fic.core.codec.Pixel;
 import org.stranger2015.opencv.fic.utils.Point;
 
 /**
  * 8 X 8
  */
 public
-class DomainBlock<N extends DomainBlock <N, A, M>, A extends Address <A>, M extends Image>
+class DomainBlock<N extends DomainBlock <N, A, M>, A extends Address <A>, M extends IImage>
         extends LeafNode <N, A, M>
-        implements IImageBlock {
+        implements IImage {
 
     public final static int W = 8;
     public final static int H = 8;
@@ -48,8 +50,14 @@ class DomainBlock<N extends DomainBlock <N, A, M>, A extends Address <A>, M exte
      */
     @Override
     public
-    TreeNode <N, A, M> createChild ( Point point, int layerIndex, int clusteIndex, int x, int y, int address )
+    TreeNode <N, A, M> createChild ( Point point,
+                                     int layerIndex,
+                                     int clusteIndex,
+                                     int x,
+                                     int y,
+                                     int address )
             throws ValueError {
+
         return new DomainBlock <>(address);
     }
 
@@ -131,6 +139,112 @@ class DomainBlock<N extends DomainBlock <N, A, M>, A extends Address <A>, M exte
     Size getSize () {
         return new Size();
     }//fixme
+
+    /**
+     * @param contractivity
+     */
+    @Override
+    public
+    IImage contract ( int contractivity ) {
+        return null;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    int width () {
+        return 0;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    int height () {
+        return 0;
+    }
+
+    /**
+     * @param rowStart
+     * @param rowEnd
+     * @param colStart
+     * @param colEnd
+     * @return
+     */
+    @Override
+    public
+    Mat submat ( int rowStart, int rowEnd, int colStart, int colEnd ) {
+        return new Mat().submat(rowStart, rowEnd,colStart,colEnd);//fixme
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    int getOriginalImageWidth () {
+        return 0;
+    }
+
+    /**
+     * @param originalImageWidth
+     */
+    @Override
+    public
+    void setOriginalImageWidth ( int originalImageWidth ) {
+
+    }
+
+    /**
+     * @param originalImageHeight
+     */
+    @Override
+    public
+    void setOriginalImageHeight ( int originalImageHeight ) {
+
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    int getOriginalImageHeight () {
+        return 0;
+    }
+
+    @Override
+    public
+    int get ( int x, int y, int[] ia ) {
+        return 0;
+    }
+
+    @Override
+    public
+    void put ( int destX, int destY, int pixel ) {
+
+    }
+
+    @Override
+    public
+    void put ( Pixel[] pixels, double v, double v1, double v2, double v3 ) {
+
+    }
+
+    @Override
+    public
+    int cols () {
+        return 0;
+    }
+
+    @Override
+    public
+    int rows () {
+        return 0;
+    }
 
     /**
      * @param parent

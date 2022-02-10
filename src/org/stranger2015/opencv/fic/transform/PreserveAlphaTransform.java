@@ -1,9 +1,9 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.stranger2015.opencv.fic.core.Image;
+import org.stranger2015.opencv.fic.core.IImage;
 
 public
-class PreserveAlphaTransform<M extends Image> extends ImageTransform<M>{
+class PreserveAlphaTransform<M extends IImage> extends ImageTransform<M>{
     private final boolean preserveAlpha;
 
     /**

@@ -1,6 +1,7 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.opencv.core.Rect;
+
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.fic.utils.Point;
@@ -9,7 +10,7 @@ import org.stranger2015.opencv.fic.utils.Point;
  * @param <N>
  * @param <A>
  */
-public class HvTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+public class HvTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
         extends TreeNodeBase <N, A, M> {
     /**
      * @param parent
@@ -17,7 +18,7 @@ public class HvTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M e
      * @param rect
      */
     public
-    HvTreeNode ( TreeNode <N, A, M> parent, EDirection quadrant, Rect rect ) throws ValueError {
+    HvTreeNode ( TreeNode <N, A, M> parent, EDirection quadrant, Rect rect ) {
         super(parent, null, rect);
     }
 
@@ -30,7 +31,6 @@ public class HvTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M e
     HvTreeNode <N, A, M> createChild ( EDirection quadrant, Rect boundingBox ) throws ValueError {
         return new HvTreeNode <>(null, quadrant, boundingBox);
     }
-
 
     /**
      * @param parent
@@ -90,7 +90,7 @@ public class HvTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M e
      * @param <A>
      */
     public static
-    class HvLeafNode<N extends HvLeafNode <N, A, M>, A extends Address <A>, M extends Image>
+    class HvLeafNode<N extends HvLeafNode <N, A, M>, A extends Address <A>, M extends IImage>
             extends LeafNode <N, A, M>
             implements ILeaf <N, A, M> {
 
@@ -108,7 +108,7 @@ public class HvTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M e
         /**
          * @param point
          * @param layerIndex
-         * @param clusteIndex
+         * @param clusterIndex
          * @param x
          * @param y
          * @param address
@@ -117,7 +117,8 @@ public class HvTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M e
          */
         @Override
         public
-        TreeNode <N, A, M> createChild ( Point point, int layerIndex, int clusteIndex, int x, int y, int address ) throws ValueError {
+        TreeNode <N, A, M> createChild ( Point point, int layerIndex, int clusterIndex, int x, int y, int address )
+                throws ValueError {
             return null;
         }
 

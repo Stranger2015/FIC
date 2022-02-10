@@ -2,6 +2,7 @@ package org.stranger2015.opencv.fic.core.codec;
 
 import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.Address;
+import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.Image;
 import org.stranger2015.opencv.fic.core.ImageBlock;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
@@ -16,7 +17,7 @@ import java.util.List;
  * @param <M>
  */
 public
-class SearchlessEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+class SearchlessEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
         extends Encoder <N, A, M> {
 
     /**

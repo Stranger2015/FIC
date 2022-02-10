@@ -1,8 +1,8 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.jetbrains.annotations.NotNull;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.Codec;
+import org.stranger2015.opencv.fic.core.codec.EncodeAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +50,7 @@ import java.util.List;
  * }// End function Quadtree()
  */
 public
-class ImagePartitionProcessor<N extends TreeNode <N, A,M>, A extends Address <A>, M extends Image>
+class ImagePartitionProcessor<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
         extends ImageProcessor <N, A, M> {
 
     protected final List <M> rangeBlocks = new ArrayList <>();
@@ -68,7 +68,7 @@ class ImagePartitionProcessor<N extends TreeNode <N, A,M>, A extends Address <A>
      */
     public
     ImagePartitionProcessor ( String fn, EPartitionScheme scheme, Tree <N, A, M> tree ) {
-        super(fn, scheme, List.of());
+        super(fn, scheme, List.of(), Codec.create(scheme, new EncodeAction(fn)));
 
         this.tree = tree;
     }
@@ -82,6 +82,7 @@ class ImagePartitionProcessor<N extends TreeNode <N, A,M>, A extends Address <A>
     }
 
 //
+
     /**
      * image mat is of the square shape so, width and height are equal and are of power of two
      *
@@ -116,7 +117,7 @@ class ImagePartitionProcessor<N extends TreeNode <N, A,M>, A extends Address <A>
 //    }
 //
     private
-    boolean isLeaf ( TreeNode<N, A,M> treeNode ) {
+    boolean isLeaf ( TreeNode <N, A, M> treeNode ) {
         return treeNode.isLeaf();
     }
 

@@ -4,7 +4,7 @@ import org.opencv.core.Rect;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 
 public
-class RLTree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+class RLTree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
         extends Tree <N, A, M> {
     /**
      * Constructs a new object.

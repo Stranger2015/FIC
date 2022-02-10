@@ -1,5 +1,6 @@
 package org.stranger2015.opencv.fic.transform;
 
+import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.Image;
 
 import static java.lang.String.format;
@@ -8,7 +9,7 @@ import static java.lang.String.format;
  * functor class to affineScale an image
  */
 public
-class ScaleTransform<M extends Image> extends PreserveAlphaTransform<M> {
+class ScaleTransform<M extends IImage> extends PreserveAlphaTransform<M> {
 
 //    private final boolean preserveAlpha;
     private final double scaleX;

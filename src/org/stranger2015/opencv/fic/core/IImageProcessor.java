@@ -1,5 +1,6 @@
 package org.stranger2015.opencv.fic.core;
 
+
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.Codec;
 
@@ -10,7 +11,7 @@ import java.util.List;
  * @param <M>
  */
 public
-interface IImageProcessor<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+interface IImageProcessor<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
         extends IProcessor <M> {
     /**
      *

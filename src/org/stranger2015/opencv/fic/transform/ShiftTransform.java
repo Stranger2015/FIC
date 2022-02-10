@@ -6,7 +6,7 @@ import org.stranger2015.opencv.fic.core.Image;
  * @param <M>
  */
 public abstract
-class ShiftTransform<M extends Image> extends ImageTransform<M>{
+class ShiftTransform<M extends IImage> extends ImageTransform<M>{
     private final float intensity;
     private final int channelAxis;
 

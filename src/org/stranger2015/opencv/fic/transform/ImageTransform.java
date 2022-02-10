@@ -1,7 +1,7 @@
 package org.stranger2015.opencv.fic.transform;
 
 import org.stranger2015.opencv.fic.core.CompressedImage;
-import org.stranger2015.opencv.fic.core.Image;
+import org.stranger2015.opencv.fic.core.IImage;
 
 import java.io.Serializable;
 
@@ -9,7 +9,7 @@ import java.io.Serializable;
  * Produces transformed copies of a given input image.
  */
 public abstract
-class ImageTransform<M extends Image> implements ITransform <M>, Serializable {
+class ImageTransform<M extends IImage> implements ITransform <M>, Serializable {
 
     protected final M outputImage;
 
@@ -35,9 +35,9 @@ class ImageTransform<M extends Image> implements ITransform <M>, Serializable {
     }
 
     public static
-    <M extends Image>
+    <M extends IImage>
     ImageTransform <M> create (M image) {
-        return new NoneTransform <>(image);
+        return new NoneTransform <M>(image);
     }
 
     /**

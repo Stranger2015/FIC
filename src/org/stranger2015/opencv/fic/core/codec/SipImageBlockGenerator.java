@@ -1,6 +1,8 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.opencv.core.Size;
+import org.stranger2015.opencv.fic.core.IImage;
+
 
 /**
  *
@@ -13,7 +15,17 @@ class SipImageBlockGenerator extends SquareImageBlockGenerator {
      * @param domainSize
      */
     public
-    SipImageBlockGenerator ( Size rangeSize, Size domainSize ) {
-        super(rangeSize, domainSize);
+    SipImageBlockGenerator ( IEncoder <?, ?, ?> encoder, IImage image, Size rangeSize, Size domainSize ) {
+        super(encoder, image, rangeSize, domainSize);
+    }
+
+    /**
+     *
+     * @return
+     */
+    @Override
+    public
+    SipImageBlockGenerator newInstance () {
+        return this;
     }
 }

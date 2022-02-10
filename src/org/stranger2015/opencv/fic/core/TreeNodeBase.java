@@ -2,6 +2,7 @@ package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Rect;
+
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.utils.Point;
 
@@ -14,7 +15,7 @@ import static org.stranger2015.opencv.fic.core.TreeNodeBase.EType.*;
  * @param <N>
  */
 abstract public
-class TreeNodeBase<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+class TreeNodeBase<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
         implements Comparable <N> {
 
     protected static int indexCounter;
@@ -79,7 +80,6 @@ class TreeNodeBase<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
         return address;
     }
 
-
     /**
      * @return
      */
@@ -107,7 +107,7 @@ class TreeNodeBase<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
     /**
      * @param point
      * @param layerIndex
-     * @param clusteIndex
+     * @param clusterIndex
      * @param x
      * @param y
      * @param address
@@ -115,7 +115,7 @@ class TreeNodeBase<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
      * @throws ValueError
      */
     public abstract
-    TreeNode <N, A, M> createChild ( Point point, int layerIndex, int clusteIndex, int x, int y, int address )
+    TreeNode <N, A, M> createChild ( Point point, int layerIndex, int clusterIndex, int x, int y, int address )
             throws ValueError;
 
     /**
@@ -285,7 +285,7 @@ class TreeNodeBase<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
      * @param <A>
      */
     public abstract static
-    class TreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+    class TreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
             extends TreeNodeBase <N, A, M> {
 
         protected final NodeList <N, A, M> children = new NodeList <>();
@@ -397,14 +397,14 @@ class TreeNodeBase<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
          * @param <M>
          */
         public abstract static
-        class LeafNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends Image>
+        class LeafNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
                 extends TreeNode <N, A, M>
                 implements ILeaf <N, A, M> {
 
             protected ImageBlock imageBlock;
 
             public
-           LeafNode ( TreeNode <N, A, M> parent, M image, Rect rect ) {
+            LeafNode ( TreeNode <N, A, M> parent, M image, Rect rect ) {
                 super(parent, image, rect);
             }
 
@@ -414,19 +414,19 @@ class TreeNodeBase<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
             }
 
             protected
-            <N extends TreeNode <N, A, M>, M extends Image>
+            <N extends TreeNode <N, A, M>, M extends IImage>
             LeafNode () {
             }
 
 //            public
-//            <A extends SipAddress <A>, M extends Image>
+//            <A extends SipAddress <A>, M extends IImage>
 //            LeafNode ( TreeNode <N, A, M> parent, M image, int width, int height ) {
 //
 //
 //            }
 //
 //            public
-//            <A extends SipAddress <A>, M extends Image>
+//            <A extends SipAddress <A>, M extends IImage>
 //            LeafNode ( TreeNode<N,A,M> parent, M image, int width, int height ) {
 //            }
 

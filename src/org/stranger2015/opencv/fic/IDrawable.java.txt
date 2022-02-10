@@ -13,7 +13,7 @@ import org.stranger2015.opencv.fic.core.Triangle;
  *
  */
 public
-interface IDrawable<M extends Image> {
+interface IDrawable<M extends IImage> {
     /**
      * @param image
      * @param rect

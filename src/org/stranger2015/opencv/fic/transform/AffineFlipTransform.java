@@ -1,5 +1,6 @@
 package org.stranger2015.opencv.fic.transform;
 
+import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.Image;
 
 import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
@@ -7,7 +8,7 @@ import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
 /**
  * 
  */
-public class AffineFlipTransform<M extends Image> extends AffineTransform <M> {
+public class AffineFlipTransform<M extends IImage> extends AffineTransform <M> {
 
 
     public AffineFlipTransform(M image, EInterpolationType interpolationType) {super(image, interpolationType);
