@@ -1,14 +1,22 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.opencv.core.Size;
+import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.fic.core.TreeNodeBase;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.utils.BitBuffer;
+
+import java.nio.ByteBuffer;
 
 
 /**
  *
  */
 public
-class SquareImageBlockGenerator extends ImageBlockGenerator {
+class SquareImageBlockGenerator<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>,
+        G extends BitBuffer>
+        extends ImageBlockGenerator<N, A, M, G> {
 
     /**
      * @param encoder
@@ -17,7 +25,7 @@ class SquareImageBlockGenerator extends ImageBlockGenerator {
      * @param domainSize
      */
     public
-    SquareImageBlockGenerator ( IEncoder <?, ?, ?> encoder, IImage image, Size rangeSize, Size domainSize ) {
+    SquareImageBlockGenerator ( IEncoder <N, A, M, G> encoder, IImage<A> image, Size rangeSize, Size domainSize ) {
         super(encoder, image, rangeSize, domainSize);
     }
 
@@ -26,7 +34,7 @@ class SquareImageBlockGenerator extends ImageBlockGenerator {
      */
     @Override
     public
-    SquareImageBlockGenerator newInstance () {
+    SquareImageBlockGenerator<N, A, M, G> newInstance () {
         return this;
     }
 }

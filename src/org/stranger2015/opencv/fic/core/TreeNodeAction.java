@@ -2,6 +2,7 @@ package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.NotNull;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,26 +11,41 @@ import java.util.function.Consumer;
 import static org.stranger2015.opencv.fic.DomainBlock.H;
 import static org.stranger2015.opencv.fic.DomainBlock.W;
 
+/**
+ * @param <N>
+ * @param <A>
+ * @param <M>
+ * @param <G>
+ */
 public
-class TreeNodeAction<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
+class TreeNodeAction<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
         implements Consumer <N> {
 
-    private final List <ImageBlock> domainPool = new ArrayList <>();
-    private final NodeList <N, A, M> leaves = new NodeList <>();
+    private final List <N> leaves = new ArrayList <N>();
+    private final List <ImageBlock <A>> domainPool=new ArrayList <>();
 
+    /**
+     * @param domainPool
+     * @param leaves
+     */
     public
-    TreeNodeAction ( List <ImageBlock> domainPool, NodeList <N, A, M> leaves ) {
+    TreeNodeAction ( List <ImageBlock<A>> domainPool, List <N> leaves ) {
         this.domainPool.addAll(domainPool);
-        this.leaves.add(leaves);
+        this.leaves.addAll(leaves);
     }
 
+    /**
+     * @param domainPool
+     */
     public
-    TreeNodeAction ( List <ImageBlock> domainPool ) {
-        this(domainPool, new NodeList <>());
+    TreeNodeAction ( List <ImageBlock<A>> domainPool ) {
+        this(domainPool, new ArrayList <>());
     }
 
+    /**
+     * @return      */
     public
-    NodeList <N, A, M> getLeaves () {
+    List <N> getLeaves () {
         return leaves;
     }
 
@@ -77,7 +93,7 @@ class TreeNodeAction<N extends TreeNode <N, A, M>, A extends Address <A>, M exte
      * @return
      */
     public
-    List <ImageBlock> getDomainPool () {
+    List <ImageBlock<A>> getDomainPool () {
         return domainPool;
     }
 }

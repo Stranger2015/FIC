@@ -1,8 +1,11 @@
 package org.stranger2015.opencv.fic.transform;
 
 import org.opencv.core.Range;
+import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.CompressedImage;
+import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.Image;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayList;
 
@@ -10,7 +13,9 @@ import java.util.ArrayList;
  *
  */
 public
-class AffineTransforms<M extends IImage> extends ArrayList<ImageTransform<M>> {
+class AffineTransforms<M extends IImage, A extends Address <A>, G extends BitBuffer>
+
+        extends ArrayList<ImageTransform<M, A, G>> {
     /**
      * @param x
      * @param axis
@@ -339,6 +344,4 @@ class AffineTransforms<M extends IImage> extends ArrayList<ImageTransform<M>> {
 //        x = np.stack(channel_images, axis=0)
 //        x = np.rollaxis(x, 0, channel_axis + 1)
 //    return x
-
-
 }

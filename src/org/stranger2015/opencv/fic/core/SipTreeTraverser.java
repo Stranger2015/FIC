@@ -9,15 +9,15 @@ import org.stranger2015.opencv.fic.core.codec.SipAddress;
  * @param <N>
  */
 public
-class SipTreeTraverser<N extends TreeNode <N, A, M>, A extends SipAddress <A>, M extends IImage>
-        extends TreeTraverser <N, A, M> {
+class SipTreeTraverser<N extends TreeNode <N, A, M, G>, A extends SipAddress <A>, M extends IImage>
+        extends TreeTraverser <N, A, M, G> {
     /**
      * @param tree
      * @param depth
      * @param action
      */
     public
-    SipTreeTraverser ( SipTree <N, A, M> tree, int depth, TreeNodeAction <N, A, M> action ) {
+    SipTreeTraverser ( SipTree <N, A, M, G> tree, int depth, TreeNodeAction <N, A, M, G> action ) {
         super(tree, depth, action);
     }
 
@@ -32,7 +32,7 @@ class SipTreeTraverser<N extends TreeNode <N, A, M>, A extends SipAddress <A>, M
      */
     @Override
     public
-    void traverse ( TreeNode <N, A, M> node, int depth, NodeList <N, A, M> neighbors, TreeNodeAction <N, A, M> action )
+    void traverse ( TreeNode <N, A, M, G> node, int depth, NodeList <N, A, M, G> neighbors, TreeNodeAction <N, A, M, G> action )
             throws DepthLimitExceeded {
         super.traverse(node, depth, neighbors, action);
     }

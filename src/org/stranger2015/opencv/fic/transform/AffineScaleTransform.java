@@ -1,50 +1,41 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
-import org.stranger2015.opencv.fic.core.Image;
+import org.stranger2015.opencv.fic.core.Address;
+import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
 
 /**
  * 
  */
-public class AffineScaleTransform<M extends IImage> extends AffineTransform<M>{
+public class AffineScaleTransform<M extends IImage, A extends Address <A>, G extends BitBuffer>
+        extends AffineTransform<M, A, G>{
 
     private final double scaleX;
     private final double scaleY;
 
-    public AffineScaleTransform(M image, double scaleX, double scaleY, EInterpolationType interpolationType) {
-        super(image, interpolationType);
+    /**
+     * @param image
+     * @param scaleX
+     * @param scaleY
+     * @param interpolationType
+     * @param address
+     */
+    public AffineScaleTransform(M image, double scaleX, double scaleY, EInterpolationType interpolationType, Address<A> address ) {
+        super(image, interpolationType, address );
         this.scaleX = scaleX;
         this.scaleY = scaleY;
     }
 
-    public AffineScaleTransform(M image, double scaleX, double scaleY) {
-        this(image, scaleX, scaleY, BILINEAR);
-    }
-
     /**
-     * @param src
-     * @param transformMatrix
-     * @param interpolationType
-     * @return
+     * @param image
+     * @param scaleX
+     * @param scaleY
+     * @param address
      */
-    @Override
-    public
-    M transform ( M src, M transformMatrix, EInterpolationType interpolationType ) {
-        // Creating the Size object
-        Size size = new Size(src.rows()*2, src.rows()*2);
-
-        M out= (M) new Image(image);
-        // Scaling the Image
-        Imgproc.resize(src, out, size, 0, 0, Imgproc.INTER_AREA);
-
-        // Writing the image
-//        Imgcodecs.imwrite("E:/OpenCV/chap24/scale_output.jpg", dst);
-
-        System.out.println("Image Processed");
-        return out;
+    public AffineScaleTransform(M image, double scaleX, double scaleY, Address<A> address) {
+        this(image, scaleX, scaleY, BILINEAR, address);
     }
 
     public

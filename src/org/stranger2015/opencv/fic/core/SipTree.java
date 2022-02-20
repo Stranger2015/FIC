@@ -13,13 +13,13 @@ import java.util.Map;
  * @param <A>
  */
 public
-class SipTree<N extends TreeNode <N, A, M>, A extends SipAddress <A>, M extends IImage>
-        extends SaTree <N, A, M> {
+class SipTree<N extends TreeNode <N, A, M, G>, A extends SipAddress <A>, M extends IImage>
+        extends SaTree <N, A, M, G> {
 
     public
-    SipTree ( SipTreeNode <N, A, M> parent,
+    SipTree ( SipTreeNode <N, A, M, G> parent,
               Map<Point, SipImageBlock> blocks,
-              TreeNodeAction <N, A, M> namTreeNodeAction ) {
+              TreeNodeAction <N, A, M, G> namTreeNodeAction ) {
         super(parent, (M) blocks, namTreeNodeAction);
     }
 
@@ -28,7 +28,7 @@ class SipTree<N extends TreeNode <N, A, M>, A extends SipAddress <A>, M extends 
      */
     @Override
     public
-    NodeList <N, A, M> getNodes () {
+    NodeList <N, A, M, G> getNodes () {
         return super.getNodes();
     }
 
@@ -38,7 +38,7 @@ class SipTree<N extends TreeNode <N, A, M>, A extends SipAddress <A>, M extends 
      * @param action
      */
     public
-    SipTree ( TreeNode <N, A, M> root, M image, TreeNodeAction <N, A, M> action ) {
+    SipTree ( TreeNode <N, A, M, G> root, M image, TreeNodeAction <N, A, M, G> action ) {
         super(root, image, action);
     }
 

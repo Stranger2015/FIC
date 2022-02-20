@@ -25,5 +25,6 @@
     <orderEntry type="library" exported="" name="commons-collections4-4.4" level="project" />
     <orderEntry type="library" exported="" name="slf4j" level="project" />
     <orderEntry type="library" exported="" name="GAlib" level="project" />
+    <orderEntry type="library" exported="" name="commons-compress-1.21-bin" level="project" />
   </component>
 </module>

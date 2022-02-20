@@ -3,6 +3,7 @@ package org.stranger2015.opencv.fic.core;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.Codec;
 import org.stranger2015.opencv.fic.core.codec.EncodeAction;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,13 +51,14 @@ import java.util.List;
  * }// End function Quadtree()
  */
 public
-class ImagePartitionProcessor<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
-        extends ImageProcessor <N, A, M> {
+class ImagePartitionProcessor<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage,
+        G extends BitBuffer>
+        extends ImageProcessor <N, A, M, G> {
 
     protected final List <M> rangeBlocks = new ArrayList <>();
     protected final List <M> domainBlocks = new ArrayList <>();
 
-    protected final Tree <N, A, M> tree;
+    protected final Tree <N, A, M, G> tree;
 
     protected int row;
     protected int col;
@@ -67,7 +69,7 @@ class ImagePartitionProcessor<N extends TreeNode <N, A, M>, A extends Address <A
      * @param tree
      */
     public
-    ImagePartitionProcessor ( String fn, EPartitionScheme scheme, Tree <N, A, M> tree ) {
+    ImagePartitionProcessor ( String fn, EPartitionScheme scheme, Tree <N, A, M, G> tree ) {
         super(fn, scheme, List.of(), Codec.create(scheme, new EncodeAction(fn)));
 
         this.tree = tree;
@@ -117,7 +119,7 @@ class ImagePartitionProcessor<N extends TreeNode <N, A, M>, A extends Address <A
 //    }
 //
     private
-    boolean isLeaf ( TreeNode <N, A, M> treeNode ) {
+    boolean isLeaf ( TreeNode <N, A, M, G> treeNode ) {
         return treeNode.isLeaf();
     }
 
@@ -376,7 +378,7 @@ class ImagePartitionProcessor<N extends TreeNode <N, A, M>, A extends Address <A
      */
     @Override
     public
-    Codec <N, A, M> getCodec () {
+    Codec <N, A, M, G> getCodec () {
         return null;
     }
 }

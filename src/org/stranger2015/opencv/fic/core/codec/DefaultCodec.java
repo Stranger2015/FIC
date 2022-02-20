@@ -14,14 +14,14 @@ import java.util.List;
  * @param <M>
  */
 public
-class DefaultCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
-        extends Codec <N, A, M>
+class DefaultCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer>
+        extends Codec <N, A, M, G>
         implements IConstants {
 
     /**
      *
      */
-    protected final IEncoder <N, A, M> encoder;
+    protected final IEncoder <N, A, M, G> encoder;
     protected final IDecoder <M> decoder = new Decoder <>();
 
     /**
@@ -40,7 +40,7 @@ class DefaultCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
      */
     @Override
     public
-    Codec <N, A, M> create ( EPartitionScheme scheme, EncodeAction action ) {
+    Codec <N, A, M, G> create ( EPartitionScheme scheme, EncodeAction action ) {
         return new DefaultCodec <>(scheme, action/*, action.getFilename()*/);
     }
 //
@@ -89,7 +89,7 @@ class DefaultCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
 //     */
 //    @Override
 //    public
-//    M randomTransform ( M image, ImageTransform <M> transform ) {
+//    M randomTransform ( M image, ImageTransform <M, A, G> transform ) {
 //        return encoder.randomTransform(image, transform);
 //    }
 //
@@ -100,7 +100,7 @@ class DefaultCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
 //     */
 //    @Override
 //    public
-//    M applyTransform ( M image, ImageTransform <M> transform ) {
+//    M applyTransform ( M image, ImageTransform <M, A, G> transform ) {
 //        return encoder.applyTransform(image, transform);
 //    }
 //
@@ -111,7 +111,7 @@ class DefaultCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
 //     */
 //    @Override
 //    public
-//    M applyAffineTransform ( M image, AffineTransform <M> transform ) {
+//    M applyAffineTransform ( M image, AffineTransform <M, A, G> transform ) {
 //        return encoder.applyAffineTransform(image, transform);
 //    }
 //
@@ -124,7 +124,7 @@ class DefaultCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
 //     */
 //    @Override
 //    public
-//    List <ImageTransform <M>> compress ( M image, int sourceSize, int destinationSize, int step ) {
+//    List <ImageTransform <M, A, G>> compress ( M image, int sourceSize, int destinationSize, int step ) {
 //        return encoder.compress(image, sourceSize, destinationSize, step);
 //    }
 
@@ -185,7 +185,7 @@ class DefaultCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
      */
     @Override
     public
-    IEncoder <N, A, M> getEncoder ( M image, Size rangeSize, Size domainSize ) {
+    IEncoder <N, A, M, G> getEncoder ( M image, Size rangeSize, Size domainSize ) {
         return encoder;
     }
 
@@ -203,7 +203,7 @@ class DefaultCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
      */
     @Override
     public
-    IEncoder <N, A, M> getEncoder () {
+    IEncoder <N, A, M, G> getEncoder () {
         return encoder;
     }
 

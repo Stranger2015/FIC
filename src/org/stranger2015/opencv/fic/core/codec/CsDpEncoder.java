@@ -7,6 +7,8 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteBuffer;
 import java.util.List;
 
 /**
@@ -15,15 +17,15 @@ import java.util.List;
  * @param <A>
  */
 public
-class ConstSizeDomainPoolEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
-        extends Encoder <N, A, M> {
+class CsDpEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer>
+        extends Encoder <N, A, M, G> {
     /**
      * @param inputImage
      * @param rangeSize
      * @param domainSize
      */
     public
-    ConstSizeDomainPoolEncoder ( M inputImage, Size rangeSize, Size domainSize ) {
+    CsDpEncoder ( M inputImage, Size rangeSize, Size domainSize ) {
         super(inputImage, rangeSize, domainSize);
     }
 
@@ -43,7 +45,7 @@ class ConstSizeDomainPoolEncoder<N extends TreeNode <N, A, M>, A extends Address
      */
     @Override
     public
-    M randomTransform ( M image, ImageTransform <M> transform ) {
+    M randomTransform ( M image, ImageTransform <M, A, G> transform ) {
         return null;
     }
 
@@ -54,7 +56,7 @@ class ConstSizeDomainPoolEncoder<N extends TreeNode <N, A, M>, A extends Address
      */
     @Override
     public
-    M applyTransform ( M image, ImageTransform <M> transform ) {
+    M applyTransform ( M image, ImageTransform <M, A, G> transform ) {
         return null;//todo
     }
 
@@ -65,7 +67,7 @@ class ConstSizeDomainPoolEncoder<N extends TreeNode <N, A, M>, A extends Address
      */
     @Override
     public
-    M applyAffineTransform ( M image, AffineTransform <M> transform ) {
+    M applyAffineTransform ( M image, AffineTransform <M, A, G> transform ) {
         return null;//todo
     }
 
@@ -78,7 +80,7 @@ class ConstSizeDomainPoolEncoder<N extends TreeNode <N, A, M>, A extends Address
      */
     @Override
     public
-    List <ImageTransform <M>> compress ( M image, int sourceSize, int destinationSize, int step ) {
+    List <ImageTransform <M, A, G>> compress ( M image, int sourceSize, int destinationSize, int step ) {
         return null;//todo
     }
 

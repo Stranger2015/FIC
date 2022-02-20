@@ -3,6 +3,9 @@ package org.stranger2015.opencv.fic.core;
 import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.*;
+import org.stranger2015.opencv.utils.BitBuffer;
+
+import java.nio.ByteBuffer;
 
 /**
  * @param <N>
@@ -10,8 +13,8 @@ import org.stranger2015.opencv.fic.core.codec.*;
  * @param <M>
  */
 public
-class SipCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
-        extends Codec <N, A, M> {
+class SipCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
+        extends Codec <N, A, M, G> {
 
     /**
      * @param scheme
@@ -30,7 +33,7 @@ class SipCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M extends II
      */
     @Override
     public
-    Codec <N, A, M> create ( EPartitionScheme scheme, EncodeAction action ) {
+    Codec <N, A, M, G> create ( EPartitionScheme scheme, EncodeAction action ) {
         return new SipCodec <>(scheme, action);
     }
 
@@ -42,8 +45,8 @@ class SipCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M extends II
      */
     @Override
     public
-    Encoder <N, A, M> getEncoder ( M image, Size rangeSize, Size domainSize ) {
-        return new SipEncoder <>(image, rangeSize, domainSize);
+    IEncoder <N, A, M, G> getEncoder ( M image, Size rangeSize, Size domainSize ) {
+        return new SipEncoder <N, A, M, G>(image, rangeSize, domainSize);
     }
 
     /**
@@ -51,7 +54,7 @@ class SipCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M extends II
      */
     @Override
     public
-    IEncoder <N, A, M> getEncoder () {
+    IEncoder <N, A, M, G> getEncoder () {
         return null;
     }
 

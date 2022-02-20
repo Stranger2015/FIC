@@ -1,7 +1,14 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
+import org.stranger2015.opencv.fic.core.Address;
+import org.stranger2015.opencv.utils.BitBuffer;
+
+/**
+ * @param <T>
+ */
 public
-class SgaProcessor<T extends Individual> extends GaProcessor {
+class SgaProcessor<T extends Individual <G, C>, A extends Address <A>, G extends BitBuffer, C extends Chromosome <G>>
+                extends GaProcessor <T, G> {
 
     /**
      * Please see chapter2/GeneticAlgorithm for additional comments.
@@ -20,31 +27,40 @@ class SgaProcessor<T extends Individual> extends GaProcessor {
      */
 
     /**
-     * See chapter2/GeneticAlgorithm for a description of these properties.
-     */
-    private final int populationSize;
-    private final double mutationRate;
-    private final double crossoverRate;
-    private final int elitismCount;
-
-    /**
      * A new property we've introduced is the size of the population used for
      * tournament selection in crossover.
      */
     protected int tournamentSize;
 
+    /**
+     * @param popSize
+     * @param mutationRate
+     * @param crossoverRate
+     * @param elitismCount
+     * @param selector
+     * @param fitnessFunction
+     * @param mutationOperator
+     * @param crossoverOperator
+     */
     public
-    SgaProcessor ( int populationSize,
+    SgaProcessor ( int popSize,
                    double mutationRate,
                    double crossoverRate,
                    int elitismCount,
-                   int tournamentSize ) {
+                   ISelector <T> selector,
+                   FitnessFunction <T> fitnessFunction,
+                   IMutationOperator <T> mutationOperator,
+                   ICrossoverOperator <T> crossoverOperator ) {
 
-        super(populationSize,
+        super(popSize,
                 mutationRate,
                 crossoverRate,
                 elitismCount,
-                tournamentSize);
+                selector,
+                fitnessFunction,
+                mutationOperator,
+                crossoverOperator
+        );
 
     }
 
@@ -55,9 +71,10 @@ class SgaProcessor<T extends Individual> extends GaProcessor {
      * @return population The initial population generated
      */
     public
-    Population initPopulation ( int chromosomeLength ) {
+    Population <T> initPopulation ( int popSize, int chromosomeLength ) {
         // Initialize population
-        Population population = new Population(this.populationSize, chromosomeLength);
+        Population <T> population = new Population <>(popSize, chromosomeLength);
+
         return population;
     }
 
@@ -72,7 +89,7 @@ class SgaProcessor<T extends Individual> extends GaProcessor {
      * @return double The fitness value for individual
      */
     public
-    double calcFitness ( Individual individual) {
+    double calcFitness ( T individual ) {
         // Get individual's chromosome
         int[] chromosome = individual.getChromosome();
 
@@ -104,12 +121,11 @@ class SgaProcessor<T extends Individual> extends GaProcessor {
      * @param population the population to evaluate
      */
     public
-    void evalPopulation ( Populatio<T> population) {
+    void evalPopulation ( Population <T> population ) {
         double populationFitness = 0;
 
-        // Loop over population evaluating individuals and suming population
-        // fitness
-        for (Individual individual : population.getIndividuals()) {
+        // Loop over population evaluating individuals and summing population fitness
+        for (T individual : population.getIndividuals()) {
             populationFitness += this.calcFitness(individual);
         }
 
@@ -142,14 +158,14 @@ class SgaProcessor<T extends Individual> extends GaProcessor {
      * @return The individual selected as a parent
      */
     public
-    Individual selectParent ( Population population ) {
+    T selectParent ( Population <T> population ) {
         // Create tournament
-        Population tournament = new Population(this.selector, this.populationSize, this.tournamentSize);
+        Population <T> tournament = new Population (population);
 
         // Add random individuals to the tournament
         population.shuffle();
         for (int i = 0; i < this.tournamentSize; i++) {
-            Individual tournamentIndividual = population.getIndividual(i);
+            T tournamentIndividual = population.getIndividual(i);
             tournament.setIndividual(i, tournamentIndividual);
         }
 
@@ -157,168 +173,12 @@ class SgaProcessor<T extends Individual> extends GaProcessor {
         return tournament.getFittest(0);
     }
 
-    /**
-     * Apply mutation to population
-     * <p>
-     * This method is the same as chapter2's version.
-     *
-     * @param population The population to apply mutation to
-     * @return The mutated population
-     */
-    public
-    Population mutatePopulation ( Population population ) {
-        // Initialize new population
-        Population newPopulation = new Population(this.selector, this.populationSize, this.populationSize);
-
-        // Loop over current population by fitness
-        for (int populationIndex = 0; populationIndex < population.size(); populationIndex++) {
-            Individual individual = population.getFittest(populationIndex);
-
-            // Loop over individual's genes
-            for (int geneIndex = 0; geneIndex < individual.getChromosomeLength(); geneIndex++) {
-                // Skip mutation if this is an elite individual
-                if (populationIndex >= this.elitismCount) {
-                    // Does this gene need mutation?
-                    if (this.mutationRate > Math.random()) {
-                        // Get new gene
-                        int newGene = 1;
-                        if (individual.getGene(geneIndex) == 1) {
-                            newGene = 0;
-                        }
-                        // Mutate gene
-                        individual.setGene(geneIndex, newGene);
-                    }
-                }
-            }
-
-
-            // Add individual to population
-            newPopulation.setIndividual(populationIndex, individual);
-        }
-
-        // Return mutated population
-        return newPopulation;
-    }
-
-    /**
-     * Crossover population using single point crossover
-     * <p>
-     * Single-point crossover differs from the crossover used in chapter2.
-     * Chapter2's version simply selects genes at random from each parent, but
-     * in this case we want to select a contiguous region of the chromosome from
-     * each parent.
-     * <p>
-     * For instance, chapter2's version would look like this:
-     * <p>
-     * Parent1: AAAAAAAAAA
-     * Parent2: BBBBBBBBBB
-     * Child  : AABBAABABA
-     * <p>
-     * This version, however, might look like this:
-     * <p>
-     * Parent1: AAAAAAAAAA
-     * Parent2: BBBBBBBBBB
-     * Child  : AAAABBBBBB
-     *
-     * @param population Population to crossover
-     * @return Population The new population
-     */
-    public
-    Population crossoverPopulation ( Population population ) {
-        // Create new population
-        Population newPopulation = new Population(this.selector, this.populationSize, population.size());
-
-        // Loop over current population by fitness
-        for (int populationIndex = 0; populationIndex < population.size(); populationIndex++) {
-            Individual parent1 = population.getFittest(populationIndex);
-
-            // Apply crossover to this individual?
-            if (this.crossoverRate > Math.random() && populationIndex >= this.elitismCount) {
-                // Initialize offspring
-                Individual offspring = new Individual(parent1.getChromosomeLength());
-
-                // Find second parent
-                Individual parent2 = this.selectParent(population);
-
-                // Get random swap point
-                int swapPoint = (int) (Math.random() * (parent1.getChromosomeLength() + 1));
-
-                // Loop over genome
-                for (int geneIndex = 0; geneIndex < parent1.getChromosomeLength(); geneIndex++) {
-                    // Use half of parent1's genes and half of parent2's genes
-                    if (geneIndex < swapPoint) {
-                        offspring.setGene(geneIndex, parent1.getGene(geneIndex));
-                    }
-                    else {
-                        offspring.setGene(geneIndex, parent2.getGene(geneIndex));
-                    }
-                }
-
-                // Add offspring to new population
-                newPopulation.setIndividual(populationIndex, offspring);
-            }
-            else {
-                // Add individual to new population without applying crossover
-                newPopulation.setIndividual(populationIndex, parent1);
-            }
-        }
-
-        return newPopulation;
-    }
-
-    /**
+        /**
      * initialize the population (chromosomes) to random values
      */
     @Override
     protected
     void initPopulation () {
-
-    }
-
-    /**
-     * do a random mutation on given chromosome
-     *
-     * @param iChromIndex
-     */
-    @Override
-    protected
-    void doRandomMutation ( int iChromIndex ) {
-
-    }
-
-    /**
-     * do one point crossover between the two given chromosomes
-     *
-     * @param Chrom1
-     * @param Chrom2
-     */
-    @Override
-    protected
-    void doOnePtCrossover ( Chromosome Chrom1, Chromosome Chrom2 ) {
-
-    }
-
-    /**
-     * do two point crossover between the two given chromosomes
-     *
-     * @param Chrom1
-     * @param Chrom2
-     */
-    @Override
-    protected
-    void doTwoPtCrossover ( Chromosome Chrom1, Chromosome Chrom2 ) {
-
-    }
-
-    /**
-     * do uniform crossover between the two given chromosomes
-     *
-     * @param Chrom1
-     * @param Chrom2
-     */
-    @Override
-    protected
-    void doUniformCrossover ( Chromosome Chrom1, Chromosome Chrom2 ) {
 
     }
 
@@ -330,6 +190,7 @@ class SgaProcessor<T extends Individual> extends GaProcessor {
     @Override
     protected
     double getFitness ( int iChromIndex ) {
+        // fitnessFunction.apply();
         return 0;
     }
 }

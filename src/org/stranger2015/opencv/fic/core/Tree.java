@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Rect;
 
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.EnumSet;
 
@@ -14,18 +15,18 @@ import static org.stranger2015.opencv.fic.core.Tree.EAffineTransform.*;
  * @param <M>
  */
 abstract public
-class Tree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage> {
+class Tree<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer> {
 
     public static final int DEFAULT_DEPTH = Integer.MAX_VALUE;
     public static final Rect DEFAULT_BOUNDING_BOX = new Rect(0, 0, 0, 0);
 
-    protected final NodeList <N, A, M> leaves = new NodeList <>();
-    protected final NodeList <N, A, M> nodes = new NodeList <>();
+    protected final NodeList <N, A, M, G> leaves = new NodeList <>();
+    protected final NodeList <N, A, M, G> nodes = new NodeList <>();
 
     protected M image;
 
-    protected TreeNode <N, A, M> root;
-    protected TreeNodeAction <N, A, M> action;
+    protected TreeNode <N, A, M, G> root;
+    protected TreeNodeAction <N, A, M, G> action;
 
     private Rect area;
 
@@ -48,7 +49,7 @@ class Tree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage
      * @param area
      */
     protected
-    Tree ( TreeNode <N, A, M> root, M image, TreeNodeAction <N, A, M> action, Rect area, int depth ) {
+    Tree ( TreeNode <N, A, M, G> root, M image, TreeNodeAction <N, A, M, G> action, Rect area, int depth ) {
         this.image = image;
         this.root = root;
         this.area = area;
@@ -63,7 +64,7 @@ class Tree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage
      * @param action
      */
     protected
-    Tree ( TreeNode <N, A, M> root, M image, TreeNodeAction <N, A, M> action ) {
+    Tree ( TreeNode <N, A, M, G> root, M image, TreeNodeAction <N, A, M, G> action ) {
         this(
                 root,
                 image,
@@ -75,12 +76,12 @@ class Tree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage
 
     @SuppressWarnings("unchecked")
     public static
-    <N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
-    @NotNull Tree <N, A, M> create ( String className ) {
+    <N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer>
+    @NotNull Tree <N, A, M, G> create ( String className ) {
         int rc = 0;
         try {
-            Class <Tree <N, A, M>> clazz = (Class <Tree <N, A, M>>) Class.forName(className);
-            Tree <N, A, M> tree = clazz.getDeclaredConstructor().newInstance();
+            Class <Tree <N, A, M, G>> clazz = (Class <Tree <N, A, M, G>>) Class.forName(className);
+            Tree <N, A, M, G> tree = clazz.getDeclaredConstructor().newInstance();
             tree.initialize();
 
             return tree;
@@ -116,7 +117,7 @@ class Tree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage
      * @return
      */
     abstract public
-    TreeNode <N, A, M> nodeInstance ( TreeNode <N, A, M> parent, EDirection quadrant, Rect rect )
+    TreeNode <N, A, M, G> nodeInstance ( TreeNode <N, A, M, G> parent, EDirection quadrant, Rect rect )
             throws ValueError;
 
     /**
@@ -124,15 +125,15 @@ class Tree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage
      */
     @SuppressWarnings("unchecked")
     public
-    Class <? extends TreeNode <N, A, M>> getNodeClass ( TreeNode <N, A, M> clazz ) {
-        return (Class <? extends TreeNode <N, A, M>>) clazz.getClass();
+    Class <? extends TreeNode <N, A, M, G>> getNodeClass ( TreeNode <N, A, M, G> clazz ) {
+        return (Class <? extends TreeNode <N, A, M, G>>) clazz.getClass();
     }
 
     /**
      * @return
      */
     public
-    TreeNode <N, A, M> getRoot () {
+    TreeNode <N, A, M, G> getRoot () {
         return root;
     }
 
@@ -151,9 +152,9 @@ class Tree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage
      * @return
      */
     public
-    TreeTraverser <N, A, M> getTraverser ( Tree <N, A, M> tree,
+    TreeTraverser <N, A, M, G> getTraverser ( Tree <N, A, M, G> tree,
                                            int depth,
-                                           TreeNodeAction <N, A, M> action ) {
+                                           TreeNodeAction <N, A, M, G> action ) {
         return new TreeTraverser <>(tree, depth, action);
     }
 
@@ -169,7 +170,7 @@ class Tree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage
      * @return
      */
     public
-    NodeList <N, A, M> getNodes () {
+    NodeList <N, A, M, G> getNodes () {
         return nodes;
     }
 

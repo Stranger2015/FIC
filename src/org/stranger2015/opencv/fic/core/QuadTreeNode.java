@@ -5,13 +5,14 @@ import org.opencv.core.Rect;
 
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.utils.Point;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  *
  */
 public
-class QuadTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
-        extends BinTreeNode <N, A, M> {
+class QuadTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
+        extends BinTreeNode <N, A, M, G> {
 
     /**
      * @param parent
@@ -19,7 +20,7 @@ class QuadTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
      * @param rect
      */
     public
-    QuadTreeNode ( TreeNode <N, A, M> parent, EDirection quadrant, Rect rect ) throws ValueError {
+    QuadTreeNode ( TreeNode <N, A, M, G> parent, EDirection quadrant, Rect rect ) throws ValueError {
         super(parent, quadrant, rect);
     }
 
@@ -31,7 +32,7 @@ class QuadTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
     @Override
     @SuppressWarnings("*")
     public
-    TreeNode <N, A, M> createChild ( EDirection quadrant, Rect rect ) throws ValueError {
+    TreeNode <N, A, M, G> createChild ( EDirection quadrant, Rect rect ) throws ValueError {
         return new QuadTreeNode <>(this, quadrant, rect);
     }
 
@@ -40,39 +41,39 @@ class QuadTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
      * @param <A>
      */
     public static
-    class QuadLeafNode<N extends LeafNode <N, A, M>, A extends Address <A>, M extends IImage>
-            extends LeafNode <N, A, M> {
+    class QuadLeafNode<N extends LeafNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>,
+            G extends BitBuffer>
+            extends LeafNode <N, A, M, G> {
         /**
          * @param parent
          * @param image
          * @param rect
-         * @throws ValueError
          */
         protected
-        QuadLeafNode ( TreeNode <N, A, M> parent, M image, Rect rect ) throws ValueError {
-            super(parent, image, rect);
+        QuadLeafNode ( TreeNode <N, A, M, G> parent, M image, Rect rect ) {
+            super(parent,
+                    image,
+                    rect);
         }
 
         /**
          * @param point
          * @param layerIndex
-         * @param clusteIndex
-         * @param x
-         * @param y
+         * @param clusterIndex
          * @param address
          * @return
          * @throws ValueError
          */
         @Override
         public
-        TreeNode <N, A, M> createChild ( Point point, int layerIndex, int clusteIndex, int x, int y, int address )
+        TreeNode <N, A, M, G> createChild ( Point point, int layerIndex, int clusterIndex, Address <A> address )
                 throws ValueError {
+
             return null;
         }
 
-//        @Override
         public
-        TreeNode <N, A, M> createChild ( int layerIndex, int clusteIndex, int address ) throws ValueError {
+        TreeNode <N, A, M, G> createChild ( int layerIndex, int clusteIndex, int address ) throws ValueError {
             return null;
         }
 
@@ -85,7 +86,7 @@ class QuadTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
          */
         @Override
         public
-        TreeNode <N, A, M> createNode ( TreeNode <N, A, M> parent, M image, Rect boundingBox ) throws ValueError {
+        TreeNode <N, A, M, G> createNode ( TreeNode <N, A, M, G> parent, M image, Rect boundingBox ) throws ValueError {
             return null;
         }
 
@@ -96,7 +97,7 @@ class QuadTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
          * @return
          */
         public
-        QuadLeafNode <N, A, M> createNode ( TreeNode <N, A, M> parent, EDirection quadrant, Rect boundingBox )
+        QuadLeafNode <N, A, M, G> createNode ( TreeNode <N, A, M, G> parent, EDirection quadrant, Rect boundingBox )
                 throws ValueError {
             return new QuadLeafNode <>(parent, null, boundingBox);//fixme
         }
@@ -108,7 +109,7 @@ class QuadTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
          */
         @Override
         public
-        TreeNode <N, A, M> createNode ( TreeNode <N, A, M> parent, Rect boundingBox ) throws ValueError {
+        TreeNode <N, A, M, G> createNode ( TreeNode <N, A, M, G> parent, Rect boundingBox ) throws ValueError {
             return new QuadLeafNode <>(parent, null, boundingBox);
         }
 

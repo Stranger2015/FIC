@@ -9,13 +9,13 @@ import java.util.List;
  * @param <N>
  */
 public
-class BuildAction<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
-        extends TreeNodeAction <N, A, M> {
+class BuildAction<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer>
+        extends TreeNodeAction <N, A, M, G> {
     /**
      * @param domainPool
      */
     public
-    BuildAction (List<ImageBlock> domainPool ) {
+    BuildAction (List<ImageBlock<A>> domainPool ) {
         super(domainPool, new NodeList <>());
     }
 

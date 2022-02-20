@@ -6,50 +6,62 @@ import org.opencv.core.MatOfDouble;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-
 import org.stranger2015.opencv.fic.core.codec.Pixel;
-
-import java.awt.*;
 
 /**
  *
  */
 public
-class Image extends MatOfDouble implements IImage {
+class Image<A extends Address <A>> extends MatOfDouble implements IImage <A> {
+
+    protected Address <A> address;
 
     /**
      *
      */
-enum EColorType {
-    GRAYSCALE(0),
-    TRUE_COLOR(2),
-    INDEXED_COLOR(3),
-    GRAYSCALE_WITH_ALPHA(4),
-    TRUE_COLOR_WITH_ALPHA(6);
+    public
+    Image () {
+    }
 
-    private final int cType;
+    public
+    Image ( IImage <A> image, Address <A> address, int type ) {
+
+
+    }
+
+    /**
+     *
+     */
+    enum EColorType {
+        GRAYSCALE(0),
+        TRUE_COLOR(2),
+        INDEXED_COLOR(3),
+        GRAYSCALE_WITH_ALPHA(4),
+        TRUE_COLOR_WITH_ALPHA(6);
+
+        private final int cType;
 
         /**
          * @param cType
          */
-    @Contract(pure = true)
-    EColorType ( int cType ) {
-        this.cType = cType;
-    }
+        @Contract(pure = true)
+        EColorType ( int cType ) {
+            this.cType = cType;
+        }
 
         /**
          * @return
          */
-    @Contract(pure = true)
-    public
-    int getCType () {
-        return cType;
+        @Contract(pure = true)
+        public
+        int getCType () {
+            return cType;
+        }
     }
-}
 
     public /*final fixme */ EColorType cType;
 
-       public int originalImageWidth;
+    public int originalImageWidth;
     public int originalImageHeight;
 
     /**
@@ -68,7 +80,7 @@ enum EColorType {
                 pixelData.val[2],
                 pixelData.val[3]
         );
-        this.cType=cType;
+        this.cType = cType;
     }
 
     /**
@@ -76,7 +88,7 @@ enum EColorType {
      * @param n
      */
     public
-    Image ( IImage image, double... n ) {
+    Image ( IImage <A> image, double... n ) {
         super(n);
     }
 
@@ -89,24 +101,24 @@ enum EColorType {
      * @param cType
      */
     public
-    Image ( IImage image, int x, int y, int w, int h, EColorType cType ) {
+    Image ( IImage <A> image, int x, int y, int w, int h, EColorType cType ) {
 //todo
         this.cType = cType;
     }
 
     public
-    Image ( IImage image, int address, int blockSize, EColorType cType ) {
-     //todo
+    Image ( IImage <A> image, int address, int blockSize, EColorType cType ) {
+        //todo
         this.cType = cType;
     }
 
     /**
      * @return
      */
-//    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
     public
-    IImage subImage ( int rowStart, int rowEnd, int colStart, int colEnd ) {
-        return (IImage) submat(rowStart, rowEnd, colStart, colEnd);
+    IImage <A> subImage ( int rowStart, int rowEnd, int colStart, int colEnd ) {
+        return (IImage <A>) submat(rowStart, rowEnd, colStart, colEnd);
     }
 
     /**
@@ -125,24 +137,27 @@ enum EColorType {
         imread.create(size, type());
     }
 
-    /**
-     * @return
-     */
-    @Override
-    public
-    int getX () {
-        return 0;
-    }
+//    /**
+//     * @return
+//     */
+//    @Override
+//    public
+//    int getX () {
+//        return 0;
+//    }
+//
+//    /**
+//     * @return
+//     */
+//    @Override
+//    public
+//    int getY () {
+//        return 0;
+//    }
 
-    /**
-     * @return
-     */
-    @Override
-    public
-    int getY () {
-        return 0;
-    }
-
+  public Address<A> getAddress(){
+        return address;
+   }
     /**
      * @return
      */
@@ -192,8 +207,6 @@ enum EColorType {
     }
 
     /**
-     *
-     *
      * @param inputImage
      * @param outputImage
      * @param factor
@@ -239,17 +252,16 @@ enum EColorType {
      * @return
      */
     public
-    IImage createInputImage (IImage image) {
+    IImage createInputImage ( IImage image ) {
         return new Image(image);
     }
 
     /**
-     *
      * @param image
      * @return
      */
     public
-    IImage createOutputImage(IImage image){
+    IImage createOutputImage ( IImage image ) {
         return new CompressedImage(image);
     }
 
@@ -269,12 +281,12 @@ enum EColorType {
      */
     @Override
     public
-    IImage contract ( int contractivity){
+    IImage contract ( int contractivity ) {
 
         IImage image = new Image(this);
 
-        int newWidth = image.width()/contractivity;
-        int newHeight = image.height()/contractivity;
+        int newWidth = image.width() / contractivity;
+        int newHeight = image.height() / contractivity;
 
         Imgproc.resize(this, (Mat) image, new Size(newWidth, newHeight));
 

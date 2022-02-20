@@ -1,12 +1,11 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import org.stranger2015.opencv.utils.BitBuffer;
+
+import java.util.*;
+import java.util.stream.IntStream;
 
 /**
- *
  * 5.1 Roulette wheel selection
  * In roulette wheel selection, the probability that individual i is selected, P (choice = i), is computed as follows:
  * P (choice = i) =def
@@ -35,21 +34,19 @@ import java.util.Random;
  *
  * <p>In some instances, particularly with small population sizes, the randomness
  * of selection may result in excessively high occurrences of particular candidates.
-// * If this is a problem, provides an alternativeёё* fitness-proportionate strategy for selection.</p>
+ * // * If this is a problem, provides an alternativeёё* fitness-proportionate strategy for selection.</p>
  *
  * @author Daniel Dyer
  */
 public
-class RouletteWheelSelector<T extends Individual> extends Selector<T> implements ISelector<T> {
+class RouletteWheelSelector<T extends Individual <G, C>, G extends BitBuffer, C extends Chromosome <G>>
+        extends Selector <T, G, C> {
     /**
      *
      */
-
-
     public
     RouletteWheelSelector ( ESelectionType type ) {
         super(type);
-        this.type = type;
     }
 
     /**
@@ -67,7 +64,7 @@ class RouletteWheelSelector<T extends Individual> extends Selector<T> implements
      * @return The selected candidates.
      */
     public
-    <S> List <S> select ( List <EvaluatedCandidate <S>> population,
+    <S> List <S> select ( List <T> population,
                           boolean naturalFitnessScores,
                           int selectionSize,
                           Random rng ) {
@@ -81,12 +78,12 @@ class RouletteWheelSelector<T extends Individual> extends Selector<T> implements
         double[] cumulativeFitnesses = new double[population.size()];
         cumulativeFitnesses[0] = getAdjustedFitness(population.get(0).getFitness(),
                 naturalFitnessScores);
-        for (int i = 1; i < population.size(); i++) {
-            double fitness = getAdjustedFitness(population.get(i).getFitness(),                    naturalFitnessScores);
+        IntStream.range(1, population.size()).forEachOrdered(i -> {
+            double fitness = getAdjustedFitness(population.get(i).getFitness(), naturalFitnessScores);
             cumulativeFitnesses[i] = cumulativeFitnesses[i - 1] + fitness;
-        }
+        });
 
-        List <S> selection = new ArrayList <S>(selectionSize);
+        List <S> selection = new ArrayList <>(selectionSize);
         for (int i = 0; i < selectionSize; i++) {
             double randomFitness = rng.nextDouble() * cumulativeFitnesses[cumulativeFitnesses.length - 1];
             int index = Arrays.binarySearch(cumulativeFitnesses, randomFitness);
@@ -94,7 +91,7 @@ class RouletteWheelSelector<T extends Individual> extends Selector<T> implements
                 // Convert negative insertion point to array index.
                 index = Math.abs(index + 1);
             }
-            selection.add(population.get(index).getCandidate());
+//            selection.add(population.get(index)/*.getCandidate()*/); fixme
         }
 
         return selection;
@@ -134,12 +131,6 @@ class RouletteWheelSelector<T extends Individual> extends Selector<T> implements
     public
     T selectSecond () {
         return null;
-    }
-
-    @Override
-    public
-    ESelectionType getType () {
-        return type;
     }
 }
 

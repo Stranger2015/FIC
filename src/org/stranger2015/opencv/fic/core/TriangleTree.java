@@ -7,8 +7,8 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
  * root --> rectangle diagonally divided into 2 triangles --> triangle tree nodes
  */
 public
-class TriangleTree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
-        extends BinTree <N, A, M> {
+class TriangleTree<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer>
+        extends BinTree <N, A, M, G> {
     /**
      * Constructs a new object.
      *
@@ -17,7 +17,7 @@ class TriangleTree<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
      * @param action
      */
     public
-    TriangleTree ( TreeNode <N, A, M> parent, M image, TreeNodeAction <N, A, M> action ) {
+    TriangleTree ( TreeNode <N, A, M, G> parent, M image, TreeNodeAction <N, A, M, G> action ) {
         super(parent, image, action);
     }
 
@@ -29,7 +29,7 @@ class TriangleTree<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
      */
 //    @Override
     public
-    TreeNode <N, A, M> nodeInstance ( TreeNode <N, A, M> parent, EDirection quadrant, Rect rect ) throws ValueError {
+    TreeNode <N, A, M, G> nodeInstance ( TreeNode <N, A, M, G> parent, EDirection quadrant, Rect rect ) throws ValueError {
         return new TriangleTreeNode <>(parent, rect);
     }
 
@@ -38,7 +38,7 @@ class TriangleTree<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
      */
     @SuppressWarnings("unchecked")
     public
-    Class <? extends TreeNode <N, A, M>> getNodeClass ( TreeNode <N, A, M> clazz ) {
-        return (Class <? extends TreeNode <N, A, M>>) clazz.getClass();
+    Class <? extends TreeNode <N, A, M, G>> getNodeClass ( TreeNode <N, A, M, G> clazz ) {
+        return (Class <? extends TreeNode <N, A, M, G>>) clazz.getClass();
     }
 }

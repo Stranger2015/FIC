@@ -1,11 +1,14 @@
 package org.stranger2015.opencv.fic.core.codec;
 
+import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.fic.core.search.ga.*;
+import org.stranger2015.opencv.fic.transform.ITransform;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * 4. GA’s and the IFS Inverse Problem:
- *
+ * <p>
  * Genetic algorithms work with a population of
  * individuals which are iteratively adapted towards the
  * optimum by means of a random process of selection,
@@ -103,29 +106,35 @@ import org.stranger2015.opencv.fic.core.search.ga.*;
  * return the fittest individual from Pk
  */
 public
-class FicGaProcessor<T extends Individual>
-        extends GaProcessor <T>
-        implements ISearchProcessor <T> {
+class FicGaProcessor<T extends Individual <T, A, G, C>, A extends Address <A>, G extends BitBuffer,
+        C extends Chromosome <T, A, G>>
+        extends GaProcessor <T, A, G, C>
+        implements ISearchProcessor <T, A, G> {
     /**
-     * @param populationSize
+     * @param popSize
      * @param mutationRate
      * @param crossoverRate
      * @param elitismCount
      * @param selector
      */
     public
-    FicGaProcessor ( int populationSize,
+    FicGaProcessor ( int popSize,
                      double mutationRate,
                      double crossoverRate,
                      int elitismCount,
-                     ISelector <Individual> selector ) {
+                     ISelector <T, A, G, C> selector,
+                     FitnessFunction <T> fitnessFunction,
+                     IMutationOperator <T> mutationOperator,
+                     ICrossoverOperator <T, A, G, C> crossoverOperator ) {
 
-        super(
-                populationSize,
+        super(popSize,
                 mutationRate,
                 crossoverRate,
                 elitismCount,
-                selector);
+                selector,
+                fitnessFunction,
+                mutationOperator,
+                crossoverOperator);
     }
 
 //    /**
@@ -174,54 +183,7 @@ class FicGaProcessor<T extends Individual>
     @Override
     protected
     void initPopulation () {
-        Population.init();
-    }
-
-    /**
-     * do a random mutation on given chromosome
-     *
-     * @param iChromIndex
-     */
-    @Override
-    protected
-    void doRandomMutation ( int iChromIndex ) {
-
-    }
-
-    /**
-     * do one point crossover between the two given chromosomes
-     *
-     * @param Chrom1
-     * @param Chrom2
-     */
-    @Override
-    protected
-    void doOnePtCrossover ( Chromosome Chrom1, Chromosome Chrom2 ) {
-
-    }
-
-    /**
-     * do two point crossover between the two given chromosomes
-     *
-     * @param Chrom1
-     * @param Chrom2
-     */
-    @Override
-    protected
-    void doTwoPtCrossover ( Chromosome Chrom1, Chromosome Chrom2 ) {
-
-    }
-
-    /**
-     * do uniform crossover between the two given chromosomes
-     *
-     * @param Chrom1
-     * @param Chrom2
-     */
-    @Override
-    protected
-    void doUniformCrossover ( Chromosome Chrom1, Chromosome Chrom2 ) {
-
+        populations[popIndex].init();
     }
 
     /**
@@ -250,11 +212,21 @@ class FicGaProcessor<T extends Individual>
 
     }
 
+    /**
+     * @param bestTransform
+     */
+    @Override
     public
-    int evaluate () {
-        int fitness = 0;
+     void setBestTransform ( ITransform <T, A, G> bestTransform ) {
 
+    }
 
-        return fitness;
+    /**
+     * @return
+     */
+    @Override
+    public
+    ITransform <T, A, G> getBestTransform () {
+        return null;
     }
 }

@@ -3,20 +3,18 @@ package org.stranger2015.opencv.fic.core;
 import org.jetbrains.annotations.NotNull;
 
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  *
  */
 public
-class NodeList<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
+class NodeList<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer>
         implements Iterable <N>{
 
-    private final List <TreeNode <N, A, M>> list = new ArrayList <>();
+    private final List <TreeNode <N, A, M, G>> list = new ArrayList <>();
 
     /**
      *
@@ -29,7 +27,7 @@ class NodeList<N extends TreeNode <N, A, M>, A extends Address <A>, M extends II
      * @param node
      */
     public
-    NodeList ( TreeNode <N, A, M> node ) {
+    NodeList ( TreeNode <N, A, M, G> node ) {
         list.add(node);
     }
 
@@ -58,7 +56,7 @@ class NodeList<N extends TreeNode <N, A, M>, A extends Address <A>, M extends II
      * @param node
      */
     public
-    void add ( TreeNode <N, A, M> node ) {
+    void add ( TreeNode <N, A, M, G> node ) {
         addi(node.index, node);
     }
 
@@ -66,7 +64,7 @@ class NodeList<N extends TreeNode <N, A, M>, A extends Address <A>, M extends II
      * @param node
      */
     public
-    void set ( TreeNode <N, A, M> node ) {
+    void set ( TreeNode <N, A, M, G> node ) {
         seti(node.index, node);
     }
 
@@ -75,7 +73,7 @@ class NodeList<N extends TreeNode <N, A, M>, A extends Address <A>, M extends II
      * @param node
      */
     private
-    void seti ( int index, TreeNode <N, A, M> node ) {
+    void seti ( int index, TreeNode <N, A, M, G> node ) {
         list.set(index, node);
     }
 
@@ -84,7 +82,7 @@ class NodeList<N extends TreeNode <N, A, M>, A extends Address <A>, M extends II
      * @param node
      */
     public
-    void add ( EDirection direction, TreeNode <N, A, M> node ) {
+    void add ( EDirection direction, TreeNode <N, A, M, G> node ) {
         int index = direction.getOrd();
         addi(index, node);
     }
@@ -94,7 +92,7 @@ class NodeList<N extends TreeNode <N, A, M>, A extends Address <A>, M extends II
      * @param node
      */
     public
-    void set ( EDirection direction, TreeNode <N, A, M> node ) {
+    void set ( EDirection direction, TreeNode <N, A, M, G> node ) {
         int index = direction.getOrd();
         seti(index, node);
     }
@@ -104,7 +102,7 @@ class NodeList<N extends TreeNode <N, A, M>, A extends Address <A>, M extends II
      * @param node
      */
     public
-    void add ( int index, TreeNode <N, A, M> node ) {
+    void add ( int index, TreeNode <N, A, M, G> node ) {
         addi(index, node);
     }
 
@@ -113,7 +111,7 @@ class NodeList<N extends TreeNode <N, A, M>, A extends Address <A>, M extends II
      * @param node
      */
     public
-    void set ( int index, TreeNode <N, A, M> node ) {
+    void set ( int index, TreeNode <N, A, M, G> node ) {
         list.set(index, node);
     }
 
@@ -122,7 +120,7 @@ class NodeList<N extends TreeNode <N, A, M>, A extends Address <A>, M extends II
      * @param node
      */
     private
-    void addi ( int index, TreeNode <N, A, M> node ) {
+    void addi ( int index, TreeNode <N, A, M, G> node ) {
         if (index < list.size()) {
             list.set(index, node);
         }
@@ -136,7 +134,7 @@ class NodeList<N extends TreeNode <N, A, M>, A extends Address <A>, M extends II
      * @return
      */
     public
-    TreeNode <N, A, M> get ( EDirection dir ) {
+    TreeNode <N, A, M, G> get ( EDirection dir ) {
         return list.get(dir.getOrd());
     }
 
@@ -144,7 +142,7 @@ class NodeList<N extends TreeNode <N, A, M>, A extends Address <A>, M extends II
      * @return
      */
     public
-    List <TreeNode <N, A, M>> getList () {
+    List <TreeNode <N, A, M, G>> getList () {
         return list;
     }
 
@@ -152,7 +150,7 @@ class NodeList<N extends TreeNode <N, A, M>, A extends Address <A>, M extends II
      * @param node
      * @return
      */
-    NodeList <N, A, M> singleton ( TreeNode <N, A, M> node ) {
+    NodeList <N, A, M, G> singleton ( TreeNode <N, A, M, G> node ) {
         return new NodeList <>(node);
     }
 
@@ -174,12 +172,12 @@ class NodeList<N extends TreeNode <N, A, M>, A extends Address <A>, M extends II
      */
     @SuppressWarnings("unchecked")
     public
-    void add ( NodeList <N, A, M> l ) {
-        getList().addAll((Collection <? extends TreeNode <N, A, M>>) l);
+    void add ( NodeList <N, A, M, G> l ) {
+        getList().addAll((Collection <? extends TreeNode <N, A, M, G>>) l);
     }
 
     public
-    TreeNode <N, A, M> get ( int ord ) {
+    TreeNode <N, A, M, G> get ( int ord ) {
         return list.get(ord);
     }
 }

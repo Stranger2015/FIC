@@ -11,15 +11,15 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
  * @param <M>
  */
 public
-class SabVrTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
-        extends SaTreeNode <N, A, M> {
+class SabVrTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer>
+        extends SaTreeNode <N, A, M, G> {
     /**
      * @param parent
      * @param hexant
      * @param rect
      */
     public
-    SabVrTreeNode ( TreeNode <N, A, M> parent, EDirection hexant, Rect rect ) throws ValueError {
+    SabVrTreeNode ( TreeNode <N, A, M, G> parent, EDirection hexant, Rect rect ) throws ValueError {
         super(parent, hexant, rect);
     }
 }

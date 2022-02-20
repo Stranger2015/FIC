@@ -2,15 +2,16 @@ package org.stranger2015.opencv.fic.core;
 
 import org.opencv.core.Size;
 
-
 /**
  *
  */
 public
-class ImageBlock extends Image  {
+class ImageBlock<A extends Address <A>> extends Image <A> {
 
-    public int x;
-    public int y;
+    /**
+     *
+     */
+//    public Address <A> address;
 
     public int width;
     public int height;
@@ -18,7 +19,7 @@ class ImageBlock extends Image  {
     public double beta;
     public double meanPixelValue;
 
-    protected IImage image;
+    protected IImage <A> image;
 
     /**
      * @param subImage
@@ -27,8 +28,9 @@ class ImageBlock extends Image  {
      * @param type
      */
     public
-    ImageBlock ( IImage subImage, int rows, int cols, int type ) {
+    ImageBlock ( IImage <A> subImage, int rows, int cols, int type ) {
         super(subImage, rows, cols, type);
+
         this.image = subImage;
     }
 
@@ -48,7 +50,7 @@ class ImageBlock extends Image  {
      * @param h
      */
     public
-    ImageBlock ( IImage image, int x, int y, int w, int h ) {
+    ImageBlock ( IImage <A> image, int x, int y, int w, int h ) {
         super(image, x, y, w, h);
 
         this.image = image;
@@ -56,16 +58,8 @@ class ImageBlock extends Image  {
 
 
     public
-    ImageBlock ( IImage image, int blockSize, int address ) {
+    ImageBlock ( IImage <A> image, int blockSize, int address ) {
         super(image, address, blockSize);
-    }
-
-    /**
-     * @return
-     */
-    public
-    int getX () {
-        return x;
     }
 
     /**
@@ -92,52 +86,40 @@ class ImageBlock extends Image  {
     double getBeta () {
         return beta;
     }
+//
+//    /**
+//     * @param width
+//     * @param height
+//     * @param type
+//     */
+//    public
+//    ImageBlock ( int width, int height, int type ) throws ValueError {
+//        this( width, height, type);
+//    }
 
     /**
-     * @param width
-     * @param height
      * @param type
      */
     public
-    ImageBlock ( int width, int height, int type ) {
-        this(0, 0, width, height, type);
-    }
+    ImageBlock ( Address<A> address, int width, int height, int type ) {
+        super(null, address, type);//fixme
 
-    /**
-     * @param type
-     */
-    public
-    ImageBlock ( int x, int y, int width, int height, int type ) {
-        super(null, x, y, type);//fixme
-
-        this.x = x;
-        this.y = y;
         this.width = width;
         this.height = height;
     }
 
-    /**
-     * @return
-     */
+    @Override
     public
-    int getY () {
-        return y;
+    Address <A> getAddress () {
+        return address;
     }
 
     public
-    void setX ( int x ) {
-        this.x = x;
+    void setAddress ( Address <A> address ) {
+        this.address = address;
     }
 
-    /**
-     * @param y
-     */
-    public
-    void setY ( int y ) {
-        this.y = y;
-    }
-
-//    /**
+    //    /**
 //     * @param contractivity
 //     */
 //    public

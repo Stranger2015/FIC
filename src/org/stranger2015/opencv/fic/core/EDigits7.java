@@ -3,7 +3,7 @@ package org.stranger2015.opencv.fic.core;
 import org.jetbrains.annotations.Contract;
 import org.stranger2015.opencv.fic.core.codec.IAddress;
 
-import java.util.BitSet;
+import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.List;
 @Deprecated
@@ -26,17 +26,17 @@ enum EDigits7 implements IDigits7 {
      */
     @Contract(pure = true)
     public
-    BitSet getOccurrences () {
+    ByteBuffer getOccurrences () {
         return occurrences;
     }
 
-    private final BitSet occurrences;
+    private final ByteBuffer occurrences;
 
     /**
      *
      */
     EDigits7 () {
-        occurrences = new BitSet(0);
+        occurrences = new ByteBuffer(0);
     }
 
     @Override

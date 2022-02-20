@@ -3,6 +3,7 @@ package org.stranger2015.opencv.fic.core;
 import org.opencv.core.Rect;
 import org.stranger2015.opencv.fic.DomainBlock;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.function.Consumer;
 
@@ -11,8 +12,8 @@ import java.util.function.Consumer;
  * @param <M>
  */
 public
-class QuadTree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
-        extends BinTree <N, A, M> {
+class QuadTree<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer>
+        extends BinTree <N, A, M, G> {
 
     /**
      * @param root
@@ -20,19 +21,9 @@ class QuadTree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends II
      * @param action
      */
     public
-    QuadTree ( TreeNode <N, A, M> root, M image, TreeNodeAction <N, A, M> action ) {
+    QuadTree ( TreeNode <N, A, M, G> root, M image, TreeNodeAction <N, A, M, G> action ) {
         super(root, image, action);
     }
-
-//    /**
-//     * @return
-//     */
-//    @SuppressWarnings("unchecked")
-//    @Override
-//    public
-//    Class <TreeNode <N, A, M>> getNodeClass () {
-//        return (Class <N>) QuadTreeNode.class;
-//    }
 
     /**
      * @param w
@@ -40,11 +31,11 @@ class QuadTree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends II
      * @return
      */
     protected static
-    <N extends DomainBlock <N, A, M>, A extends Address <A>, M extends IImage>
-    NodeList <N, A, M> collectDomainBlocks ( NodeList <N, A, M> leaves, int w, int h ) throws ValueError {
-        NodeList <N, A, M> l = new NodeList <>();
+    <N extends DomainBlock <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer>
+    NodeList <N, A, M, G> collectDomainBlocks ( NodeList <N, A, M, G> leaves, int w, int h ) {
+        NodeList <N, A, M, G> l = new NodeList <>();
         if (!leaves.isEmpty()) {
-            for (ILeaf <N, A, M> leaf : leaves) {
+            for (ILeaf <N, A, M, G> leaf : leaves) {
                 M image = leaf.getImage();
                 if (image.width() == w && image.height() == h) {
                     l.add(new DomainBlock <>(null, image, leaf.getBoundingBox()));
@@ -62,7 +53,7 @@ class QuadTree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends II
      * @return
      */
     public
-    TreeNode <N, A, M> nodeInstance ( TreeNode <N, A, M> parent, EDirection quadrant, Rect rect )
+    TreeNode <N, A, M, G> nodeInstance ( TreeNode <N, A, M, G> parent, EDirection quadrant, Rect rect )
             throws ValueError {
         return new QuadTreeNode <>(parent, quadrant, rect);
     }

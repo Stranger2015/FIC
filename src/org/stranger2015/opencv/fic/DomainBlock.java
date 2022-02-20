@@ -8,14 +8,16 @@ import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.fic.core.codec.Pixel;
 import org.stranger2015.opencv.fic.utils.Point;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * 8 X 8
  */
 public
-class DomainBlock<N extends DomainBlock <N, A, M>, A extends Address <A>, M extends IImage>
-        extends LeafNode <N, A, M>
-        implements IImage {
+class DomainBlock<N extends DomainBlock <N, A, M, G>, A extends Address <A>, M extends IImage<A>,
+        G extends BitBuffer>
+        extends LeafNode <N, A, M, G>
+        implements IImage<A> {
 
     public final static int W = 8;
     public final static int H = 8;
@@ -26,7 +28,7 @@ class DomainBlock<N extends DomainBlock <N, A, M>, A extends Address <A>, M exte
      * @param rect
      */
     public
-    DomainBlock ( TreeNode <N, A, M> parent, M image, Rect rect ) {
+    DomainBlock ( TreeNode <N, A, M, G> parent, M image, Rect rect ) {
         super(parent, image, rect);
     }
 
@@ -34,7 +36,7 @@ class DomainBlock<N extends DomainBlock <N, A, M>, A extends Address <A>, M exte
      * @param address
      */
     public
-    DomainBlock ( int address ) {
+    DomainBlock ( Address <A> address ) {
         super(address);
     }
 
@@ -42,20 +44,16 @@ class DomainBlock<N extends DomainBlock <N, A, M>, A extends Address <A>, M exte
      * @param point
      * @param layerIndex
      * @param clusteIndex
-     * @param x
-     * @param y
      * @param address
      * @return
      * @throws ValueError
      */
     @Override
     public
-    TreeNode <N, A, M> createChild ( Point point,
+    TreeNode <N, A, M, G> createChild ( Point point,
                                      int layerIndex,
                                      int clusteIndex,
-                                     int x,
-                                     int y,
-                                     int address )
+                                     Address<A> address )
             throws ValueError {
 
         return new DomainBlock <>(address);
@@ -70,7 +68,7 @@ class DomainBlock<N extends DomainBlock <N, A, M>, A extends Address <A>, M exte
      */
 //    @Override
     public//todo fixme
-    TreeNode <N, A, M> createChild ( int layerIndex, int imageBlock, int address ) throws ValueError {
+    TreeNode <N, A, M, G> createChild ( int layerIndex, int imageBlock, Address<A> address ) throws ValueError {
         return new DomainBlock <>(null, null);//fixme
     }
 
@@ -81,31 +79,31 @@ class DomainBlock<N extends DomainBlock <N, A, M>, A extends Address <A>, M exte
      * @throws ValueError
      */
     public
-    DomainBlock ( TreeNode <N, A, M> parent, Rect boundingBox ) throws ValueError {
+    DomainBlock ( TreeNode <N, A, M, G> parent, Rect boundingBox ) throws ValueError {
         super(parent, null, boundingBox);
     }
 
-    /**
-     *
-     *
-     * @return
-     */
-    @Override
-    public
-    int getX () {
-        return imageBlock.getX();
-    }
+//    /**
+//     *
+//     *
+//     * @return
+//     */
+//    @Override
+//    public
+//    int getX () {
+//        return imageBlock.getX();
+//    }
 
-    /**
-     *
-     *
-     * @return
-     */
-    @Override
-    public
-    int getY () {
-        return imageBlock.getY();
-    }
+//    /**
+//     *
+//     *
+//     * @return
+//     */
+//    @Override
+//    public
+//    int getY () {
+//        return imageBlock.getY();
+//    }
 
     /**
      *
@@ -145,7 +143,7 @@ class DomainBlock<N extends DomainBlock <N, A, M>, A extends Address <A>, M exte
      */
     @Override
     public
-    IImage contract ( int contractivity ) {
+    IImage<A> contract ( int contractivity ) {
         return null;
     }
 
@@ -247,6 +245,16 @@ class DomainBlock<N extends DomainBlock <N, A, M>, A extends Address <A>, M exte
     }
 
     /**
+     * @param x
+     * @param y
+     */
+    @Override
+    public
+    void setAddress ( int x, int y ) {
+
+    }
+
+    /**
      * @param parent
      * @param quadrant
      * @param boundingBox
@@ -254,7 +262,7 @@ class DomainBlock<N extends DomainBlock <N, A, M>, A extends Address <A>, M exte
      */
 //    @Override
     public
-    LeafNode <N, A, M> createNode ( TreeNode<N, A, M> parent, EDirection quadrant, Rect boundingBox )
+    LeafNode <N, A, M, G> createNode ( TreeNode<N, A, M, G> parent, EDirection quadrant, Rect boundingBox )
             throws ValueError {
         throw new IllegalStateException();
     }
@@ -311,7 +319,7 @@ class DomainBlock<N extends DomainBlock <N, A, M>, A extends Address <A>, M exte
      */
     @Override
     public
-    TreeNode <N, A, M> createNode ( TreeNode <N, A, M> parent, Rect boundingBox ) throws ValueError {
+    TreeNode <N, A, M, G> createNode ( TreeNode <N, A, M, G> parent, Rect boundingBox ) throws ValueError {
         return null;
     }
 
@@ -324,8 +332,26 @@ class DomainBlock<N extends DomainBlock <N, A, M>, A extends Address <A>, M exte
      */
     @Override
     public
-    TreeNode <N, A, M> createNode ( TreeNode <N, A, M> parent, M image, Rect boundingBox ) throws ValueError {
+    TreeNode <N, A, M, G> createNode ( TreeNode <N, A, M, G> parent, M image, Rect boundingBox ) throws ValueError {
         return null;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    int getX () {
+        return 0;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    int getY () {
+        return 0;
     }
 
     /**

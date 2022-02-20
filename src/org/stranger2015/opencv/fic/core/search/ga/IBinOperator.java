@@ -1,12 +1,12 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
-import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 
 /**
  *
  */
 public
-interface IBinOperator<T extends Individual> extends BiFunction <Population <T>, Population <T>, Number> {
+interface IBinOperator<T extends Individual> extends BinaryOperator <T> {
     /**
      * @return
      */

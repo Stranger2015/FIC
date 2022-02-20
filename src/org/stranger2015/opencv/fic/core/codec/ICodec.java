@@ -5,6 +5,7 @@ import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.Image;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
@@ -12,11 +13,13 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
  * @param <M>
  */
 public
-interface ICodec<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage> {
+interface ICodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>,
+        G extends BitBuffer> {
+
     /**
      * @return
      */
-    IEncoder <N, A, M> getEncoder ();
+    IEncoder <N, A, M, G> getEncoder ();
 
     /**
      * @return

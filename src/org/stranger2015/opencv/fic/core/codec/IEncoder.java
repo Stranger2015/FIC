@@ -6,7 +6,9 @@ import org.stranger2015.opencv.fic.core.ImageBlock;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
+import org.stranger2015.opencv.utils.BitBuffer;
 
+import java.nio.ByteBuffer;
 import java.util.List;
 
 /**
@@ -110,7 +112,7 @@ import java.util.List;
 *=======================================================================================================================
  * A Proposed Hybrid Fractal Image Compression Based on Graph Theory and Isosceles Triangle Segmentation
  * <p>
- * Proposed algorithms encoding steps as following:
+ * <b>Proposed algorithms encoding steps as following:</b>
  * <p>
  *
  * Step 1: Segment the initial image with graph-based image segmentation algorithm, and set label for all pixels;
@@ -144,13 +146,17 @@ import java.util.List;
  * <p>
  * Var(I)  =  ()()2* 2
  * Where n is the size of the block and Xi is the pixel value of the range blocks.
+ *
  * Step 11: For all R blocks, repeat Step 6-10;
+ *
  * Step 12: Write out the compressed data in the form of a local IFS code;
+ *
  * Step 13: Apply a fractal compression algorithm to obtain a compressed IFS code.
  *
  */
 public
-interface IEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
+interface IEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>,
+        G extends BitBuffer>
         extends IImageProcessorListener {
 
     /**
@@ -194,21 +200,21 @@ interface IEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
      * @param transform
      * @return
      */
-    M randomTransform ( M image, ImageTransform <M> transform );
+    M randomTransform ( M image, ImageTransform <M, A, G> transform );
 
     /**
      * @param image
      * @param transform
      * @return
      */
-    M applyTransform ( M image, ImageTransform <M> transform );
+    M applyTransform ( M image, ImageTransform <M, A, G> transform );
 
     /**
      * @param image
      * @param transform
      * @return
      */
-    M applyAffineTransform ( M image, AffineTransform <M> transform );
+    M applyAffineTransform ( M image, AffineTransform <M, A, G> transform );
 
     /**
      *
@@ -218,7 +224,7 @@ interface IEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
      * @param step
      * @return
      */
-    List <ImageTransform <M>> compress ( M image, int sourceSize, int destinationSize, int step );
+    List <ImageTransform <M, A, G>> compress ( M image, int sourceSize, int destinationSize, int step );
 
     /**
      *
@@ -228,27 +234,30 @@ interface IEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
      * @param step
      * @return
      */
-    List <ImageBlock> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step );
+    List <ImageBlock<A>> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step );
 
     /**
      * @return
      */
-    List<ImageBlock> getRangeBlocks();
+    List<ImageBlock<A>> getRangeBlocks();
 
     /**
      * @return
      */
-    List<ImageBlock> getDomainBlocks();
+    List<ImageBlock<A>> getDomainBlocks();
 
     /**
      * @return
      */
-    List<ImageBlock> getCodebookBlocks();
+    List<ImageBlock<A>> getCodebookBlocks();
 
     /**
      * @return
      */
-    List<ImageTransform<M>> getTransforms();
+    List<ImageTransform<M, A, G>> getTransforms();
 
+    /**
+     * @return
+     */
     M getInputImage();
 }

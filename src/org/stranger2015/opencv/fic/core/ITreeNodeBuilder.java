@@ -8,6 +8,6 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
  * @param <M>
  */
 public
-interface ITreeNodeBuilder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage> {
-    Tree <N, A, M> buildTree () throws ValueError;
+interface ITreeNodeBuilder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer> {
+    Tree <N, A, M, G> buildTree () throws ValueError;
 }

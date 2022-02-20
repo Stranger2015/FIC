@@ -10,6 +10,7 @@ import org.stranger2015.opencv.fic.core.codec.EncodeAction;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
 import org.stranger2015.opencv.fic.core.codec.IImageProcessorListener;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,14 +22,14 @@ import static org.stranger2015.opencv.fic.core.Tree.DEFAULT_BOUNDING_BOX;
  *
  */
 public
-class ImageProcessor<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
+class ImageProcessor<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer>
         extends CompositeTask
-        implements IImageProcessor <N, A, M> {
+        implements IImageProcessor <N, A, M, G> {
 
     Logger logger = LoggerFactory.getLogger(getClass());
 
     private final EPartitionScheme scheme;
-    private final Codec <N, A, M> codec;
+    private final Codec <N, A, M, G> codec;
     private M image;
     private EncodeAction action;
     List <IImageProcessorListener> listeners = new ArrayList <>();
@@ -40,7 +41,7 @@ class ImageProcessor<N extends TreeNode <N, A, M>, A extends Address <A>, M exte
      */
 //    @SuppressWarnings("unchecked")
     public
-    ImageProcessor ( String imageFilename, EPartitionScheme scheme, List <Task> tasks, Codec <N, A, M> codec ) {
+    ImageProcessor ( String imageFilename, EPartitionScheme scheme, List <Task> tasks, Codec <N, A, M, G> codec ) {
         super(imageFilename, tasks);
 
         this.scheme = scheme;
@@ -71,11 +72,11 @@ class ImageProcessor<N extends TreeNode <N, A, M>, A extends Address <A>, M exte
      * @return
      */
     public static
-    <N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
-    ImageProcessor <N, A, M> create ( String filename,
+    <N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer>
+    ImageProcessor <N, A, M, G> create ( String filename,
                                       EPartitionScheme scheme,
                                       List <Task> tasks,
-                                      Codec <N, A, M> codec ) {
+                                      Codec <N, A, M, G> codec ) {
 
         return new ImageProcessor <>(filename, scheme, tasks, codec);
     }
@@ -109,8 +110,8 @@ class ImageProcessor<N extends TreeNode <N, A, M>, A extends Address <A>, M exte
     M process ( M image ) throws ValueError {
 //        List <M> rangeBlocks = createRangeBlocks(image, 4, 4);
 //        List <M> domainBlocks = createDomainBlocks(image, 8, 8);
-        IEncoder <N, A, M> encoder = codec.getEncoder();
-        List <ImageTransform <M>> img = encoder.compress(image, -1, -1, -2);
+        IEncoder <N, A, M, G> encoder = codec.getEncoder();
+        List <ImageTransform <M, A, G>> img = encoder.compress(image, -1, -1, -2);
 
         return (M) new CompressedImage(image);
     }
@@ -145,13 +146,20 @@ class ImageProcessor<N extends TreeNode <N, A, M>, A extends Address <A>, M exte
         return l;
     }
 
+    /**
+     * @param image
+     * @param w
+     * @param h
+     * @return
+     * @throws ValueError
+     */
     protected
     List <M> createDomainBlocks ( M image, int w, int h ) throws ValueError {
         List <M> l = new ArrayList <>();
-        TreeNodeAction <N, A, M> action =
+        TreeNodeAction <N, A, M, G> action =
                 new TreeNodeAction <>(new ArrayList <>(), new NodeList <>());
-        final Tree <N, A, M> tree = Tree.create("??");//fixme
-        new QuadTree <>(
+        final Tree <N, A, M, G> tree = Tree.create("??");//fixme
+        new QuadTree <N, A, M, G>(
                 new QuadTreeNode <>(
                         null,
                         NORTH_WEST,
@@ -160,8 +168,8 @@ class ImageProcessor<N extends TreeNode <N, A, M>, A extends Address <A>, M exte
                 image,
                 action);
 
-        final TreeNode <N, A, M> root = tree.getRoot();
-        TreeNodeBase <N, A, M> node = root.getChildren().get(0);
+        final TreeNode <N, A, M, G> root = tree.getRoot();
+        TreeNodeBase <N, A, M, G> node = root.getChildren().get(0);
 
         for (int i = 0, width = image.width(); i < width / w; i++, width /= 2) {
             for (int j = 0, height = image.height(); j < height / h; j++, height /= 2) {
@@ -222,7 +230,7 @@ class ImageProcessor<N extends TreeNode <N, A, M>, A extends Address <A>, M exte
 
         System.out.println(imageOut.dump());
 
-//        ImageProcessor <N, A, M> processor = new ImagePartitionProcessor <N, A, M>(imageOut, QUAD_TREE);
+//        ImageProcessor <N, A, M, G> processor = new ImagePartitionProcessor <N, A, M, G>(imageOut, QUAD_TREE);
         HighGui.destroyAllWindows();
 
         image.release();
@@ -256,7 +264,7 @@ class ImageProcessor<N extends TreeNode <N, A, M>, A extends Address <A>, M exte
     }
 
     public
-    Codec <N, A, M> getCodec () {
+    Codec <N, A, M, G> getCodec () {
         return codec;
     }
 

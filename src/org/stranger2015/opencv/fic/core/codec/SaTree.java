@@ -9,12 +9,12 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
  * @param <M>
  */
 public
-class SaTree<N extends TreeNode <N, A, M>, A extends SaAddress <A>, M extends IImage>
-        extends Tree <N, A, M> {
+class SaTree<N extends TreeNode <N, A, M, G>, A extends SaAddress <A>, M extends IImage>
+        extends Tree <N, A, M, G> {
 
 
     public
-    SaTree ( TreeNode <N, A, M> root, M image, TreeNodeAction <N, A, M> action ) {
+    SaTree ( TreeNode <N, A, M, G> root, M image, TreeNodeAction <N, A, M, G> action ) {
         super(root, image, action);
     }
 
@@ -26,7 +26,7 @@ class SaTree<N extends TreeNode <N, A, M>, A extends SaAddress <A>, M extends II
      */
     @Override
     public
-    TreeNode <N, A, M> nodeInstance ( TreeNode <N, A, M> parent, EDirection quadrant, Rect rect ) {
+    TreeNode <N, A, M, G> nodeInstance ( TreeNode <N, A, M, G> parent, EDirection quadrant, Rect rect ) {
         return new SaTreeNode <>();
     }
 
@@ -36,7 +36,7 @@ class SaTree<N extends TreeNode <N, A, M>, A extends SaAddress <A>, M extends II
     @SuppressWarnings("unchecked")
     @Override
     public//fixme
-    Class <? extends TreeNode <N, A, M>> getNodeClass ( TreeNode <N, A, M> clazz ) {
-        return (Class <? extends TreeNode <N, A, M>>) clazz.getClass();
+    Class <? extends TreeNode <N, A, M, G>> getNodeClass ( TreeNode <N, A, M, G> clazz ) {
+        return (Class <? extends TreeNode <N, A, M, G>>) clazz.getClass();
     }
 }

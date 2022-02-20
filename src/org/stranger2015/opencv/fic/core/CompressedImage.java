@@ -1,6 +1,5 @@
 package org.stranger2015.opencv.fic.core;
 
-
 import org.stranger2015.opencv.fic.core.codec.ICompressedImage;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 
@@ -10,12 +9,12 @@ import java.util.List;
  *
  */
 public
-class CompressedImage extends Image implements ICompressedImage {
+class CompressedImage<A extends Address <A>> extends Image <A> implements ICompressedImage <A> {
 
     public int originalImageWidth;
     public int originalImageHeight;
 
-    private List <ImageTransform <IImage>> transforms;
+    private List <ImageTransform <?, A, ?>> transforms;
 
     /**
      * @param rows
@@ -23,7 +22,7 @@ class CompressedImage extends Image implements ICompressedImage {
      * @param type
      */
     public
-    CompressedImage ( IImage image, int rows, int cols, int type ) {
+    CompressedImage ( IImage <A> image, int rows, int cols, int type ) {
         super(image, rows, cols, type);
     }
 
@@ -31,7 +30,7 @@ class CompressedImage extends Image implements ICompressedImage {
      * @param inputImage
      */
     public
-    CompressedImage ( IImage inputImage ) {
+    CompressedImage ( IImage <A> inputImage ) {
         super(inputImage);
     }
 
@@ -41,7 +40,7 @@ class CompressedImage extends Image implements ICompressedImage {
      */
     @Override
     public
-    List <ImageTransform <IImage>> getTransforms () {
+    List <ImageTransform <?, A, ?>> getTransforms () {
         return transforms;
     }
 
@@ -50,7 +49,7 @@ class CompressedImage extends Image implements ICompressedImage {
      */
     @Override
     public
-    void setTransforms ( List <ImageTransform <IImage>> transforms ) {
+    void setTransforms ( List <ImageTransform <?, A, ?>> transforms ) {
         this.transforms = transforms;
     }
 

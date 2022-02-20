@@ -1,5 +1,6 @@
 package org.stranger2015.opencv.fic.core.codec;
 
+import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.Image;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
@@ -10,9 +11,9 @@ import java.util.List;
  *
  */
 public
-class CompressedSipImage extends SipImage implements ICompressedImage {
+class CompressedSipImage<A extends Address<A>> extends SipImage<A> implements ICompressedImage<A> {
 
-   public ICompressedImage image;
+   public ICompressedImage<A> image;
 
     /**
      * @param input
@@ -30,7 +31,7 @@ class CompressedSipImage extends SipImage implements ICompressedImage {
      */
     @Override
     public
-    List <ImageTransform <IImage>> getTransforms () {
+    List <ImageTransform <?, A, ?>> getTransforms () {
         return image.getTransforms();
     }
 
@@ -39,7 +40,7 @@ class CompressedSipImage extends SipImage implements ICompressedImage {
      */
     @Override
     public
-    void setTransforms ( List <ImageTransform <IImage>> transforms ) {
+    void setTransforms ( List <ImageTransform <?,A,?>> transforms ) {
 
     }
 }

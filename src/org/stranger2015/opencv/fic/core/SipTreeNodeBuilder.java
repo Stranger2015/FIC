@@ -23,8 +23,8 @@ import static org.stranger2015.opencv.fic.core.codec.SipAddress.radix;
  * @param <M>
  */
 public
-class SipTreeNodeBuilder<N extends TreeNode <N, A, M>, A extends SipAddress <A>, M extends IImage>
-        implements ITreeNodeBuilder <N, A, M> {
+class SipTreeNodeBuilder<N extends TreeNode <N, A, M, G>, A extends SipAddress <A>, M extends IImage>
+        implements ITreeNodeBuilder <N, A, M, G> {
 
     public final static Rect BB = new Rectangle(0, 0, blockSideSize, blockSideSize);
 
@@ -38,10 +38,10 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, M>, A extends SipAddress <A>,
     public final SipImage sipImage;
     public final SipLibrary <A> sipLib;
 
-    TreeNode <N, A, M> lastNode;
-    SipLayerClusterNode <N, A, M> lastCluster;
+    TreeNode <N, A, M, G> lastNode;
+    SipLayerClusterNode <N, A, M, G> lastCluster;
 
-    NodeList <N, A, M> clusters = new NodeList <>();
+    NodeList <N, A, M, G> clusters = new NodeList <>();
 //    protected final List <Point> pixelShiftAddresses;
 
     /**
@@ -68,9 +68,9 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, M>, A extends SipAddress <A>,
      */
     @SuppressWarnings("unchecked")
     public
-    SipTree <N, A, M> buildTree () throws ValueError {
-        SipTreeNode <N, A, M> root = new SipTreeNode <>(null, (M) sipImage, BB);
-        SipTree <N, A, M> tree = new SipTree <>(root, (M) sipImage, null);
+    SipTree <N, A, M, G> buildTree () throws ValueError {
+        SipTreeNode <N, A, M, G> root = new SipTreeNode <>(null, (M) sipImage, BB);
+        SipTree <N, A, M, G> tree = new SipTree <>(root, (M) sipImage, null);
         tree.getNodes().add(root);
         tree.getNodes().add(buildLayers(root));
 
@@ -108,7 +108,7 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, M>, A extends SipAddress <A>,
      * @param address
      * @return
      */
-    SipLayerClusterNode <N, A, M> createNewClusterNode0 ( SipImage sipImage,
+    SipLayerClusterNode <N, A, M, G> createNewClusterNode0 ( SipImage sipImage,
                                                           int layerIndex,
                                                           int clusterIndex,
                                                           int address ) {
@@ -129,7 +129,7 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, M>, A extends SipAddress <A>,
      * @return
      */
     private
-    NodeList <N, A, M> buildLayers ( SipTreeNode <N, A, M> root ) throws ValueError {
+    NodeList <N, A, M, G> buildLayers ( SipTreeNode <N, A, M, G> root ) throws ValueError {
         blocks.putAll(splitSipImageToBlocks(sipImage, blockSideSize));
         sipLib.layersAmount = sipLib.calcLayersAmount(sideSize);
         int startAddress = 0;
@@ -146,7 +146,7 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, M>, A extends SipAddress <A>,
                     try {
                         startAddress = endAddress + 1;
                         endAddress = startAddress + sipLib.clustersAmount * radix;
-                        NodeList <N, A, M> l = createNewClusterNodes(root, sipLib.layerIndex, startAddress, endAddress);
+                        NodeList <N, A, M, G> l = createNewClusterNodes(root, sipLib.layerIndex, startAddress, endAddress);
                         clusters.add(l);
 
                     } catch (Exception e) {
@@ -168,19 +168,19 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, M>, A extends SipAddress <A>,
      * @throws ValueError
      */
     private
-    NodeList <N, A, M> createNewClusterNodes ( SipTreeNode <N, A, M> parent,
+    NodeList <N, A, M, G> createNewClusterNodes ( SipTreeNode <N, A, M, G> parent,
                                                int layerIndex,
                                                int startAddress,
                                                int endAddress ) throws ValueError {
-        NodeList <N, A, M> l = new NodeList <>();
+        NodeList <N, A, M, G> l = new NodeList <>();
         List <Point> ccs = sipLib.getCartesianCoordinates(radix);
         for (int i = 0, amount = endAddress - startAddress; i < amount; i++) {
-            List<ImageBlock> domainPool = new ArrayList <>();
+            List<ImageBlock<A>> domainPool = new ArrayList <>();
             List <N> leaves=new ArrayList <>();
             List <Point> shifts = sipLib.derivePixelShifts(
                     new SipTree <>(parent,
                             blocks,
-                            new TreeNodeAction <>(domainPool, (NodeList <N, A, M>) leaves)),
+                            new TreeNodeAction <>(domainPool, (NodeList <N, A, M, G>) leaves)),
                     ccs,
                     sipLib.pixelCapacity,
                     startAddress,
@@ -191,7 +191,7 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, M>, A extends SipAddress <A>,
                     layerIndex,
                     i);
             l.add(lastNode);
-            parent = (SipTreeNode <N, A, M>) lastNode;
+            parent = (SipTreeNode <N, A, M, G>) lastNode;
             onNewCluster();
         }
 
@@ -207,8 +207,8 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, M>, A extends SipAddress <A>,
      */
     @SuppressWarnings("unchecked")
     private
-    SipLayerClusterNode <N, A, M> createNewClusterNode (
-            TreeNode <N, A, M> parent,
+    SipLayerClusterNode <N, A, M, G> createNewClusterNode (
+            TreeNode <N, A, M, G> parent,
             SipImage image,
             int layerIndex,
             int address ) {

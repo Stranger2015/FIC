@@ -1,14 +1,14 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.opencv.core.Size;
-
 import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
- *  Schematic diagram of SABVR method for FIC with the following steps;
- *
+ * Schematic diagram of SABVR method for FIC with the following steps;
+ * <p>
  * i. Partition the input grey image into hexagon shape units as Rgi.
  * ii. Partition the input image obtaining Dmj blocks for 343 and 49 overlapping hexagonal units of
  * Rgj.
@@ -38,8 +38,8 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
  * @param <A>
  */
 public
-class SabVrEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
-        extends SaEncoder <N, A, M> {
+class SabVrEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
+        extends SaEncoder <N, A, M, G> {
 
     /**
      * @param inputImage
@@ -53,12 +53,12 @@ class SabVrEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extend
 
     @Override
     public
-    SaImageBlockGenerator createBlockGenerator ( IEncoder <N, A, M> encoder,
-                                                 IImage image,
-                                                 Size rangeSize,
-                                                 Size domainSize ) {
+    SaImageBlockGenerator <N, A, M, G> createBlockGenerator ( IEncoder <N, A, M, G> encoder,
+                                                              M image,
+                                                              Size rangeSize,
+                                                              Size domainSize ) {
 
-        return new SaImageBlockGenerator(encoder, image,rangeSize,domainSize);
+        return new SaImageBlockGenerator <>(encoder, image, rangeSize, domainSize);
     }
 
     /**

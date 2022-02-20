@@ -1,14 +1,17 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
-import com.softtechdesign.ga.Crossover;
 import org.jetbrains.annotations.Contract;
+import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
+import org.stranger2015.opencv.fic.transform.ITransform;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.Date;
+import java.util.stream.IntStream;
 
 /**
- *                  Algorithm for fractal image compression by applying Genetic Algorithm.
- *
+ * Algorithm for fractal image compression by applying Genetic Algorithm.
+ * <p>
  * Input: take a NxN square image
  * <p>
  * Initialize FIC parameters like
@@ -72,25 +75,26 @@ import java.util.Date;
  */
 
 public abstract
-class GaProcessor<T extends Individual> implements ISearchProcessor <T>, Runnable {
+class GaProcessor<T extends Individual <T, A, G, C>, A extends Address <A>, G extends BitBuffer,
+        C extends Chromosome <T, A, G>>
+        implements ISearchProcessor <T, A, G> {
 
-    private final int populationSize;
-          private final double mutationRate;
-    private final double crossoverRate;
-    private final int elitismCount;
+    protected final int popSize;
+    protected final double mutationRate;
+    protected final double crossoverRate;
+    protected final int elitismCount;
 
     /**
      * A new property we've introduced is the size of the population used for
      * tournament selection in crossover.
      */
-    protected ISelector <Individual> selector;
-protected IMutationOperator mutationOperator;
-    protected ICrossoverOperator crossoverOperator;
-
-    protected FitnessFunction <T> fitnessFunction;
+    protected final ISelector <T, A, G, C> selector;
+    protected final IMutationOperator <T> mutationOperator;
+    protected final ICrossoverOperator <T, A, G, C> crossoverOperator;
+    protected final FitnessFunction <T> fitnessFunction;
 
     /**
-     * @param populationSize
+     * @param popSize
      * @param mutationRate
      * @param crossoverRate
      * @param elitismCount
@@ -98,22 +102,27 @@ protected IMutationOperator mutationOperator;
      */
     @Contract(pure = true)
     public
-    GaProcessor ( int populationSize,
+    GaProcessor ( int popSize,
                   double mutationRate,
                   double crossoverRate,
                   int elitismCount,
-                  ISelector <Individual> selector,
-                  FitnessFunction <T> fitnessFunction ) {
+                  ISelector <T, A, G, C> selector,
+                  FitnessFunction <T> fitnessFunction,
+                  IMutationOperator <T> mutationOperator,
+                  ICrossoverOperator <T, A, G, C> crossoverOperator ) {
 
-        this.populationSize = populationSize;
+        this.popSize = popSize;
         this.mutationRate = mutationRate;
         this.crossoverRate = crossoverRate;
         this.elitismCount = elitismCount;
         this.selector = selector;
         this.fitnessFunction = fitnessFunction;
+        this.mutationOperator = mutationOperator;
+        this.crossoverOperator = crossoverOperator;
     }
 
-    protected Population <T> population;
+    protected Population <T>[] populations;
+    protected int popIndex;
 
     /**
      * Initialize population
@@ -124,7 +133,7 @@ protected IMutationOperator mutationOperator;
     public
     Population <T> initPopulation ( int chromosomeLength ) {
         // Initialize population
-        return new Population <>(this.selector, this.populationSize, chromosomeLength);
+        return new Population <T>(populations[popIndex].getRange(0, populations[popIndex].size()));
     }
 
     /**
@@ -140,7 +149,7 @@ protected IMutationOperator mutationOperator;
     public
     double calcFitness ( T individual ) {
         // Get individual's chromosome
-        int[] chromosome = individual.getChromosome();
+        C chromosome = individual.getChromosome();
 
         // Get fitness
 //        Robot robot = new Robot(chromosome, maze, 100);
@@ -170,7 +179,7 @@ protected IMutationOperator mutationOperator;
      */
     public
     void evalPopulation ( Population <T> population ) {
-        double populationFitness = fitnessFunction.apply(population).doubleValue();
+        double populationFitness = fitnessFunction.apply(population).doubleValue();//fixme
 
     }
 
@@ -202,11 +211,11 @@ protected IMutationOperator mutationOperator;
     public
     T selectParent ( Population <T> population ) {
         // Create tournament
-        Population <T> tournament = new Population <>(this.selector, populationSize, chromosomeDim);
+        Population <T> tournament = new Population <>(population);
 
         // Add random individuals to the tournament
         population.shuffle();
-        for (int i = 0; i < this.populationSize; i++) {
+        for (int i = 0; i < this.popSize; i++) {
             T tournamentIndividual = population.getIndividual(i);
             tournament.setIndividual(i, tournamentIndividual);
         }
@@ -226,7 +235,7 @@ protected IMutationOperator mutationOperator;
     public
     Population <T> mutatePopulation ( Population <T> population ) {
         // Initialize new population
-        Population <T> newPopulation = new Population <>(this.selector, this.populationSize, chromosomeDim);
+        Population <T> newPopulation = new Population <>(population);//fixme
 
         // Loop over current population by fitness
         for (int populationIndex = 0; populationIndex < population.size(); populationIndex++) {
@@ -238,13 +247,8 @@ protected IMutationOperator mutationOperator;
                 if (populationIndex >= this.elitismCount) {
                     // Does this gene need mutation?
                     if (this.mutationRate > Math.random()) {
-                        // Get new gene
-                        int newGene = 1;
-                        if (individual.getGene(geneIndex) == 1) {
-                            newGene = 0;
-                        }
-                        // Mutate gene
-                        individual.setGene(geneIndex, newGene);
+                        mutationOperator.setGeneIndex(geneIndex);
+                        individual = mutationOperator.apply(individual);
                     }
                 }
             }
@@ -280,19 +284,20 @@ protected IMutationOperator mutationOperator;
      * @param population Population to crossover
      * @return Population The new population
      */
+    @SuppressWarnings("unchecked")
     public
     Population <T> crossoverPopulation ( Population <T> population ) {
         // Create new population
-        Population <T> newPopulation = new Population <>(this.selector, this.populationSize, population.size());
+        Population <T> newPopulation = new Population <T>(this.selector, this.popSize, population.size());
 
         // Loop over current population by fitness
         for (int populationIndex = 0; populationIndex < population.size(); populationIndex++) {
-            Individual parent1 = population.getFittest(populationIndex);
+            Individual <T,A,G, C> parent1 = population.getFittest(populationIndex);
 
             // Apply crossover to this individual?
             if (this.crossoverRate > Math.random() && populationIndex >= this.elitismCount) {
                 // Initialize offspring
-                T offspring = (T) new Individual(parent1.getChromosomeLength());
+                T offspring = (T) new Individual <T, A, G, C>(parent1.getChromosomeLength());
 
                 // Find second parent
                 T parent2 = this.selectParent(population);
@@ -346,11 +351,6 @@ protected IMutationOperator mutationOperator;
     int randomSelectionProbability;
 
     /**
-     * probability that a crossover will occur during genetic mating
-     */
-    double crossoverProb;
-
-    /**
      * dimension of chromosome (number of genes)
      */
     protected int chromosomeDim;
@@ -363,32 +363,32 @@ protected IMutationOperator mutationOperator;
     /**
      * storage for pool of chromosomes for current generation
      */
-    Chromosome[] chromosomes;
+    Chromosome <G>[] chromosomes;
 
     /**
      * storage for temporary holding pool for next generation chromosomes
      */
-    Chromosome[] chromNextGen;
+    Chromosome <G>[] chromNextGen;
 
     /**
      * storage for pool of prelim generation chromosomes
      */
-    Chromosome[] prelimChrom;
+    Chromosome <G>[] prelimChrom;
 
     /**
-     * index of fittest chromosome in current generation
+     * index of the fittest chromosome in current generation
      */
     int bestFitnessChromIndex;
 
     /**
-     * index of least fit chromosome in current generation
+     * index of the least fit chromosome in current generation
      */
     int worstFitnessChromIndex;
 
     /**
      * type of crossover to be employed during genetic mating
      */
-    protected int crossoverType;
+    protected ECrossoverType crossoverType;
 
     /**
      * statistics--average deviation of current generation
@@ -412,34 +412,10 @@ protected IMutationOperator mutationOperator;
     void initPopulation ();
 
     /**
-     * do a random mutation on given chromosome
-     */
-    abstract protected
-    void doRandomMutation ( int iChromIndex );
-
-    /**
-     * do one point crossover between the two given chromosomes
-     */
-    abstract protected
-    void doOnePtCrossover ( Chromosome Chrom1, Chromosome Chrom2 );
-
-    /**
-     * do two point crossover between the two given chromosomes
-     */
-    abstract protected
-    void doTwoPtCrossover ( Chromosome Chrom1, Chromosome Chrom2 );
-
-    /**
-     * do uniform crossover between the two given chromosomes
-     */
-    abstract protected
-    void doUniformCrossover ( Chromosome Chrom1, Chromosome Chrom2 );
-
-    /**
      * get the fitness value for the given chromosome
      */
     abstract protected
-    double getFitness ( int iChromIndex );
+    double getFitness ( int index );
 
 
     /**
@@ -451,39 +427,53 @@ protected IMutationOperator mutationOperator;
     }
 
     /**
+     *
+     */
+    @Override
+    public
+    ITransform <T, A, G> searchForBestTransform () {
+        return evolve();
+    }
+
+    /**
      * Initializes the GA using given parameters
      *
-     * @param crossoverRate
      * @param chromosomeDim
-     * @param populationSize
+     * @param crossoverRate
+     * @param popSize
      * @param elitismCount
-     * @param randomSelectionChance
+     * @param selector
      * @param maxGenerations
      * @param numPrelimRuns
      * @param maxPrelimGenerations
      * @param mutationRate
-     * @param crossoverType
      * @param computeStatistics
      */
     public
     GaProcessor ( int chromosomeDim,
                   double crossoverRate,
-                  int populationSize,
+                  int popSize,
                   int elitismCount,
-                  int randomSelectionChance,
+                  ISelector <T, G, C> selector,
+                  FitnessFunction <T> fitnessFunction,
+                  IMutationOperator <T> mutationOperator,
+                  ICrossoverOperator <T, A, G, C> crossoverOperator,
+                  //              int randomSelectionChance,
                   int maxGenerations,
                   int numPrelimRuns,
                   int maxPrelimGenerations,
                   double mutationRate,
-                  int crossoverType,
+//                  int crossoverType,
                   boolean computeStatistics ) {
 
-        this.populationSize = populationSize;
+        this.popSize = popSize;
         this.crossoverRate = crossoverRate;
         this.elitismCount = elitismCount;
-        this.randomSelectionProbability = randomSelectionChance;
-        this.crossoverType = crossoverType;
+        this.selector = selector;
         this.chromosomeDim = chromosomeDim;
+        this.fitnessFunction = fitnessFunction;
+        this.mutationOperator = mutationOperator;
+        this.crossoverOperator = crossoverOperator;
         this.computeStatistics = computeStatistics;
 
         this.chromosomes = new Chromosome[populationDim];
@@ -572,16 +562,6 @@ protected IMutationOperator mutationOperator;
     }
 
     /**
-     * Gets the crossover probability
-     *
-     * @return double
-     */
-    public
-    double getCrossoverProb () {
-        return crossoverProb;
-    }
-
-    /**
      * Gets the dimension (size or number) of genes per chromosome
      *
      * @return int
@@ -607,7 +587,7 @@ protected IMutationOperator mutationOperator;
      * @return
      */
     public
-    int getCrossoverType () {
+    ECrossoverType getCrossoverType () {
         return crossoverType;
     }
 
@@ -624,10 +604,10 @@ protected IMutationOperator mutationOperator;
     /**
      * Returns the fittest chromosome in the population
      *
-     * @return Chromosome
+     * @return Chromosome<G>
      */
     public
-    Chromosome getFittestChromosome () {
+    Chromosome <G> getFittestChromosome () {
         return (this.chromosomes[bestFitnessChromIndex]);
     }
 
@@ -647,9 +627,9 @@ protected IMutationOperator mutationOperator;
      * @param upperBound
      * @return int
      */
+    public static
     int getRandom ( int upperBound ) {
-        int iRandom = (int) (Math.random() * upperBound);
-        return (iRandom);
+        return ((int) (Math.random() * upperBound));
     }
 
     /**
@@ -658,20 +638,21 @@ protected IMutationOperator mutationOperator;
      * @param upperBound
      * @return double
      */
+    public static
     double getRandom ( double upperBound ) {
-        double dRandom = (Math.random() * upperBound);
-        return (dRandom);
+        return ((Math.random() * upperBound));
     }
 
     /**
      * Main routine that runs the evolution simulation for this population of chromosomes.
      *
-     * @return number of generations
+     * @return the best found image transformation          //number of generations
      */
     public
-    int evolve () {
+    ITransform <T, A, G> evolve () {
         int iGen;
-        int iPrelimChrom, iPrelimChromToUsePerRun;
+        int iPrelimChrom;
+        int iPrelimChromToUsePerRun;
 
         System.out.println("GA start time: " + new Date());
 
@@ -690,10 +671,10 @@ protected IMutationOperator mutationOperator;
                             (iGen + 1) + " of " + maxPrelimGenerations + " generations");
 
                     computeFitnessRankings();
-                    doGeneticMating();
+//                    doCrossover();
                     copyNextGenToThisGen();
 
-                    if (computeStatistics == true) {
+                    if (computeStatistics) {
                         this.genAvgDeviation[iGen] = getAvgDeviationAmongChroms();
                         this.genAvgFitness[iGen] = getAvgFitness();
                     }
@@ -704,16 +685,18 @@ protected IMutationOperator mutationOperator;
 
                 //copy these somewhat fit chromosomes to the main chromosome pool
                 int iNumPrelimSaved = 0;
-                for (int i = 0; i < populationDim && iNumPrelimSaved < iPrelimChromToUsePerRun; i++)
+                for (int i = 0; i < populationDim && iNumPrelimSaved < iPrelimChromToUsePerRun; i++) {
                     if (this.chromosomes[i].fitnessRank >= populationDim - iPrelimChromToUsePerRun) {
                         this.prelimChrom[iPrelimChrom + iNumPrelimSaved].copyChromGenes(this.chromosomes[i]);
                         //store (remember) these fit chroms
                         iNumPrelimSaved++;
                     }
+                }
                 iPrelimChrom += iNumPrelimSaved;
             }
-            for (int i = 0; i < iPrelimChrom; i++)
-                this.chromosomes[i].copyChromGenes(this.prelimChrom[i]);
+            IntStream.range(0, iPrelimChrom).forEachOrdered(i ->
+                    this.chromosomes[i].copyChromGenes(this.prelimChrom[i]));
+
             System.out.println("INITIAL POPULATION AFTER PRELIM RUNS:");
         }
         else
@@ -725,10 +708,10 @@ protected IMutationOperator mutationOperator;
         iGen = 0;
         while (iGen < maxGenerations) {
             computeFitnessRankings();
-            doGeneticMating();
+//            doCrossover();
             copyNextGenToThisGen();
 
-            if (computeStatistics == true) {
+            if (computeStatistics) {
                 this.genAvgDeviation[iGen] = getAvgDeviationAmongChroms();
                 this.genAvgFitness[iGen] = getAvgFitness();
             }
@@ -736,19 +719,84 @@ protected IMutationOperator mutationOperator;
             iGen++;
         }
 
-        System.out.println("GEN " + (iGen + 1) + " AVG FITNESS = " + this.genAvgFitness[iGen - 1] +
-                " AVG DEV = " + this.genAvgDeviation[iGen - 1]);
+        System.out.printf("GEN %d, AVG FITNESS = %f, AVG DEV = %f",
+                (iGen + 1),
+                this.genAvgFitness[iGen - 1],
+                this.genAvgDeviation[iGen - 1]);
 
         addChromosomesToLog(iGen, 10); //display Chromosomes to system.out
 
         computeFitnessRankings();
-        System.out.println("Best Chromosome Found: ");
-        System.out.println(this.chromosomes[this.bestFitnessChromIndex].getGenesAsStr() +
-                " Fitness= " + this.chromosomes[this.bestFitnessChromIndex].fitness);
+        System.out.println("Best Chromosome<G> Found: ");
+        System.out.printf("%s  Fitness= %f",
+                this.chromosomes[this.bestFitnessChromIndex].getGenesAsG(),
+                this.chromosomes[this.bestFitnessChromIndex].fitness);
 
         System.out.println("GA end time: " + new Date());
-        return (iGen);
+
+        //return (iGen);
+        return null;
     }
+
+//    /**
+//     * Select two parents from population, giving highly fit individuals a greater chance of
+//     * being selected.
+//     *
+//     * @param indexParents
+//     */
+//    public
+//    void selectTwoParents ( int[] indexParents ) {
+//        int indexParent1 = indexParents[0];
+//        int indexParent2 = indexParents[1];
+//        boolean bFound = false;
+//        int index;
+//
+//        while (bFound == false) {
+//            index = getRandom(populationDim); //get random member of population
+//
+//            if (randomSelectionProbability > getRandom(100)) {
+//                indexParent1 = index;
+//                bFound = true;
+//            }
+//            else {
+//                //the greater a chromosome's fitness rank, the higher prob that it will be
+//                //selected to reproduce
+//                if (this.chromosomes[index].fitnessRank + 1 > getRandom(populationDim)) {
+//                    indexParent1 = index;
+//                    bFound = true;
+//                }
+//            }
+//        }
+//
+//        bFound = false;
+//        while (bFound == false) {
+//            index = getRandom(populationDim); //get random member of population
+//
+//            if (randomSelectionProbability > getRandom(100)) {
+//                if (index != indexParent1) {
+//                    indexParent2 = index;
+//                    bFound = true;
+//                }
+//            }
+//            else {
+//                //the greater a chromosome's fitness rank, the higher prob that it will be
+//                //selected to reproduce
+//                if ((index != indexParent1)
+//                        && (this.chromosomes[index].fitnessRank + 1 > getRandom(populationDim))) {
+//                    //          if (this.chromosomes[index].getNumGenesInCommon(this.chromosomes[indexParent1])+1 > getRandom(chromosomeDim))
+//                    //          {
+//                    //            indexParent2 = index;
+//                    //            bFound = true;
+//                    //          }
+//                    indexParent2 = index;
+//                    bFound = true;
+//                }
+//            }
+//        }
+//
+//        indexParents[0] = indexParent1;
+//        indexParents[1] = indexParent2;
+//    }
 
     /**
      * Go through all chromosomes and calculate the average fitness (of this generation)
@@ -762,66 +810,6 @@ protected IMutationOperator mutationOperator;
         for (int i = 0; i < populationDim; i++)
             rSumFitness += this.chromosomes[i].fitness;
         return (rSumFitness / populationDim);
-    }
-
-    /**
-     * Select two parents from population, giving highly fit individuals a greater chance of
-     * being selected.
-     *
-     * @param indexParents
-     */
-    public
-    void selectTwoParents ( int[] indexParents ) {
-        int indexParent1 = indexParents[0];
-        int indexParent2 = indexParents[1];
-        boolean bFound = false;
-        int index;
-
-        while (bFound == false) {
-            index = getRandom(populationDim); //get random member of population
-
-            if (randomSelectionProbability > getRandom(100)) {
-                indexParent1 = index;
-                bFound = true;
-            }
-            else {
-                //the greater a chromosome's fitness rank, the higher prob that it will be
-                //selected to reproduce
-                if (this.chromosomes[index].fitnessRank + 1 > getRandom(populationDim)) {
-                    indexParent1 = index;
-                    bFound = true;
-                }
-            }
-        }
-
-        bFound = false;
-        while (bFound == false) {
-            index = getRandom(populationDim); //get random member of population
-
-            if (randomSelectionProbability > getRandom(100)) {
-                if (index != indexParent1) {
-                    indexParent2 = index;
-                    bFound = true;
-                }
-            }
-            else {
-                //the greater a chromosome's fitness rank, the higher prob that it will be
-                //selected to reproduce
-                if ((index != indexParent1)
-                        && (this.chromosomes[index].fitnessRank + 1 > getRandom(populationDim))) {
-                    //          if (this.chromosomes[index].getNumGenesInCommon(this.chromosomes[indexParent1])+1 > getRandom(chromosomeDim))
-                    //          {
-                    //            indexParent2 = index;
-                    //            bFound = true;
-                    //          }
-                    indexParent2 = index;
-                    bFound = true;
-                }
-            }
-        }
-
-        indexParents[0] = indexParent1;
-        indexParents[1] = indexParent2;
     }
 
     /**
@@ -851,11 +839,13 @@ protected IMutationOperator mutationOperator;
         double rValue;
 
         // recalc the fitness of each chromosome
-        for (int i = 0; i < populationDim; i++)
+        for (int i = 0; i < populationDim; i++) {
             this.chromosomes[i].fitness = getFitness(i);
+        }
 
-        for (int i = 0; i < populationDim; i++)
+        for (int i = 0; i < populationDim; i++) {
             this.chromosomes[i].fitnessRank = getFitnessRank(this.chromosomes[i].fitness);
+        }
 
         double rBestFitnessVal;
         double rWorstFitnessVal;
@@ -872,93 +862,6 @@ protected IMutationOperator mutationOperator;
     }
 
     /**
-     * Create the next generation of chromosomes by genetically mating fitter individuals of the
-     * current generation.
-     * Also employ elitism (so the fittest 2 chromosomes always survive to the next generation).
-     * This way an extremely fit chromosome is never lost from our chromosome pool.
-     */
-    void doGeneticMating () {
-        int iCnt;
-        int iRandom;
-        int indexParent1 = -1;
-        int indexParent2 = -1;
-        Chromosome Chrom1, Chrom2;
-
-        iCnt = 0;
-
-        //Elitism--fittest chromosome automatically go on to next gen (in 2 offspring)
-        this.chromNextGen[iCnt].copyChromGenes(this.chromosomes[this.bestFitnessChromIndex]);
-        iCnt++;
-        this.chromNextGen[iCnt].copyChromGenes(this.chromosomes[this.bestFitnessChromIndex]);
-        iCnt++;
-
-//        if (this instanceof GAString) {
-//            Chrom1 = new ChromChars(chromosomeDim);
-//            Chrom2 = new ChromChars(chromosomeDim);
-//        }
-//        else if (this instanceof GAFloat) {
-//            Chrom1 = new ChromFloat(chromosomeDim);
-//            Chrom2 = new ChromFloat(chromosomeDim);
-//        }
-//        else //must be GASeq
-//        {
-//            Chrom1 = new ChromStrings(chromosomeDim);
-//            Chrom2 = new ChromStrings(chromosomeDim);
-//        }
-
-        do {
-            int[] indexes = {indexParent1, indexParent2};
-            selectTwoParents(indexes);
-            indexParent1 = indexes[0];
-            indexParent2 = indexes[1];
-
-//            Chrom1.copyChromGenes(this.chromosomes[indexParent1]);
-//            Chrom2.copyChromGenes(this.chromosomes[indexParent2]);
-
-            if (getRandom(1.0) < crossoverProb) //do crossover
-            {
-                if (this.crossoverType == Crossover.ctOnePoint) {
-//                    doOnePtCrossover(Chrom1, Chrom2);
-                }
-                else if (this.crossoverType == Crossover.ctTwoPoint) {
-//                    doTwoPtCrossover(Chrom1, Chrom2);
-                }
-                else if (this.crossoverType == Crossover.ctUniform) {
-//                    doUniformCrossover(Chrom1, Chrom2);
-                }
-                else if (this.crossoverType == Crossover.ctRoulette) {
-                    iRandom = getRandom(3);
-                    if (iRandom < 1) {
-//                        doOnePtCrossover(Chrom1, Chrom2);
-                    }
-                    else if (iRandom < 2) {
-//                        doTwoPtCrossover(Chrom1, Chrom2);
-                    }
-                    else {
-//                        doUniformCrossover(Chrom1, Chrom2);
-                    }
-                }
-
-//                this.chromNextGen[iCnt].copyChromGenes(Chrom1);
-                iCnt++;
-//                this.chromNextGen[iCnt].copyChromGenes(Chrom2);
-                iCnt++;
-            }
-            else {//if no crossover, then copy this parent chromosome "as is" into the offspring
-//            {
-//                // CREATE OFFSPRING ONE
-//                this.chromNextGen[iCnt].copyChromGenes(Chrom1);
-//                iCnt++;
-//
-//                // CREATE OFFSPRING TWO
-//                this.chromNextGen[iCnt].copyChromGenes(Chrom2);
-//                iCnt++;
-            }
-        }
-        while (iCnt < populationDim);
-    }
-
-    /**
      * Copy the chromosomes previously created and stored in the "next" generation into the main
      * chromsosome memory pool. Perform random mutations where appropriate.
      */
@@ -970,7 +873,7 @@ protected IMutationOperator mutationOperator;
             if (i != this.bestFitnessChromIndex) {
                 //always mutate the chromosome with the lowest fitness
                 if ((i == this.worstFitnessChromIndex) || (getRandom(1.0) < mutationRate))
-                    doRandomMutation(i);
+//                    doRandomMutation(i);
             }
         }
     }
@@ -997,7 +900,7 @@ protected IMutationOperator mutationOperator;
             if (sChrom.length() < 2)
                 sChrom = sChrom + " ";
             System.out.println("Gen " + sGen + ": Chrom" + sChrom + " = " +
-                    this.chromosomes[i].getGenesAsStr() + ", fitness = " +
+                    this.chromosomes[i].getGenesAsG() + ", fitness = " +
                     this.chromosomes[i].fitness);
         }
     }
@@ -1066,9 +969,8 @@ protected IMutationOperator mutationOperator;
         return (iResult);
     }
 
-    //    @Override
     public
-    Population generateRandomPopulation () {
+    Population <T> generateRandomPopulation () {
         return null;
     }
 
@@ -1078,13 +980,14 @@ protected IMutationOperator mutationOperator;
     @Override
     public
     T search () {
+        evolve();
 
         return null;
     }
 
     @Override
     public
-    int evaluate () {
-        return 0;
+    double evaluate () {
+        return (double) fitnessFunction.apply(populations[popIndex]);
     }
 }

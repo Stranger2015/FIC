@@ -38,11 +38,6 @@ class Address<A extends Address <A>> implements IAddress <A> {
         this(0);//fixme
     }
 
-    protected
-    Address ( EnumSet digits ) {
-
-    }
-
     /**
      * Returns the value of the specified number as an {@code int}.
      *

@@ -1,7 +1,9 @@
 package org.stranger2015.opencv.fic.transform;
 
+import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.Image;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 import static java.lang.String.format;
 
@@ -9,9 +11,9 @@ import static java.lang.String.format;
  * functor class to affineScale an image
  */
 public
-class ScaleTransform<M extends IImage> extends PreserveAlphaTransform<M> {
+class ScaleTransform<M extends IImage, A extends Address <A>, G extends BitBuffer>
+        extends PreserveAlphaTransform<M, A, G> {
 
-//    private final boolean preserveAlpha;
     private final double scaleX;
     private final double scaleY;
 
@@ -21,8 +23,8 @@ class ScaleTransform<M extends IImage> extends PreserveAlphaTransform<M> {
      * @param scaleY
      */
     public
-    ScaleTransform ( M image, double scaleX, double scaleY ) {
-        this(image, scaleX, scaleY, false);
+    ScaleTransform ( M image, double scaleX, double scaleY, Address<A> address ) {
+        this(image, scaleX, scaleY, false, address);
     }
 
     /**
@@ -31,29 +33,11 @@ class ScaleTransform<M extends IImage> extends PreserveAlphaTransform<M> {
      * @param preserveAlpha whether to preserve the alpha channel or not
      */
     public
-    ScaleTransform ( M image, double scaleX, double scaleY, boolean preserveAlpha ) {
-        super(image, preserveAlpha);
+    ScaleTransform ( M image, double scaleX, double scaleY, boolean preserveAlpha, Address<A> address ) {
+        super(image, preserveAlpha, address);
         this.scaleX = scaleX;
         this.scaleY = scaleY;
-//        this.preserveAlpha = preserveAlpha;
     }
-
-//    @Override
-//    public BufferedImage transform(final BufferedImage inputimage) {
-//        int imageType    = preserveAlpha ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
-//        int scaledWidth  = (int) (inputimage.getWidth() * scaleX);
-//        int scaledHeight = (int) (inputimage.getHeight() * scaleY);
-//        BufferedImage scaledImg = new BufferedImage(scaledWidth, scaledHeight, imageType);
-//
-//        Graphics2D graphics = scaledImg.createGraphics();
-//        if (preserveAlpha) {
-//            graphics.setComposite(AlphaComposite.Src);
-//        }
-//        graphics.drawImage(inputimage, 0, 0, scaledWidth, scaledHeight, null);
-//        graphics.dispose();
-//
-//        return scaledImg;
-//    }
 
     public
     double getScaleX () {
@@ -69,18 +53,5 @@ class ScaleTransform<M extends IImage> extends PreserveAlphaTransform<M> {
     public
     String toString () {
         return format("%.2f:%.2f", scaleX, scaleY);
-    }
-
-
-    /**
-     * @param inputImage
-     * @param transformMatrix
-     * @param interpolationType
-     * @return
-     */
-    @Override
-    public
-    M transform ( M inputImage, M transformMatrix, EInterpolationType interpolationType ) {
-        return null;
     }
 }

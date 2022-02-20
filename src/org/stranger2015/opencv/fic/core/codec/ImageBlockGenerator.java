@@ -2,18 +2,28 @@ package org.stranger2015.opencv.fic.core.codec;
 
 import org.jetbrains.annotations.Contract;
 import org.opencv.core.Size;
+import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.ImageBlock;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.utils.BitBuffer;
 
+import java.nio.ByteBuffer;
 import java.util.List;
 
 /**
- *
+ * @param <N>
+ * @param <A>
+ * @param <M>
+ * @param <G>
  */
-//abstract
-public class ImageBlockGenerator {
-    protected final IEncoder <?, ?, ?> encoder;
-    protected final IImage image;
+public
+class ImageBlockGenerator<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>,
+        G extends BitBuffer> {
+
+    protected final IEncoder <N, A, M, G> encoder;
+    protected final IImage<A> image;
+
     protected Size rangeSize;
     protected Size domainSize;
 
@@ -23,7 +33,7 @@ public class ImageBlockGenerator {
      */
     @Contract(pure = true)
     protected
-    ImageBlockGenerator ( IEncoder <?, ?, ?> encoder, IImage image, Size rangeSize, Size domainSize ) {
+    ImageBlockGenerator ( IEncoder <N, A, M, G> encoder, IImage<A> image, Size rangeSize, Size domainSize ) {
         this.encoder = encoder;
         this.image = image;
         this.rangeSize = rangeSize;
@@ -34,7 +44,7 @@ public class ImageBlockGenerator {
      * @return
      */
     public
-    ImageBlockGenerator newInstance () {
+    ImageBlockGenerator <N, A, M, G> newInstance () {
         return this;//todo
     }
 
@@ -42,16 +52,16 @@ public class ImageBlockGenerator {
      * @param inputImage
      */
     public
-    void generateRangeBlocks ( IImage inputImage ) {
+    void generateRangeBlocks ( M inputImage ) {
         int blockWidth = (int) rangeSize.width;
         int blockHeight = (int) rangeSize.height;
         int numOfBlocksPerRow = inputImage.getWidth() / blockWidth;
         int numOfBlocksPerCol = inputImage.getHeight() / blockHeight;
-        List <ImageBlock> blocks = encoder.getRangeBlocks();
+        List <ImageBlock<A>> blocks = encoder.getRangeBlocks();
 
         for (int i = 0; i < numOfBlocksPerRow; i++) {
             for (int j = 0; j < numOfBlocksPerCol; j++) {
-                ImageBlock block = new ImageBlock(inputImage, i, j, blockWidth, blockHeight);//fixme check-me
+                ImageBlock<A> block = new ImageBlock<>(inputImage, i, j, blockWidth, blockHeight);//fixme check-me
                 double sumOfPixelValues = 0;
                 for (int x = 0; x < blockWidth; x++) {
                     for (int y = 0; y < blockHeight; y++) {
@@ -70,16 +80,16 @@ public class ImageBlockGenerator {
      * @param inputImage
      */
     public
-    void generateDomainBlocks ( IImage inputImage ) {
+    void generateDomainBlocks ( M inputImage ) {
         int blockWidth = (int) domainSize.width;
         int blockHeight = (int) domainSize.height;
         int numOfBlocksPerRow = inputImage.getWidth() - blockWidth + 1;
         int numOfBlocksPerCol = inputImage.getHeight() - blockHeight + 1;
-        List <ImageBlock> blocks = encoder.getDomainBlocks();
+        List <ImageBlock<A>> blocks = encoder.getDomainBlocks();
 
         for (int i = 0; i < numOfBlocksPerRow; i++) {
             for (int j = 0; j < numOfBlocksPerCol; j++) {
-                ImageBlock block = new ImageBlock(inputImage, i, j, blockWidth, blockHeight);
+                ImageBlock<A> block = new ImageBlock<>(inputImage, i, j, blockWidth, blockHeight);
                 double sumOfPixelValues = 0;
                 for (int x = 0; x < blockWidth; x++) {
                     for (int y = 0; y < blockHeight; y++) {
@@ -106,7 +116,7 @@ public class ImageBlockGenerator {
      * @param domainBlocks
      */
     public
-    void createCodebookBlocks ( IImage inputImage, List <ImageBlock> domainBlocks ) {
-        List <ImageBlock> blocks = encoder.getCodebookBlocks();
+    void createCodebookBlocks ( M inputImage, List <ImageBlock<A>> domainBlocks ) {
+        List <ImageBlock<A>> blocks = encoder.getCodebookBlocks();
     }
 }

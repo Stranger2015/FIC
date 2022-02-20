@@ -4,14 +4,15 @@ import org.opencv.core.Rect;
 
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.utils.Point;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
  * @param <A>
  */
 public
-class TriangleTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
-        extends TreeNode <N, A, M> {
+class TriangleTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer>
+        extends TreeNode <N, A, M, G> {
     /**
      * @param parent
      * @param quadrant
@@ -19,7 +20,7 @@ class TriangleTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M ex
      * @throws ValueError
      */
     public
-    TriangleTreeNode ( TreeNode <N, A, M> parent, EDirection quadrant, Rect boundingBox ) throws ValueError {
+    TriangleTreeNode ( TreeNode <N, A, M, G> parent, EDirection quadrant, Rect boundingBox ) throws ValueError {
         super(parent, boundingBox);
     }
 
@@ -29,7 +30,7 @@ class TriangleTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M ex
      * @throws ValueError
      */
     public
-    TriangleTreeNode ( TreeNode <N, A, M> quadrant, Rect boundingBox ) throws ValueError {
+    TriangleTreeNode ( TreeNode <N, A, M, G> quadrant, Rect boundingBox ) throws ValueError {
         super((EDirection) null, boundingBox);
     }
 
@@ -40,7 +41,7 @@ class TriangleTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M ex
 
     @Override
     public
-    TreeNode <N, A, M> createChild ( int address ) throws ValueError {
+    TreeNode <N, A, M, G> createChild ( int address ) throws ValueError {
         return null;
     }
 
@@ -56,14 +57,14 @@ class TriangleTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M ex
      */
     @Override
     public
-    TreeNode <N, A, M> createChild ( Point point, int layerIndex, int clusteIndex, int x, int y, int address )
+    TreeNode <N, A, M, G> createChild ( Point point, int layerIndex, int clusteIndex, int x, int y, int address )
             throws ValueError {
         return null;
     }
 
 //    @Override
     public
-    TreeNode <N, A, M> createChild ( int layerIndex, int clusteIndex, int address )
+    TreeNode <N, A, M, G> createChild ( int layerIndex, int clusteIndex, int address )
             throws ValueError {
         return null;
     }
@@ -75,7 +76,7 @@ class TriangleTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M ex
      */
 //    @Override
     public
-    TreeNode <N, A, M> createChild ( EDirection quadrant, Rect boundingBox ) throws ValueError {
+    TreeNode <N, A, M, G> createChild ( EDirection quadrant, Rect boundingBox ) throws ValueError {
         return new TriangleTreeNode <>(quadrant, boundingBox);
     }
 
@@ -86,13 +87,13 @@ class TriangleTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M ex
      */
 //    @Override
     public
-    TreeNode <N, A, M> createNode ( TreeNode <N, A, M> parent, Rect boundingBox ) throws ValueError {
+    TreeNode <N, A, M, G> createNode ( TreeNode <N, A, M, G> parent, Rect boundingBox ) throws ValueError {
         return new TriangleTreeNode <>(parent, boundingBox);
     }
 
-    public static
-    class TriangleLeafNode<N extends LeafNode <N, A, M>, A extends Address <A>, M extends IImage>
-            extends LeafNode <N, A, M> {
+    public
+    class TriangleLeafNode<N extends LeafNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>>
+            extends LeafNode <N, A, M, G> {
 
         /**
          * @param parent
@@ -100,8 +101,22 @@ class TriangleTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M ex
          * @param rect
          */
         protected
-        TriangleLeafNode ( TreeNode <N, A, M> parent, M image, Rect rect ) throws ValueError {
-            super(parent, (M) image, rect);
+        TriangleLeafNode ( TreeNode <N, A, M, G> parent, M image, Rect rect ) {
+            super(parent, image, rect);
+        }
+
+        /**
+         * @param point
+         * @param layerIndex
+         * @param clusterIndex
+         * @param address
+         * @return
+         * @throws ValueError
+         */
+        @Override
+        public
+        TreeNode <N, A, M, G> createChild ( Point point, int layerIndex, int clusterIndex, Address <A> address ) throws ValueError {
+            return null;
         }
 
         /**
@@ -116,7 +131,7 @@ class TriangleTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M ex
          */
         @Override
         public
-        TreeNode <N, A, M> createChild ( Point point, int layerIndex, int clusterIndex, int x, int y, int address )
+        TreeNode <N, A, M, G> createChild ( Point point, int layerIndex, int clusterIndex, int x, int y, int address )
                 throws ValueError {
 
             return null;
@@ -131,7 +146,7 @@ class TriangleTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M ex
          */
 //        @Override
         public
-        TreeNode <N, A, M> createChild ( int layerIndex, int clusterIndex, int address ) throws ValueError {
+        TreeNode <N, A, M, G> createChild ( int layerIndex, int clusterIndex, int address ) throws ValueError {
             return null;
         }
 
@@ -186,7 +201,7 @@ class TriangleTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M ex
          */
         @Override
         public
-        TreeNodeBase <N, A, M> createNode ( TreeNode <N, A, M> parent, Rect boundingBox ) throws ValueError {
+        TreeNodeBase <N, A, M, G> createNode ( TreeNode <N, A, M, G> parent, Rect boundingBox ) throws ValueError {
             return null;
         }
 
@@ -199,7 +214,7 @@ class TriangleTreeNode<N extends TreeNode <N, A, M>, A extends Address <A>, M ex
          */
         @Override
         public
-        TreeNode <N, A, M> createNode ( TreeNode <N, A, M> parent, M image, Rect boundingBox ) throws ValueError {
+        TreeNode <N, A, M, G> createNode ( TreeNode <N, A, M, G> parent, M image, Rect boundingBox ) throws ValueError {
             return null;
         }
     }

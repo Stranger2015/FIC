@@ -3,13 +3,14 @@ package org.stranger2015.opencv.fic.core;
 import org.opencv.core.Rect;
 
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  *
  */
 public
-class BinTree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
-        extends Tree <N, A, M> {
+class BinTree<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer>
+        extends Tree <N, A, M, G> {
 
     /**
      * Constructs a new object.
@@ -17,7 +18,7 @@ class BinTree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IIm
      * @param image
      */
     public
-    BinTree ( M image, TreeNodeAction <N, A, M> action ) {
+    BinTree ( M image, TreeNodeAction <N, A, M, G> action ) {
         this(null, image, action);
     }
 
@@ -27,7 +28,7 @@ class BinTree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IIm
      * @param action
      */
     public
-    BinTree ( TreeNode <N, A, M> root, M image, TreeNodeAction<N, A, M> action ) {
+    BinTree ( TreeNode <N, A, M, G> root, M image, TreeNodeAction<N, A, M, G> action ) {
         super(root, image, action);
     }
 
@@ -39,7 +40,7 @@ class BinTree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IIm
      */
     @Override
     public
-    TreeNode <N, A, M> nodeInstance ( TreeNode <N, A, M> parent, EDirection quadrant, Rect rect ) throws ValueError {
+    TreeNode <N, A, M, G> nodeInstance ( TreeNode <N, A, M, G> parent, EDirection quadrant, Rect rect ) throws ValueError {
         return null;
     }
 
@@ -49,7 +50,7 @@ class BinTree<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IIm
 ////    @SuppressWarnings("unchecked")
 //    @Override
 //    public
-//    Class <TreeNode <N, A, M>> getNodeClass () {
-//        return ( Class <TreeNode <N, A, M>>) BinTreeNode.class;
+//    Class <TreeNode <N, A, M, G>> getNodeClass () {
+//        return ( Class <TreeNode <N, A, M, G>>) BinTreeNode.class;
 //    }
 }

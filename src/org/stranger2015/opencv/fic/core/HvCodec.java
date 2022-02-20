@@ -13,8 +13,8 @@ import org.stranger2015.opencv.fic.core.codec.IEncoder;
  * @param <M>
  */
 public
-class HvCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
-        extends Codec <N, A, M> {
+class HvCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer>
+        extends Codec <N, A, M, G> {
 
     /**
      * @param scheme
@@ -32,7 +32,7 @@ class HvCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IIm
      */
     @Override
     public
-    Codec <N, A, M> create ( EPartitionScheme scheme, EncodeAction action ) {
+    Codec <N, A, M, G> create ( EPartitionScheme scheme, EncodeAction action ) {
         return new HvCodec<>(scheme, action);
     }
     /**
@@ -43,7 +43,7 @@ class HvCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IIm
      */
     @Override
     public
-    IEncoder <N, A, M> getEncoder ( M image, Size rangeSize, Size domainSize ) {
+    IEncoder <N, A, M, G> getEncoder ( M image, Size rangeSize, Size domainSize ) {
         return new HvEncoder <>(image, rangeSize, domainSize);
     }
 
@@ -52,7 +52,7 @@ class HvCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IIm
      */
     @Override
     public
-    IEncoder <N, A, M> getEncoder () {
+    IEncoder <N, A, M, G> getEncoder () {
         return null;
     }
 

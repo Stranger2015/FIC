@@ -1,24 +1,24 @@
 package org.stranger2015.opencv.fic.transform;
 
+import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.utils.BitBuffer;
 
+/**
+ * @param <M>
+ * @param <A>
+ * @param <G>
+ */
 public
-class ZoomTransform<M extends IImage> extends ImageTransform<M>{
-
-    public
-    ZoomTransform (M image) {
-        super(image);
-    }
+class ZoomTransform<M extends IImage, A extends Address <A>, G extends BitBuffer>
+        extends ImageTransform<M, A, G>{
 
     /**
-     * @param inputImage
-     * @param transformMatrix
-     * @param interpolationType
-     * @return
+     * @param image
+     * @param address
      */
-    @Override
     public
-    M transform ( M inputImage, M transformMatrix, EInterpolationType interpolationType ) {
-        return null;
+    ZoomTransform (M image, Address<A> address) {
+        super(image, EInterpolationType.BILINEAR, address);
     }
 }

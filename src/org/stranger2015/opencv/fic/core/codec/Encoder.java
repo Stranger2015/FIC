@@ -2,10 +2,14 @@ package org.stranger2015.opencv.fic.core.codec;
 
 import org.jetbrains.annotations.Contract;
 import org.opencv.core.Size;
-import org.stranger2015.opencv.fic.core.*;
+import org.stranger2015.opencv.fic.core.Address;
+import org.stranger2015.opencv.fic.core.CompressedImage;
+import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.fic.core.ImageBlock;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,29 +20,29 @@ import java.util.List;
  * @param <M>
  */
 public //abstract
-class Encoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
-        implements IEncoder <N, A, M>, IConstants, IImageProcessorListener {
+class Encoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
+        implements IEncoder <N, A, M, G>, IConstants, IImageProcessorListener {
 
     public static final Size ZERO_SIZE = new Size(0, 0);
 
-    protected final ImageBlockGenerator blockGenerator;
+    protected final ImageBlockGenerator <N, A, M, G> blockGenerator;
     protected final List <IEncoderListener> listeners = new ArrayList <>();
 
     protected M inputImage;
     protected M outputImage;
 
-    public final List <ImageBlock> rangeBlocks = new ArrayList <>();
-    public final List <ImageBlock> domainBlocks = new ArrayList <>();
-    public final List <ImageBlock> codebookBlocks = new ArrayList <>();
+    public final List <ImageBlock <A>> rangeBlocks = new ArrayList <>();
+    public final List <ImageBlock <A>> domainBlocks = new ArrayList <>();
+    public final List <ImageBlock <A>> codebookBlocks = new ArrayList <>();
 
-    protected final List <ImageTransform <M>> transforms = new ArrayList <>();
+    protected final List <ImageTransform <M, A, G>> transforms = new ArrayList <>();
 
     /**
      * @return
      */
     @Override
     public
-    List <ImageBlock> getRangeBlocks () {
+    List <ImageBlock <A>> getRangeBlocks () {
         return rangeBlocks;
     }
 
@@ -47,7 +51,7 @@ class Encoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IIm
      */
     @Override
     public
-    List <ImageBlock> getDomainBlocks () {
+    List <ImageBlock <A>> getDomainBlocks () {
         return domainBlocks;
     }
 
@@ -56,13 +60,14 @@ class Encoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IIm
      */
     @Override
     public
-    List <ImageBlock> getCodebookBlocks () {
+    List <ImageBlock <A>> getCodebookBlocks () {
         return codebookBlocks;
     }
 
     /**
      * @return
      */
+    @Override
     public
     M getInputImage () {
         return inputImage;
@@ -110,10 +115,12 @@ class Encoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IIm
      * @return
      */
     protected //abstract
-    ImageBlockGenerator createBlockGenerator ( IEncoder <N, A, M> encoder,
-                                               IImage image,
-                                               Size rangeSize,
-                                               Size domainSize ) {
+    ImageBlockGenerator <N, A, M, G> createBlockGenerator (
+            IEncoder <N, A, M, G> encoder,
+            M image,
+            Size rangeSize,
+            Size domainSize ) {
+
         return null;
     }
 
@@ -151,10 +158,10 @@ class Encoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IIm
     @SuppressWarnings("unchecked")
     protected
     M iterateRangeBlocks ( M image ) {
-        for (ImageBlock rangeBlock : rangeBlocks) {
+        for (ImageBlock <A> rangeBlock : rangeBlocks) {
             int percent = 100 * (rangeBlocks.indexOf(rangeBlock) + 1) / rangeBlocks.size();
             System.err.printf("%d%%", percent);
-            ImageTransform <M> bestTransform = ImageTransform.create(image);
+            ImageTransform <M, A, G> bestTransform = ImageTransform.create(image, rangeBlock.getAddress());
             int minDistance = Integer.MAX_VALUE;
 
             iterateDomainBlocks(rangeBlock, bestTransform, minDistance);
@@ -162,7 +169,7 @@ class Encoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IIm
             getTransforms().add(bestTransform);
         }
         ((ICompressedImage) outputImage).getTransforms()
-                .addAll((Collection <? extends ImageTransform <IImage>>) transforms);
+                .addAll((Collection <? extends ImageTransform <M,A,G>>) transforms);//todo fixme
 
         return outputImage;
     }
@@ -173,17 +180,17 @@ class Encoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IIm
      * @param minDistance
      */
     protected
-    void iterateDomainBlocks ( ImageBlock rangeBlock, ImageTransform <M> bestTransform, int minDistance ) {
+    void iterateDomainBlocks ( ImageBlock rangeBlock, ImageTransform <M, A, G> bestTransform, int minDistance ) {
         for (ImageBlock domainBlock : domainBlocks) {
             double alpha = 0;
             for (int i = 0; i < domainBlock.width; i++) {
                 for (int j = 0; j < domainBlock.height; j++) {
                     int[] data = new int[4];//fixme
-                    alpha += (domainBlock.get(i, j, data) - domainBlock.meanPixelValue);
+                    alpha += (domainBlock.get(i, j, data) - domainBlock.meanPixelValue); //[-1,+1]?????????????? or byte
                 }
             }
 
-            double contrast = alpha / domainBlock.beta;
+            double contrast = alpha / domainBlock.beta;//byte
             int brightness = (int) (rangeBlock.meanPixelValue - contrast * domainBlock.meanPixelValue);
 
             for (int index = 0; index < 8; index++) {
@@ -215,7 +222,7 @@ class Encoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IIm
                 int distance = getDistance(rangeBlock, transformedDomainBlock);
                 if ((distance < minDistance) && (distance != 0)) {
                     minDistance = distance;
-                    bestTransform.dihedralAffineTransformerIndex = index;
+                    bestTransform.dihedralAffineTransformIndex = index;
                     bestTransform.originalDomainX = domainBlock.x;
                     bestTransform.originalDomainY = domainBlock.y;
                     bestTransform.brightnessOffset = brightness;
@@ -259,7 +266,7 @@ class Encoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IIm
      */
     @Override
     public
-    List <ImageTransform <M>> getTransforms () {
+    List <ImageTransform <M, A, G>> getTransforms () {
         return transforms;
     }
 
@@ -283,7 +290,7 @@ class Encoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IIm
      */
     @Override
     public
-    M randomTransform ( M image, ImageTransform <M> transform ) {
+    M randomTransform ( M image, ImageTransform <M, A, G> transform ) {
         return null;
     }
 
@@ -294,7 +301,7 @@ class Encoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IIm
      */
     @Override
     public
-    M applyTransform ( M image, ImageTransform <M> transform ) {
+    M applyTransform ( M image, ImageTransform <M, A, G> transform ) {
         return null;
     }
 
@@ -305,7 +312,7 @@ class Encoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IIm
      */
     @Override
     public
-    M applyAffineTransform ( M image, AffineTransform <M> transform ) {
+    M applyAffineTransform ( M image, AffineTransform <M, A, G> transform ) {
         return null;
     }
 
@@ -318,7 +325,7 @@ class Encoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IIm
      */
     @Override
     public
-    List <ImageTransform <M>> compress ( M image, int sourceSize, int destinationSize, int step ) {
+    List <ImageTransform <M, A, G>> compress ( M image, int sourceSize, int destinationSize, int step ) {
         return null;
     }
 
@@ -331,104 +338,15 @@ class Encoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IIm
      */
     @Override
     public
-    List <ImageBlock> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
+    List <ImageBlock<A>> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
         return null;
     }
-
-    /*
-    public class SimpleEncoder implements Constants{
-
-        List<ImageBlock> rangeBlocks;
-        List<ImageBlock> domainBlocks;
-
-        List<ImageBlockTransform> transforms = null;
-    //	GrayscaleImage inputImage;
-    //	CompressedImage outputImage;
-        GrayscaleImage inputImage;
-    //	CompressedImage outputImage;
-
-        public SimpleEncoder(GrayscaleImage inputImage, AddressedPoint rangeSize, AddressedPoint domainSize) {
-            this.inputImage = inputImage;
-            outputImage = new CompressedImage();
-            outputImage.originalImageWidth = inputImage.getWidth();
-            outputImage.originalImageHeight = inputImage.getHeight();
-
-            SimpleBlockGenerator blockGenerator = new SimpleBlockGenerator(rangeSize, domainSize);
-            rangeBlocks = blockGenerator.generateRangeBlocks(inputImage);
-            domainBlocks = blockGenerator.generateDomainBlocks(inputImage);
-            transforms = new ArrayList<ImageBlockTransform>();
-
-            outputImage.rangeBlocks = rangeBlocks;
-            outputImage.domainBlocks = domainBlocks;
-        }
-
-        public CompressedImage encode() {
-
-            for (ImageBlock rangeBlock : rangeBlocks) {
-                int percent = 100 * (rangeBlocks.indexOf(rangeBlock)+1) / rangeBlocks.size();
-                System.err.println(percent + "%");
-                ImageBlockTransform bestTransform = new ImageBlockTransform();
-                int minDistance = Integer.MAX_VALUE;
-
-                for (ImageBlock domainBlock : domainBlocks) {
-
-                    double alpha = 0;
-                    for(int i = 0; i<domainBlock.width ; i++){
-                        for(int j = 0 ; j<domainBlock.height ; j++){
-                            alpha += (domainBlock.pixelValues[i][j] - domainBlock.meanPixelValue)
-                                        * (rangeBlock.pixelValues[i][j] - rangeBlock.meanPixelValue);
-                        }
-                    }
-
-                    double contrast = alpha / domainBlock.beta;
-                    int brightness = (int) (rangeBlock.meanPixelValue - contrast * domainBlock.meanPixelValue);
-
-                    for(int indx = 0; indx<8;indx++){
-                        ImageBlock transformedDomainBlock = new ImageBlock(	domainBlock.x,
-                                                                            domainBlock.y,
-                                                                        domainBlock.width,
-                                                                        domainBlock.height);
-
-                        for(int x = 0; x<domainBlock.width ; x++){
-                            for(int y = 0 ; y<domainBlock.height ; y++){
-                                int newX = x * dihedralAffineTransforms[indx][0] + y * dihedralAffineTransforms[indx][1];
-                                int newY = x * dihedralAffineTransforms[indx][2] + y * dihedralAffineTransforms[indx][3];
-                                if(newX<0) newX +=domainBlock.width;
-                                if(newY<0) newY +=domainBlock.height;
-                                short newPixelValue = (short)(contrast * domainBlock.pixelValues[x][y] + brightness);
-                                if(newPixelValue<MAX_PIXEL_VALUE
-                                        && newPixelValue>=0)
-                                    transformedDomainBlock.pixelValues[newX][newY] = newPixelValue;
-                                else
-                                    transformedDomainBlock.pixelValues[newX][newY] = MAX_PIXEL_VALUE / 2;
-
-                            }
-                        }
-
-                        int distance = getDistance(rangeBlock, transformedDomainBlock);
-
-                        if( (distance < minDistance)
-                                && (distance!=0)){
-                            minDistance = distance;
-                            bestTransform.dihedralAffineTransformerIndex = indx;
-                            bestTransform.originalDomainX = domainBlock.x;
-                            bestTransform.originalDomainY = domainBlock.y;
-                            bestTransform.brightnessOffset = brightness;
-                            bestTransform.contrastScale = contrast;
-                        }
-                    }
-                }
-                transforms.add(bestTransform);
-            }
-            outputImage.transforms =  ;
-            return outputImage;
-        }
 
     /**
      *
      */
     protected
-    Encoder ( ImageBlockGenerator blockGenerator ) {
+    Encoder ( ImageBlockGenerator <N, A, M, G> blockGenerator ) {
         this.blockGenerator = blockGenerator;
     }
 

@@ -1,12 +1,26 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.stranger2015.opencv.fic.core.Image;
+import org.stranger2015.opencv.fic.core.Address;
+import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.utils.BitBuffer;
 
+import java.nio.ByteBuffer;
+
+/**
+ * @param <M>
+ * @param <A>
+ * @param <G>
+ */
 public
-class BrightnessShift<M extends IImage> extends ShiftTransform <M> {
+class BrightnessShift<M extends IImage, A extends Address <A>, G extends BitBuffer>
+        extends ShiftTransform <M, A, G> {
+    /**
+     * @param image
+     * @param brightness
+     */
     public
-    BrightnessShift (M image, float brightness) {
-        super(image,  brightness);
+    BrightnessShift ( M image, float brightness, Address <A> address) {
+        super(image, brightness, address);
     }
 
     /**
@@ -17,7 +31,7 @@ class BrightnessShift<M extends IImage> extends ShiftTransform <M> {
      */
     @Override
     public
-    M transform ( M inputImage, M transformMatrix, EInterpolationType interpolationType ) {
+    M warpAffine ( M inputImage, M transformMatrix, EInterpolationType interpolationType, Address<A> address ) {
         return inputImage;
     }
 }

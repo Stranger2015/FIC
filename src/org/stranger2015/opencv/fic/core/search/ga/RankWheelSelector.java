@@ -1,28 +1,39 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
 
+import java.nio.ByteBuffer;
+
+/**
+ * @param <T>
+ * @param <G>
+ * @param <C>
+ */
 public
-class RankWheelSelector<T extends Individual> extends Selector <T> {
+class RankWheelSelector<T extends Individual <G, C>, G extends BitBuffer, C extends Chromosome <G>>
+        extends Selector <T, G, C> {
+    /**
+     * @param type
+     */
     public
-    RankWheelSelector () {
+    RankWheelSelector ( ESelectionType type ) {
         super(type);
     }
 
+    /**
+     * @return
+     */
     @Override
     public
-    Individual selectFirst () {
+    T selectFirst () {
         return null;
     }
 
+    /**
+     * @return
+     */
     @Override
     public
-    Individual selectSecond () {
-        return null;
-    }
-
-    @Override
-    public
-    ESelectionType getType () {
+    T selectSecond () {
         return null;
     }
 }

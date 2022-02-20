@@ -5,7 +5,7 @@ import java.util.function.Function;
 /**
  * @param <T>
  */
-public class FitnessFunction<T extends Individual> implements Function<Population<T>, Number> {
+public class FitnessFunction<T extends Individual<?,?>> implements Function<Population<T>, Number> {
 
     /**
      * Applies this function to the given argument.

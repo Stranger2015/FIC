@@ -6,6 +6,7 @@ import org.stranger2015.opencv.fic.core.EPartitionScheme;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.Image;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
@@ -13,8 +14,8 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
  * @param <M>
  */
 public
-class SearchlessCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
-        extends Codec <N, A, M> {
+class SearchlessCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
+        extends Codec <N, A, M, G> {
     /**
      * @param scheme
      * @param action
@@ -22,7 +23,7 @@ class SearchlessCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M ext
      */
     @Override
     public
-    Codec <N, A, M> create ( EPartitionScheme scheme, EncodeAction action ) {
+    Codec <N, A, M, G> create ( EPartitionScheme scheme, EncodeAction action ) {
         return new SearchlessCodec <>();
     }
 
@@ -34,8 +35,8 @@ class SearchlessCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M ext
      */
     @Override
     public
-    IEncoder <N, A, M> getEncoder ( M image, Size rangeSize, Size domainSize ) {
-        return new SearchlessEncoder <>(image, rangeSize, domainSize);
+    IEncoder <N, A, M, G> getEncoder ( M image, Size rangeSize, Size domainSize ) {
+        return new SearchlessEncoder <N, A, M, G>(image, rangeSize, domainSize);
     }
 
     /**
@@ -44,7 +45,7 @@ class SearchlessCodec<N extends TreeNode <N, A, M>, A extends Address <A>, M ext
      */
     @Override
     public
-    IEncoder <N, A, M> getEncoder () {
+    IEncoder <N, A, M, G> getEncoder () {
         return null;
     }
 

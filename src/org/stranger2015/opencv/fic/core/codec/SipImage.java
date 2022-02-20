@@ -2,6 +2,7 @@ package org.stranger2015.opencv.fic.core.codec;
 
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
+import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.Image;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
@@ -12,11 +13,11 @@ import java.util.List;
  *
  */
 public
-class SipImage extends Image {
+class SipImage<A extends Address<A>> extends Image<A> {
     protected Pixel[] pixels;
 
     public
-    <M extends IImage>
+    <M extends IImage<A>>
     SipImage ( M input, Pixel[] pixels ) {
         super(input);
         this.pixels = pixels;

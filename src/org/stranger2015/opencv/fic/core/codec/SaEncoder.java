@@ -7,6 +7,7 @@ import org.stranger2015.opencv.fic.core.ImageBlock;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
 
@@ -14,8 +15,9 @@ import java.util.List;
  *
  */
 public
-class SaEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
-        extends Encoder <N, A, M> {
+class SaEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>,
+        G extends BitBuffer>
+        extends Encoder <N, A, M, G> {
 
     /**
      * @param inputImage
@@ -46,21 +48,20 @@ class SaEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends I
      */
     @Override
     public
-    List <ImageTransform <M>> compress ( M image,
-                                         int sourceSize,
-                                         int destinationSize,
-                                         int step ) {
+    List <ImageTransform <M, A, G>> compress ( M image,
+                                               int sourceSize,
+                                               int destinationSize,
+                                               int step ) {
         return null;
     }
 
-    @Override
     protected
-    SaImageBlockGenerator createBlockGenerator ( IEncoder <N, A, M> encoder,
-                                                 IImage image,
-                                                 Size rangeSize,
-                                                 Size domainSize ) {
+    ImageBlockGenerator <N, A, M, G> createBlockGenerator ( IEncoder <N, A, M, G> encoder,
+                                                            M image,
+                                                            Size rangeSize,
+                                                            Size domainSize ) {
 
-        return new SaImageBlockGenerator(encoder, image, rangeSize, domainSize);
+        return new SaImageBlockGenerator <>(encoder, image, rangeSize, domainSize);
     }
 
     /**
@@ -72,7 +73,7 @@ class SaEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends I
      */
     @Override
     public
-    List <ImageBlock> generateAllTransformedBlocks ( M image,
+    List <ImageBlock<A>> generateAllTransformedBlocks ( M image,
                                                      int sourceSize,
                                                      int destinationSize,
                                                      int step ) {
@@ -84,7 +85,7 @@ class SaEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends I
      */
     @Override
     public
-    List <ImageTransform <M>> getTransforms () {
+    List <ImageTransform <M, A, G>> getTransforms () {
         return transforms;
     }
 
@@ -95,7 +96,7 @@ class SaEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends I
      */
     @Override
     public
-    M randomTransform ( M image, ImageTransform <M> transform ) {
+    M randomTransform ( M image, ImageTransform <M, A, G> transform ) {
         return null;
     }
 
@@ -106,7 +107,7 @@ class SaEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends I
      */
     @Override
     public
-    M applyTransform ( M image, ImageTransform <M> transform ) {
+    M applyTransform ( M image, ImageTransform <M, A, G> transform ) {
         return null;
     }
 
@@ -117,7 +118,7 @@ class SaEncoder<N extends TreeNode <N, A, M>, A extends Address <A>, M extends I
      */
     @Override
     public
-    M applyAffineTransform ( M image, AffineTransform <M> transform ) {
+    M applyAffineTransform ( M image, AffineTransform <M, A, G> transform ) {
         return null;
     }
 

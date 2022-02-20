@@ -1,25 +1,26 @@
 package org.stranger2015.opencv.fic.transform;
 
+import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.fic.core.Image;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * functor class to rotate an image by the given degrees
  */
 public
-class RotationTransform<M extends IImage> extends PreserveAlphaTransform <M> {
+class RotationTransform<M extends IImage, A extends Address <A>, G extends BitBuffer>
+        extends PreserveAlphaTransform <M, A, G> {
 
     private final double degrees;
-    private final double pointX;
-    private final double pointY;
-//    private final boolean preserveAlpha;
+    private final double pointX;//int
+    private final double pointY;//imt
 
     /**
      * @param degrees
      */
     public
-    RotationTransform ( double degrees ) {
-        this(degrees, 0, 0, false);
+    RotationTransform ( double degrees, Address <A> address ) {
+        this(degrees, 0, 0, false, address);
     }
 
     /**
@@ -27,8 +28,8 @@ class RotationTransform<M extends IImage> extends PreserveAlphaTransform <M> {
      * @param preserveAlpha
      */
     public
-    RotationTransform ( double degrees, boolean preserveAlpha ) {
-        this(degrees, 0, 0, preserveAlpha);
+    RotationTransform ( double degrees, boolean preserveAlpha, Address <A> address ) {
+        this(degrees, 0, 0, preserveAlpha, address);
     }
 
     /**
@@ -39,9 +40,10 @@ class RotationTransform<M extends IImage> extends PreserveAlphaTransform <M> {
     public
     RotationTransform ( double degrees,
                         double pointX,
-                        double pointY ) {
+                        double pointY,
+                        Address <A> address ) {
 
-        this(degrees, pointX, pointY, false);
+        this(degrees, pointX, pointY, false, address);
     }
 
     /**
@@ -54,31 +56,15 @@ class RotationTransform<M extends IImage> extends PreserveAlphaTransform <M> {
     RotationTransform ( double degrees,
                         double pointX,
                         double pointY,
-                        boolean preserveAlpha ) {
+                        boolean preserveAlpha,
+                        Address <A> address ) {
 
-        super(null,preserveAlpha);
+        super(null, preserveAlpha, address);
 
         this.degrees = degrees;
         this.pointX = pointX;
         this.pointY = pointY;
-//        this.preserveAlpha = preserveAlpha;
     }
-
-//    @Override
-//    public BufferedImage transform( BufferedImage inputimage) {
-//        int imageType = preserveAlpha ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
-//        BufferedImage rotatedImg = new BufferedImage(inputimage.getWidth(), inputimage.getHeight(), imageType);
-//
-//        Graphics2D graphics = rotatedImg.createGraphics();
-//        if (preserveAlpha) {
-//            graphics.setComposite(AlphaComposite.Src);
-//        }
-//        graphics.rotate(Math.toRadians(degrees), pointX, pointY);
-//        graphics.drawImage(inputimage, null, null);
-//        graphics.dispose();
-//
-//        return rotatedImg;
-//    }
 
     public
     double getDegrees () {
@@ -93,23 +79,5 @@ class RotationTransform<M extends IImage> extends PreserveAlphaTransform <M> {
     public
     double getPointY () {
         return pointY;
-    }
-
-//    public
-//    boolean isPreserveAlpha () {
-//        return preserveAlpha;
-//    }
-
-    /**
-     * @param inputImage
-     * @param transformMatrix
-     * @param interpolationType
-     * @return
-     */
-    @Override
-    public
-    M transform ( M inputImage, M transformMatrix, EInterpolationType interpolationType ) {
-
-        return outputImage;
     }
 }

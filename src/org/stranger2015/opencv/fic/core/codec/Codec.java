@@ -6,6 +6,7 @@ import org.opencv.core.Size;
 
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -18,8 +19,8 @@ import static org.stranger2015.opencv.fic.core.codec.Encoder.ZERO_SIZE;
  * @param <A>
  */
 public abstract
-class Codec<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
-        implements ICodec <N, A, M> {
+class Codec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
+        implements ICodec <N, A, M, G> {
 
     private final EPartitionScheme scheme;
     private final EncodeAction action;
@@ -50,7 +51,7 @@ class Codec<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImag
      * @return
      */
     public
-    Codec <N, A, M> create ( EPartitionScheme scheme, EncodeAction action ) {
+    Codec <N, A, M, G> create ( EPartitionScheme scheme, EncodeAction action ) {
         return null;
     }
 
@@ -77,7 +78,7 @@ class Codec<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImag
      * @return
      */
     public abstract
-    IEncoder <N, A, M> getEncoder ( M image, Size rangeSize, Size domainSize );
+    IEncoder <N, A, M, G> getEncoder ( M image, Size rangeSize, Size domainSize );
 
     /**
      * @param scheme
@@ -90,12 +91,12 @@ class Codec<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImag
      */
     @SuppressWarnings("unchecked")
     public static
-    <N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage>
-    @NotNull Codec <N, A, M> create ( EPartitionScheme scheme, EncodeAction action, LoadSaveImageTask lit ) {
+    <N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
+    @NotNull Codec <N, A, M, G> create ( EPartitionScheme scheme, EncodeAction action, LoadSaveImageTask lit ) {
         try {
-            Class <Codec <N, A, M>> codecClass =
-                    (Class <Codec <N, A, M>>) Class.forName(scheme.getCodecClassName());
-            Constructor <Codec <N, A, M>> ctor = codecClass.getDeclaredConstructor(
+            Class <Codec <N, A, M, G>> codecClass =
+                    (Class <Codec <N, A, M, G>>) Class.forName(scheme.getCodecClassName());
+            Constructor <Codec <N, A, M, G>> ctor = codecClass.getDeclaredConstructor(
                     Image.class,
                     Size.class,
                     Size.class);

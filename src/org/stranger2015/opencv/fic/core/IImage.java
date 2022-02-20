@@ -8,18 +8,18 @@ import org.stranger2015.opencv.fic.core.codec.Pixel;
  *
  */
 public
-interface IImage {
-    /**
-     *
-     * @return
-     */
-    int getX();
-
-    /**
-     *
-     * @return
-     */
-    int getY();
+interface IImage<A extends Address<A>> {
+//    /**
+//     *
+//     * @return
+//     */
+//    int getX();
+//
+//    /**
+//     *
+//     * @return
+//     */
+//    int getY();
 
     /**
      *
@@ -42,7 +42,7 @@ interface IImage {
      *
      * @param contractivity
      */
-    IImage contract ( int contractivity);
+    IImage<A> contract ( int contractivity);
 
     /**
      * @return
@@ -83,14 +83,46 @@ interface IImage {
      */
     int  getOriginalImageHeight();
 
+    /**
+     * @param x
+     * @param y
+     * @param ia
+     * @return
+     */
     int get ( int x, int y, int[] ia );
 
+    /**
+     * @param destX
+     * @param destY
+     * @param pixel
+     */
     void put ( int destX, int destY, int pixel );
 
+    /**
+     * @param pixels
+     * @param v
+     * @param v1
+     * @param v2
+     * @param v3
+     */
     void put ( Pixel[] pixels, double v, double v1, double v2, double v3 );
 
+    /**
+     * @return
+     */
     int cols ();
+
+    /**
+     * @return
+     */
     int rows ();
+
+    /**
+     * @param x
+     * @param y
+     */
+    void setAddress ( int x, int y );
+
 }
 
 

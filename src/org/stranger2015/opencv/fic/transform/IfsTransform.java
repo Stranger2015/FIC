@@ -1,7 +1,9 @@
 package org.stranger2015.opencv.fic.transform;
 
+import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.Image;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 import static org.stranger2015.opencv.fic.transform.IfsTransform.SYM.*;
 
@@ -9,21 +11,10 @@ import static org.stranger2015.opencv.fic.transform.IfsTransform.SYM.*;
  * @param <M>
  */
 public
-class IfsTransform<M extends IImage> extends ImageTransform <M> {
+class IfsTransform<M extends IImage, A extends Address <A>, G extends BitBuffer>
+        extends ImageTransform <M, A, G> {
 
     private final static int[] ia = new int[0];
-
-    /**
-     * @param inputImage
-     * @param transformMatrix
-     * @param interpolationType
-     * @return
-     */
-    @Override
-    public
-    M transform ( M inputImage, M transformMatrix, EInterpolationType interpolationType ) {
-        return null;
-    }
 
     /**
      *
@@ -60,8 +51,9 @@ class IfsTransform<M extends IImage> extends ImageTransform <M> {
                    int size,
                    SYM symmetry,
                    double scale,
-                   int offset ) {
-        super(image);
+                   int offset , Address<A> address) {
+
+        super(image, EInterpolationType.BILINEAR, address);
 
         this.fromX = fromX;
         this.fromY = fromY;

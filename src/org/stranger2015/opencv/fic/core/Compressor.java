@@ -3,8 +3,8 @@ package org.stranger2015.opencv.fic.core;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.fic.transform.ScaleTransform;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImageOp;
+import java.awt.image.M;
+import java.awt.image.MOp;
 import java.util.HashSet;
 import java.util.Observable;
 import java.util.Observer;
@@ -15,13 +15,13 @@ import java.util.Set;
  * comparator classes to create a fractal image model
  */
 public
-class Compressor extends Observable {
+class Compressor<M extends M> extends Observable {
 
-    private final ScaleTransform <IImage> scaleTransform;
-    private final Tiler <BufferedImage> tiler;
-    private final ThreadLocal <Distanceator /*<BufferedImage>*/> comparator = new ThreadLocal <>();
-    private final Set <ImageTransform <IImage>> transforms;
-    private final Set <BufferedImageOp> filters;
+    private final ScaleTransform <M> scaleTransform;
+    private final Tiler <M> tiler;
+    private final ThreadLocal <Distanceator /*<M>*/> comparator = new ThreadLocal <>();
+    private final Set <ImageTransform <M>> transforms;
+    private final Set <MOp> filters;
 
     /**
      * @param scaleTransform the scale difference between the ranges and the domains
@@ -34,10 +34,10 @@ class Compressor extends Observable {
      * @see Observer#update(java.util.Observable, java.lang.Object)
      */
     public
-    Compressor ( final ScaleTransform <IImage> scaleTransform,
-                 final Tiler <BufferedImage> tiler,
-                 final Distanceator /*<BufferedImage>*/ comparator,
-                 final Set <ImageTransform <IImage>> transforms,
+    Compressor ( final ScaleTransform <M> scaleTransform,
+                 final Tiler <M> tiler,
+                 final Distanceator /*<M>*/ comparator,
+                 final Set <ImageTransform <M>> transforms,
                  final Observer observer )
             throws NullPointerException {
         this(scaleTransform, tiler, comparator, transforms,
@@ -56,11 +56,11 @@ class Compressor extends Observable {
      * @see Observer#update(java.util.Observable, java.lang.Object)
      */
     public
-    Compressor ( final ScaleTransform <IImage> scaleTransform,
-                 final Tiler <BufferedImage> tiler,
-                 final Distanceator /*<BufferedImage>*/ comparator,
-                 final Set <ImageTransform <IImage>> transforms,
-                 final Set <BufferedImageOp> filters,
+    Compressor ( final ScaleTransform <M> scaleTransform,
+                 final Tiler <M> tiler,
+                 final Distanceator /*<M>*/ comparator,
+                 final Set <ImageTransform <M>> transforms,
+                 final Set <MOp> filters,
                  Observer observer ) throws NullPointerException {
         assert (comparator != null) && (transforms != null) && (filters != null)
                 && (tiler != null) && (scaleTransform != null) : "Null elements now allowed";
@@ -77,22 +77,22 @@ class Compressor extends Observable {
     }
 
     public
-    ScaleTransform <IImage> getScaleTransform () {
+    ScaleTransform <M> getScaleTransform () {
         return scaleTransform;
     }
 
     public
-    Tiler <BufferedImage> getTiler () {
+    Tiler <M> getTiler () {
         return tiler;
     }
 
     public
-    Set <ImageTransform <IImage>> getTransforms () {
+    Set <ImageTransform <M>> getTransforms () {
         return transforms;
     }
 
     public
-    Set <BufferedImageOp> getFilters () {
+    Set <MOp> getFilters () {
         return filters;
     }
 }

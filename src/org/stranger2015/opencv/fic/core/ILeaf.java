@@ -3,6 +3,7 @@ package org.stranger2015.opencv.fic.core;
 import org.opencv.core.Rect;
 
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
@@ -10,7 +11,7 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
  * @param <M>
  */
 public
-interface ILeaf<N extends TreeNode <N, A, M>, A extends Address <A>, M extends IImage> {
+interface ILeaf<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer> {
 
     /**
      * @return
@@ -25,7 +26,7 @@ interface ILeaf<N extends TreeNode <N, A, M>, A extends Address <A>, M extends I
     /**
      * @return
      */
-    int getAddress();
+    Address <A> getAddress();
 
     /**
      * @return
@@ -46,5 +47,4 @@ interface ILeaf<N extends TreeNode <N, A, M>, A extends Address <A>, M extends I
      * @return
      */
     Rect getBoundingBox();
-
 }

@@ -1,41 +1,33 @@
 package org.stranger2015.opencv.fic.transform;
 
+import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.fic.core.Image;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
 
 /**
- * 
+ *
  */
-public class AffineFlipTransform<M extends IImage> extends AffineTransform <M> {
+public
+class AffineFlipTransform<M extends IImage, A extends Address <A>, G extends BitBuffer>
+        extends AffineTransform <M, A, G> {
 
 
-    public AffineFlipTransform(M image, EInterpolationType interpolationType) {super(image, interpolationType);
-    }
-
-    public AffineFlipTransform(M image) {
-        this(image, BILINEAR);
+    /**
+     * @param image
+     * @param interpolationType
+     */
+    public
+    AffineFlipTransform ( M image, EInterpolationType interpolationType, Address<A> address ) {
+        super(image, interpolationType, address );
     }
 
     /**
-     * @param inputImage
-     * @param transformMatrix
-     * @param interpolationType
-     * @return
+     * @param image
      */
-    @Override
     public
-    M transform ( M inputImage, M transformMatrix, EInterpolationType interpolationType ) {
-        return null;
+    AffineFlipTransform ( M image, Address<A> address ) {
+        this(image, BILINEAR, address);
     }
-
-//    @Override
-//    public BufferedImage transform(final BufferedImage inputimage) {
-//        AffineTransform transform = new AffineTransform();
-//        transform.translate(inputimage.getWidth()  / 2, inputimage.getHeight()  / 2);
-//        transform.scale(1, -1);
-//        transform.translate(-inputimage.getWidth() / 2, -inputimage.getHeight() / 2);
-//        return affineTransform(inputimage, transform, interpolationType);
-//    }
 }
