@@ -1,6 +1,8 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
 import org.jetbrains.annotations.NotNull;
+import org.stranger2015.opencv.fic.core.Address;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -12,52 +14,62 @@ import static org.stranger2015.opencv.fic.core.search.ga.GaProcessor.getRandom;
 /**
  *
  */
-
 @SuppressWarnings("unchecked")
 public
-class Population<T extends Individual> implements Iterable <T> {
+class Population<T extends Individual <T, A, G, C>, A extends Address <A>, G extends BitBuffer,
+        C extends Chromosome <T, A, G>>
 
-    private final List <T> list = new ArrayList <>();
+        implements Iterable <T> {
 
-    public final static int popSize = 50;//fixme
-    public final static int chromSize = 8;
+    protected final List <T> list = new ArrayList <>();
+
+    public int popSize = 100;
+    protected int chromosomeLength = 31;
 
     protected T fittest;
-    private double populationFitness;
+    protected double populationFitness;
 
+    /**
+     * @param list
+     */
     public
     Population ( List <T> list ) {
-
-//        this.popSize = popSize;
-//        this.chromSize = chromSize;
+        this.list.addAll(list);
     }
 
+    /**
+     * @param list
+     * @param fromIndex
+     * @param toIndex
+     */
     public
     Population ( List <T> list, int fromIndex, int toIndex ) {
         this(list.subList(fromIndex, toIndex));
     }
 
     /**
+     *
+     *
      * @param popSize
      * @param chromosomeLength
      */
     public
     Population ( int popSize, int chromosomeLength ) {
-
+        this.popSize = popSize;
+        this.chromosomeLength = chromosomeLength;
     }
 
     /**
+     *
+     *
      * @param population
+     * @param chromosomeLength
      */
     public
-    Population( Population <T> population ) {
-        list.clear();
+    Population ( Population <T, A, G, C> population, int chromosomeLength ) {
+        this.chromosomeLength = chromosomeLength;
+        popSize = population.size();
         list.addAll(population.list);
-    }
-
-    public
-    Population ( ISelector <T> selector, int popSize, int chromSize ) {
-
     }
 
     /**
@@ -65,8 +77,7 @@ class Population<T extends Individual> implements Iterable <T> {
      */
     public
     void init () {
-        IntStream.range(0, list.size()).mapToObj(i ->
-                (T) new Individual(8)).forEachOrdered(list::add);
+        IntStream.range(0, list.size()).mapToObj(this::apply).forEachOrdered(list::add);
     }
 
     /**
@@ -75,7 +86,8 @@ class Population<T extends Individual> implements Iterable <T> {
      */
     public
     T getFittest ( int popIndex ) {
-        return (T) new Individual(8);
+//        populations[];
+        return (T) new Individual <T, A, G, C>(chromosomeLength);
     }
 
     /**
@@ -83,7 +95,7 @@ class Population<T extends Individual> implements Iterable <T> {
      */
     public
     T[] getIndividuals () {
-        return (T[]) list.toArray(new Individual[list.size()]);
+        return list.toArray((T[]) new Individual[list.size()]);
     }
 
     /**
@@ -117,7 +129,7 @@ class Population<T extends Individual> implements Iterable <T> {
      * @return
      */
     public
-    Population <T> getRange ( int fromIdx, int toIdx ) {
+    Population <T, A, G, C> getRange ( int fromIdx, int toIdx ) {
         return new Population <>(list.subList(fromIdx, toIdx));
     }
 
@@ -132,7 +144,7 @@ class Population<T extends Individual> implements Iterable <T> {
         // current population size
         int size = this.size();
         // create temporary copy of the population
-        Population <T> tempPopulation = this.getRange(0, size);
+        Population <T, A, G, C> tempPopulation = this.getRange(0, size);
         // clear current population and refill it randomly
         this.list.clear();
         while (size > 0) {
@@ -171,5 +183,14 @@ class Population<T extends Individual> implements Iterable <T> {
     public
     double getPopulationFitness () {
         return populationFitness;
+    }
+
+    /**
+     * @param i
+     * @return
+     */
+    protected
+    T apply ( int i ) {
+        return (T) new Individual <T, A, G, C>(chromosomeLength);
     }
 }

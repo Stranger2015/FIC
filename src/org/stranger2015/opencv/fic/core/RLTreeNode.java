@@ -9,7 +9,7 @@ import org.stranger2015.opencv.fic.utils.Point;
  * @param <N>
  */
 public
-class RLTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer> extends TreeNode <N, A, M, G> {
+class RLTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer> extends TreeNode <N, A, M, G> {
 
 
     /**

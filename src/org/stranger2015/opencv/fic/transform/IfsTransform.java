@@ -11,7 +11,7 @@ import static org.stranger2015.opencv.fic.transform.IfsTransform.SYM.*;
  * @param <M>
  */
 public
-class IfsTransform<M extends IImage, A extends Address <A>, G extends BitBuffer>
+class IfsTransform<M extends IImage<A>, A extends Address <A>, G extends BitBuffer>
         extends ImageTransform <M, A, G> {
 
     private final static int[] ia = new int[0];
@@ -74,7 +74,7 @@ class IfsTransform<M extends IImage, A extends Address <A>, G extends BitBuffer>
      */
     public
     M downSample ( M src, /*int srcWidth,*/ int startX, int startY, int targetSize ) {
-        IImage out = new Image(src);
+        IImage<A> out = new Image(src);
         //        PixelValue* dest = new PixelValue[targetSize * targetSize];
 //        int srcWidth = src.width();
         int destX = 0;

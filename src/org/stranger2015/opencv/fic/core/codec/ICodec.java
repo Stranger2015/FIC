@@ -1,10 +1,10 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-
 import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.Image;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.ValueError;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
@@ -13,8 +13,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
  * @param <M>
  */
 public
-interface ICodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>,
-        G extends BitBuffer> {
+interface ICodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer> {
 
     /**
      * @return
@@ -24,10 +23,17 @@ interface ICodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exten
     /**
      * @return
      */
-    IDecoder <M> getDecoder ();
+    IDecoder <M,A> getDecoder ();
 
     /**
      * @return
      */
     int getImageSizeBase ();
+
+    /**
+     * @param address
+     * @return
+     * @throws ValueError
+     */
+    Address<A> createAddress( int address ) throws ValueError;
 }

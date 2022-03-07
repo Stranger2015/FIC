@@ -9,7 +9,7 @@ import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
 /**
  * functor class to rotate an image by the given degrees
  */
-public class AffineRotateTransform<M extends IImage, A extends Address <A>, G extends BitBuffer> extends AffineTransform<M, A, G> {
+public class AffineRotateTransform<M extends IImage<A>, A extends Address <A>, G extends BitBuffer> extends AffineTransform<M, A, G> {
 
     private final double degrees;
 

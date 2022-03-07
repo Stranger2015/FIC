@@ -123,7 +123,7 @@ class FicGaProcessor<T extends Individual <T, A, G, C>, A extends Address <A>, G
                      double crossoverRate,
                      int elitismCount,
                      ISelector <T, A, G, C> selector,
-                     FitnessFunction <T> fitnessFunction,
+                     FitnessFunction <T, A, G, C> fitnessFunction,
                      IMutationOperator <T> mutationOperator,
                      ICrossoverOperator <T, A, G, C> crossoverOperator ) {
 
@@ -204,7 +204,7 @@ class FicGaProcessor<T extends Individual <T, A, G, C>, A extends Address <A>, G
     public
     T search () {
 
-        return null;
+        return (T) getBestTransform();
     }
 
     public
@@ -217,7 +217,7 @@ class FicGaProcessor<T extends Individual <T, A, G, C>, A extends Address <A>, G
      */
     @Override
     public
-     void setBestTransform ( ITransform <T, A, G> bestTransform ) {
+    void setBestTransform ( ITransform <T, A, G> bestTransform ) {
 
     }
 

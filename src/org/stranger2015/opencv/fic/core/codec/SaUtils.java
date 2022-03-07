@@ -1,7 +1,6 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.EDigits7;
 import org.stranger2015.opencv.fic.core.SaAddress;
 import org.stranger2015.opencv.fic.core.ValueError;
 

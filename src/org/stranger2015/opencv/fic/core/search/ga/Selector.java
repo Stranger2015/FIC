@@ -1,9 +1,8 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
 import org.jetbrains.annotations.Contract;
+import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.utils.BitBuffer;
-
-import java.nio.ByteBuffer;
 
 
 /**
@@ -12,8 +11,9 @@ import java.nio.ByteBuffer;
  * @param <C>
  */
 public abstract
-class Selector<T extends Individual <G, C>, G extends BitBuffer, C extends Chromosome <G>>
-        implements ISelector <T, G, C> {
+class Selector<T extends Individual <T, A, G, C>, A extends Address <A>, G extends BitBuffer,
+        C extends Chromosome <T, A, G>>
+        implements ISelector <T, A, G, C> {
 
     protected final ESelectionType type;
 

@@ -4,6 +4,7 @@ import org.opencv.core.Rect;
 
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
@@ -11,7 +12,7 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
  * @param <M>
  */
 public
-class SabVrTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer>
+class SabVrTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
         extends SaTreeNode <N, A, M, G> {
     /**
      * @param parent

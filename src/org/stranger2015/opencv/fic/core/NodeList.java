@@ -11,7 +11,7 @@ import java.util.*;
  *
  */
 public
-class NodeList<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer>
+class NodeList<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
         implements Iterable <N>{
 
     private final List <TreeNode <N, A, M, G>> list = new ArrayList <>();

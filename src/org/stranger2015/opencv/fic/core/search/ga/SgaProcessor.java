@@ -1,13 +1,14 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
 import org.stranger2015.opencv.fic.core.Address;
+import org.stranger2015.opencv.fic.transform.ITransform;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <T>
  */
 public
-class SgaProcessor<T extends Individual <G, C>, A extends Address <A>, G extends BitBuffer, C extends Chromosome <G>>
+class SgaProcessor<T extends Individual <T,A,G, C>, A extends Address <A>, G extends BitBuffer, C extends Chromosome <T,A,G>>
                 extends GaProcessor <T, G> {
 
     /**
@@ -71,9 +72,9 @@ class SgaProcessor<T extends Individual <G, C>, A extends Address <A>, G extends
      * @return population The initial population generated
      */
     public
-    Population <T> initPopulation ( int popSize, int chromosomeLength ) {
+    Population <T,A,G,C> initPopulation ( int popSize, int chromosomeLength ) {
         // Initialize population
-        Population <T> population = new Population <>(popSize, chromosomeLength);
+        Population <T,A,G,C> population = new Population <>(popSize, chromosomeLength);
 
         return population;
     }
@@ -121,7 +122,7 @@ class SgaProcessor<T extends Individual <G, C>, A extends Address <A>, G extends
      * @param population the population to evaluate
      */
     public
-    void evalPopulation ( Population <T> population ) {
+    void evalPopulation ( Population <T,A,G,C> population ) {
         double populationFitness = 0;
 
         // Loop over population evaluating individuals and summing population fitness
@@ -144,7 +145,7 @@ class SgaProcessor<T extends Individual <G, C>, A extends Address <A>, G extends
      * @return boolean True if termination condition met, otherwise, false
      */
     public
-    boolean isTerminationConditionMet ( int generationsCount, int maxGenerations ) {
+    boolean isFinalState ( int generationsCount, int maxGenerations ) {
         return (generationsCount > maxGenerations);
     }
 
@@ -158,9 +159,9 @@ class SgaProcessor<T extends Individual <G, C>, A extends Address <A>, G extends
      * @return The individual selected as a parent
      */
     public
-    T selectParent ( Population <T> population ) {
+    T selectParent ( Population <T,A,G,C> population ) {
         // Create tournament
-        Population <T> tournament = new Population (population);
+        Population <T,A,G,C> tournament = new Population (population, chromosomeLength);
 
         // Add random individuals to the tournament
         population.shuffle();
@@ -192,5 +193,23 @@ class SgaProcessor<T extends Individual <G, C>, A extends Address <A>, G extends
     double getFitness ( int iChromIndex ) {
         // fitnessFunction.apply();
         return 0;
+    }
+
+    /**
+     * @param bestTransform
+     */
+    @Override
+    public
+    void setBestTransform ( ITransform<T,A,G> bestTransform ) {
+
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    ITransform getBestTransform () {
+        return null;
     }
 }

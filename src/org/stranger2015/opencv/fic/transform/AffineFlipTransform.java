@@ -10,7 +10,7 @@ import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
  *
  */
 public
-class AffineFlipTransform<M extends IImage, A extends Address <A>, G extends BitBuffer>
+class AffineFlipTransform<M extends IImage<A>, A extends Address <A>, G extends BitBuffer>
         extends AffineTransform <M, A, G> {
 
 

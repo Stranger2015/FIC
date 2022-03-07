@@ -1,8 +1,8 @@
 package org.stranger2015.opencv.fic.core;
 
+import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.core.codec.Codec;
-import org.stranger2015.opencv.fic.core.codec.EncodeAction;
+import org.stranger2015.opencv.fic.core.codec.*;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayList;
@@ -50,8 +50,9 @@ import java.util.List;
  * }// End while uncovered ranges
  * }// End function Quadtree()
  */
+@Deprecated
 public
-class ImagePartitionProcessor<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage,
+class ImagePartitionProcessor<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>,
         G extends BitBuffer>
         extends ImageProcessor <N, A, M, G> {
 
@@ -70,7 +71,13 @@ class ImagePartitionProcessor<N extends TreeNode <N, A, M, G>, A extends Address
      */
     public
     ImagePartitionProcessor ( String fn, EPartitionScheme scheme, Tree <N, A, M, G> tree ) {
-        super(fn, scheme, List.of(), Codec.create(scheme, new EncodeAction(fn)));
+        super(fn, scheme, List.of(), Codec.create(scheme, new EncodeTask<N,A,M,G>(fn, scheme, List.of(), new Encoder <N, A, M, G>() {
+            @Override
+            protected
+            ImageBlockGenerator <N, A, M, G> createBlockGenerator ( IEncoder <N, A, M, G> encoder, M image, Size rangeSize, Size domainSize ) {
+                return null;
+            }
+        })));
 
         this.tree = tree;
     }

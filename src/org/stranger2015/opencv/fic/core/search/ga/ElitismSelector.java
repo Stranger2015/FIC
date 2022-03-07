@@ -1,6 +1,7 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
-import java.nio.ByteBuffer;
+import org.stranger2015.opencv.fic.core.Address;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <T>
@@ -8,8 +9,9 @@ import java.nio.ByteBuffer;
  * @param <C>
  */
 public
-class ElitismSelector<T extends Individual <G, C>, G extends BitBuffer, C extends Chromosome <G>>
-        extends Selector <T, G, C> {
+class ElitismSelector<T extends Individual <T, A, G, C>, A extends Address <A>, G extends BitBuffer,
+        C extends Chromosome <T, A, G>>
+        extends Selector <T, A, G, C> {
     /**
      * @param type
      */

@@ -8,51 +8,27 @@ import org.stranger2015.opencv.fic.core.codec.Pixel;
  *
  */
 public
-interface IImage<A extends Address<A>> {
-//    /**
-//     *
-//     * @return
-//     */
-//    int getX();
-//
-//    /**
-//     *
-//     * @return
-//     */
-//    int getY();
+interface IImage<A extends Address <A>> {
 
     /**
-     *
      * @return
      */
-    int getWidth();
+    int getWidth ();
 
     /**
-     *
      * @return
      */
-    int getHeight();
+    int getHeight ();
+
     /**
-     *
      * @return
      */
     Size getSize ();
 
     /**
-     *
      * @param contractivity
      */
-    IImage<A> contract ( int contractivity);
-
-    /**
-     * @return
-     */
-    int width ();
-
-    /**
-     * @return
-     */
-    int height ();
+    IImage <A> contract ( int contractivity );
 
     /**
      * @param rowStart
@@ -66,7 +42,7 @@ interface IImage<A extends Address<A>> {
     /**
      * @return
      */
-    int  getOriginalImageWidth();
+    int getOriginalImageWidth ();
 
     /**
      * @param originalImageWidth
@@ -81,7 +57,7 @@ interface IImage<A extends Address<A>> {
     /**
      * @return
      */
-    int  getOriginalImageHeight();
+    int getOriginalImageHeight ();
 
     /**
      * @param x
@@ -121,7 +97,35 @@ interface IImage<A extends Address<A>> {
      * @param x
      * @param y
      */
-    void setAddress ( int x, int y );
+    void setAddress ( int x, int y ) throws ValueError;
+
+    /**
+     *
+     */
+    void release ();
+
+    /**
+     * @return
+     */
+    String dump ();
+
+    /**
+     * @return
+     */
+    default
+    Mat getMat () {
+        return (Mat) this;
+    }
+
+    /**
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     * @param <M>
+     * @return
+     */
+    <M extends IImage <A>> M getSubImage ( int x, int y, int width, int height );
 
 }
 

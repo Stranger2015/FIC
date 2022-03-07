@@ -6,6 +6,7 @@ import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.fic.transform.ITransform;
 import org.stranger2015.opencv.utils.BitBuffer;
 
+import java.io.PrintStream;
 import java.util.Date;
 import java.util.stream.IntStream;
 
@@ -15,29 +16,38 @@ import java.util.stream.IntStream;
  * Input: take a NxN square image
  * <p>
  * Initialize FIC parameters like
+ * <p>
  * range block size,
  * fitness function,
  * error limit,
  * no. of iterations.
+ * <p>
  * Initialize GA parameters like mutation rate, crossover rate;
+ * <p>
  * Divide the input image into set of range blocks;
+ * <p>
  * Divide the input image into set of domain blocks;
+ * <p>
  * Generate a random population of chromosomes from region blocks;
  * <p>
- * While Loop (Number of iterations reached)
- * While Loop (until all Regions not coded)
- * -Select Region Blocks sequentially
- * While Loop (until last generation reached)
- * - Compute fitness for all regions;
- * - Depending upon the fitness search
- * the optimal domain block from domain pool;
- * - When optimal domain block found
- * - write obtained transformation parameters to the Output
- * Coefficient;
- * Wend
- * Wend
- * -Generate new population {Apply Selection, Crossover and Mutation operators};
- * Wend.
+ *      While Loop (Number of iterations reached){
+ *          While Loop (until all Regions not coded){
+ * <p>
+ *              -Select Region Blocks sequentially
+ * <p>
+ *              While Loop (until last generation reached){
+ * <p>
+ *                  - Compute fitness for all regions;
+ * <p>
+ *                  - Depending upon the fitness search the optimal domain block from domain pool;
+ *
+ *                  - When optimal domain block found
+ *                         - write obtained transformation parameters to the Output Coefficient;
+ *              }
+ *          }
+ *
+ *          -Generate new population {Apply Selection, Crossover and Mutation operators};
+ *     }.
  * <p>
  * =====================================================================================
  * <p>
@@ -91,7 +101,7 @@ class GaProcessor<T extends Individual <T, A, G, C>, A extends Address <A>, G ex
     protected final ISelector <T, A, G, C> selector;
     protected final IMutationOperator <T> mutationOperator;
     protected final ICrossoverOperator <T, A, G, C> crossoverOperator;
-    protected final FitnessFunction <T> fitnessFunction;
+    protected final FitnessFunction <T, A, G, C> fitnessFunction;
 
     /**
      * @param popSize
@@ -107,7 +117,7 @@ class GaProcessor<T extends Individual <T, A, G, C>, A extends Address <A>, G ex
                   double crossoverRate,
                   int elitismCount,
                   ISelector <T, A, G, C> selector,
-                  FitnessFunction <T> fitnessFunction,
+                  FitnessFunction <T, A, G, C> fitnessFunction,
                   IMutationOperator <T> mutationOperator,
                   ICrossoverOperator <T, A, G, C> crossoverOperator ) {
 
@@ -121,7 +131,7 @@ class GaProcessor<T extends Individual <T, A, G, C>, A extends Address <A>, G ex
         this.crossoverOperator = crossoverOperator;
     }
 
-    protected Population <T>[] populations;
+    protected Population <T, A, G, C>[] populations;
     protected int popIndex;
 
     /**
@@ -131,17 +141,14 @@ class GaProcessor<T extends Individual <T, A, G, C>, A extends Address <A>, G ex
      * @return population The initial population generated
      */
     public
-    Population <T> initPopulation ( int chromosomeLength ) {
+    Population <T, A, G, C> initPopulation ( int chromosomeLength ) {
         // Initialize population
-        return new Population <T>(populations[popIndex].getRange(0, populations[popIndex].size()));
+        return new Population <>(populations[popIndex].getRange(0, populations[popIndex].size()),
+                chromosomeLength);
     }
 
     /**
      * Calculate fitness for an individual.
-     * <p>
-     * This fitness calculation is a little more involved than chapter2's. In
-     * this case we initialize a new Robot class, and evaluate its performance
-     * in the given maze.
      *
      * @param individual the individual to evaluate
      * @return double The fitness value for individual
@@ -151,10 +158,7 @@ class GaProcessor<T extends Individual <T, A, G, C>, A extends Address <A>, G ex
         // Get individual's chromosome
         C chromosome = individual.getChromosome();
 
-        // Get fitness
-//        Robot robot = new Robot(chromosome, maze, 100);
-//        robot.run();
-        int fitness = 100;//maze.scoreRoute(robot.getRoute());
+        double fitness = 100;
 
         // Store fitness
         individual.setFitness(fitness);
@@ -178,9 +182,9 @@ class GaProcessor<T extends Individual <T, A, G, C>, A extends Address <A>, G ex
      * @param population the population to evaluate
      */
     public
-    void evalPopulation ( Population <T> population ) {
-        double populationFitness = fitnessFunction.apply(population).doubleValue();//fixme
+    double evalPopulation ( Population <T, A, G, C> population ) {
 
+        return fitnessFunction.apply(population).doubleValue();//fixme
     }
 
     /**
@@ -195,7 +199,7 @@ class GaProcessor<T extends Individual <T, A, G, C>, A extends Address <A>, G ex
      * @return boolean True if termination condition met, otherwise, false
      */
     public
-    boolean isTerminationConditionMet ( int generationsCount, int maxGenerations ) {
+    boolean isFinalState ( int generationsCount, int maxGenerations ) {
         return (generationsCount > maxGenerations);
     }
 
@@ -209,16 +213,16 @@ class GaProcessor<T extends Individual <T, A, G, C>, A extends Address <A>, G ex
      * @return The individual selected as a parent
      */
     public
-    T selectParent ( Population <T> population ) {
+    T selectParent ( Population <T, A, G, C> population ) {
         // Create tournament
-        Population <T> tournament = new Population <>(population);
+        Population <T, A, G, C> tournament = new Population <>(population, population.chromosomeLength);
 
         // Add random individuals to the tournament
         population.shuffle();
-        for (int i = 0; i < this.popSize; i++) {
+        IntStream.range(0, this.popSize).forEachOrdered(i -> {
             T tournamentIndividual = population.getIndividual(i);
             tournament.setIndividual(i, tournamentIndividual);
-        }
+        });
 
         // Return the best
         return tournament.getFittest(0);
@@ -233,14 +237,13 @@ class GaProcessor<T extends Individual <T, A, G, C>, A extends Address <A>, G ex
      * @return The mutated population
      */
     public
-    Population <T> mutatePopulation ( Population <T> population ) {
+    Population <T, A, G, C> mutatePopulation ( Population <T, A, G, C> population ) {
         // Initialize new population
-        Population <T> newPopulation = new Population <>(population);//fixme
+        Population <T, A, G, C> newPopulation = new Population <>(population, population.chromosomeLength);//fixme
 
         // Loop over current population by fitness
         for (int populationIndex = 0; populationIndex < population.size(); populationIndex++) {
             T individual = population.getFittest(populationIndex);
-
             // Loop over individual's genes
             for (int geneIndex = 0; geneIndex < individual.getChromosomeLength(); geneIndex++) {
                 // Skip mutation if this is an elite individual
@@ -286,13 +289,13 @@ class GaProcessor<T extends Individual <T, A, G, C>, A extends Address <A>, G ex
      */
     @SuppressWarnings("unchecked")
     public
-    Population <T> crossoverPopulation ( Population <T> population ) {
+    Population <T, A, G, C> crossoverPopulation ( Population <T, A, G, C> population ) {
         // Create new population
-        Population <T> newPopulation = new Population <T>(this.selector, this.popSize, population.size());
+        Population <T, A, G, C> newPopulation = new Population <>(population.size(), population.chromosomeLength);//fixme
 
         // Loop over current population by fitness
         for (int populationIndex = 0; populationIndex < population.size(); populationIndex++) {
-            Individual <T,A,G, C> parent1 = population.getFittest(populationIndex);
+            T parent1 = population.getFittest(populationIndex);
 
             // Apply crossover to this individual?
             if (this.crossoverRate > Math.random() && populationIndex >= this.elitismCount) {
@@ -321,7 +324,7 @@ class GaProcessor<T extends Individual <T, A, G, C>, A extends Address <A>, G ex
             }
             else {
                 // Add individual to new population without applying crossover
-                newPopulation.setIndividual(populationIndex, (T) parent1);
+                newPopulation.setIndividual(populationIndex, parent1);
             }
         }
 
@@ -363,17 +366,17 @@ class GaProcessor<T extends Individual <T, A, G, C>, A extends Address <A>, G ex
     /**
      * storage for pool of chromosomes for current generation
      */
-    Chromosome <G>[] chromosomes;
+    Chromosome <T, A, G>[] chromosomes;
 
     /**
      * storage for temporary holding pool for next generation chromosomes
      */
-    Chromosome <G>[] chromNextGen;
+    Chromosome <T, A, G>[] chromNextGen;
 
     /**
      * storage for pool of prelim generation chromosomes
      */
-    Chromosome <G>[] prelimChrom;
+    Chromosome <T, A, G>[] prelimChrom;
 
     /**
      * index of the fittest chromosome in current generation
@@ -454,16 +457,14 @@ class GaProcessor<T extends Individual <T, A, G, C>, A extends Address <A>, G ex
                   double crossoverRate,
                   int popSize,
                   int elitismCount,
-                  ISelector <T, G, C> selector,
-                  FitnessFunction <T> fitnessFunction,
+                  ISelector <T, A, G, C> selector,
+                  FitnessFunction <T, A, G, C> fitnessFunction,
                   IMutationOperator <T> mutationOperator,
                   ICrossoverOperator <T, A, G, C> crossoverOperator,
-                  //              int randomSelectionChance,
                   int maxGenerations,
                   int numPrelimRuns,
                   int maxPrelimGenerations,
                   double mutationRate,
-//                  int crossoverType,
                   boolean computeStatistics ) {
 
         this.popSize = popSize;
@@ -607,8 +608,8 @@ class GaProcessor<T extends Individual <T, A, G, C>, A extends Address <A>, G ex
      * @return Chromosome<G>
      */
     public
-    Chromosome <G> getFittestChromosome () {
-        return (this.chromosomes[bestFitnessChromIndex]);
+    Chromosome <T, A, G> getFittestChromosome () {
+        return this.chromosomes[bestFitnessChromIndex];
     }
 
     /**
@@ -667,8 +668,13 @@ class GaProcessor<T extends Individual <T, A, G, C>, A extends Address <A>, G ex
 
                 //create a somewhat fit chromosome population for this prelim run
                 while (iGen < maxPrelimGenerations) {
-                    System.out.println(iPrelimRuns + " of " + numPrelimRuns + " prelim runs --> " +
-                            (iGen + 1) + " of " + maxPrelimGenerations + " generations");
+                    try (PrintStream printStream = System.out.printf(
+                            "%d of %d prelim runs --> %d of %d generations ",
+                            iPrelimRuns,
+                            numPrelimRuns,
+                            iGen + 1,
+                            maxPrelimGenerations)) {
+                    }
 
                     computeFitnessRankings();
 //                    doCrossover();
@@ -699,8 +705,9 @@ class GaProcessor<T extends Individual <T, A, G, C>, A extends Address <A>, G ex
 
             System.out.println("INITIAL POPULATION AFTER PRELIM RUNS:");
         }
-        else
+        else {
             System.out.println("INITIAL POPULATION (NO PRELIM RUNS):");
+        }
 
         //Add Preliminary Chromosomes to list box
         addChromosomesToLog(0, 10);
@@ -728,75 +735,15 @@ class GaProcessor<T extends Individual <T, A, G, C>, A extends Address <A>, G ex
 
         computeFitnessRankings();
         System.out.println("Best Chromosome<G> Found: ");
-        System.out.printf("%s  Fitness= %f",
+        System.out.printf("%s Fitness= %f",
                 this.chromosomes[this.bestFitnessChromIndex].getGenesAsG(),
                 this.chromosomes[this.bestFitnessChromIndex].fitness);
 
         System.out.println("GA end time: " + new Date());
 
         //return (iGen);
-        return null;
+        return getFittestChromosome();
     }
-
-//    /**
-//     * Select two parents from population, giving highly fit individuals a greater chance of
-//     * being selected.
-//     *
-//     * @param indexParents
-//     */
-//    public
-//    void selectTwoParents ( int[] indexParents ) {
-//        int indexParent1 = indexParents[0];
-//        int indexParent2 = indexParents[1];
-//        boolean bFound = false;
-//        int index;
-//
-//        while (bFound == false) {
-//            index = getRandom(populationDim); //get random member of population
-//
-//            if (randomSelectionProbability > getRandom(100)) {
-//                indexParent1 = index;
-//                bFound = true;
-//            }
-//            else {
-//                //the greater a chromosome's fitness rank, the higher prob that it will be
-//                //selected to reproduce
-//                if (this.chromosomes[index].fitnessRank + 1 > getRandom(populationDim)) {
-//                    indexParent1 = index;
-//                    bFound = true;
-//                }
-//            }
-//        }
-//
-//        bFound = false;
-//        while (bFound == false) {
-//            index = getRandom(populationDim); //get random member of population
-//
-//            if (randomSelectionProbability > getRandom(100)) {
-//                if (index != indexParent1) {
-//                    indexParent2 = index;
-//                    bFound = true;
-//                }
-//            }
-//            else {
-//                //the greater a chromosome's fitness rank, the higher prob that it will be
-//                //selected to reproduce
-//                if ((index != indexParent1)
-//                        && (this.chromosomes[index].fitnessRank + 1 > getRandom(populationDim))) {
-//                    //          if (this.chromosomes[index].getNumGenesInCommon(this.chromosomes[indexParent1])+1 > getRandom(chromosomeDim))
-//                    //          {
-//                    //            indexParent2 = index;
-//                    //            bFound = true;
-//                    //          }
-//                    indexParent2 = index;
-//                    bFound = true;
-//                }
-//            }
-//        }
-//
-//        indexParents[0] = indexParent1;
-//        indexParents[1] = indexParent2;
-//    }
 
     /**
      * Go through all chromosomes and calculate the average fitness (of this generation)
@@ -805,10 +752,8 @@ class GaProcessor<T extends Individual <T, A, G, C>, A extends Address <A>, G ex
      */
     public
     double getAvgFitness () {
-        double rSumFitness = 0.0;
+        double rSumFitness = IntStream.range(0, populationDim).mapToDouble(i -> this.chromosomes[i].fitness).sum();
 
-        for (int i = 0; i < populationDim; i++)
-            rSumFitness += this.chromosomes[i].fitness;
         return (rSumFitness / populationDim);
     }
 
@@ -824,10 +769,7 @@ class GaProcessor<T extends Individual <T, A, G, C>, A extends Address <A>, G ex
      */
     int getFitnessRank ( double fitness ) {
         int fitnessRank = -1;
-        for (int i = 0; i < populationDim; i++) {
-            if (fitness >= this.chromosomes[i].fitness)
-                fitnessRank++;
-        }
+        fitnessRank += IntStream.range(0, populationDim).filter(i -> fitness >= this.chromosomes[i].fitness).count();
 
         return (fitnessRank);
     }
@@ -839,13 +781,10 @@ class GaProcessor<T extends Individual <T, A, G, C>, A extends Address <A>, G ex
         double rValue;
 
         // recalc the fitness of each chromosome
-        for (int i = 0; i < populationDim; i++) {
-            this.chromosomes[i].fitness = getFitness(i);
-        }
+        IntStream.range(0, populationDim).forEachOrdered(i -> this.chromosomes[i].fitness = getFitness(i));
 
-        for (int i = 0; i < populationDim; i++) {
-            this.chromosomes[i].fitnessRank = getFitnessRank(this.chromosomes[i].fitness);
-        }
+        IntStream.range(0, populationDim).forEachOrdered(i -> this.chromosomes[i].fitnessRank
+                = getFitnessRank(this.chromosomes[i].fitness));
 
         double rBestFitnessVal;
         double rWorstFitnessVal;
@@ -866,16 +805,16 @@ class GaProcessor<T extends Individual <T, A, G, C>, A extends Address <A>, G ex
      * chromsosome memory pool. Perform random mutations where appropriate.
      */
     void copyNextGenToThisGen () {
-        for (int i = 0; i < populationDim; i++) {
+        //only mutate chromosomes if it is NOT the best
+        IntStream.range(0, populationDim).forEachOrdered(i -> {
             this.chromosomes[i].copyChromGenes(this.chromNextGen[i]);
-
-            //only mutate chromosomes if it is NOT the best
             if (i != this.bestFitnessChromIndex) {
                 //always mutate the chromosome with the lowest fitness
-                if ((i == this.worstFitnessChromIndex) || (getRandom(1.0) < mutationRate))
+                if ((i == this.worstFitnessChromIndex) || (getRandom(1.0) < mutationRate)) {
 //                    doRandomMutation(i);
+                }
             }
-        }
+        });
     }
 
     /**
@@ -885,24 +824,28 @@ class GaProcessor<T extends Individual <T, A, G, C>, A extends Address <A>, G ex
      * @param iNumChromosomesToDisplay
      */
     void addChromosomesToLog ( int iGeneration, int iNumChromosomesToDisplay ) {
-        String sGen, sChrom;
+//        String sGen, sChrom;
 
-        if (iNumChromosomesToDisplay > this.populationDim)
+        if (iNumChromosomesToDisplay > this.populationDim) {
             iNumChromosomesToDisplay = this.chromosomeDim;
+        }
 
         //Display Chromosomes
-        for (int i = 0; i < iNumChromosomesToDisplay; i++) {
+        //            sGen = "" + iGeneration;
+        //            if (sGen.length() < 2)
+        //                sGen += " ";
+        //            sChrom = "" + i;
+        //            if (sChrom.length() < 2) {
+        //                sChrom += " ";
+        //            }
+        IntStream.range(0, iNumChromosomesToDisplay).forEachOrdered(i -> {
             this.chromosomes[i].fitness = getFitness(i);
-            sGen = "" + iGeneration;
-            if (sGen.length() < 2)
-                sGen = sGen + " ";
-            sChrom = "" + i;
-            if (sChrom.length() < 2)
-                sChrom = sChrom + " ";
-            System.out.println("Gen " + sGen + ": Chrom" + sChrom + " = " +
-                    this.chromosomes[i].getGenesAsG() + ", fitness = " +
+            System.out.printf("Gen %d: Chrom%d = %s, fitness = %f",
+                    iGeneration,
+                    i,
+                    this.chromosomes[i].getGenesAsG(),
                     this.chromosomes[i].fitness);
-        }
+        });
     }
 
     /**
@@ -939,10 +882,8 @@ class GaProcessor<T extends Individual <T, A, G, C>, A extends Address <A>, G ex
             {
                 String bestFitGene = null;
 //                        ((ChromStrings) this.chromosomes[this.bestFitnessChromIndex]).getGene(iGene);
-                for (int i = 0; i < this.populationDim; i++) {
-//                    String thisGene =  this.chromosomes[i].getGene(iGene);
-                    devCnt++;
-                }
+                //                    String thisGene =  this.chromosomes[i].getGene(iGene);
+                devCnt += IntStream.range(0, this.populationDim).count();
             }
         }
 
@@ -956,22 +897,22 @@ class GaProcessor<T extends Individual <T, A, G, C>, A extends Address <A>, G ex
      * @return long
      */
     long binaryStrToInt ( String sBinary ) {
-        long digit, iResult = 0;
+        long digit = 0;
+        long iResult = 0;
 
         int iLen = sBinary.length();
         for (int i = iLen - 1; i >= 0; i--) {
-            if (sBinary.charAt(i) == '1')
-                digit = 1;
-            else
-                digit = 0;
+            digit = sBinary.charAt(i) == '1' ? 1 : 0;
             iResult += (digit << (iLen - i - 1));
         }
         return (iResult);
     }
 
     public
-    Population <T> generateRandomPopulation () {
-        return null;
+    Population <T, A, G, C> generateRandomPopulation () {
+        Population <T, A, G, C> population = new Population <>(popSize, 31);
+
+        return null;//TODO
     }
 
     /**
@@ -980,9 +921,8 @@ class GaProcessor<T extends Individual <T, A, G, C>, A extends Address <A>, G ex
     @Override
     public
     T search () {
-        evolve();
 
-        return null;
+        return (T) evolve();
     }
 
     @Override

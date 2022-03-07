@@ -2,22 +2,30 @@ package org.stranger2015.opencv.fic.core;
 
 import org.opencv.osgi.OpenCVNativeLoader;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.core.codec.DefaultCodec;
+import org.stranger2015.opencv.fic.core.codec.*;
+import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
+
+import static java.util.List.of;
 
 /**
  *
  */
 public
-class FicApplication implements Runnable, Consumer <String> {
-    Logger logger = Logger.getLogger(String.valueOf(getClass()));
+class FicApplication<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>,
+        G extends BitBuffer>
+
+        implements Runnable, Consumer <String> {
+
+    protected final Logger logger = Logger.getLogger(String.valueOf(getClass()));
 
     private final Consumer <String> action = this;
-    private EPartitionScheme scheme;
-    private String filename;
+    private final EPartitionScheme scheme;
+    private final String filename;
+    private final EtvColorSpace colorSpace;
 
     /**
      * @param args
@@ -26,11 +34,10 @@ class FicApplication implements Runnable, Consumer <String> {
     FicApplication ( String[] args ) {
         switch (args[0]) {
             case "-e":
+            case "-d":
                 scheme = EPartitionScheme.valueOf(args[1]);
                 filename = args[2];
-                break;
-            case "-d":
-//                filename = args[1];
+                colorSpace = EtvColorSpace.valueOf(args[3]);
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + args[0]);
@@ -76,11 +83,25 @@ class FicApplication implements Runnable, Consumer <String> {
     @Override
     public
     void accept ( String filename ) {
+        ICompressor <N, A, M, G> compressor = new Compressor <N, A, M, G>();
+        IDecompressor <N, A, M, G> decompressor=new Decompressor<N, A, M, G>();
+        Encoder <N, A, M, G> encoder = Encoder.create(getScheme().getEncoderClassName());
+        Decoder <M, A> decoder = Decoder.create(getScheme().getDecoderClassName());
+        EncodeTask <N, A, M, G> encodeTask = new EncodeTask <>(filename, getScheme(), List.of(), encoder);
+        ICodec <N, A, M, G> codec = Codec.create(getScheme());
 
-        ImageProcessor<?,?,?> processor = ImageProcessor.create(filename, scheme, new ArrayList <>(2));
-        processor.preprocess();
-        processor.process();
-        processor.postprocess();
+        ImageProcessor <N, A, M, G> processor = ImageProcessor.create(
+                filename,
+                scheme,
+                of(),
+                codec,
+                colorSpace);
+        try {
+            processor.execute(filename);
+        } catch (ValueError e) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
     }
 
     /**
@@ -94,5 +115,10 @@ class FicApplication implements Runnable, Consumer <String> {
     public
     EPartitionScheme getScheme () {
         return scheme;
+    }
+
+    public
+    String getColorSpace () {
+        return colorSpace;
     }
 }

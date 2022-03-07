@@ -7,6 +7,7 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.stranger2015.opencv.fic.core.codec.Pixel;
+import org.stranger2015.opencv.fic.core.codec.SipAddress;
 
 /**
  *
@@ -14,19 +15,38 @@ import org.stranger2015.opencv.fic.core.codec.Pixel;
 public
 class Image<A extends Address <A>> extends MatOfDouble implements IImage <A> {
 
+    protected /*final*/ IImage <A> image;
     protected Address <A> address;
+//    private final int width;
+//    private final int height;
+    protected /*final*/ int type;
 
     /**
-     *
+     * @param image
      */
     public
-    Image () {
+    Image ( IImage <A> image ) {
+        this.image = image;
+    }
+
+    /**
+     * @param image
+     * @param address
+     * @param type
+     */
+    public
+    Image ( IImage <A> image, Address <A> address, int type ) {
+        this.image = image;
+        this.address = address;
+        this.type = type;
     }
 
     public
-    Image ( IImage <A> image, Address <A> address, int type ) {
-
-
+    Image ( IImage <A> inputImage, Address <A> address, int width, int height ) {
+        this.image = inputImage;
+        this.address = address;
+        setOriginalImageWidth(width);
+        setOriginalImageHeight(height);
     }
 
     /**
@@ -59,7 +79,7 @@ class Image<A extends Address <A>> extends MatOfDouble implements IImage <A> {
         }
     }
 
-    public /*final fixme */ EColorType cType;
+    public EColorType cType;
 
     public int originalImageWidth;
     public int originalImageHeight;
@@ -69,9 +89,10 @@ class Image<A extends Address <A>> extends MatOfDouble implements IImage <A> {
      * @param cols
      * @param cType
      * @param pixelData
+     * @param image
      */
     public
-    Image ( int rows, int cols, EColorType/*int*/ cType, Scalar pixelData ) {
+    Image ( int rows, int cols, EColorType/*int*/ cType, Scalar pixelData, IImage <A> image ) {
         super(rows,
                 cols,
                 cType.getCType(),//FIXME
@@ -81,6 +102,7 @@ class Image<A extends Address <A>> extends MatOfDouble implements IImage <A> {
                 pixelData.val[3]
         );
         this.cType = cType;
+        this.image = image;
     }
 
     /**
@@ -90,26 +112,32 @@ class Image<A extends Address <A>> extends MatOfDouble implements IImage <A> {
     public
     Image ( IImage <A> image, double... n ) {
         super(n);
+        this.image = image;
     }
 
     /**
      * @param image
-     * @param x
-     * @param y
      * @param w
      * @param h
      * @param cType
      */
     public
-    Image ( IImage <A> image, int x, int y, int w, int h, EColorType cType ) {
-//todo
+    Image ( IImage <A> image, Address <A> address, int w, int h, EColorType cType ) {//fixme
+        this.image = image;
+        this.address = address;
         this.cType = cType;
+
     }
 
+    /**
+     * @param image
+     * @param address
+     * @param blockSize
+     * @param cType
+     */
     public
-    Image ( IImage <A> image, int address, int blockSize, EColorType cType ) {
-        //todo
-        this.cType = cType;
+    Image ( IImage <A> image, Address <A> address, int blockSize, EColorType cType ) {
+        this(image, address, blockSize, blockSize, cType);
     }
 
     /**
@@ -137,27 +165,11 @@ class Image<A extends Address <A>> extends MatOfDouble implements IImage <A> {
         imread.create(size, type());
     }
 
-//    /**
-//     * @return
-//     */
-//    @Override
-//    public
-//    int getX () {
-//        return 0;
-//    }
-//
-//    /**
-//     * @return
-//     */
-//    @Override
-//    public
-//    int getY () {
-//        return 0;
-//    }
-
-  public Address<A> getAddress(){
+    public
+    Address <A> getAddress () {
         return address;
-   }
+    }
+
     /**
      * @return
      */
@@ -213,7 +225,7 @@ class Image<A extends Address <A>> extends MatOfDouble implements IImage <A> {
      * @return
      */
     public
-    IImage reduce ( IImage inputImage, IImage outputImage, int factor ) {
+    IImage <A> reduce ( IImage <A> inputImage, IImage <A> outputImage, int factor ) {
         return outputImage;
     }
 
@@ -234,7 +246,7 @@ class Image<A extends Address <A>> extends MatOfDouble implements IImage <A> {
      * @return
      */
     public
-    IImage convertTo ( IImage image ) {
+    IImage <A> convertTo ( IImage <A> image ) {
         return image;
     }
 
@@ -252,8 +264,8 @@ class Image<A extends Address <A>> extends MatOfDouble implements IImage <A> {
      * @return
      */
     public
-    IImage createInputImage ( IImage image ) {
-        return new Image(image);
+    IImage <A> createInputImage ( IImage <A> image ) {
+        return new Image <>(image);
     }
 
     /**
@@ -261,8 +273,8 @@ class Image<A extends Address <A>> extends MatOfDouble implements IImage <A> {
      * @return
      */
     public
-    IImage createOutputImage ( IImage image ) {
-        return new CompressedImage(image);
+    IImage <A> createOutputImage ( IImage <A> image ) {
+        return new CompressedImage <>(image);
     }
 
     /**
@@ -281,53 +293,110 @@ class Image<A extends Address <A>> extends MatOfDouble implements IImage <A> {
      */
     @Override
     public
-    IImage contract ( int contractivity ) {
+    IImage <A> contract ( int contractivity ) {
+        IImage <A> image = new Image <>((Mat) this);
 
-        IImage image = new Image(this);
-
-        int newWidth = image.width() / contractivity;
-        int newHeight = image.height() / contractivity;
+        int newWidth = image.getWidth() / contractivity;
+        int newHeight = image.getHeight() / contractivity;
 
         Imgproc.resize(this, (Mat) image, new Size(newWidth, newHeight));
 
         return image;
     }
 
+    /**
+     * @return
+     */
     @Override
     public
     int getOriginalImageWidth () {
         return originalImageWidth;
     }
 
+    /**
+     * @param originalImageWidth
+     */
     @Override
     public
     void setOriginalImageWidth ( int originalImageWidth ) {
         this.originalImageWidth = originalImageWidth;
     }
 
+    /**
+     * @return
+     */
     @Override
     public
     int getOriginalImageHeight () {
         return originalImageHeight;
     }
 
-
+    /**
+     * @param originalImageHeight
+     */
     @Override
     public
     void setOriginalImageHeight ( int originalImageHeight ) {
         this.originalImageHeight = originalImageHeight;
     }
 
-
+    /**
+     * @param destX
+     * @param destY
+     * @param pixel
+     */
     @Override
     public
     void put ( int destX, int destY, int pixel ) {
 
     }
 
+    /**
+     * @param pixels
+     * @param v
+     * @param v1
+     * @param v2
+     * @param v3
+     */
     @Override
     public
     void put ( Pixel[] pixels, double v, double v1, double v2, double v3 ) {
 
     }
+
+    /**
+     * @param x
+     * @param y
+     */
+    @Override
+    public
+    void setAddress ( int x, int y ) throws ValueError {
+        if (this instanceof SipImageBlock) {
+            address = new SipAddress <>(x, y);
+        }
+        else if (this instanceof SaImageBlock) {
+            address = new SaAddress <A>(x, y);
+        }
+    }
+
+    /**
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public
+    <M extends IImage <A>> M getSubImage ( int x, int y, int width, int height ) {
+        return (M) submat(x, y, width, height);
+    }
+
+////        @Override
+//    public
+//    <M extends IImage <A>, N extends TreeNode <N, A, M, G>, G extends BitBuffer, A extends Address <A>>
+//    Image<A> convertImageToSipImage ( SipTree <?, A, Image<A>, ?> buildTree, Image<A> image ) {
+//        return null;
+//    }
 }

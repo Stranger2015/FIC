@@ -25,6 +25,7 @@ class Individual<M extends IImage<A>, A extends Address <A>, G extends BitBuffer
      */
     public
     Individual ( int chromosomeLength ) {
+        super(image);
         chromosome = (C) new BinChromosome <M, A, G>(allocate(chromosomeLength));
     }
 

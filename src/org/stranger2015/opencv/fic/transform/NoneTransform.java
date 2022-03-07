@@ -12,7 +12,7 @@ import java.nio.ByteBuffer;
  * This is useful to traverse the transforms without special casing
  * the comparison with the normal (non-transformed) image.
  */
-public class NoneTransform<M extends IImage, A extends Address <A>, G extends BitBuffer>
+public class NoneTransform<M extends IImage<A>, A extends Address <A>, G extends BitBuffer>
         extends ImageTransform<M, A, G> {
 
     /**

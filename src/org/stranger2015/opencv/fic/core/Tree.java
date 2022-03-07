@@ -15,7 +15,7 @@ import static org.stranger2015.opencv.fic.core.Tree.EAffineTransform.*;
  * @param <M>
  */
 abstract public
-class Tree<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer> {
+class Tree<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer> {
 
     public static final int DEFAULT_DEPTH = Integer.MAX_VALUE;
     public static final Rect DEFAULT_BOUNDING_BOX = new Rect(0, 0, 0, 0);
@@ -76,7 +76,7 @@ class Tree<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IIm
 
     @SuppressWarnings("unchecked")
     public static
-    <N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer>
+    <N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
     @NotNull Tree <N, A, M, G> create ( String className ) {
         int rc = 0;
         try {

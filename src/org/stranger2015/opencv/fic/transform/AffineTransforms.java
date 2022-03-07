@@ -13,7 +13,7 @@ import java.util.ArrayList;
  *
  */
 public
-class AffineTransforms<M extends IImage, A extends Address <A>, G extends BitBuffer>
+class AffineTransforms<M extends IImage<A>, A extends Address <A>, G extends BitBuffer>
 
         extends ArrayList<ImageTransform<M, A, G>> {
     /**

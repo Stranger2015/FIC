@@ -17,6 +17,7 @@ import java.util.List;
 public
 class SaEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>,
         G extends BitBuffer>
+
         extends Encoder <N, A, M, G> {
 
     /**
@@ -73,10 +74,10 @@ class SaEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extend
      */
     @Override
     public
-    List <ImageBlock<A>> generateAllTransformedBlocks ( M image,
-                                                     int sourceSize,
-                                                     int destinationSize,
-                                                     int step ) {
+    List <ImageBlock <A>> generateAllTransformedBlocks ( M image,
+                                                         int sourceSize,
+                                                         int destinationSize,
+                                                         int step ) {
         return null;
     }
 

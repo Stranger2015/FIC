@@ -1,8 +1,9 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.opencv.core.Size;
-
-import org.stranger2015.opencv.fic.core.*;
+import org.stranger2015.opencv.fic.core.Address;
+import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.fic.core.ImageBlock;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
@@ -17,11 +18,10 @@ import java.util.List;
  * @param <M>
  */
 public
-class SipEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
+class SipEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>, G extends BitBuffer>
         extends SaEncoder <N, A, M, G> {
 
     /**
-     *
      * @param inputImage
      * @param rangeSize
      * @param domainSize
@@ -32,7 +32,6 @@ class SipEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exten
     }
 
     /**
-     *
      * @return
      */
     @Override
@@ -125,7 +124,6 @@ class SipEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exten
     }
 
     /**
-     *
      * @param encoder
      * @param image
      * @param rangeSize
@@ -133,8 +131,11 @@ class SipEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exten
      */
     @Override
     public
-    SipImageBlockGenerator<N,A,M,G> createBlockGenerator ( IEncoder <N, A, M, G> encoder, M image, Size rangeSize, Size domainSize ) {
-        return new SipImageBlockGenerator<>(
+    ImageBlockGenerator <N, A, M, G> createBlockGenerator ( IEncoder <N, A, M, G> encoder,
+                                                            M image,
+                                                            Size rangeSize,
+                                                            Size domainSize ) {
+        return new SipImageBlockGenerator <>(
                 encoder,
                 image,
                 rangeSize,
@@ -150,7 +151,7 @@ class SipEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exten
      */
     @Override
     public
-    List <ImageBlock> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
+    List <ImageBlock <A>> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
         return Collections.emptyList(); //todo
     }
 }

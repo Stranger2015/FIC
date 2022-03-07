@@ -18,7 +18,7 @@ import static org.stranger2015.opencv.fic.core.SipTreeNodeBuilder.BB;
  * @param <A>
  */
 public
-class SipTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer>
+class SipTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
         extends SaTreeNode <N, A, M, G> {
 
     /**

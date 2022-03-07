@@ -25,7 +25,6 @@ class SipCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends
         super(scheme, action);
     }
 
-
     /**
      * @param scheme
      * @param action
@@ -46,7 +45,7 @@ class SipCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends
     @Override
     public
     IEncoder <N, A, M, G> getEncoder ( M image, Size rangeSize, Size domainSize ) {
-        return new SipEncoder <N, A, M, G>(image, rangeSize, domainSize);
+        return new SipEncoder <>(image, rangeSize, domainSize);
     }
 
     /**
@@ -74,6 +73,6 @@ class SipCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends
     public
     int getImageSizeBase () {
         return 3;
-    }
+    }//9 ???
 }
 

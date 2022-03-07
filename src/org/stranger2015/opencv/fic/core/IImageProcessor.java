@@ -1,23 +1,25 @@
 package org.stranger2015.opencv.fic.core;
 
-
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.Codec;
+import org.stranger2015.opencv.fic.core.codec.ICodec;
+import org.stranger2015.opencv.fic.core.codec.ICompressor;
+import org.stranger2015.opencv.fic.core.codec.IDecompressor;
 import org.stranger2015.opencv.utils.BitBuffer;
-
-import java.util.List;
 
 /**
  * @param <N>
  * @param <M>
  */
 public
-interface IImageProcessor<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer>
-        extends IProcessor <M> {
+interface IImageProcessor<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>,
+        G extends BitBuffer>
+
+        extends IProcessor <N, A, M, G> {
     /**
-     *
+     * @param inputImage
      */
-    M process ();
+    M process ( M inputImage ) throws ValueError;
 
     /**
      * @return
@@ -32,20 +34,17 @@ interface IImageProcessor<N extends TreeNode <N, A, M, G>, A extends Address <A>
     /**
      * @return
      */
-    Codec <N, A, M, G> getCodec ();
+    ICodec <N, A, M, G> getCodec ();
 
     /**
+     * @param filename
      * @return
      */
-    M preprocess ();
+    M preprocess ( String filename );
 
     /**
+     * @param image
      * @return
      */
-    M postprocess ();
-
-    /**
-     * @return
-     */
-    List <Task> getTasks ();
+    M postprocess ( M image );
 }

@@ -9,7 +9,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
  *
  */
 public
-class BinTree<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer>
+class BinTree<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
         extends Tree <N, A, M, G> {
 
     /**

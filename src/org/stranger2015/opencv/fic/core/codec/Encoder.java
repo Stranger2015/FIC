@@ -12,21 +12,20 @@ import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
  * @param <N>
  * @param <M>
  */
-public //abstract
-class Encoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
-        implements IEncoder <N, A, M, G>, IConstants, IImageProcessorListener {
+public abstract
+class Encoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>, G extends BitBuffer>
+        implements IEncoder <N, A, M, G>, IConstants {
 
     public static final Size ZERO_SIZE = new Size(0, 0);
 
     protected final ImageBlockGenerator <N, A, M, G> blockGenerator;
-    protected final List <IEncoderListener> listeners = new ArrayList <>();
+//    protected final List <IEncoderListener> listeners = new ArrayList <>();
 
     protected M inputImage;
     protected M outputImage;
@@ -36,6 +35,12 @@ class Encoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends 
     public final List <ImageBlock <A>> codebookBlocks = new ArrayList <>();
 
     protected final List <ImageTransform <M, A, G>> transforms = new ArrayList <>();
+
+    public static
+    Encoder <?, ?, ?, ?> create ( String encoderClassName ) {
+
+        return null;
+    }
 
     /**
      * @return
@@ -90,12 +95,14 @@ class Encoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends 
     protected
     Encoder ( M inputImage, Size rangeSize, Size domainSize ) {
         this.inputImage = inputImage;
-        outputImage = (M) new CompressedImage(inputImage);
+        outputImage = (M) new CompressedImage <>(inputImage);
 
         outputImage.setOriginalImageWidth(inputImage.getWidth());
         outputImage.setOriginalImageHeight(inputImage.getHeight());
 
         blockGenerator = createBlockGenerator(this, inputImage, rangeSize, domainSize);
+
+//        compressor = new Compressor <N, A, M, G>(domainSize);
     }
 
     /**
@@ -103,6 +110,7 @@ class Encoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends 
      */
     public
     void segmentImage ( M inputImage ) {
+
         blockGenerator.generateRangeBlocks(inputImage);
         blockGenerator.generateDomainBlocks(inputImage);
         blockGenerator.createCodebookBlocks(inputImage, domainBlocks);
@@ -114,33 +122,12 @@ class Encoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends 
      * @param domainSize
      * @return
      */
-    protected //abstract
+    protected abstract
     ImageBlockGenerator <N, A, M, G> createBlockGenerator (
             IEncoder <N, A, M, G> encoder,
             M image,
             Size rangeSize,
-            Size domainSize ) {
-
-        return null;
-    }
-
-    /**
-     * @param listener
-     */
-    @Override
-    public
-    void addListener ( IEncoderListener listener ) {
-        listeners.add(listener);
-    }
-
-    /**
-     * @param listener
-     */
-    @Override
-    public
-    void removeListener ( IEncoderListener listener ) {
-        listeners.remove(listener);
-    }
+            Size domainSize );
 
     /**
      * @return
@@ -148,6 +135,7 @@ class Encoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends 
     public
     M encode ( M image ) {
         segmentImage(image);
+
         return iterateRangeBlocks(image);
     }
 
@@ -158,18 +146,15 @@ class Encoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends 
     @SuppressWarnings("unchecked")
     protected
     M iterateRangeBlocks ( M image ) {
-        for (ImageBlock <A> rangeBlock : rangeBlocks) {
+        rangeBlocks.forEach(rangeBlock -> {
             int percent = 100 * (rangeBlocks.indexOf(rangeBlock) + 1) / rangeBlocks.size();
             System.err.printf("%d%%", percent);
             ImageTransform <M, A, G> bestTransform = ImageTransform.create(image, rangeBlock.getAddress());
             int minDistance = Integer.MAX_VALUE;
-
             iterateDomainBlocks(rangeBlock, bestTransform, minDistance);
-
             getTransforms().add(bestTransform);
-        }
-        ((ICompressedImage) outputImage).getTransforms()
-                .addAll((Collection <? extends ImageTransform <M,A,G>>) transforms);//todo fixme
+        });
+        ((ICompressedImage <A>) outputImage).getTransforms().addAll(transforms);
 
         return outputImage;
     }
@@ -180,13 +165,13 @@ class Encoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends 
      * @param minDistance
      */
     protected
-    void iterateDomainBlocks ( ImageBlock rangeBlock, ImageTransform <M, A, G> bestTransform, int minDistance ) {
-        for (ImageBlock domainBlock : domainBlocks) {
+    void iterateDomainBlocks ( ImageBlock <A> rangeBlock, ImageTransform <M, A, G> bestTransform, int minDistance ) {
+        for (ImageBlock <A> domainBlock : domainBlocks) {
             double alpha = 0;
             for (int i = 0; i < domainBlock.width; i++) {
                 for (int j = 0; j < domainBlock.height; j++) {
                     int[] data = new int[4];//fixme
-                    alpha += (domainBlock.get(i, j, data) - domainBlock.meanPixelValue); //[-1,+1]?????????????? or byte
+                    alpha += (domainBlock.get(i, j, data) - domainBlock.meanPixelValue);
                 }
             }
 
@@ -194,12 +179,12 @@ class Encoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends 
             int brightness = (int) (rangeBlock.meanPixelValue - contrast * domainBlock.meanPixelValue);
 
             for (int index = 0; index < 8; index++) {
-                ImageBlock transformedDomainBlock = new ImageBlock(
-                        inputImage,
-                        domainBlock.x,
-                        domainBlock.y,
-                        domainBlock.width,
-                        domainBlock.height);
+                ImageBlock <A> transformedDomainBlock =
+                        new ImageBlock <>(
+                                inputImage,
+                                domainBlock.getAddress(),
+                                domainBlock.width,
+                                domainBlock.height);
 
                 for (int x = 0; x < domainBlock.width; x++) {
                     for (int y = 0; y < domainBlock.height; y++) {
@@ -218,13 +203,12 @@ class Encoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends 
                                 (MAX_PIXEL_VALUE / 2.0));
                     }
                 }
-
                 int distance = getDistance(rangeBlock, transformedDomainBlock);
                 if ((distance < minDistance) && (distance != 0)) {
                     minDistance = distance;
                     bestTransform.dihedralAffineTransformIndex = index;
-                    bestTransform.originalDomainX = domainBlock.x;
-                    bestTransform.originalDomainY = domainBlock.y;
+//                    bestTransform.setAddress(transformedDomainBlock.domainBlock.getx, domainBlock.y);
+                    // bestTransform.originalDomainY = domainBlock.y;
                     bestTransform.brightnessOffset = brightness;
                     bestTransform.contrastScale = contrast;
                 }
@@ -238,11 +222,11 @@ class Encoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends 
      * @return
      */
     public
-    int getDistance ( ImageBlock range, ImageBlock domain ) {
+    int getDistance ( ImageBlock <A> range, ImageBlock <A> domain ) {
         double error = 0;
         for (int i = 0; i < range.getWidth(); i++) {
             for (int j = 0; j < range.getHeight(); j++) {
-                error += Math.pow(range.meanPixelValue - domain.meanPixelValue, 2);///fixme CHECK mean??
+                error += Math.pow(range.meanPixelValue - domain.meanPixelValue, 2);
             }
         }
         error = error / (double) (range.getWidth() * range.getHeight());
@@ -255,7 +239,7 @@ class Encoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends 
      */
     @Contract(pure = true)
     protected
-    void createCodebookBlocks ( M image, List <ImageBlock> domainBlocks ) {
+    void createCodebookBlocks ( M image, List <ImageBlock <A>> domainBlocks ) {
 //        for (int i = 0; i < domainBlocks.size(); i++) {
 //            domainBlocks.get(i);
 //        }
@@ -316,6 +300,19 @@ class Encoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends 
         return null;
     }
 
+//    /**
+//     * @param image
+//     * @param sourceSize
+//     * @param destinationSize
+//     * @param step
+//     * @return
+//     */
+//    @Override
+//    public
+//    List <ImageTransform <M, A, G>> compress ( M image, int sourceSize, int destinationSize, int step ) {
+//        return null;
+//    }
+//
     /**
      * @param image
      * @param sourceSize
@@ -325,20 +322,7 @@ class Encoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends 
      */
     @Override
     public
-    List <ImageTransform <M, A, G>> compress ( M image, int sourceSize, int destinationSize, int step ) {
-        return null;
-    }
-
-    /**
-     * @param image
-     * @param sourceSize
-     * @param destinationSize
-     * @param step
-     * @return
-     */
-    @Override
-    public
-    List <ImageBlock<A>> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
+    List <ImageBlock <A>> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
         return null;
     }
 
@@ -374,6 +358,33 @@ class Encoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends 
     @Override
     public
     void onPostprocess () {
+
+    }
+
+    /**
+     *
+     */
+    @Override
+    public
+    void onCreateCodec () {
+
+    }
+
+    /**
+     *
+     */
+    @Override
+    public
+    void onEncode () {
+
+    }
+
+    /**
+     *
+     */
+    @Override
+    public
+    void onDecode () {
 
     }
 }

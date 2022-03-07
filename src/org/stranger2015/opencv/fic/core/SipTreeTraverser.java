@@ -2,6 +2,7 @@ package org.stranger2015.opencv.fic.core;
 
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.SipAddress;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * //tracking#19710153023525 {
@@ -9,7 +10,9 @@ import org.stranger2015.opencv.fic.core.codec.SipAddress;
  * @param <N>
  */
 public
-class SipTreeTraverser<N extends TreeNode <N, A, M, G>, A extends SipAddress <A>, M extends IImage>
+class SipTreeTraverser<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>,
+        G extends BitBuffer>
+
         extends TreeTraverser <N, A, M, G> {
     /**
      * @param tree

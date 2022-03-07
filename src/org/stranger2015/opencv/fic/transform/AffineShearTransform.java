@@ -11,7 +11,7 @@ import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
  * functor class to affine shear an image
  */
 public
-class AffineShearTransform<M extends IImage, A extends Address <A>, G extends BitBuffer>
+class AffineShearTransform<M extends IImage<A>, A extends Address <A>, G extends BitBuffer>
         extends AffineTransform <M, A, G> {
 
     private final double shearX;

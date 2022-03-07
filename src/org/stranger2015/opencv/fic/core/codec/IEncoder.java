@@ -155,21 +155,12 @@ import java.util.List;
  *
  */
 public
-interface IEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>,
-        G extends BitBuffer>
-        extends IImageProcessorListener {
+interface IEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
+        extends IImageProcessorListener, ICodecListener {
 
     /**
-     * @param listener
-     */
-    void addListener ( IEncoderListener listener );
-
-    /**
-     * @param listener
-     */
-    void removeListener ( IEncoderListener listener );
-
-    /**
+     *
+     *
      * @return
      */
     M encode ( M image );
@@ -181,6 +172,8 @@ interface IEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
     void segmentImage ( M image);
 
     /**
+     *
+     *
      * @return
      */
     default
@@ -189,6 +182,8 @@ interface IEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
     }
 
     /**
+     *
+     *
      * @param image
      * @param axis
      * @return
@@ -203,6 +198,8 @@ interface IEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
     M randomTransform ( M image, ImageTransform <M, A, G> transform );
 
     /**
+     *
+     *
      * @param image
      * @param transform
      * @return
@@ -210,21 +207,13 @@ interface IEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
     M applyTransform ( M image, ImageTransform <M, A, G> transform );
 
     /**
+     *
+     *
      * @param image
      * @param transform
      * @return
      */
     M applyAffineTransform ( M image, AffineTransform <M, A, G> transform );
-
-    /**
-     *
-     * @param image
-     * @param sourceSize
-     * @param destinationSize
-     * @param step
-     * @return
-     */
-    List <ImageTransform <M, A, G>> compress ( M image, int sourceSize, int destinationSize, int step );
 
     /**
      *

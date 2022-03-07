@@ -5,6 +5,7 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.Encoder;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.List;
  * @param <M>
  */
 public
-class HvEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer>
+class HvEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
         extends Encoder <N, A, M, G> {
 
     /**
@@ -96,7 +97,7 @@ class HvEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extend
      */
     @Override
     public
-    List <ImageBlock> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
+    List <ImageBlock<A>> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
         return null;//todo
     }
 

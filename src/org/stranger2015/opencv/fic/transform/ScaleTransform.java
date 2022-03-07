@@ -11,7 +11,7 @@ import static java.lang.String.format;
  * functor class to affineScale an image
  */
 public
-class ScaleTransform<M extends IImage, A extends Address <A>, G extends BitBuffer>
+class ScaleTransform<M extends IImage<A>, A extends Address <A>, G extends BitBuffer>
         extends PreserveAlphaTransform<M, A, G> {
 
     private final double scaleX;

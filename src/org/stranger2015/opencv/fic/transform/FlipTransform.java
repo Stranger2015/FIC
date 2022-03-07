@@ -9,7 +9,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
  * functor class to affineFlip an image
  */
 public
-class FlipTransform<M extends IImage, A extends Address <A>, G extends BitBuffer>
+class FlipTransform<M extends IImage<A>, A extends Address <A>, G extends BitBuffer>
         extends PreserveAlphaTransform <M, A, G> {
 
     /**

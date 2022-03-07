@@ -13,7 +13,7 @@ import java.util.HashMap;
  * @param <A>
  */
 public
-class BinTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer>
+class BinTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends  IImage<A> , G extends BitBuffer>
         extends TreeNode <N, A, M, G> {
 
     /**
@@ -50,14 +50,14 @@ class BinTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exte
      */
     @Override
     public
-    TreeNode <N, A, M, G> createChild ( Point point, int layerIndex, int clusterIndex, Address<A> address )
+    TreeNode <N, A, M, G> createChild ( Point point, int layerIndex, int clusterIndex, Address <A> address )
             throws ValueError {
         return null;
     }
 
-//    @Override
+    //    @Override
     public
-    TreeNode <N, A, M, G> createChild ( int layerIndex, int clusterIndex, Address<A> address )
+    TreeNode <N, A, M, G> createChild ( int layerIndex, int clusterIndex, Address <A> address )
             throws ValueError {
         return null;
     }
@@ -102,7 +102,7 @@ class BinTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exte
         return super.hashCode();
     }
 
-//    @Override
+    //    @Override
     public
     TreeNode <N, A, M, G> createChild ( EDirection quadrant, Rect boundingBox ) throws ValueError {
         return new BinTreeNode <>(this, quadrant, boundingBox);
@@ -121,7 +121,7 @@ class BinTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exte
 
     public
     BinTreeNode <N, A, M, G> createNode ( BinTreeNode <N, A, M, G> parent,
-                                       EDirection quadrant, Rect boundingBox )
+                                          EDirection quadrant, Rect boundingBox )
             throws ValueError {
         return new BinTreeNode <>(parent, quadrant, boundingBox);
     }
@@ -257,7 +257,7 @@ class BinTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exte
      * @param <G>
      */
     public static
-    class BinLeafNode<N extends LeafNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>,
+    class BinLeafNode<N extends LeafNode <N, A, M, G>, A extends Address <A>, M extends  IImage<A> ,
             G extends BitBuffer>
             extends LeafNode <N, A, M, G> {
 
@@ -269,6 +269,11 @@ class BinTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exte
         protected
         BinLeafNode ( TreeNode <N, A, M, G> parent, M image, Rect rect ) {
             super(parent, image, rect);
+        }
+
+        public
+        BinLeafNode ( BinLeafNode <N, A, M, G> parent, M image ) {
+            this(parent, image, new Rectangle(0,0, 0,0));
         }
 
         /**
@@ -285,22 +290,6 @@ class BinTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exte
                 throws ValueError {
 
             return new BinLeafNode <N, A, M, G>(this, null);
-        }
-
-        /**
-         * @param point
-         * @param layerIndex
-         * @param clusterIndex
-         * @param address
-         * @return
-         * @throws ValueError
-         */
-        @Override
-        public
-        TreeNode <N, A, M, G> createChild ( Point point, int layerIndex, int clusterIndex, Address<A> address )
-                throws ValueError {
-
-            return null;
         }
 
         /**
@@ -330,9 +319,9 @@ class BinTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exte
          */
 //        @Override
         public
-        TreeNode<N, A, M, G> createNode ( TreeNode <N, A, M, G> parent,
-                                       EDirection quadrant,
-                                       Rect boundingBox )
+        TreeNode <N, A, M, G> createNode ( TreeNode <N, A, M, G> parent,
+                                           EDirection quadrant,
+                                           Rect boundingBox )
                 throws ValueError {
 
             return null;//todo

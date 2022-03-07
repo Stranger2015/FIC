@@ -12,7 +12,7 @@ import java.nio.ByteBuffer;
  * @param <G>
  */
 public
-class BrightnessShift<M extends IImage, A extends Address <A>, G extends BitBuffer>
+class BrightnessShift<M extends IImage<A>, A extends Address <A>, G extends BitBuffer>
         extends ShiftTransform <M, A, G> {
     /**
      * @param image
@@ -21,17 +21,5 @@ class BrightnessShift<M extends IImage, A extends Address <A>, G extends BitBuff
     public
     BrightnessShift ( M image, float brightness, Address <A> address) {
         super(image, brightness, address);
-    }
-
-    /**
-     * @param inputImage
-     * @param transformMatrix
-     * @param interpolationType
-     * @return
-     */
-    @Override
-    public
-    M warpAffine ( M inputImage, M transformMatrix, EInterpolationType interpolationType, Address<A> address ) {
-        return inputImage;
     }
 }

@@ -1,22 +1,29 @@
 package org.stranger2015.opencv.fic.core;
 
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.utils.BitBuffer;
+
 /**
  *
  */
 public
-interface IProcessor<M extends IImage> {
+interface IProcessor<N extends TreeNode <N, A, M, G>, A extends Address <A>,  M extends IImage <A>,
+        G extends BitBuffer> {
+
     /**
      * @return
+     * @param filename
      */
-   M preprocess();
+   M preprocess ( String filename );
 
     /**
      * @return
      */
-   M process();
+   M process( M inputImage) throws ValueError;
 
     /**
      * @return
+     * @param outputImage
      */
-   M postprocess();
+   M postprocess ( M outputImage );
 }

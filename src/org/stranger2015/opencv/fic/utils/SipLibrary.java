@@ -8,7 +8,6 @@ import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.SipTreeNode.SipLayerClusterNode;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.IAddressMath;
-import org.stranger2015.opencv.fic.core.codec.Pixel;
 import org.stranger2015.opencv.fic.core.codec.SipAddress;
 import org.stranger2015.opencv.fic.core.codec.SipImage;
 
@@ -77,7 +76,7 @@ import static org.stranger2015.opencv.fic.core.codec.SipAddress.radix;
  * @param <A>
  */
 public
-class SipLibrary<A extends SipAddress <A>> implements IAddressMath <A> {
+class SipLibrary<A extends Address <A>> implements IAddressMath <A> {
 
     public int layerIndex;
     public int layersAmount;
@@ -88,10 +87,6 @@ class SipLibrary<A extends SipAddress <A>> implements IAddressMath <A> {
 
     public int clustersAmount;
     public int clusterIndex;
-
-//    public final List <Point> pixelLocations = new ArrayList <>();
-
-//    private final List <Point> pixelShiftAddresses = new ArrayList <>(getPixelCapacity());
 
     private final int[] powersOfThree = new int[]{
             1,              //0
@@ -114,6 +109,55 @@ class SipLibrary<A extends SipAddress <A>> implements IAddressMath <A> {
             129140163,      //17
             387420489,      //18
             1162261467,     //19
+    };
+
+    private final int[] powersOfNine = new int[]{
+            1,              //0
+            9,              //1
+            81,             //2
+            729,            //3
+            6561,           //4
+            59049,          //5
+            531441,         //6
+            4782969,        //7
+            43046721,       //8
+            387420489,      //9
+    };
+
+    private final int[] powersOfSeven = new int[]{
+            1,              //0
+            7,              //1
+            49,             //2
+            343,            //3
+            2401,           //4
+            16807,          //5
+            117649,         //6
+            843523,        //7
+            5764801,       //8
+            40353607,      //9
+            282475249,      //10
+            1977326743,      //11
+    };
+    private final int[] powersOfTwo = new int[]{
+            1,              //0
+            2,              //1
+            4,              //2
+            8,              //3
+            16,             //4
+            32,             //5
+            64,             //6
+            128,            //7
+            256,            //8
+            512,            //9
+            1024,           //10
+            2048,           //11
+            4096,           //12
+            8192,           //13
+            16384,          //14
+            32768,          //15
+            65536,          //16
+            131072,         //17
+            //todo
     };
 
     /**
@@ -212,7 +256,7 @@ class SipLibrary<A extends SipAddress <A>> implements IAddressMath <A> {
      */
     public
     <A extends SipAddress <A>>
-    SipAddress <A> convertCartesianCoordsToSipAddress ( SipTree <?, ?, ?> tree, List <Point> shifts )
+    SipAddress <A> convertCartesianCoordsToSipAddress ( SipTree <?, ?, ?, ?> tree, List <Point> shifts )
             throws ValueError {
         int address = 0;
         int sum = 0;
@@ -235,7 +279,7 @@ class SipLibrary<A extends SipAddress <A>> implements IAddressMath <A> {
      */
     public
     <A extends SipAddress <A>>
-    List <Point> convertSipAddressToCartesianCoords ( SipTree <?, ?, ?> tree, SipAddress <A> sipAddress )
+    List <Point> convertSipAddressToCartesianCoords ( SipTree <?, ?, ?, ?> tree, SipAddress <A> sipAddress )
             throws ValueError {
         int address = sipAddress.getNumber();
         List <Point> shifts = new ArrayList <>();
@@ -298,9 +342,9 @@ class SipLibrary<A extends SipAddress <A>> implements IAddressMath <A> {
      * @return
      */
     public
-    <M extends IImage>
+    <M extends IImage <A>>
     @NotNull
-            SipImage convertImageToSipImage ( SipTree <?, ?, ?> tree, @NotNull M input ) throws ValueError {
+            SipImage <A> convertImageToSipImage ( SipTree <?, ?, ?, ?> tree, @NotNull M input ) throws ValueError {
         int addressBase = 0;
         int addressOffset = 0;
         List <Point> pixelShifts = new ArrayList <>();
@@ -325,20 +369,20 @@ class SipLibrary<A extends SipAddress <A>> implements IAddressMath <A> {
      * @return
      */
     public
-    <M extends IImage>
-    @NotNull SipImage relocatePixelData ( M input, List <Point> pixelShifts ) {
-        SipImage sipImage = new SipImage((Mat) input);
+    <M extends IImage <A>>
+    @NotNull SipImage <A> relocatePixelData ( M input, List <Point> pixelShifts ) {
+        SipImage <A> sipImage = new SipImage <>((Mat) input);
         List <Scalar> scalars = new ArrayList <>();
         for (int i = 0; i < input.getWidth(); i++) {
             for (int j = 0; j < input.getHeight(); j++) {
                 scalars.add(new Scalar(((Mat) input).get(i, j)));
             }
         }
-        SipImage output = new SipImage((Mat) input);
+        SipImage <A> output = new SipImage <>((Mat) input);
         //            getPixelShiftAddresses().addAll(pixelShifts);
-        for (Scalar scalar : scalars) {
+        scalars.forEach(scalar -> {
             output.put(output.getPixels(), scalar.val[0], scalar.val[1], scalar.val[2], scalar.val[3]);
-        }
+        });
 
         return sipImage;
     }
@@ -419,7 +463,7 @@ class SipLibrary<A extends SipAddress <A>> implements IAddressMath <A> {
      */
     @Contract(pure = true)
     private
-    List <Point> getCartesianCoordinates9 () throws ValueError {
+    List <Point> getCartesianCoordinates9 () {
         return Arrays.asList(
                 new Point(0, 0),
                 new Point(-1, 0),
@@ -512,7 +556,7 @@ class SipLibrary<A extends SipAddress <A>> implements IAddressMath <A> {
      */
     public
     List <Point> derivePixelShifts (
-            SipTree <?, ?, ?> tree,
+            SipTree <?, ?, ?, ?> tree,
             List <Point> points,
             int pixelCapacity,
             int addressBase,
@@ -532,7 +576,7 @@ class SipLibrary<A extends SipAddress <A>> implements IAddressMath <A> {
      * @param address
      */
     public
-    Point derivePixelShift ( SipTree <?, ?, ?> tree, List <Point> ccs, int address ) {
+    Point derivePixelShift ( SipTree <?, ?, ?, ?> tree, List <Point> ccs, int address ) {
         Point result = new Point(0, 0);
         for (int i = 1; i < address; i++) {
             int ai = pow3(i - 1);
@@ -551,7 +595,7 @@ class SipLibrary<A extends SipAddress <A>> implements IAddressMath <A> {
      * @return
      * @throws ValueError
      */
-    List <SipAddress <?>> deriveAddresses ( SipTree <?, ?, ?> tree, List <Point> shifts ) throws ValueError {
+    List <SipAddress <?>> deriveAddresses ( SipTree <?, ?, ?, ?> tree, List <Point> shifts ) throws ValueError {
         final List <SipAddress <?>> addresses = new ArrayList <>();
         for (Point shift : shifts) {
             addresses.add(deriveAddress(tree, shift));
@@ -585,9 +629,9 @@ class SipLibrary<A extends SipAddress <A>> implements IAddressMath <A> {
      * @throws ValueError
      */
     public
-    SipAddress <?> deriveAddress ( SipTree <?, ?, ?> tree, Point shift ) throws ValueError {
-        TreeNode <?, ?, ?> node = tree.findNode(shift);
-        return new SipAddress <>(node.getAddress());
+    SipAddress <?> deriveAddress ( SipTree <?, ?, ?, ?> tree, Point shift ) throws ValueError {
+        TreeNode <?, ?, ?, ?> node = tree.findNode(shift);
+        return new SipAddress <>((A) node.getAddress());
     }
 
     /**
@@ -738,11 +782,9 @@ class SipLibrary<A extends SipAddress <A>> implements IAddressMath <A> {
         return null;
     }
 
-//    public
-//    List <Point> getPixelShiftAddresses () {
-//        return pixelShiftAddresses;
-//    }
-
+    /**
+     * @return
+     */
     public
     int[] getPowersOfThree () {
         return powersOfThree;

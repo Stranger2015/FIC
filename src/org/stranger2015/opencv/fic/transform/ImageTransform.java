@@ -27,7 +27,7 @@ import java.io.Serializable;
  * [   0    0    1   ]     [  0   0     1  ]
  */
 public abstract
-class ImageTransform<M extends IImage<A>, A extends Address <A>, G extends BitBuffer>
+class ImageTransform<M extends  IImage<A> , A extends Address <A>, G extends BitBuffer>
         implements ITransform <M, A, G>, Serializable {
 
     /**
@@ -40,11 +40,14 @@ class ImageTransform<M extends IImage<A>, A extends Address <A>, G extends BitBu
         this(image, type, address, 0, 1.0, -1);
     }
 
+    /**
+     * @throws ValueError
+     */
     protected
     ImageTransform () throws ValueError {
         address = new DecAddress <>(0);
         outputImage = null;
-        type=EInterpolationType.BILINEAR;
+        type = EInterpolationType.BILINEAR;
     }
 
     /**
@@ -106,7 +109,7 @@ class ImageTransform<M extends IImage<A>, A extends Address <A>, G extends BitBu
         this.contrastScale = contrastScale;
         this.dihedralAffineTransformIndex = dihedralAffineTransformIndex;
 
-        outputImage = (M) new CompressedImage(image);
+        outputImage = (M) new CompressedImage<>(image);
     }
 
     /**
@@ -119,7 +122,7 @@ class ImageTransform<M extends IImage<A>, A extends Address <A>, G extends BitBu
      */
     @Contract("_, _ -> new")
     public static
-    <M extends IImage<A>, A extends Address <A>, G extends BitBuffer>
+    <M extends  IImage<A> , A extends Address <A>, G extends BitBuffer>
     @NotNull ImageTransform <M, A, G> create ( M image, Address <A> address ) {
         return new NoneTransform <>(
                 image,
@@ -131,6 +134,8 @@ class ImageTransform<M extends IImage<A>, A extends Address <A>, G extends BitBu
     }
 
     /**
+     *
+     *
      * @return
      */
     public
@@ -139,6 +144,8 @@ class ImageTransform<M extends IImage<A>, A extends Address <A>, G extends BitBu
     }
 
     /**
+     *
+     *
      * @param inputImage
      * @param transformMatrix
      * @param interpolationType
@@ -147,8 +154,8 @@ class ImageTransform<M extends IImage<A>, A extends Address <A>, G extends BitBu
     @SuppressWarnings("unchecked")
     @Override
     public final
-    M warpAffine ( M inputImage, M transformMatrix, EInterpolationType interpolationType, Address <A> address ) {
-        M outputImage = (M) new Image<>(inputImage);
+    M warpAffine ( M inputImage, M transformMatrix, EInterpolationType interpolationType/*, Address <A> address*/ ) {
+        M outputImage = (M) new Image <>(inputImage);
         Imgproc.warpAffine((Mat) inputImage, (Mat) outputImage, (Mat) transformMatrix, inputImage.getSize());
 
         return outputImage;

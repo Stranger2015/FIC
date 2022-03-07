@@ -4,12 +4,12 @@ package org.stranger2015.opencv.fic.core;
  *
  */
 public
-class SipImageBlock extends ImageBlock {
+class SipImageBlock<A extends Address <A>> extends SaImageBlock <A> {
 
     public static final int blockSideSize = 3;//in encoder
 
-    protected int centerX;
-    protected int centerY;
+    protected final int centerX;
+    protected final int centerY;
 
     /**
      * @param centerX
@@ -42,10 +42,14 @@ class SipImageBlock extends ImageBlock {
      * @param y
      * @param w
      * @param h
+     * @param centerX
      */
     public
-    SipImageBlock ( Image image, int x, int y, int w, int h ) {
+    SipImageBlock ( Image <A> image, int x, int y, int w, int h, int centerX, int centerY ) {
         super(image, x, y, w, h);
+
+        this.centerX = centerX;
+        this.centerY = centerY;
     }
 
     /**
@@ -53,8 +57,8 @@ class SipImageBlock extends ImageBlock {
      * @param x
      * @param y
      */
-public
-    SipImageBlock ( Image image, int x, int y) {
+    public
+    SipImageBlock ( Image <A> image, int x, int y ) {
         super(image, x, y, blockSideSize, blockSideSize);
     }
 
@@ -74,6 +78,7 @@ public
         return centerY;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public
     boolean equals ( Object o ) {
@@ -84,7 +89,7 @@ public
             return false;
         }
 
-        SipImageBlock that = (SipImageBlock) o;
+        SipImageBlock <A> that = (SipImageBlock <A>) o;
 
         if (getCenterX() != that.getCenterX()) {
             return false;
@@ -99,10 +104,13 @@ public
      */
     @Override
     public
-    Image contract ( int contractivity ) {
+    IImage <A> contract ( int contractivity ) {
         return super.contract(contractivity);
     }
 
+    /**
+     * @return
+     */
     @Override
     public
     int hashCode () {

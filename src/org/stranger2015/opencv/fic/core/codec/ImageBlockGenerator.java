@@ -4,11 +4,11 @@ import org.jetbrains.annotations.Contract;
 import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.fic.core.ITiler;
 import org.stranger2015.opencv.fic.core.ImageBlock;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.nio.ByteBuffer;
 import java.util.List;
 
 /**
@@ -21,6 +21,7 @@ public
 class ImageBlockGenerator<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>,
         G extends BitBuffer> {
 
+    protected final ITiler<M, A> tiler;
     protected final IEncoder <N, A, M, G> encoder;
     protected final IImage<A> image;
 
@@ -28,12 +29,18 @@ class ImageBlockGenerator<N extends TreeNode <N, A, M, G>, A extends Address <A>
     protected Size domainSize;
 
     /**
+     * @param tiler
      * @param rangeSize
      * @param domainSize
      */
     @Contract(pure = true)
     protected
-    ImageBlockGenerator ( IEncoder <N, A, M, G> encoder, IImage<A> image, Size rangeSize, Size domainSize ) {
+    ImageBlockGenerator ( ITiler <M, A> tiler,
+                          IEncoder <N, A, M, G> encoder,
+                          IImage <A> image,
+                          Size rangeSize,
+                          Size domainSize ) {
+        this.tiler = tiler;
         this.encoder = encoder;
         this.image = image;
         this.rangeSize = rangeSize;
@@ -50,9 +57,10 @@ class ImageBlockGenerator<N extends TreeNode <N, A, M, G>, A extends Address <A>
 
     /**
      * @param inputImage
+     * @return
      */
     public
-    void generateRangeBlocks ( M inputImage ) {
+    List <ImageBlock <A>> generateRangeBlocks ( M inputImage ) {
         int blockWidth = (int) rangeSize.width;
         int blockHeight = (int) rangeSize.height;
         int numOfBlocksPerRow = inputImage.getWidth() / blockWidth;
@@ -70,17 +78,21 @@ class ImageBlockGenerator<N extends TreeNode <N, A, M, G>, A extends Address <A>
 //                        sumOfPixelValues += block.pixelValues[x, y];
                     }
                 }
+
                 block.meanPixelValue = sumOfPixelValues / (double) (blockWidth * blockHeight);
                 blocks.add(block);
             }
         }
+
+        return blocks;
     }
 
     /**
      * @param inputImage
+     * @return
      */
     public
-    void generateDomainBlocks ( M inputImage ) {
+    List <ImageBlock <A>> generateDomainBlocks ( M inputImage ) {
         int blockWidth = (int) domainSize.width;
         int blockHeight = (int) domainSize.height;
         int numOfBlocksPerRow = inputImage.getWidth() - blockWidth + 1;
@@ -89,7 +101,7 @@ class ImageBlockGenerator<N extends TreeNode <N, A, M, G>, A extends Address <A>
 
         for (int i = 0; i < numOfBlocksPerRow; i++) {
             for (int j = 0; j < numOfBlocksPerCol; j++) {
-                ImageBlock<A> block = new ImageBlock<>(inputImage, i, j, blockWidth, blockHeight);
+                var block = new ImageBlock <>(inputImage, i, j, blockWidth, blockHeight);
                 double sumOfPixelValues = 0;
                 for (int x = 0; x < blockWidth; x++) {
                     for (int y = 0; y < blockHeight; y++) {
@@ -97,6 +109,7 @@ class ImageBlockGenerator<N extends TreeNode <N, A, M, G>, A extends Address <A>
 //                        sumOfPixelValues += block.pixelValues[x, y];
                     }
                 }
+
                 block.meanPixelValue = sumOfPixelValues / (double) (blockWidth * blockHeight);
                 for (int x = 0; x < blockWidth; x++) {
                     for (int y = 0; y < blockHeight; y++) {
@@ -109,14 +122,21 @@ class ImageBlockGenerator<N extends TreeNode <N, A, M, G>, A extends Address <A>
             }
         }
 
+        return blocks;
     }
 
     /**
-     * @param inputImage
+     *  @param inputImage
      * @param domainBlocks
+     * @return
      */
     public
-    void createCodebookBlocks ( M inputImage, List <ImageBlock<A>> domainBlocks ) {
+    List <ImageBlock <A>> createCodebookBlocks ( M inputImage, List <ImageBlock<A>> domainBlocks ) {
+        if(domainBlocks.isEmpty() || encoder.getCodebookBlocks().isEmpty()){
+
+        }
         List <ImageBlock<A>> blocks = encoder.getCodebookBlocks();
+
+        return blocks;
     }
 }

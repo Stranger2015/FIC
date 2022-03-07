@@ -9,7 +9,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
 public
 interface ICrossoverOperator<T extends Individual <T, A, G, C>, A extends Address <A>, G extends BitBuffer,
         C extends Chromosome <T, A, G>>
-        extends IBinOperator <T> {
+        extends IBinOperator <T,A,G,C> {
     /**
      * @param <T>
      */
@@ -61,6 +61,9 @@ interface ICrossoverOperator<T extends Individual <T, A, G, C>, A extends Addres
 
         /**
          * @param <T>
+         * @param <A>
+         * @param <G>
+         * @param <C>
          */
         static
         class OnePointCrossover<T extends Individual <T, A, G, C>, A extends Address <A>, G extends BitBuffer,
@@ -112,8 +115,6 @@ interface ICrossoverOperator<T extends Individual <T, A, G, C>, A extends Addres
         class TwoPointCrossover<T extends Individual <T, A, G, C>, A extends Address <A>, G extends BitBuffer,
                 C extends Chromosome <T, A, G>>
                 extends OnePointCrossover <T, A, G, C> {
-
-//            protected double fitness;
 
             /**
              * @param rate

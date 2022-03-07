@@ -1,12 +1,14 @@
 package org.stranger2015.opencv.fic.core.codec;
 
+import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.fic.core.Image;
 
 /**
  *
  */
-class Decoder<M extends IImage> implements IDecoder <M> {
+public
+class Decoder<M extends IImage <A>, A extends Address <A>> implements IDecoder <M, A> {
+
     /**
      *
      */
@@ -15,10 +17,16 @@ class Decoder<M extends IImage> implements IDecoder <M> {
 
     }
 
+    public static
+    Decoder <?, ?> create ( String decoderClassName ) {
+        return null;
+    }
+
     /**
      *
      */
-    public M  decode(){
+    public
+    M decode () {
         return null;
     }
 }

@@ -11,7 +11,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
  * @param <A>
  */
 public
-class TriangleTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer>
+class TriangleTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
         extends TreeNode <N, A, M, G> {
     /**
      * @param parent

@@ -10,7 +10,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
  *
  */
 public
-class SaImageBlockGenerator<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>  <A>,
+class SaImageBlockGenerator<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>,
         G extends BitBuffer>
         extends ImageBlockGenerator <N, A, M, G> {
     /**
@@ -18,7 +18,7 @@ class SaImageBlockGenerator<N extends TreeNode <N, A, M, G>, A extends Address <
      * @param domainSize
      */
     public
-    SaImageBlockGenerator ( IEncoder <N, A, M, G> encoder, IImage <A> image, Size rangeSize, Size domainSize ) {
-        super(encoder, image, rangeSize, domainSize);
+    SaImageBlockGenerator ( IEncoder <N, A, M, G> encoder,  IImage<A>  image, Size rangeSize, Size domainSize ) {
+        super(tiler, encoder, image, rangeSize, domainSize);
     }
 }

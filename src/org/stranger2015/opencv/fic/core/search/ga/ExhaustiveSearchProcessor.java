@@ -12,7 +12,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
  * @param <G>
  */
 public
-class StandardSearchProcessor<M extends IImage<A>, A extends Address <A>, G extends BitBuffer>
+class ExhaustiveSearchProcessor<M extends IImage<A>, A extends Address <A>, G extends BitBuffer>
         implements ISearchProcessor <M, A, G> {
 
     protected ITransform <M, A, G> bestTransform;
@@ -31,7 +31,17 @@ class StandardSearchProcessor<M extends IImage<A>, A extends Address <A>, G exte
      */
     @Override
     public
-    int evaluate () {
+    M search () {
+
+        return (M) bestTransform;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    double evaluate () {
         return 0;
     }
 

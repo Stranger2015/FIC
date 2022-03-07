@@ -10,7 +10,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
  *
  */
 public
-class SipImageBlockGenerator<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>,
+class SipImageBlockGenerator<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends  IImage<A> ,
         G extends BitBuffer>
         extends SquareImageBlockGenerator <N, A, M, G> {
 
@@ -19,7 +19,7 @@ class SipImageBlockGenerator<N extends TreeNode <N, A, M, G>, A extends Address 
      * @param domainSize
      */
     public
-    SipImageBlockGenerator ( IEncoder <N, A, M, G> encoder, IImage <A> image, Size rangeSize, Size domainSize ) {
+    SipImageBlockGenerator ( IEncoder <N, A, M, G> encoder,  IImage<A>  image, Size rangeSize, Size domainSize ) {
         super(encoder, image, rangeSize, domainSize);
     }
 

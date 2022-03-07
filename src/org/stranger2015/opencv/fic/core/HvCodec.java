@@ -3,7 +3,6 @@ package org.stranger2015.opencv.fic.core;
 import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.Codec;
-import org.stranger2015.opencv.fic.core.codec.EncodeAction;
 import org.stranger2015.opencv.fic.core.codec.IDecoder;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
 
@@ -13,7 +12,7 @@ import org.stranger2015.opencv.fic.core.codec.IEncoder;
  * @param <M>
  */
 public
-class HvCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer>
+class HvCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
         extends Codec <N, A, M, G> {
 
     /**

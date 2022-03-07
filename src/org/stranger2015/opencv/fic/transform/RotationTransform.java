@@ -8,7 +8,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
  * functor class to rotate an image by the given degrees
  */
 public
-class RotationTransform<M extends IImage, A extends Address <A>, G extends BitBuffer>
+class RotationTransform<M extends IImage<A>, A extends Address <A>, G extends BitBuffer>
         extends PreserveAlphaTransform <M, A, G> {
 
     private final double degrees;

@@ -3,10 +3,7 @@ package org.stranger2015.opencv.fic.core.codec;
 import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.transform.AffineTransform;
-import org.stranger2015.opencv.fic.transform.ImageTransform;
-
-import java.util.List;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
@@ -14,168 +11,34 @@ import java.util.List;
  * @param <M>
  */
 public
-class DefaultCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer>
+class DefaultCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>, G extends BitBuffer>
         extends Codec <N, A, M, G>
         implements IConstants {
 
-    /**
-     *
-     */
-    protected final IEncoder <N, A, M, G> encoder;
-    protected final IDecoder <M> decoder = new Decoder <>();
+    private EPartitionScheme scheme;
+    private EncodeTask <N, A, M, G> task;
+    private DecodeTask <N, A, M, G> inverseTask;
 
     /**
      * @param scheme
      */
     public
-    DefaultCodec ( EPartitionScheme scheme, EncodeAction action/*, String filename*/ ) {
-        super(scheme, action);
-        encoder = getEncoder();
+    DefaultCodec ( EPartitionScheme scheme, EncodeTask <N, A, M, G> task, DecodeTask <N, A, M, G> decodeTask ) {
+        super(scheme, task, decodeTask);
     }
 
-    /**
-     * @param scheme
-     * @param action
-     * @return
-     */
-    @Override
+//    public
+//    DefaultCodec ( EPartitionScheme scheme, EncodeTask <N, A, M, G> action, String filename ) {
+//
+//    }
+
     public
-    Codec <N, A, M, G> create ( EPartitionScheme scheme, EncodeAction action ) {
-        return new DefaultCodec <>(scheme, action/*, action.getFilename()*/);
+    ICodec <N, A, M, G> create ( EPartitionScheme scheme,
+                                 EncodeTask <N, A, M, G> task,
+                                 DecodeTask <N, A, M, G> inverseTask ) {
+
+        return new DefaultCodec <>(scheme, task, inverseTask);
     }
-//
-//    /**
-//     * @param listener
-//     */
-//    @Override
-//    public
-//    void addListener ( IEncoderListener listener ) {
-//
-//    }
-//
-//    /**
-//     * @param listener
-//     */
-//    @Override
-//    public
-//    void removeListener ( IEncoderListener listener ) {
-//
-//    }
-//
-//    /**
-//     * @return
-//     */
-//    @Override
-//    public
-//    M encode ( M image ) {
-//        return encoder.encode(image);
-//    }
-//
-//    /**
-//     * @param x
-//     * @param axis
-//     * @return
-//     */
-//    @Override
-//    public
-//    M flipAxis ( M x, int axis ) {
-//        return encoder.flipAxis(x, axis);
-//    }
-//
-//    /**
-//     * @param image
-//     * @param transform
-//     * @return
-//     */
-//    @Override
-//    public
-//    M randomTransform ( M image, ImageTransform <M, A, G> transform ) {
-//        return encoder.randomTransform(image, transform);
-//    }
-//
-//    /**
-//     * @param image
-//     * @param transform
-//     * @return
-//     */
-//    @Override
-//    public
-//    M applyTransform ( M image, ImageTransform <M, A, G> transform ) {
-//        return encoder.applyTransform(image, transform);
-//    }
-//
-//    /**
-//     * @param image
-//     * @param transform
-//     * @return
-//     */
-//    @Override
-//    public
-//    M applyAffineTransform ( M image, AffineTransform <M, A, G> transform ) {
-//        return encoder.applyAffineTransform(image, transform);
-//    }
-//
-//    /**
-//     * @param image
-//     * @param sourceSize
-//     * @param destinationSize
-//     * @param step
-//     * @return
-//     */
-//    @Override
-//    public
-//    List <ImageTransform <M, A, G>> compress ( M image, int sourceSize, int destinationSize, int step ) {
-//        return encoder.compress(image, sourceSize, destinationSize, step);
-//    }
-
-//    /**
-//     * @param image
-//     * @param sourceSize
-//     * @param destinationSize
-//     * @param step
-//     * @return
-//     */
-//    @Override
-//    public
-//    List <ImageBlock> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
-//        return encoder.generateAllTransformedBlocks(image, sourceSize, destinationSize, step);
-//    }
-
-//    /**
-//     * @return
-//     */
-//    @Override
-//    public
-//    List <ImageBlock> segmentImage ( M image ) {
-//        return encoder.segmentImage(image);
-//    }
-
-//    /**
-//     *
-//     */
-//    @Override
-//    public
-//    void onPreprocess () {
-//
-//    }
-//
-//    /**
-//     *
-//     */
-//    @Override
-//    public
-//    void onProcess () {
-//
-//    }
-//
-//    /**
-//     *
-//     */
-//    @Override
-//    public
-//    void onPostprocess () {
-//
-//    }
 
     /**
      * @param image
@@ -198,6 +61,35 @@ class DefaultCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
         return encoder.getImageSizeBase();
     }
 
+    @Override
+    public
+    Address <A> createAddress ( int address ) throws ValueError {
+        switch (getScheme()) {
+            case FIXED_SIZE:                        //FALLING
+            case BIN_TREE:
+            case DCT:
+            case CONST_SIZE_DOMAIN_POOL:
+            case ABP:
+            case HV:
+            case IRREGULAR:
+            case QUADRILATERAL:
+            case QUAD_TREE:
+            case TRIANGULAR:
+            case SPLIT_AND_MERGE_0:
+            case SPLIT_AND_MERGE_1:
+            case SEARCHLESS:
+            case UNIFORM_SQUARE:
+            case TWO_LEVEL_SQUARE:
+                return new DecAddress <>(address, EAddressKind.ORDINARY);
+            case SA_0:
+            case SABVR:
+                return new SaAddress <>(address, EAddressKind.SPIRAL);
+            case SIP:
+                return new SipAddress <A>(address, EAddressKind.SQUIRAL);
+        }
+        return null;
+    }
+
     /**
      * @return
      */
@@ -214,5 +106,26 @@ class DefaultCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
     public
     IDecoder <M> getDecoder () {
         return decoder;
+    }
+
+    @Override
+    public
+    EPartitionScheme getScheme () {
+        return scheme;
+    }
+
+    public
+    void setTask ( EncodeTask <N, A, M, G> task ) {
+        this.task = task;
+    }
+
+    public
+    DecodeTask <N, A, M, G> getInverseTask () {
+        return inverseTask;
+    }
+
+    public
+    void setScheme ( EPartitionScheme scheme ) {
+        this.scheme = scheme;
     }
 }

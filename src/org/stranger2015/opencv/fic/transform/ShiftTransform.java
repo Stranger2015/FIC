@@ -12,7 +12,9 @@ import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
  * @param <M>
  */
 public abstract
-class ShiftTransform<M extends IImage, A extends Address <A>, G extends BitBuffer> extends ImageTransform<M, A, G>{
+class ShiftTransform<M extends IImage<A>, A extends Address <A>, G extends BitBuffer>
+        extends ImageTransform<M, A, G>{
+
     private final float intensity;
     private final int channelAxis;
 

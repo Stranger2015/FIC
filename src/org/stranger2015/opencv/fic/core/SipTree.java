@@ -1,9 +1,10 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.core.codec.SipAddress;
 import org.stranger2015.opencv.fic.core.codec.SaTree;
+import org.stranger2015.opencv.fic.core.codec.SipAddress;
 import org.stranger2015.opencv.fic.utils.Point;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.Map;
 
@@ -13,13 +14,14 @@ import java.util.Map;
  * @param <A>
  */
 public
-class SipTree<N extends TreeNode <N, A, M, G>, A extends SipAddress <A>, M extends IImage>
+class SipTree<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
         extends SaTree <N, A, M, G> {
 
     public
     SipTree ( SipTreeNode <N, A, M, G> parent,
-              Map<Point, SipImageBlock> blocks,
+              Map<Point, SipImageBlock<A>> blocks,
               TreeNodeAction <N, A, M, G> namTreeNodeAction ) {
+
         super(parent, (M) blocks, namTreeNodeAction);
     }
 
@@ -46,11 +48,12 @@ class SipTree<N extends TreeNode <N, A, M, G>, A extends SipAddress <A>, M exten
      * @param shift
      * @return
      */
+    @SuppressWarnings("unchecked")
     public
     N findNode ( Point shift ) {
         for (N n = this.getRoot().getChild(0); n != null; n = n.getChild(0)) {
            if(n.isLeaf()){
-               if (((ILeaf) n).getX() == shift.getX() && ((ILeaf) n).getY() == shift.getY()) {
+               if (((ILeaf<N, A, M, G>) n).getX() == shift.getX() && ((ILeaf<N, A, M, G>) n).getY() == shift.getY()) {
                  return n;
                }
            }

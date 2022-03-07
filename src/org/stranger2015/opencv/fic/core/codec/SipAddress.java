@@ -1,11 +1,8 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.EDigits7;
 import org.stranger2015.opencv.fic.core.SaAddress;
 import org.stranger2015.opencv.fic.core.ValueError;
-
-import java.util.EnumSet;
 
 /**
  * ...
@@ -17,7 +14,7 @@ import java.util.EnumSet;
  * convert the lattice of a square image to the new SIP
  * format based on the spiral addressing scheme. The
  * steps are as following:
- *
+ * <p>
  * For a given image with size M × N , the number of SIP layers λ
  * can be found by λ = ( logM + logN )/log( 9 ); then the length of the SIP image is 9^λ.
  * Because the SIP address scheme is base 9, the conversion
@@ -81,27 +78,41 @@ class SipAddress<A extends Address <A>> extends SaAddress <A> {
     /**
      * @param address
      */
-//    @SuppressWarnings("unchecked")
     public
     SipAddress ( int address ) throws ValueError {
-        super(address);
+        this(address, EAddressKind.SQUIRAL);
     }
 
     /**
-     * @param digits
+     * @throws ValueError
      */
-    public
-    SipAddress ( EnumSet <EDigits7> digits ) throws ValueError {
-        this(0);
-    }
-
     public
     SipAddress () throws ValueError {
         super();
     }
 
+    /**
+     * @param divident
+     * @throws ValueError
+     */
     public
     SipAddress ( A divident ) throws ValueError {
+        super(divident.getIndex(), EAddressKind.SQUIRAL);
+    }
+
+    /**
+     * @param rows
+     * @param cols
+     * @throws ValueError
+     */
+    public
+    SipAddress ( int rows, int cols ) throws ValueError {
+        super(rows* cols, EAddressKind.SQUIRAL);
+
+    }
+
+    public
+    SipAddress ( int address, EAddressKind squiral ) throws ValueError {
         super();
 
     }

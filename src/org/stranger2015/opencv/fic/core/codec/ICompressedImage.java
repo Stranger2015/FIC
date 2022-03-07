@@ -1,6 +1,5 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-
 import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.transform.ImageTransform;

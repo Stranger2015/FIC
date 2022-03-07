@@ -10,15 +10,18 @@ import org.stranger2015.opencv.utils.BitBuffer;
  */
 public
 interface ISearchProcessor<M extends IImage<A>, A extends Address <A>, G extends BitBuffer> extends Runnable {
+
     /**
      *
      */
     ITransform <M, A, G> searchForBestTransform ();
 
+    M search ();
+
     /**
      * @return
      */
-    int evaluate ();
+    double evaluate ();
 
     /**
      * When an object implementing interface <code>Runnable</code> is used

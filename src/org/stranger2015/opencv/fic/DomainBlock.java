@@ -4,8 +4,11 @@ import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.opencv.core.Size;
-import org.stranger2015.opencv.fic.core.*;
+import org.stranger2015.opencv.fic.core.Address;
+import org.stranger2015.opencv.fic.core.EDirection;
+import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
+import org.stranger2015.opencv.fic.core.ValueError;
 import org.stranger2015.opencv.fic.core.codec.Pixel;
 import org.stranger2015.opencv.fic.utils.Point;
 import org.stranger2015.opencv.utils.BitBuffer;
@@ -14,10 +17,10 @@ import org.stranger2015.opencv.utils.BitBuffer;
  * 8 X 8
  */
 public
-class DomainBlock<N extends DomainBlock <N, A, M, G>, A extends Address <A>, M extends IImage<A>,
+class DomainBlock<N extends DomainBlock <N, A, M, G>, A extends Address <A>, M extends IImage <A>,
         G extends BitBuffer>
         extends LeafNode <N, A, M, G>
-        implements IImage<A> {
+        implements IImage <A> {
 
     public final static int W = 8;
     public final static int H = 8;
@@ -43,7 +46,7 @@ class DomainBlock<N extends DomainBlock <N, A, M, G>, A extends Address <A>, M e
     /**
      * @param point
      * @param layerIndex
-     * @param clusteIndex
+     * @param clusterIndex
      * @param address
      * @return
      * @throws ValueError
@@ -51,9 +54,9 @@ class DomainBlock<N extends DomainBlock <N, A, M, G>, A extends Address <A>, M e
     @Override
     public
     TreeNode <N, A, M, G> createChild ( Point point,
-                                     int layerIndex,
-                                     int clusteIndex,
-                                     Address<A> address )
+                                        int layerIndex,
+                                        int clusterIndex,
+                                        Address <A> address )
             throws ValueError {
 
         return new DomainBlock <>(address);
@@ -68,12 +71,11 @@ class DomainBlock<N extends DomainBlock <N, A, M, G>, A extends Address <A>, M e
      */
 //    @Override
     public//todo fixme
-    TreeNode <N, A, M, G> createChild ( int layerIndex, int imageBlock, Address<A> address ) throws ValueError {
+    TreeNode <N, A, M, G> createChild ( int layerIndex, int imageBlock, Address <A> address ) throws ValueError {
         return new DomainBlock <>(null, null);//fixme
     }
 
     /**
-     *
      * @param parent
      * @param boundingBox
      * @throws ValueError
@@ -106,8 +108,6 @@ class DomainBlock<N extends DomainBlock <N, A, M, G>, A extends Address <A>, M e
 //    }
 
     /**
-     *
-     *
      * @return
      */
     @Override
@@ -117,8 +117,6 @@ class DomainBlock<N extends DomainBlock <N, A, M, G>, A extends Address <A>, M e
     }
 
     /**
-     *
-     *
      * @return
      */
     @Override
@@ -128,8 +126,6 @@ class DomainBlock<N extends DomainBlock <N, A, M, G>, A extends Address <A>, M e
     }
 
     /**
-     *
-     *
      * @return
      */
     @Override
@@ -143,27 +139,10 @@ class DomainBlock<N extends DomainBlock <N, A, M, G>, A extends Address <A>, M e
      */
     @Override
     public
-    IImage<A> contract ( int contractivity ) {
+    IImage <A> contract ( int contractivity ) {
         return null;
     }
 
-    /**
-     * @return
-     */
-    @Override
-    public
-    int width () {
-        return 0;
-    }
-
-    /**
-     * @return
-     */
-    @Override
-    public
-    int height () {
-        return 0;
-    }
 
     /**
      * @param rowStart
@@ -175,7 +154,7 @@ class DomainBlock<N extends DomainBlock <N, A, M, G>, A extends Address <A>, M e
     @Override
     public
     Mat submat ( int rowStart, int rowEnd, int colStart, int colEnd ) {
-        return new Mat().submat(rowStart, rowEnd,colStart,colEnd);//fixme
+        return new Mat().submat(rowStart, rowEnd, colStart, colEnd);//fixme
     }
 
     /**
@@ -254,6 +233,18 @@ class DomainBlock<N extends DomainBlock <N, A, M, G>, A extends Address <A>, M e
 
     }
 
+    @Override
+    public
+    void release () {
+
+    }
+
+    @Override
+    public
+    String dump () {
+        return "?";
+    }
+
     /**
      * @param parent
      * @param quadrant
@@ -262,12 +253,12 @@ class DomainBlock<N extends DomainBlock <N, A, M, G>, A extends Address <A>, M e
      */
 //    @Override
     public
-    LeafNode <N, A, M, G> createNode ( TreeNode<N, A, M, G> parent, EDirection quadrant, Rect boundingBox )
+    LeafNode <N, A, M, G> createNode ( TreeNode <N, A, M, G> parent, EDirection quadrant, Rect boundingBox )
             throws ValueError {
         throw new IllegalStateException();
     }
 
-      /**
+    /**
      * Compares this object with the specified object for order.  Returns a
      * negative integer, zero, or a positive integer as this object is less
      * than, equal to, or greater than the specified object.
@@ -359,7 +350,20 @@ class DomainBlock<N extends DomainBlock <N, A, M, G>, A extends Address <A>, M e
      */
     @Override
     public
-    M getMat () {
+    Mat getMat () {
+        return null;
+    }
+
+    /**
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     * @return
+     */
+    @Override
+    public
+    <M extends IImage <A>> M getSubImage ( int x, int y, int width, int height ) {
         return null;
     }
 

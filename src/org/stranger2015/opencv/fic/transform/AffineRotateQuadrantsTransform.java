@@ -11,7 +11,7 @@ import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
 /**
  * functor class to rotate an image by the given quadrant
  */
-public class AffineRotateQuadrantsTransform<M extends IImage, A extends Address <A>, G extends BitBuffer>
+public class AffineRotateQuadrantsTransform<M extends IImage<A>, A extends Address <A>, G extends BitBuffer>
         extends AffineTransform<M, A, G> {
 
     private final int quadrants;

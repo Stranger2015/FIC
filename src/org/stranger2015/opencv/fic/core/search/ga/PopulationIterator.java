@@ -7,7 +7,7 @@ import java.util.NoSuchElementException;
 
 public
 class PopulationIterator<T extends Individual> implements ListIterator <T> {
-    protected final Population <T> population;
+    protected final Population <T,A,G,C> population;
     int cursor;
 
     /**
@@ -15,7 +15,7 @@ class PopulationIterator<T extends Individual> implements ListIterator <T> {
      */
     @Contract(pure = true)
     public
-    PopulationIterator ( Population <T> population ) {
+    PopulationIterator ( Population <T,A,G,C> population ) {
         this.population = population;
     }
 

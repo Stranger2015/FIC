@@ -11,7 +11,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
  */
 @SuppressWarnings("unchecked")
 public
-class SaTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer>
+class SaTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
         extends TreeNode <N, A, M, G> {
 
     protected int layerIndex;
@@ -177,7 +177,7 @@ class SaTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exten
          * @param address
          */
         public
-//        <N extends TreeNode <N, A, M, G>, A extends SipAddress <A>, M extends IImage>
+//        <N extends TreeNode <N, A, M, G>, A extends SipAddress <A>, M extends IImage<A>,
         SaLayerClusterNode ( TreeNode <N, A, M, G> parent,
                               M image,
                               Rect boundingBox,
@@ -189,7 +189,7 @@ class SaTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exten
         }
 
         public
-//        <M extends IImage, A extends SipAddress <A>, N extends TreeNode <N, A, M, G>>
+//        <M extends IImage<A>, A extends SipAddress <A>, N extends TreeNode <N, A, M, G>>
         SaLayerClusterNode ( TreeNode <N, A, M, G> parent,
                              M image,
                              int layerIndex,
@@ -202,13 +202,13 @@ class SaTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exten
         }
 
         public
-//        <N extends TreeNode <N, A, M, G>, A extends SipAddress <A>, M extends IImage>
+//        <N extends TreeNode <N, A, M, G>, A extends SipAddress <A>, M extends IImage<A>,
         SaLayerClusterNode ( TreeNode <N, A, M, G> parent, Rect boundingBox, int layerIndex, int clusterIndex, int address ) {
             this(parent, layerIndex, clusterIndex, 0, 0, address);
         }
 
         public
-//        <N extends TreeNode <N, A, M, G>, A extends SipAddress <A>, M extends IImage>
+//        <N extends TreeNode <N, A, M, G>, A extends SipAddress <A>, M extends IImage<A>,
         SaLayerClusterNode ( TreeNode <N, A, M, G> parent,
                              M image,
                              int layerIndex,
@@ -220,7 +220,7 @@ class SaTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exten
         }
 
         public
-//        <M extends IImage, N extends TreeNode <N, A, M, G>, A extends SipAddress <A>>
+//        <M extends IImage<A>, N extends TreeNode <N, A, M, G>, A extends SipAddress <A>>
         SaLayerClusterNode ( TreeNode <N, A, M, G> parent, int layerIndex, int clusterIndex, int i, int i1, int address ) {
 
 

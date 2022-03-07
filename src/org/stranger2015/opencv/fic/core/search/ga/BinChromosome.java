@@ -16,7 +16,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
  * @param <G>
  */
 public
-class BinChromosome<M extends IImage, A extends Address <A>, G extends BitBuffer> extends Chromosome <M, A, G> {
+class BinChromosome<M extends IImage<A>, A extends Address <A>, G extends BitBuffer> extends Chromosome <M, A, G> {
 
     protected G genes;
     protected Address <A> address;

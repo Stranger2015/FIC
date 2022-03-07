@@ -11,7 +11,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
  * @param <N>
  * @param <A>
  */
-public class HvTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage, G extends BitBuffer>
+public class HvTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
         extends TreeNodeBase <N, A, M, G> {
     /**
      * @param parent

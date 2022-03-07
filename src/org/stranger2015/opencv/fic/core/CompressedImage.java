@@ -22,7 +22,7 @@ class CompressedImage<A extends Address <A>> extends Image <A> implements ICompr
      * @param type
      */
     public
-    CompressedImage ( IImage <A> image, int rows, int cols, int type ) {
+    CompressedImage (  IImage<A>  image, int rows, int cols, int type ) {
         super(image, rows, cols, type);
     }
 
@@ -30,10 +30,9 @@ class CompressedImage<A extends Address <A>> extends Image <A> implements ICompr
      * @param inputImage
      */
     public
-    CompressedImage ( IImage <A> inputImage ) {
+    CompressedImage (  IImage<A>  inputImage ) {
         super(inputImage);
     }
-
 
     /**
      * @return

@@ -1,6 +1,7 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
@@ -8,7 +9,7 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
  * @param <M>
  */
 public
-class TreeFactory<N extends TreeNode <N,A,M>, A extends Address<A>, M extends IImage> {
+class TreeFactory<N extends TreeNode <N,A,M,G>, A extends Address<A>, M extends IImage<A>, G extends BitBuffer> {
 
     private
     TreeFactory () {

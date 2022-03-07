@@ -14,7 +14,7 @@ import java.nio.ByteBuffer;
  * @param <G>
  */
 public
-class ChannelShift<M extends IImage, A extends Address <A>, G extends BitBuffer>
+class ChannelShift<M extends IImage<A>, A extends Address <A>, G extends BitBuffer>
         extends ShiftTransform<M, A, G>{
     /**
      * @param image

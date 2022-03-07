@@ -2,14 +2,13 @@ package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.Contract;
 import org.stranger2015.opencv.fic.core.codec.DecAddress;
+import org.stranger2015.opencv.fic.core.codec.EAddressKind;
 import org.stranger2015.opencv.fic.core.codec.IAddress;
 import org.stranger2015.opencv.fic.utils.Point;
 
-import java.util.EnumSet;
 import java.util.List;
 
 import static org.stranger2015.opencv.fic.core.codec.EAddressKind.ORDINARY;
-import static org.stranger2015.opencv.fic.core.codec.SaUtils.createAddress;
 
 /**
  *
@@ -19,6 +18,7 @@ class Address<A extends Address <A>> implements IAddress <A> {
 
     public final static int radix = 10;
 
+    protected final EAddressKind addressKind;
     protected int address;
 
     /**
@@ -26,8 +26,28 @@ class Address<A extends Address <A>> implements IAddress <A> {
      */
     @Contract(pure = true)
     protected
-    Address ( int address) throws ValueError {
+    Address ( int address ) throws ValueError {
         this.address = address;
+        addressKind = ORDINARY;
+    }
+
+    /**
+     * @param address
+     */
+    @Contract(pure = true)
+    protected
+    Address ( int address, int i ) throws ValueError {
+        this(address * i); //fixme rows cols
+    }
+
+    /**
+     * @param address
+     */
+    @Contract(pure = true)
+    protected
+    Address ( int address, int i, EAddressKind addressKind ) throws ValueError {
+        this.addressKind = addressKind;
+        this.address = address * i; //fixme rows cols
     }
 
     /**
@@ -58,7 +78,7 @@ class Address<A extends Address <A>> implements IAddress <A> {
     @Override
     public
     A newInstance ( int index ) throws ValueError {
-        return (A) new DecAddress<A>(index, 10, ORDINARY);
+        return (A) new DecAddress <A>(index, 10, ORDINARY);
     }
 
     /**
@@ -216,4 +236,4 @@ class Address<A extends Address <A>> implements IAddress <A> {
 //        S = Scale Factor
 
 //        return new AddressedPoint(xScreen, yScreen );
-    }
+}

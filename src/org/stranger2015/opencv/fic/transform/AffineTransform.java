@@ -13,8 +13,8 @@ import java.nio.ByteBuffer;
  * @param <G>
  */
 public abstract
-class AffineTransform<M extends IImage, A extends Address <A>, G extends BitBuffer>
-        extends ImageTransform <M, A, G> {
+class AffineTransform<M extends IImage<A>, A extends Address <A>, G extends BitBuffer>
+        extends ImageTransform <M, A, G> {//fixme
 
     private final EInterpolationType type;
 

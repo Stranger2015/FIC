@@ -1,6 +1,6 @@
 package org.stranger2015.opencv.fic.core;
 
-import java.util.EnumSet;
+import org.stranger2015.opencv.fic.core.codec.EAddressKind;
 
 /**
  * sa addresses
@@ -47,14 +47,19 @@ class SaAddress<A extends Address <A>> extends Address <A> {
      * @throws ValueError
      */
     public
-    SaAddress ( int number ) throws ValueError {
-        super();
-        this.number = number;
+    SaAddress ( int number , EAddressKind addressKind ) throws ValueError {
+        super(number);
+//        this.number = number;
     }
 
     public
     SaAddress () throws ValueError {
         super();
+    }
+
+    public
+    SaAddress ( int x, int y, EAddressKind addressKind ) throws ValueError {
+        this(x * y,  addressKind);
     }
 
     /**
@@ -78,15 +83,15 @@ class SaAddress<A extends Address <A>> extends Address <A> {
         return address;//todo
     }
 
-    /**
-     * @param index
-     * @return
-     */
-    @Override
-    public
-    A newInstance ( int index ) throws ValueError {
-        return null;
-    }
+//    /**
+//     * @param index
+//     * @return
+//     */
+//    @Override
+//    public
+//    A newInstance ( int index ) throws ValueError {
+//        return null;
+//    }
 
     /**
      * Based on <b>add table</b>, the sum of 57 and 8 can be computed as:

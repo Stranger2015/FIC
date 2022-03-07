@@ -8,7 +8,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
  * @param <M>
  */
 public
-class AffineTranslationTransform<M extends IImage, A extends Address <A>, G extends BitBuffer>
+class AffineTranslationTransform<M extends IImage<A>, A extends Address <A>, G extends BitBuffer>
         extends AffineTransform <M, A, G> {
     /**
      *

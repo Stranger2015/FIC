@@ -10,7 +10,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
  * @param <G>
  */
 public
-class DctTransform<M extends IImage, A extends Address <A>, G extends BitBuffer>
+class DctTransform<M extends IImage<A>, A extends Address <A>, G extends BitBuffer>
         extends ImageTransform <M, A, G> {
 
     /**
