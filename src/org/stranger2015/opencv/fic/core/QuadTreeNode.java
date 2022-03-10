@@ -1,9 +1,11 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.NotNull;
+import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.codec.IAddress;
 import org.stranger2015.opencv.fic.utils.Point;
 import org.stranger2015.opencv.utils.BitBuffer;
 
@@ -24,13 +26,17 @@ class QuadTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
         super(parent, quadrant, rect);
     }
 
+    public
+    QuadTreeNode ( LeafNode <N, A, M, G> node, Point point, int layerIndex, int clusterIndex, IAddress <A> address ) {
+        super(node, point, layerIndex, clusterIndex, address);
+    }
+
     /**
      * @param quadrant
      * @param rect
      * @return
      */
     @Override
-    @SuppressWarnings("*")
     public
     TreeNode <N, A, M, G> createChild ( EDirection quadrant, Rect rect ) throws ValueError {
         return new QuadTreeNode <>(this, quadrant, rect);
@@ -51,9 +57,7 @@ class QuadTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
          */
         protected
         QuadLeafNode ( TreeNode <N, A, M, G> parent, M image, Rect rect ) {
-            super(parent,
-                    image,
-                    rect);
+            super(parent, image, rect);
         }
 
         /**
@@ -64,17 +68,26 @@ class QuadTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
          * @return
          * @throws ValueError
          */
-        @Override
+//        @Override
         public
-        TreeNode <N, A, M, G> createChild ( Point point, int layerIndex, int clusterIndex, Address <A> address )
+        TreeNode <N, A, M, G> createChild ( Point point, int layerIndex, int clusterIndex, IAddress <A> address )
                 throws ValueError {
 
-            return null;
+            return new QuadTreeNode <>(this, point, layerIndex,clusterIndex, address);
         }
 
+
+        /**
+         * @param layerIndex
+         * @param clusterIndex
+         * @param address
+         * @return
+         * @throws ValueError
+         */
         public
-        TreeNode <N, A, M, G> createChild ( int layerIndex, int clusteIndex, int address ) throws ValueError {
-            return null;
+        TreeNode <N, A, M, G> createChild ( int layerIndex, int clusterIndex, IAddress<A> address )
+                throws ValueError {
+            return createChild(new Point(0,0), layerIndex, clusterIndex,address);
         }
 
         /**
@@ -87,10 +100,16 @@ class QuadTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
         @Override
         public
         TreeNode <N, A, M, G> createNode ( TreeNode <N, A, M, G> parent, M image, Rect boundingBox ) throws ValueError {
-            return null;
+            return new QuadTreeNode <>(parent, null, boundingBox);//fixme
         }
 
         /**
+         *
+         *
+         *
+         * FIXmE exchange sigs
+         *
+         *
          * @param parent
          * @param quadrant
          * @param boundingBox
@@ -99,6 +118,7 @@ class QuadTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
         public
         QuadLeafNode <N, A, M, G> createNode ( TreeNode <N, A, M, G> parent, EDirection quadrant, Rect boundingBox )
                 throws ValueError {
+
             return new QuadLeafNode <>(parent, null, boundingBox);//fixme
         }
 
@@ -176,21 +196,31 @@ class QuadTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
             return 0;
         }
 
+        /**
+         * @return
+         */
+        @Override
         public
-        M getMat () {
-            return null;//todo
+        Mat getMat () {
+            return imageBlock.getMat();
         }
 
+        /**
+         * @return
+         */
         @Override
         public
         M getImage () {
-            return null;
+            return (M) imageBlock;
         }
 
+        /**
+         * @return
+         */
         @Override
         public
         Rect getBoundingBox () {
-            return/* this.getBoundingBox(*/null;
+            return new Rectangle(0,0,0,0);
         }
     }
 }

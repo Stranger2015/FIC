@@ -3,6 +3,7 @@ package org.stranger2015.opencv.fic.transform;
 import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.Image;
+import org.stranger2015.opencv.fic.core.codec.IAddress;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import static java.lang.String.format;
@@ -21,9 +22,10 @@ class ScaleTransform<M extends IImage<A>, A extends Address <A>, G extends BitBu
      * @param image
      * @param scaleX
      * @param scaleY
+     * @param address
      */
     public
-    ScaleTransform ( M image, double scaleX, double scaleY, Address<A> address ) {
+    ScaleTransform ( M image, double scaleX, double scaleY, IAddress<A> address ) {
         this(image, scaleX, scaleY, false, address);
     }
 
@@ -31,24 +33,34 @@ class ScaleTransform<M extends IImage<A>, A extends Address <A>, G extends BitBu
      * @param scaleX        the factor by which coordinates are scaled along the X axis direction
      * @param scaleY        the factor by which coordinates are scaled along the Y axis direction
      * @param preserveAlpha whether to preserve the alpha channel or not
+     * @param address
      */
     public
-    ScaleTransform ( M image, double scaleX, double scaleY, boolean preserveAlpha, Address<A> address ) {
+    ScaleTransform ( M image, double scaleX, double scaleY, boolean preserveAlpha, IAddress <A> address ) {
         super(image, preserveAlpha, address);
         this.scaleX = scaleX;
         this.scaleY = scaleY;
     }
 
+    /**
+     * @return
+     */
     public
     double getScaleX () {
         return scaleX;
     }
 
+    /**
+     * @return
+     */
     public
     double getScaleY () {
         return scaleY;
     }
 
+    /**
+     * @return
+     */
     @Override
     public
     String toString () {

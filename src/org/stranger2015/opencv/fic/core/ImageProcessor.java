@@ -288,15 +288,16 @@ class ImageProcessor<N extends TreeNode <N, A, M, G>, A extends Address <A>, M e
     @Override
     public
     M preprocess ( String filename ) {
-        if (image == null) {
-            task.loadImage(filename);
+        M image=null;
+        if (this.image == null) {
+            image=task.loadImage(filename);
         }
 
         for (IImageProcessorListener listener : listeners) {
             listener.onPreprocess();
         }
 
-        return null;//filename;
+        return image;
     }
 
     /**

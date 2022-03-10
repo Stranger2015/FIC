@@ -10,6 +10,12 @@ import org.stranger2015.opencv.utils.BitBuffer;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * @param <N>
+ * @param <A>
+ * @param <M>
+ * @param <G>
+ */
 public
 interface ICompressor<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>,
         G extends BitBuffer> {
@@ -29,4 +35,10 @@ interface ICompressor<N extends TreeNode <N, A, M, G>, A extends Address <A>, M 
      * @return
      */
     FractalModel <N, A, M, G> getModel ();
+
+    /**
+     * @param filename
+     * @return
+     */
+    FractalModel <N, A, M, G> loadModel (String filename);
 }

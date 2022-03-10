@@ -27,5 +27,7 @@
     <orderEntry type="library" exported="" name="GAlib" level="project" />
     <orderEntry type="library" exported="" name="commons-compress-1.21-bin" level="project" />
     <orderEntry type="library" exported="" name="pngj-2.1.1" level="project" />
+    <orderEntry type="library" name="jcommander-1.27" level="project" />
+    <orderEntry type="library" name="src" level="project" />
   </component>
 </module>

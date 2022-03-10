@@ -8,5 +8,4 @@ enum EInterpolationType {
     NEAREST_NEIGHBOR,
     BILINEAR,
     BICUBIC,
-    ;
 }

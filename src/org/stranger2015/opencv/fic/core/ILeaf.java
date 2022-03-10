@@ -4,6 +4,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.codec.IAddress;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
@@ -27,7 +28,7 @@ interface ILeaf<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extend
     /**
      * @return
      */
-    Address <A> getAddress();
+    IAddress <A> getAddress();
 
     /**
      * @return

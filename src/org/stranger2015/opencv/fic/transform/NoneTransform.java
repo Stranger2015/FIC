@@ -1,5 +1,6 @@
 package org.stranger2015.opencv.fic.transform;
 
+import org.opencv.core.Mat;
 import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.codec.IAddress;
@@ -18,13 +19,13 @@ public class NoneTransform<M extends IImage<A>, A extends Address <A>, G extends
     /**
      * @param image
      */
-    protected
+    public
     NoneTransform ( M image,
                     EInterpolationType type,
-                    IAddress<A> address,
+                    IAddress <A> address,
                     int brightnessOffset,
                     double contrastScale,
-                    int dihedralAffineTransformerIndex) {
+                    int dihedralAffineTransformerIndex ) {
 
         super(image,
                 type,
@@ -32,5 +33,30 @@ public class NoneTransform<M extends IImage<A>, A extends Address <A>, G extends
                 brightnessOffset,
                 contrastScale,
                 dihedralAffineTransformerIndex);
+    }
+
+    /**
+     * @param inputImage
+     * @param transformMatrix
+     * @param type
+     * @return
+     */
+    @SuppressWarnings({"unchecked", "rawtype"})
+    @Override
+    public
+    M transform ( M inputImage, M transformMatrix, EInterpolationType type ) {
+        return (M) warpAffine(inputImage.getMat(), transformMatrix.getMat(),type);
+    }
+
+    /**
+     * @param inputImage
+     * @param transformMatrix
+     * @param interpolationType
+     * @return
+     */
+    @Override
+    public
+    Mat warpAffine ( Mat inputImage, Mat transformMatrix, EInterpolationType interpolationType ) {
+        return null;
     }
 }

@@ -1,6 +1,5 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.opencv.core.Mat;
 import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.codec.IAddress;
@@ -44,7 +43,7 @@ class PreserveAlphaTransform<M extends IImage<A>, A extends Address <A>, G exten
      */
     @Override
     public
-    M transform ( M inputImage, Mat transformMatrix, EInterpolationType type ) {
-        return null;
+    M transform ( M inputImage, M transformMatrix, EInterpolationType type ) {
+        return super.transform(inputImage, transformMatrix,type);
     }
 }

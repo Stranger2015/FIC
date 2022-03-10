@@ -156,7 +156,7 @@ import java.util.List;
  */
 public
 interface IEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
-        extends IImageProcessorListener, ICodecListener {
+        extends IImageProcessorListener, ICodecListener, ICompressorListener {
 
     /**
      *

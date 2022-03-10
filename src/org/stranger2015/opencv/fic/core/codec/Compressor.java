@@ -19,39 +19,25 @@ import static java.lang.Double.MAX_VALUE;
  * fractal compressor instance. combines the imageBlockGenerator and
  * comparator classes to create a fractal image model
  */
+@SuppressWarnings({"unchecked", "rawtype"})
 public
 class Compressor<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>, G extends BitBuffer>
-        extends Task <N, A, M, G> //Observable
         implements ICompressor <N, A, M, G> {
 
     private final ScaleTransform <M, A, G> scaleTransform;
     private final ImageBlockGenerator <N, A, M, G> imageBlockGenerator;
-    /**
-     *
-     */
     private final Distanceator <M, A> comparator;
     private final Set <ImageTransform <M, A, G>> transforms;
-    private final HashSet <A> filters;
+    private final Set <IImageFilter <M, A>> filters;
 
-    public
-    Compressor ( String filename, EPartitionScheme scheme, List <Task <N, A, M, G>> tasks ) {
-        super(filename, scheme, tasks);
-    }
-
-    public
-    FractalModel <N, A, M, G> getfModel () {
-        return fModel;
-    }
-
-    private final FractalModel <N, A, M, G> fModel;
+    protected final FractalModel <N, A, M, G> fractalModel;
 
     /**
      * @param scaleTransform      the scale difference between the ranges and the domains
      * @param imageBlockGenerator the tiler used to tile the image
      * @param comparator          the comparator used to compare the tiles of the image
      * @param transforms          a list of transform to apply to the tiles of the image
-     * @param observer            an observer receiving progress results for the compression - allowed to be null
-     * @param fModel
+     * @param fractalModel
      * @throws NullPointerException if any field is null
      * @see Observable
      * @see Observer#update(java.util.Observable, java.lang.Object)
@@ -61,12 +47,16 @@ class Compressor<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exten
                  final ImageBlockGenerator <N, A, M, G> imageBlockGenerator,
                  final Distanceator <M, A> comparator,
                  final Set <ImageTransform <M, A, G>> transforms,
-                 final Observer observer,
-                 FractalModel <N, A, M, G> fModel )
+                 FractalModel <N, A, M, G> fractalModel )
 
             throws NullPointerException {
         //16 (12 in sip)??????
-        this(scaleTransform, imageBlockGenerator, comparator, transforms, new HashSet <>(16), observer, fModel);
+        this(scaleTransform,
+                imageBlockGenerator,
+                comparator,
+                transforms,
+                new HashSet <>(0),
+                fractalModel);
     }
 
     /**
@@ -75,26 +65,26 @@ class Compressor<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exten
      * @param comparator          the comparator used to compare the tiles of the image
      * @param transforms          a set of transform to apply to the tiles of the image
      * @param filters             a set of filters to apply to the image for normalization
-     * @param observer            an observer receiving progress results from {@code compress} - allowed to be null
-     * @param fModel
+     *                            //     * @param observer            an observer receiving progress results from {@code compress} - allowed to be null
+     * @param fractalModel
      * @throws NullPointerException if any field is null
      * @see Observable
      * @see Observer#update(java.util.Observable, java.lang.Object)
      */
     public
     Compressor ( final ScaleTransform <M, A, G> scaleTransform,
-                 final ImageBlockGenerator <N, A,M,G> imageBlockGenerator,
+                 final ImageBlockGenerator <N, A, M, G> imageBlockGenerator,
                  final Distanceator <M, A> comparator,
                  final Set <ImageTransform <M, A, G>> transforms,
-                 final HashSet <A> filters,
-                 Observer observer,
-                 FractalModel <N, A, M, G> fModel ) throws NullPointerException {
+                 final Set <IImageFilter <M, A>> filters,
+                 FractalModel <N, A, M, G> fractalModel ) throws NullPointerException {
 
+        super();
 
         assert (comparator != null) && (transforms != null) && (filters != null)
                 && (imageBlockGenerator != null) && (scaleTransform != null) : "Null elements now allowed";
 
-        this.fModel = fModel;
+        this.fractalModel = fractalModel;
         this.comparator = comparator;
         this.imageBlockGenerator = imageBlockGenerator;
         this.filters = filters;
@@ -106,13 +96,27 @@ class Compressor<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exten
 //        }
     }
 
+    /**
+     * @return
+     */
+    public
+    FractalModel <N, A, M, G> getFractalModel () {
+        return fractalModel;
+    }
+
+    /**
+     * @return
+     */
     public
     ScaleTransform <M, A, G> getScaleTransform () {
         return scaleTransform;
     }
 
+    /**
+     * @return
+     */
     public
-    ImageBlockGenerator <N,A,M, G> getImageBlockGenerator () {
+    ImageBlockGenerator <N, A, M, G> getImageBlockGenerator () {
         return imageBlockGenerator;
     }
 
@@ -132,10 +136,10 @@ class Compressor<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exten
          * Normalization. Before tiling the image, pass it throw a set of filters.
          * This might improve results, if used wisely.
          */
-//            for (BufferedImageOp filter : filters) {
-//                image = filter.filter(image, null);
-//            }
-
+        for (IImageFilter <M, A> filter : filters) {
+            image = filter.filter(image);
+        }
+//
         /*
          * range blocks are the tiles of the original (but filtered) image.
          */
@@ -229,7 +233,6 @@ class Compressor<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exten
         return new FractalModel <>(simpleModel);
     }
 
-
     /**
      * @param image
      * @param sourceSize
@@ -240,7 +243,7 @@ class Compressor<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exten
     @Override
     public
     FractalModel <N, A, M, G> compress ( M image, int sourceSize, int destinationSize, int step ) {
-        return null;
+        return new FractalModel <>(new HashMap <>());
     }
 
     public
@@ -254,14 +257,24 @@ class Compressor<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exten
     @Override
     public
     FractalModel <N, A, M, G> getModel () {
-        return fModel;
+        return fractalModel;
+    }
+
+    /**
+     * @param filename
+     * @return
+     */
+    @Override
+    public
+    FractalModel <N, A, M, G> loadModel ( String filename ) {
+        return null;
     }
 
     /**
      * @return
      */
     public
-    Set <A> getFilters () {
+    Set <IImageFilter<M,A>> getFilters () {
         return filters;
     }
 

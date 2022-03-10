@@ -9,6 +9,7 @@ import org.stranger2015.opencv.fic.core.EDirection;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.fic.core.ValueError;
+import org.stranger2015.opencv.fic.core.codec.IAddress;
 import org.stranger2015.opencv.fic.core.codec.Pixel;
 import org.stranger2015.opencv.fic.utils.Point;
 import org.stranger2015.opencv.utils.BitBuffer;
@@ -16,6 +17,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
 /**
  * 8 X 8
  */
+@Deprecated
 public
 class DomainBlock<N extends DomainBlock <N, A, M, G>, A extends Address <A>, M extends IImage <A>,
         G extends BitBuffer>
@@ -36,10 +38,24 @@ class DomainBlock<N extends DomainBlock <N, A, M, G>, A extends Address <A>, M e
     }
 
     /**
+     * @param point
+     * @param layerIndex
+     * @param clusterIndex
+     * @param address
+     * @return
+     * @throws ValueError
+     */
+    @Override
+    public
+    TreeNode <N, A, M, G> createChild ( Point point, int layerIndex, int clusterIndex, IAddress <A> address ) throws ValueError {
+        return null;
+    }
+
+    /**
      * @param address
      */
     public
-    DomainBlock ( Address <A> address ) {
+    DomainBlock ( IAddress <A> address ) {
         super(address);
     }
 
@@ -56,7 +72,7 @@ class DomainBlock<N extends DomainBlock <N, A, M, G>, A extends Address <A>, M e
     TreeNode <N, A, M, G> createChild ( Point point,
                                         int layerIndex,
                                         int clusterIndex,
-                                        Address <A> address )
+                                        IAddress <A> address )
             throws ValueError {
 
         return new DomainBlock <>(address);
@@ -139,7 +155,7 @@ class DomainBlock<N extends DomainBlock <N, A, M, G>, A extends Address <A>, M e
      */
     @Override
     public
-    IImage <A> contract ( int contractivity ) {
+    M contract ( int contractivity ) {
         return null;
     }
 
@@ -190,7 +206,7 @@ class DomainBlock<N extends DomainBlock <N, A, M, G>, A extends Address <A>, M e
     @Override
     public
     int getOriginalImageHeight () {
-        return 0;
+        return o;
     }
 
     @Override
@@ -212,15 +228,15 @@ class DomainBlock<N extends DomainBlock <N, A, M, G>, A extends Address <A>, M e
     }
 
     @Override
-    public
+    public final
     int cols () {
-        return 0;
+        return 1;
     }
 
     @Override
     public
     int rows () {
-        return 0;
+        return getWidth() * getHeight();
     }
 
     /**

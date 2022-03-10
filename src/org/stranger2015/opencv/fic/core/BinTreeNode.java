@@ -2,7 +2,10 @@ package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Rect;
+import org.stranger2015.opencv.fic.core.QuadTreeNode.QuadLeafNode;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.codec.DecAddress;
+import org.stranger2015.opencv.fic.core.codec.IAddress;
 import org.stranger2015.opencv.fic.utils.Point;
 import org.stranger2015.opencv.utils.BitBuffer;
 
@@ -34,10 +37,29 @@ class BinTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exte
         super(parent, boundingBox);
     }
 
+    public
+    BinTreeNode ( LeafNode <N, A, M, G> node, Point point, int layerIndex, int clusterIndex, IAddress <A> address ) {
+        super(node, point,layerIndex,clusterIndex, address);
+
+
+
+
+    }
+
+    public
+    BinTreeNode ( TreeNode <N, A, M, G> parent, DecAddress <A> address ) {
+        super(parent, new Rectangle(0,0,0,0),0,0,address );
+    }
+
+    /**
+     * @param address
+     * @return
+     * @throws ValueError
+     */
     @Override
     public
     TreeNode <N, A, M, G> createChild ( int address ) throws ValueError {
-        return null;
+        return new BinTreeNode <>(this, new DecAddress <>(address));
     }
 
     /**

@@ -25,7 +25,6 @@ class Encoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends 
     public static final Size ZERO_SIZE = new Size(0, 0);
 
     protected final ImageBlockGenerator <N, A, M, G> blockGenerator;
-//    protected final List <IEncoderListener> listeners = new ArrayList <>();
 
     protected M inputImage;
     protected M outputImage;
@@ -37,7 +36,8 @@ class Encoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends 
     protected final List <ImageTransform <M, A, G>> transforms = new ArrayList <>();
 
     public static
-    Encoder <?, ?, ?, ?> create ( String encoderClassName ) {
+    <N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>, G extends BitBuffer>
+    IEncoder <N, A, M, G> create ( String encoderClassName ) {
 
         return null;
     }

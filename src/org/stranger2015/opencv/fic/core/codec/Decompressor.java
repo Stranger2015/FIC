@@ -1,6 +1,5 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.opencv.imgproc.Imgproc;
 import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.FractalModel;
 import org.stranger2015.opencv.fic.core.IImage;
@@ -19,15 +18,16 @@ import java.util.Observer;
  */
 public
 class Decompressor<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>, G extends BitBuffer>
-        extends Observable {
+        extends Observable
+        implements IDecompressor <N, A, M, G> {
 
-    /**
-     * @param observer the observer receiving progress results from the decompression - allowed to be null
-     */
-    public
-    Decompressor ( Observer observer ) {
-        this.addObserver(observer);
-    }
+//    /**
+//     * @param observer the observer receiving progress results from the decompression - allowed to be null
+//     */
+//    public
+//    Decompressor ( Observer observer ) {
+//        this.addObserver(observer);
+//    }
 
     /**
      * reconstruct the original range image from the given fractal model
@@ -70,5 +70,15 @@ class Decompressor<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
 //                -1);
 
         return null;// image;
+    }
+
+    /**
+     * @param filename
+     * @param fractalModel
+     */
+    @Override
+    public
+    void saveModel ( String filename, FractalModel <N, A, M, G> fractalModel ) {
+
     }
 }

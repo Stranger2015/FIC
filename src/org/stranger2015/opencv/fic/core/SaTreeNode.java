@@ -226,6 +226,11 @@ class SaTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exten
 
         }
 
+        public
+        SaLayerClusterNode ( TreeNode <N, A, M, G> parent, M image, Rect boundingBox, int i, int i1 ) {
+
+        }
+
         /**
          * @param parent
          * @param image

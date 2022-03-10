@@ -2,6 +2,7 @@ package org.stranger2015.opencv.fic.transform;
 
 import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.fic.core.codec.IAddress;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
@@ -13,13 +14,13 @@ class RotationTransform<M extends IImage<A>, A extends Address <A>, G extends Bi
 
     private final double degrees;
     private final double pointX;//int
-    private final double pointY;//imt
+    private final double pointY;//int
 
     /**
      * @param degrees
      */
     public
-    RotationTransform ( double degrees, Address <A> address ) {
+    RotationTransform ( double degrees, IAddress <A> address ) {
         this(degrees, 0, 0, false, address);
     }
 
@@ -28,7 +29,7 @@ class RotationTransform<M extends IImage<A>, A extends Address <A>, G extends Bi
      * @param preserveAlpha
      */
     public
-    RotationTransform ( double degrees, boolean preserveAlpha, Address <A> address ) {
+    RotationTransform ( double degrees, boolean preserveAlpha, IAddress <A> address ) {
         this(degrees, 0, 0, preserveAlpha, address);
     }
 
@@ -41,7 +42,7 @@ class RotationTransform<M extends IImage<A>, A extends Address <A>, G extends Bi
     RotationTransform ( double degrees,
                         double pointX,
                         double pointY,
-                        Address <A> address ) {
+                        IAddress <A> address ) {
 
         this(degrees, pointX, pointY, false, address);
     }
@@ -57,7 +58,7 @@ class RotationTransform<M extends IImage<A>, A extends Address <A>, G extends Bi
                         double pointX,
                         double pointY,
                         boolean preserveAlpha,
-                        Address <A> address ) {
+                        IAddress <A> address ) {
 
         super(null, preserveAlpha, address);
 
@@ -66,16 +67,25 @@ class RotationTransform<M extends IImage<A>, A extends Address <A>, G extends Bi
         this.pointY = pointY;
     }
 
+    /**
+     * @return
+     */
     public
     double getDegrees () {
         return degrees;
     }
 
+    /**
+     * @return
+     */
     public
     double getPointX () {
         return pointX;
     }
 
+    /**
+     * @return
+     */
     public
     double getPointY () {
         return pointY;

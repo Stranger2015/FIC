@@ -2,8 +2,8 @@ package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Rect;
-
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.codec.IAddress;
 import org.stranger2015.opencv.fic.utils.Point;
 import org.stranger2015.opencv.utils.BitBuffer;
 
@@ -16,18 +16,25 @@ import static org.stranger2015.opencv.fic.core.TreeNodeBase.EType.*;
  * @param <N>
  */
 abstract public
-class TreeNodeBase<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>,
+class TreeNodeBase<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>,
         G extends BitBuffer>
+
         implements Comparable <N> {
 
     protected static int indexCounter;
-    protected int index;
+    protected int index;//ID
 
-    protected Address<A> address;
+//    protected final EDirection quadrant;
+
+    protected IAddress <A> address;
 
     protected Rect boundingBox;
 
     protected TreeNodeBase <N, A, M, G> parent;
+//    protected final M image;
+
+    protected final int layerIndex;
+    protected final int clusterIndex;
 
     protected EType type;
 
@@ -40,13 +47,16 @@ class TreeNodeBase<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
     public
     TreeNodeBase ( TreeNode <N, A, M, G> parent, Rect rect ) throws ValueError {
         this.index = indexCounter++;
-//        this.address = 0;
 
         this.boundingBox = rect;
         this.parent = parent;
 
         setDistance(0);
         setType(WHITE);
+
+        layerIndex = 0;
+        clusterIndex = 0;
+        quadrant = null;
     }
 
     /**
@@ -55,6 +65,10 @@ class TreeNodeBase<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
      */
     protected
     TreeNodeBase ( EDirection quadrant, Rect boundingBox ) {
+        this.quadrant = quadrant;
+        this.boundingBox = boundingBox;
+        layerIndex = 0;
+        clusterIndex = 0;
     }
 
     /**
@@ -64,7 +78,12 @@ class TreeNodeBase<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
      */
     public
     TreeNodeBase ( TreeNode <N, A, M, G> parent, M image, Rect boundingBox ) {
+        this.parent = parent;
+        this.image = image;
+        this.boundingBox = boundingBox;
 
+        layerIndex = 0;
+        clusterIndex = 0;
     }
 
     /**
@@ -72,13 +91,30 @@ class TreeNodeBase<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
      */
     protected
     TreeNodeBase () {
+        layerIndex = 0;
+        clusterIndex =0;
+    }
+
+    public
+    TreeNodeBase ( TreeNode <N, A, M, G> parent,
+                   Rect rectangle,
+                   int layerIndex,
+                   int clusterIndex,
+                   IAddress <A> address ) {
+
+        this.parent = parent;
+        this.boundingBox = rectangle;
+        this.layerIndex = layerIndex;
+        this.clusterIndex = clusterIndex;
+        this.address = address;
+        quadrant = null;
     }
 
     /**
      * @return
      */
     public
-    Address<A> getAddress () {
+    IAddress <A> getAddress () {
         return address;
     }
 
@@ -115,7 +151,7 @@ class TreeNodeBase<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
      * @throws ValueError
      */
     public abstract
-    TreeNode <N, A, M, G> createChild ( Point point, int layerIndex, int clusterIndex, Address<A> address )
+    TreeNode <N, A, M, G> createChild ( Point point, int layerIndex, int clusterIndex, IAddress <A> address )
             throws ValueError;
 
     /**
@@ -285,7 +321,7 @@ class TreeNodeBase<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
      * @param <A>
      */
     public abstract static
-    class TreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
+    class TreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>, G extends BitBuffer>
             extends TreeNodeBase <N, A, M, G> {
 
         protected final NodeList <N, A, M, G> children = new NodeList <>();
@@ -325,6 +361,26 @@ class TreeNodeBase<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
          */
         protected
         TreeNode () {
+        }
+
+        public
+        TreeNode ( LeafNode <N, A, M, G> node,
+                   Point point,
+                   int layerIndex,
+                   int clusterIndex,
+                   IAddress <A> address ) {
+        }
+
+        public
+        TreeNode ( TreeNode <N, A, M, G> parent,
+                   Rectangle rectangle,
+                   int layerIndex,
+                   int clusterIndex,
+                   IAddress <A> address ) {
+
+            super(parent, rectangle, layerIndex, clusterIndex, address);
+
+
         }
 
         /**
@@ -381,7 +437,7 @@ class TreeNodeBase<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
         }
 
         public
-        N createChild ( int ord, Rectangle rectangle ) {
+        N createChild ( int ord, Rect rectangle ) {
 
             return null;
         }
@@ -397,17 +453,17 @@ class TreeNodeBase<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
          * @param <M>
          */
         public abstract static
-        class LeafNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>,
+        class LeafNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>,
                 G extends BitBuffer>
 
                 extends TreeNode <N, A, M, G>
                 implements ILeaf <N, A, M, G> {
 
-            protected /*final */Address <A> address;
-            protected ImageBlock<A> imageBlock;
+            protected /*final */ IAddress <A> address;
+            protected ImageBlock <A> imageBlock;
 
             public
-            LeafNode ( Address<A> address ) {
+            LeafNode ( IAddress <A> address ) {
                 this.address = address;
             }
 
@@ -417,7 +473,10 @@ class TreeNodeBase<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
             }
 
             public
-            LeafNode ( TreeNode <N, A, M, G> parent, Point point, ImageBlock <A> image, Rect boundingBox ) {
+            LeafNode ( TreeNode <N, A, M, G> parent,
+                       Point point,
+                       ImageBlock <A> image,
+                       Rect boundingBox ) {
 
             }
 
@@ -426,7 +485,7 @@ class TreeNodeBase<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
              */
             @Override
             public
-            Address <A> getAddress () {
+            IAddress <A> getAddress () {
                 return address;
             }
 
@@ -439,7 +498,7 @@ class TreeNodeBase<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
              */
 //            @SuppressWarnings("unchecked")
             protected
-            LeafNode ( TreeNode <N, A, M, G> parent, Point point, ImageBlock <A> image, Rect rect, Address <A> address )
+            LeafNode ( TreeNode <N, A, M, G> parent, Point point, ImageBlock <A> image, Rect rect, IAddress <A> address )
                     throws ValueError {
 
                 super(parent, rect);
@@ -447,24 +506,6 @@ class TreeNodeBase<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
                 this.imageBlock = image;
 //                this.address = address;
                 this.imageBlock.setAddress(point.getX(), point.getY());
-            }
-
-            /**
-             * @param parent
-             * @param image
-             * @param width
-             * @param height
-             */
-            @SuppressWarnings("unchecked")
-            public
-            LeafNode ( TreeNode <N, A, M, G> parent,
-                       Point point,
-                       M image,
-                       int width,
-                       int height ) throws ValueError {
-
-                this(
-                );
             }
 
             /**
@@ -485,6 +526,7 @@ class TreeNodeBase<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
              */
             protected
             LeafNode ( TreeNode <N, A, M, G> parent, M image, int width, int height ) {
+                super(parent, image, new Rectangle(width, height));
             }
 
             /**
@@ -501,7 +543,7 @@ class TreeNodeBase<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
              */
             @Override
             public
-            ImageBlock<A> getImageBlock () {
+            ImageBlock <A> getImageBlock () {
                 return imageBlock;
             }
 

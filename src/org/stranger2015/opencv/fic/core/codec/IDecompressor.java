@@ -20,4 +20,10 @@ interface IDecompressor<N extends TreeNode <N, A, M, G>, A extends Address <A>, 
      * @return
      */
     M decompress ( FractalModel <N, A, M, G> fractalModel );
+
+    /**
+     * @param filename
+     * @param fractalModel
+     */
+    void saveModel(String filename, FractalModel <N, A, M, G> fractalModel);
 }

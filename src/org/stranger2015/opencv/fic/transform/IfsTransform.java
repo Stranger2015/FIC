@@ -1,5 +1,6 @@
 package org.stranger2015.opencv.fic.transform;
 
+import org.opencv.core.Mat;
 import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.Image;
@@ -15,6 +16,18 @@ class IfsTransform<M extends IImage<A>, A extends Address <A>, G extends BitBuff
         extends ImageTransform <M, A, G> {
 
     private final static int[] ia = new int[0];
+
+    /**
+     * @param inputImage
+     * @param transformMatrix
+     * @param type
+     * @return
+     */
+    @Override
+    public
+    M transform ( M inputImage, Mat transformMatrix, EInterpolationType type ) {
+        return null;
+    }
 
     /**
      *
@@ -73,8 +86,8 @@ class IfsTransform<M extends IImage<A>, A extends Address <A>, G extends BitBuff
      * @return
      */
     public
-    M downSample ( M src, /*int srcWidth,*/ int startX, int startY, int targetSize ) {
-        IImage<A> out = new Image(src);
+    M downSample ( M src, int startX, int startY, int targetSize ) {
+        IImage<A> out = new Image<>(src);
         //        PixelValue* dest = new PixelValue[targetSize * targetSize];
 //        int srcWidth = src.width();
         int destX = 0;
@@ -83,8 +96,7 @@ class IfsTransform<M extends IImage<A>, A extends Address <A>, G extends BitBuff
         for (int y = startY; y < startY + targetSize * 2; y += 2) {
             for (int x = startX; x < startX + targetSize * 2; x += 2) {
                 // Perform simple 2x2 average
-                int pixel =
-                        (src.get(x, y, ia) +
+                int pixel = (src.get(x, y, ia) +
                                 src.get(x + 1, y, ia) +
                                 src.get(x, y + 1, ia) +
                                 src.get(x + 1, y + 1, ia)) / 4;

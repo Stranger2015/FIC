@@ -6,31 +6,21 @@ import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.codec.IAddress;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
-
 /**
- *
+ * @param <M>
+ * @param <A>
+ * @param <G>
  */
 public
-class AffineFlipTransform<M extends IImage<A>, A extends Address <A>, G extends BitBuffer>
-        extends AffineTransform <M, A, G> {
-
-
+class FlopTransform<M extends IImage <A>, A extends Address <A>, G extends BitBuffer> extends ImageTransform <M, A, G> {
     /**
      * @param image
-     * @param interpolationType
+     * @param type
+     * @param address
      */
     public
-    AffineFlipTransform ( M image, EInterpolationType interpolationType, IAddress <A> address ) {
-        super(image, interpolationType, address );
-    }
-
-    /**
-     * @param image
-     */
-    public
-    AffineFlipTransform ( M image, IAddress<A> address ) {
-        this(image, BILINEAR, address);
+    FlopTransform ( M image, EInterpolationType type, IAddress <A> address ) {
+        super(image, type, address);
     }
 
     /**

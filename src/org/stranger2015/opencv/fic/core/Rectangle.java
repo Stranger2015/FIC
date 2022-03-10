@@ -11,4 +11,9 @@ class Rectangle extends Rect implements IShape {
     Rectangle ( int x, int y, int width, int height ) {
         super(x, y, width, height);
     }
+
+    public
+    Rectangle ( int width, int height ) {
+        this(0,0,width, height);
+    }
 }

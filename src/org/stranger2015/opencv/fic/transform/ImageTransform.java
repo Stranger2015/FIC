@@ -3,6 +3,7 @@ package org.stranger2015.opencv.fic.transform;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.codec.DecAddress;
@@ -123,7 +124,7 @@ class ImageTransform<M extends  IImage<A> , A extends Address <A>, G extends Bit
     @Contract("_, _ -> new")
     public static
     <M extends  IImage<A> , A extends Address <A>, G extends BitBuffer>
-    @NotNull ImageTransform <M, A, G> create ( M image, Address <A> address ) {
+    @NotNull ImageTransform <M, A, G> create ( M image, IAddress <A> address ) {
         return new NoneTransform <>(
                 image,
                 null,
@@ -153,12 +154,12 @@ class ImageTransform<M extends  IImage<A> , A extends Address <A>, G extends Bit
      */
     @SuppressWarnings("unchecked")
     @Override
-    public final
-    M warpAffine ( M inputImage, M transformMatrix, EInterpolationType interpolationType/*, Address <A> address*/ ) {
+    public
+    Mat warpAffine ( Mat inputImage, Mat transformMatrix, EInterpolationType interpolationType ) {
         M outputImage = (M) new Image <>(inputImage);
-        Imgproc.warpAffine((Mat) inputImage, (Mat) outputImage, (Mat) transformMatrix, inputImage.getSize());
+        Imgproc.warpAffine( inputImage, outputImage.getMat(), transformMatrix, new Size(1,1));//fixme
 
-        return outputImage;
+        return outputImage.getMat();
     }
 
     /**
@@ -166,8 +167,8 @@ class ImageTransform<M extends  IImage<A> , A extends Address <A>, G extends Bit
      */
     @Override
     public
-    Address <A> getAddress () {
-        return (Address <A>) address;
+    IAddress <A> getAddress () {
+        return address;
     }
 
     /**

@@ -213,7 +213,7 @@ class ImagePartitionProcessor<N extends TreeNode <N, A, M, G>, A extends Address
 //
 //            if (img.width % 32 != 0 || img.height %32 != 0)
 //            {
-//                printf("Error: Image must have dimensions that are multiples of 32.\n");
+//                printf("EError: Image must have dimensions that are multiples of 32.\n");
 //                exit(-1);
 //            }
 //

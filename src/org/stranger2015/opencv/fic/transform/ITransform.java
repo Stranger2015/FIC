@@ -4,6 +4,7 @@ import org.opencv.core.Mat;
 import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.ValueError;
+import org.stranger2015.opencv.fic.core.codec.IAddress;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
@@ -15,27 +16,29 @@ public
 interface ITransform<M extends IImage<A>, A extends Address <A>, G extends BitBuffer> {
 
     /**
-     *
      * @param inputImage
      * @param transformMatrix
      * @param type
      * @return
      */
-    M transform( M inputImage, Mat transformMatrix, EInterpolationType type/*, Address<A> address */);
+    default
+    M transform ( M inputImage, M transformMatrix, EInterpolationType type ) {
+        return null;
+    }
 
     /**
      *
      * @param inputImage
      * @return
      */
-    M warpAffine ( M inputImage, M transformMatrix, EInterpolationType interpolationType/*, Address<A> address*/ );
+    Mat warpAffine ( Mat inputImage, Mat transformMatrix, EInterpolationType interpolationType);
 
     /**
      *
      *
      * @return
      */
-    Address <A> getAddress () throws InstantiationException, IllegalAccessException;
+    IAddress <A> getAddress () throws InstantiationException, IllegalAccessException;
 
     /**
      *
