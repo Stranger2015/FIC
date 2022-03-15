@@ -1,2 +1,2 @@
 # FIC
-Fractal-image-processing
+Fractal-image-compressing
