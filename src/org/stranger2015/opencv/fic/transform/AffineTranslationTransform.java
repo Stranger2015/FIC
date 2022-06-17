@@ -4,18 +4,20 @@ import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
+import static org.stranger2015.opencv.fic.transform.EInterpolationType.*;
+
 /**
- * @param <M>
+ 
  */
 public
-class AffineTranslationTransform<M extends IImage<A>, A extends Address <A>, G extends BitBuffer>
-        extends AffineTransform <M, A, G> {
+class AffineTranslationTransform</*M extends IImage<A>,*/ A extends IAddress <A>, G extends BitBuffer>
+        extends AffineTransform <A, G> {
     /**
      *
      */
     public
     AffineTranslationTransform ( M image, Address <A> address ) {
-        super(image, EInterpolationType.BILINEAR, address);
+        super(image, BILINEAR, address);
     }
 
 //    /**

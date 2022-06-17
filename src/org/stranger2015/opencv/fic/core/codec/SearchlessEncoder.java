@@ -3,6 +3,7 @@ package org.stranger2015.opencv.fic.core.codec;
 import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.utils.BitBuffer;
@@ -12,13 +13,13 @@ import java.util.List;
 /**
  * @param <N>
  * @param <A>
- * @param <M>
+ 
  */
 public
-class SearchlessEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>,
+class SearchlessEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, M extends IImage<A>,
         G extends BitBuffer>
 
-        extends Encoder <N, A, M, G> {
+        extends Encoder <N, A, G> {
 
     /**
      * @param inputImage
@@ -26,8 +27,18 @@ class SearchlessEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, 
      * @param domainSize
      */
     public
-    SearchlessEncoder ( M inputImage, Size rangeSize, Size domainSize ) {
-        super(inputImage, rangeSize, domainSize);
+    SearchlessEncoder ( M inputImage,
+                        ISearchProcessor <N, A, G> rangeSize,
+                        ImageBlockGenerator <N, A, G> domainSize ) {
+        super(inputImage,
+                scaleTransform,
+                rangeSize,
+                rangeSize,
+                domainSize,
+                transforms,
+                comparator,
+                filters,
+                fractalModel);
     }
 
     /**
@@ -37,14 +48,14 @@ class SearchlessEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, 
      * @param domainSize
      * @return
      */
-    @Override
+//    @Override
     protected
-    ImageBlockGenerator <N, A, M, G> createBlockGenerator ( IEncoder <N, A, M, G> encoder,
+    ImageBlockGenerator <N, A, G> createBlockGenerator ( IEncoder <N, A, G> encoder,
                                                             M image,
                                                             Size rangeSize,
                                                             Size domainSize ) {
         return new SquareImageBlockGenerator <>(
-                new RectangularTiler <N, A, M, G>(8),
+                new RectangularTiler <N, A, G>(8),
                 encoder,
                 image,
                 rangeSize,
@@ -53,19 +64,19 @@ class SearchlessEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, 
 
     @Override
     public
-    M randomTransform ( M image, ImageTransform <M, A, G> transform ) {
+    M randomTransform ( M image, ImageTransform <A, G> transform ) {
         return null;//todo
     }
 
     @Override
     public
-    M applyTransform ( M image, ImageTransform <M, A, G> transform ) {
+    M applyTransform ( M image, ImageTransform <A, G> transform ) {
         return null;//todo
     }
 
     @Override
     public
-    M applyAffineTransform ( M image, AffineTransform <M, A, G> transform ) {
+    M applyAffineTransform ( M image, AffineTransform <A, G> transform ) {
         return null;//todo
     }
 //
@@ -77,7 +88,7 @@ class SearchlessEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, 
 
     @Override
     public
-    List <ImageBlock<A>> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
+    List<IImageBlock<A>> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
         return null;//todo//todo
     }
 
@@ -106,5 +117,86 @@ class SearchlessEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, 
     public
     void onPostprocess () {
 
+    }
+
+    /**
+     *
+     */
+    @Override
+    public
+    void onCompress () {
+
+    }
+
+    /**
+     * @param image
+     * @param bounds
+     * @return
+     * @throws ValueError
+     */
+    @Override
+    public
+    List <RegionOfInterest <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds ) throws ValueError {
+        return null;
+    }
+
+    /**
+     * @param node
+     */
+    @Override
+    public
+    void add ( TreeNode <N, A, G> node ) {
+
+    }
+
+    /**
+     * @param node
+     */
+    @Override
+    public
+    void addLeafNode ( TreeNode.LeafNode <N, A, G> node ) {
+
+    }
+
+    @Override
+    public
+    void addLeafNode ( TreeNode <N, A, G> node ) {
+
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    IPipeline <IImage <A>, IImage <A>> getLinkedObject () {
+        return null;
+    }
+
+    /**
+     * @param link
+     */
+    @Override
+    public
+    void setNext ( ISingleLinked <IPipeline <IImage <A>, IImage <A>>> link ) {
+
+    }
+
+    @Override
+    public
+    ISingleLinked <IPipeline <IImage <A>, IImage <A>>> getNext () {
+        return null;
+    }
+
+    @Override
+    public
+    IImage <A> getInput () {
+        return null;
+    }
+
+    @Override
+    public
+    IImage <A> getOutput () {
+        return null;
     }
 }

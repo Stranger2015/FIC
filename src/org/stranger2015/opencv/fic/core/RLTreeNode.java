@@ -3,13 +3,16 @@ package org.stranger2015.opencv.fic.core;
 import org.opencv.core.Rect;
 
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.IAddress;
+import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.fic.utils.Point;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
  */
 public
-class RLTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer> extends TreeNode <N, A, M, G> {
+class RLTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, M extends IImage<A>, G extends BitBuffer> extends TreeNode <N, A, G> {
 
 
     /**
@@ -18,14 +21,14 @@ class RLTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exten
      * @param rect
      */
     public
-    RLTreeNode ( TreeNode <N, A, M, G> parent, EDirection quadrant, Rect rect )
+    RLTreeNode ( TreeNode <N, A, G> parent, EDirection quadrant, Rect rect )
             throws ValueError {
         super(parent, rect);
     }
 
     //    @Override
     public
-    TreeNode <N, A, M, G> createNode ( TreeNode <N, A, M, G> parent, EDirection quadrant, Rect boundingBox )
+    TreeNode <N, A, G> createNode ( TreeNode <N, A, G> parent, EDirection quadrant, Rect boundingBox )
             throws ValueError {
         return new RLTreeNode <>(parent, quadrant, boundingBox);
     }
@@ -38,8 +41,8 @@ class RLTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exten
      */
 //    @Override
     public
-    TreeNode <N, A, M, G> createChild ( EDirection quadrant, Rect boundingBox ) throws ValueError {
-        return new RLTreeNode <>((TreeNode<N, A, M, G>) parent, quadrant, boundingBox);
+    TreeNode <N, A, G> createChild ( EDirection quadrant, Rect boundingBox ) throws ValueError {
+        return new RLTreeNode <>((TreeNode<N, A, G>) parent, quadrant, boundingBox);
     }
 
     /**
@@ -49,14 +52,28 @@ class RLTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exten
      */
     @Override
     public
-    TreeNode <N, A, M, G> createNode ( TreeNode<N, A, M, G> parent, Rect boundingBox )
+    TreeNode <N, A, G> createNode ( TreeNode<N, A, G> parent, Rect boundingBox )
             throws ValueError {
         return null;
     }
 
     @Override
     public
-    TreeNode <N, A, M, G> createChild ( int address ) throws ValueError {
+    TreeNode <N, A, G> createChild ( int address ) throws ValueError {
+        return null;
+    }
+
+    /**
+     * @param point
+     * @param layerIndex
+     * @param clusterIndex
+     * @param address
+     * @return
+     * @throws ValueError
+     */
+    @Override
+    public
+    TreeNode <N, A, G> createChild ( GrayScaleImage <A> point, int layerIndex, int clusterIndex, IAddress <A> address ) throws ValueError {
         return null;
     }
 
@@ -72,14 +89,14 @@ class RLTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exten
      */
     @Override
     public
-    TreeNode <N, A, M, G> createChild ( Point point, int layerIndex, int clusteIndex, int x, int y, int address )
+    TreeNode <N, A, G> createChild ( Point point, int layerIndex, int clusteIndex, int x, int y, int address )
             throws ValueError {
         return null;
     }
 
 //    @Override
     public
-    TreeNode <N, A, M, G> createChild ( int layerIndex, int clusterIndex, int address )
+    TreeNode <N, A, G> createChild ( int layerIndex, int clusterIndex, int address )
             throws ValueError {
         return null;
     }

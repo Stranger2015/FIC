@@ -1,10 +1,8 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.EPartitionScheme;
-import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.fic.core.Task;
+import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
@@ -13,12 +11,12 @@ import java.util.List;
  *
  */
 public
-class EncodeTask<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>, G extends BitBuffer>
+class EncodeTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */,
+        G extends BitBuffer>
 
-        extends Task <N, A, M, G> {
+        extends Task <N, A, G> {
 
-    protected final IEncoder <N, A, M, G> encoder;
-    protected M image;
+    protected final IEncoder <N, A, G> encoder;
 
     /**
      * @param filename
@@ -27,19 +25,33 @@ class EncodeTask<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exten
     public
     EncodeTask ( String filename,
                  EPartitionScheme scheme,
-                 List <Task <N, A, M, G>> tasks,
-                 IEncoder <N, A, M, G> encoder ) {
+                 ICodec <N, A, G> codec,
+                 List <Task <N, A, G>> tasks
+               /*  IEncoder <N, A, G> encoder*/ ) {
 
-        super(filename, scheme, tasks);
+        super(filename, scheme, codec, tasks);
 
-        this.encoder = encoder;
+        this.encoder = codec.getEncoder();
+    }
+
+    /**
+     * @param filename
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    protected
+    M execute ( String filename ) throws ValueError {
+        M image = (M) encoder.encode((GrayScaleImage <A>) super.execute(filename));
+
+        return image;
     }
 
     /**
      * @return
      */
     public
-    IEncoder <N, A, M, G> getEncoder () {
+    IEncoder <N, A, G> getEncoder () {
         return encoder;
     }
 }

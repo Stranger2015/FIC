@@ -5,35 +5,21 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.*;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.nio.ByteBuffer;
-
 /**
  * @param <N>
  * @param <A>
- * @param <M>
+ 
  */
 public
-class SipCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
-        extends Codec <N, A, M, G> {
+class SipCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, M extends IImage<A>, G extends BitBuffer>
+        extends Codec <N, A, G> {
 
     /**
      * @param scheme
-     * @param action
      */
     public
-    SipCodec ( EPartitionScheme scheme, EncodeAction action ) {
-        super(scheme, action);
-    }
-
-    /**
-     * @param scheme
-     * @param action
-     * @return
-     */
-    @Override
-    public
-    Codec <N, A, M, G> create ( EPartitionScheme scheme, EncodeAction action ) {
-        return new SipCodec <>(scheme, action);
+    SipCodec ( EPartitionScheme scheme, Class<?>[]paramTypes,Object...params  ) {
+        super(scheme,paramTypes, params);
     }
 
     /**
@@ -42,10 +28,10 @@ class SipCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends
      * @param domainSize
      * @return
      */
-    @Override
+//    @Override
     public
-    IEncoder <N, A, M, G> getEncoder ( M image, Size rangeSize, Size domainSize ) {
-        return new SipEncoder <>(image, rangeSize, domainSize);
+    IEncoder <N, A, G> getEncoder ( M image, Size rangeSize, Size domainSize ) {
+        return new SipEncoder <N, A, G> (image, rangeSize, domainSize);
     }
 
     /**
@@ -53,7 +39,7 @@ class SipCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends
      */
     @Override
     public
-    IEncoder <N, A, M, G> getEncoder () {
+    IEncoder <N, A, G> getEncoder () {
         return null;
     }
 
@@ -62,7 +48,7 @@ class SipCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends
      */
     @Override
     public
-    IDecoder <M> getDecoder () {
+    IDecoder <M,A> getDecoder () {
         return null ;
     }
 
@@ -74,5 +60,16 @@ class SipCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends
     int getImageSizeBase () {
         return 3;
     }//9 ???
+
+    /**
+     * @param address
+     * @return
+     * @throws ValueError
+     */
+    @Override
+    public
+    IAddress <A> createAddress ( int address ) throws ValueError {
+        return new SipAddress <>(address);
+    }
 }
 

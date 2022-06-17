@@ -3,6 +3,7 @@ package org.stranger2015.opencv.fic.transform;
 import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.Image;
+import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
@@ -11,8 +12,8 @@ import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
  * functor class to affine shear an image
  */
 public
-class AffineShearTransform<M extends IImage<A>, A extends Address <A>, G extends BitBuffer>
-        extends AffineTransform <M, A, G> {
+class AffineShearTransform</*M extends IImage<A>,*/ A extends IAddress <A>, G extends BitBuffer>
+        extends AffineTransform <A, G> {
 
     private final double shearX;
     private final double shearY;
@@ -29,7 +30,7 @@ class AffineShearTransform<M extends IImage<A>, A extends Address <A>, G extends
                            double shearX,
                            double shearY,
                            EInterpolationType interpolationType,
-                           Address <A> address ) {
+                           IAddress <A> address ) {
 
         super(image, interpolationType, address);
 
@@ -44,7 +45,7 @@ class AffineShearTransform<M extends IImage<A>, A extends Address <A>, G extends
      * @param address
      */
     public
-    AffineShearTransform ( M image, double shearX, double shearY, Address <A> address ) {
+    AffineShearTransform ( M image, double shearX, double shearY, IAddress <A> address ) {
         this(image, shearX, shearY, BILINEAR, address);
     }
 

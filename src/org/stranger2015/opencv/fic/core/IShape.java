@@ -1,14 +1,61 @@
 package org.stranger2015.opencv.fic.core;
 
+import org.opencv.core.Point;
+import org.stranger2015.opencv.fic.core.geom.Coordinate;
+
 /**
- *
  *
  */
 public
-interface IShape  {
+interface IShape {
+
+    /**
+     * @return
+     */
+    boolean isHomogeneous () throws ValueError;
+
     /**
      *
+     */
+    enum EShape {
+        RECTANGLE,
+        SQUARE,
+        QUADRILATERAL,
+        TRIANGLE,
+        HEXAGON,
+        CIRCLE,
+        SQUIRAL,
+        IRREGULAR,
+    }
+
+    /**
+     * @return
+     */
+    EShape getShapeKind ();
+
+    /**
      * @return
      */
     double area ();
+
+    /**
+     * @return
+     */
+    IAddress <?> getAddress ();
+
+    /**
+     * @return
+     */
+    Coordinate getCentroid ();
+
+    /**
+     * @return
+     */
+//    static
+    Point[] getVertices ();
+
+    /**
+     * @return
+     */
+    double perimeter ();
 }

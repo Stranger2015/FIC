@@ -2,48 +2,52 @@ package org.stranger2015.opencv.fic.core;
 
 import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.core.codec.Codec;
-import org.stranger2015.opencv.fic.core.codec.IDecoder;
-import org.stranger2015.opencv.fic.core.codec.IEncoder;
+import org.stranger2015.opencv.fic.core.codec.*;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
  * @param <A>
- * @param <M>
+ 
  */
 public
-class HvCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
-        extends Codec <N, A, M, G> {
+class HvCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+        extends Codec <N, A, G> {
 
     /**
      * @param scheme
-     * @param action
+     * @param encodeTask
+     * @param decodeTask
      */
     public
-    HvCodec ( EPartitionScheme scheme, EncodeAction action ) {
-        super(scheme, action);
+    HvCodec ( EPartitionScheme scheme,
+              EncodeTask <N, A, G> encodeTask,
+              DecodeTask <N, A, G> decodeTask ) {
+
+        super(scheme, encodeTask, decodeTask);
     }
 
     /**
      * @param scheme
-     * @param action
+     * @param encodeTask
+     * @param decodeTask
      * @return
      */
-    @Override
     public
-    Codec <N, A, M, G> create ( EPartitionScheme scheme, EncodeAction action ) {
-        return new HvCodec<>(scheme, action);
+    ICodec <N, A, G> create ( EPartitionScheme scheme, EncodeTask <N, A, G> encodeTask, DecodeTask <N, A, G> decodeTask ) {
+        return new HvCodec <>(scheme, encodeTask, decodeTask);
     }
+
     /**
      * @param image
      * @param rangeSize
      * @param domainSize
      * @return
      */
-    @Override
+//    @Override
     public
-    IEncoder <N, A, M, G> getEncoder ( M image, Size rangeSize, Size domainSize ) {
-        return new HvEncoder <>(image, rangeSize, domainSize);
+    IEncoder <N, A, G> getEncoder ( IImage<A> image, IIntSize rangeSize, IIntSize domainSize ) {
+        return new HvEncoder <N, A, G>(image, rangeSize, domainSize);
     }
 
     /**
@@ -51,7 +55,7 @@ class HvCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends 
      */
     @Override
     public
-    IEncoder <N, A, M, G> getEncoder () {
+    IEncoder<N,A,M,G>  getEncoder () {
         return null;
     }
 
@@ -60,7 +64,7 @@ class HvCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends 
      */
     @Override
     public
-    IDecoder <M> getDecoder () {
+    IDecoder <M, A> getDecoder () {
         return null;
     }
 
@@ -71,5 +75,16 @@ class HvCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends 
     public
     int getImageSizeBase () {
         return 2;
+    }
+
+    /**
+     * @param address
+     * @return
+     * @throws ValueError
+     */
+    @Override
+    public
+    IAddress <A> createAddress ( int address ) throws ValueError {
+        return new DecAddress <>(address);
     }
 }

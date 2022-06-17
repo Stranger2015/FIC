@@ -7,16 +7,29 @@ import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
- * @param <M>
+ 
  */
 public
-class SaTree<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>, G extends BitBuffer>
-        extends Tree <N, A, M, G> {
+class SaTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
+        extends Tree <N, A, G> {
 
-
+    /**
+     * @param root
+     * @param image
+     * @param action
+     */
     public
-    SaTree ( TreeNode <N, A, M, G> root, M image, TreeNodeAction <N, A, M, G> action ) {
+    SaTree ( TreeNodeBase <N, A, G> root, IImage<A> image, TreeNodeTask <N, A, G> action ) {
         super(root, image, action);
+    }
+
+    /**
+     * @param root
+     * @param imageBlock
+     */
+    public
+    SaTree ( TreeNode <N, A, G> root, IImageBlock <A> imageBlock ) {
+
     }
 
     /**
@@ -27,8 +40,20 @@ class SaTree<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends I
      */
     @Override
     public
-    TreeNode <N, A, M, G> nodeInstance ( TreeNode <N, A, M, G> parent, EDirection quadrant, Rect rect ) {
-        return new SaTreeNode <>();
+    TreeNode <N, A, G> nodeInstance ( TreeNodeBase <N, A, G> parent, EDirection quadrant, IIntSize rect ) throws ValueError {
+        return null;
+    }
+
+    /**
+     * @param parent
+     * @param quadrant
+     * @param rect
+     * @return
+     */
+//    @Override
+    public
+    TreeNode <N, A, G> nodeInstance ( TreeNodeBase <N, A, G> parent, EDirection quadrant, Rect rect ) throws ValueError {
+        return null;
     }
 
     /**
@@ -39,7 +64,7 @@ class SaTree<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends I
     @SuppressWarnings("unchecked")
     @Override
     public//fixme
-    Class <? extends TreeNode <N, A, M, G>> getNodeClass ( TreeNode <N, A, M, G> clazz ) {
-        return (Class <? extends TreeNode <N, A, M, G>>) clazz.getClass();
+    Class <? extends TreeNode <N, A, G>> getNodeClass ( TreeNode <N, A, G> clazz ) {
+        return (Class <? extends TreeNode <N, A, G>>) clazz.getClass();
     }
 }

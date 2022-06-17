@@ -1,7 +1,6 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.core.codec.SipAddress;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
@@ -10,17 +9,17 @@ import org.stranger2015.opencv.utils.BitBuffer;
  * @param <N>
  */
 public
-class SipTreeTraverser<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>,
+class SipTreeTraverser<N extends TreeNode <N, A, G>, A extends IAddress <A>, M extends IImage<A>,
         G extends BitBuffer>
 
-        extends TreeTraverser <N, A, M, G> {
+        extends TreeTraverser <N, A, G> {
     /**
      * @param tree
      * @param depth
      * @param action
      */
     public
-    SipTreeTraverser ( SipTree <N, A, M, G> tree, int depth, TreeNodeAction <N, A, M, G> action ) {
+    SipTreeTraverser ( SipTree <N, A, G> tree, int depth, TreeNodeTask <N, A, G> action ) {
         super(tree, depth, action);
     }
 
@@ -35,7 +34,7 @@ class SipTreeTraverser<N extends TreeNode <N, A, M, G>, A extends Address <A>, M
      */
     @Override
     public
-    void traverse ( TreeNode <N, A, M, G> node, int depth, NodeList <N, A, M, G> neighbors, TreeNodeAction <N, A, M, G> action )
+    void traverse ( TreeNode <N, A, G> node, int depth, List <TreeNode<N, A, G>> neighbors, TreeNodeTask <N, A, G> action )
             throws DepthLimitExceeded {
         super.traverse(node, depth, neighbors, action);
     }

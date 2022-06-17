@@ -1,18 +1,18 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.stranger2015.opencv.fic.core.Address;
+import org.jetbrains.annotations.NotNull;
 import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.fic.core.codec.IAddress;
+import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
- * @param <M>
+ 
  * @param <A>
  * @param <G>
  */
 public
-class PreserveAlphaTransform<M extends IImage<A>, A extends Address <A>, G extends BitBuffer>
-        extends ImageTransform <M, A, G> {
+class PreserveAlphaTransform</*M extends IImage<A>,*/ A extends IAddress <A>, G extends BitBuffer>
+        extends ImageTransform <A, G> {
 
     private final boolean preserveAlpha;
 
@@ -21,7 +21,7 @@ class PreserveAlphaTransform<M extends IImage<A>, A extends Address <A>, G exten
      * @param preserveAlpha
      */
     protected
-    PreserveAlphaTransform ( M image, boolean preserveAlpha, IAddress <A> address ) {
+    PreserveAlphaTransform ( IImage<A> image, boolean preserveAlpha, IAddress <A> address ) {
         super(image, null, address);
 
         this.preserveAlpha = preserveAlpha;
@@ -43,7 +43,8 @@ class PreserveAlphaTransform<M extends IImage<A>, A extends Address <A>, G exten
      */
     @Override
     public
-    M transform ( M inputImage, M transformMatrix, EInterpolationType type ) {
+    IImage<A> transform ( @NotNull IImage<A> inputImage, IImage<A> transformMatrix, EInterpolationType type ) {
         return super.transform(inputImage, transformMatrix,type);
     }
+
 }

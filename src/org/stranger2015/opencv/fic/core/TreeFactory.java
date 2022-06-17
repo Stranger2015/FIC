@@ -6,7 +6,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
 /**
  * @param <N>
  * @param <A>
- * @param <M>
+ 
  */
 public
 class TreeFactory<N extends TreeNode <N,A,M,G>, A extends Address<A>, M extends IImage<A>, G extends BitBuffer> {

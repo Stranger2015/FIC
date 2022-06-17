@@ -1,14 +1,14 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.opencv.core.Rect;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * root --> rectangle diagonally divided into 2 triangles --> triangle tree nodes
  */
 public
-class TriangleTree<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
-        extends BinTree <N, A, M, G> {
+class TriangleTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, M extends IImage<A>, G extends BitBuffer>
+        extends BinTree<N,A,G> {
     /**
      * Constructs a new object.
      *
@@ -17,7 +17,7 @@ class TriangleTree<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
      * @param action
      */
     public
-    TriangleTree ( TreeNode <N, A, M, G> parent, M image, TreeNodeAction <N, A, M, G> action ) {
+    TriangleTree ( TreeNode <N,A,G> parent, IImageBlock <A> image, TreeNodeTask <N,A,G> action ) {
         super(parent, image, action);
     }
 
@@ -28,9 +28,10 @@ class TriangleTree<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
      * @return
      */
 //    @Override
+    @Override
     public
-    TreeNode <N, A, M, G> nodeInstance ( TreeNode <N, A, M, G> parent, EDirection quadrant, Rect rect ) throws ValueError {
-        return new TriangleTreeNode <>(parent, rect);
+    TreeNode <N,A,G> nodeInstance ( TreeNodeBase <N,A,G> parent, EDirection quadrant, IIntSize rect ) throws ValueError {
+        return new TriangleTreeNode <>(parent,  rect);
     }
 
     /**
@@ -38,7 +39,7 @@ class TriangleTree<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
      */
     @SuppressWarnings("unchecked")
     public
-    Class <? extends TreeNode <N, A, M, G>> getNodeClass ( TreeNode <N, A, M, G> clazz ) {
-        return (Class <? extends TreeNode <N, A, M, G>>) clazz.getClass();
+    Class <? extends TreeNode <N,A,G>> getNodeClass ( TreeNode <N,A,G> clazz ) {
+        return (Class <? extends TreeNode <N, A, G>>) clazz.getClass();
     }
 }

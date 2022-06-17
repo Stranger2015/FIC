@@ -3,13 +3,28 @@ package org.stranger2015.opencv.fic.core.io;
 import ar.com.hjg.pngj.IImageLine;
 import ar.com.hjg.pngj.IImageLineSet;
 import ar.com.hjg.pngj.PngReader;
+import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.FractalModel;
+import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.fic.core.IAddress;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.HashMap;
 
+import static org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+
+/**
+ * @param <N>
+ * @param <A>
+ 
+ * @param <G>
+ */
 public
-class FractalReader extends PngReader {
+class FractalReader<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
+        extends PngReader {
+
     /**
      * Constructs a PngReader object from a stream, with default options. This reads the signature and the first IHDR
      * chunk only.
@@ -49,11 +64,24 @@ class FractalReader extends PngReader {
         super(file);
     }
 
-    FractalModel<?,?,?,?> readModel(){
-        FractalModel <?, ?, ?, ?> model;
+    /**
+     *
+     *
+     * @return
+     */
+    public
+    FractalModel <N, A, G> readModel () {
+        FractalModel <N, A, G> model = new FractalModel <>(new HashMap <>());
 
-        readFirstChunks();
         IImageLineSet <? extends IImageLine> rows = readRows();
+        for (int i = 0; i < rows.size(); i++) {
+            IImageLine line = rows.getImageLine(i);
+            byte[] raw = new byte[0];
+            int len = 0;
+            int offset = 0;
+            int step = 0;
+            line.readFromPngRaw(raw, len, offset, step);
+        }
 
         return model;
     }

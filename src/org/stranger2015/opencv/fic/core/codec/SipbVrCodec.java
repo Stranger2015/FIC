@@ -4,16 +4,22 @@ import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.utils.BitBuffer;
 
+/**
+ * @param <N>
+ * @param <A>
+ 
+ * @param <G>
+ */
 public
-class SipbVrCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>, G extends BitBuffer>
-        extends SipCodec<N, A, M, G> {
+class SipbVrCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+        extends SipCodec<N, A, G> {
 
     /**
      * @param scheme
      * @param action
      */
     public
-    SipbVrCodec ( EPartitionScheme scheme, EncodeAction action ) {
+    SipbVrCodec ( EPartitionScheme scheme, EncodeTask action ) {
         super(scheme, action);
     }
 }

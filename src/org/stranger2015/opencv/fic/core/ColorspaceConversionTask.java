@@ -2,6 +2,7 @@ package org.stranger2015.opencv.fic.core;
 
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.EtvColorSpace;
+import org.stranger2015.opencv.fic.core.codec.ICodec;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
@@ -123,40 +124,61 @@ import java.util.List;
  *
  * @param <N>
  * @param <A>
- * @param <M>
  * @param <G>
  */
 public
-class ColorspaceConversionTask<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>,
-        G extends BitBuffer>
-
-        extends BidiTask <N, A, M, G> {
+class ColorspaceConversionTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
+        extends BidiTask <N, A, G> {
 
     protected final EtvColorSpace colorSpace;
 
     /**
      * @param filename
      * @param scheme
-     * @param task
-     * @param inverseTask
+     * @param colorSpace
      */
     public
     ColorspaceConversionTask ( String filename,
                                EPartitionScheme scheme,
-                               EtvColorSpace colorSpace,
-                               Task <N, A, M, G> task,
-                               Task <N, A, M, G> inverseTask ) {
-
-        this(filename, scheme, colorSpace, List.of(task, inverseTask));
+                               ICodec <N, A, G> codec,
+                               EtvColorSpace colorSpace
+    ) {
+        this(
+                filename,
+                scheme,
+                codec,
+                colorSpace,
+                List.of(new FromRgbToTvColorspaceConversionTask <>(
+                                filename,
+                                scheme,
+                                codec,
+                                colorSpace,
+                                List.of()),
+                        new FromTvToRgbColorspaceConversionTask <>(
+                                filename,
+                                scheme,
+                                codec,
+                                colorSpace,
+                                List.of())
+                )
+        );
     }
 
+    /**
+     * @param fileName
+     * @param scheme
+     * @param codec
+     * @param colorSpace
+     * @param tasks
+     */
     public
     ColorspaceConversionTask ( String fileName,
                                EPartitionScheme scheme,
+                               ICodec <N, A, G> codec,
                                EtvColorSpace colorSpace,
-                               List<Task <N, A, M, G>> tasks ) {
-
-        super(fileName, scheme, tasks);
+                               List <Task <N, A, G>> tasks
+    ) {
+        super(fileName, scheme, codec, tasks);
 
         this.colorSpace = colorSpace;
     }
@@ -167,9 +189,9 @@ class ColorspaceConversionTask<N extends TreeNode <N, A, M, G>, A extends Addres
      */
     @Override
     protected
-    M execute ( String filename ) throws ValueError {
-        M image = super.execute(filename);
-
+    IImage <A> execute ( String filename ) throws ValueError {
+        IImage <A> image = super.execute(filename);
+//getTask();
         return image;
     }
 }

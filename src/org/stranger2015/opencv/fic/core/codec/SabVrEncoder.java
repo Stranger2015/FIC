@@ -47,12 +47,12 @@ import org.stranger2015.opencv.utils.BitBuffer;
  * A Spiral Architecture Based Variable Range Fractal Image Compression Method
  *
  * @param <N>
- * @param <M>
+ 
  * @param <A>
  */
 public
-class SabVrEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
-        extends SaEncoder <N, A, M, G> {
+class SabVrEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, M extends IImage<A>, G extends BitBuffer>
+        extends SaEncoder <N, A, G> {
 
     /**
      * @param inputImage
@@ -60,16 +60,23 @@ class SabVrEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
      * @param domainSize
      */
     public
-    SabVrEncoder ( M inputImage, Size rangeSize, Size domainSize ) {
+    SabVrEncoder ( M inputImage, GrayScaleImage<A> rangeSize, IntSize domainSize ) {
         super(inputImage, rangeSize, domainSize);
     }
 
+    /**
+     * @param encoder
+     * @param image
+     * @param rangeSize
+     * @param domainSize
+     * @return
+     */
     @Override
     public
-    ImageBlockGenerator <N, A, M, G> createBlockGenerator ( IEncoder <N, A, M, G> encoder,
+    ImageBlockGenerator <N, A, G> createBlockGenerator ( IEncoder <N, A, G> encoder,
                                                               M image,
-                                                              Size rangeSize,
-                                                              Size domainSize ) {
+                                                              IntSize rangeSize,
+                                                              IntSize domainSize ) {
 
         return new SaImageBlockGenerator <>(encoder, image, rangeSize, domainSize);
     }

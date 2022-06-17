@@ -26,9 +26,8 @@ class SaUtils {
      */
     @SuppressWarnings("unchecked")
     public static
-    <A extends Address <A>> A createAddress ( int number, int radix, EAddressKind addressKind )
+    <A extends IAddress <A>> A createAddress ( int number, int radix, EAddressKind addressKind )
             throws ValueError {
-//        EnumSet <EDigits7> digits = EnumSet.noneOf(EDigits7.class);
         boolean loop = true;
         for (int i = 0; loop; i++) {
             int digit;
@@ -41,7 +40,6 @@ class SaUtils {
                 digit = number;
                 loop = false;
             }
-//            add(EDigits7.values()[digit], i);
         }
         switch (addressKind) {
             case ORDINARY:
@@ -53,30 +51,5 @@ class SaUtils {
             default:
                 throw new IllegalStateException("Unexpected value: " + addressKind);
         }
-    }
-
-    /**
-     * @param value
-     * @param i
-     */
-    public static
-    void add ( EDigits7 value, int i ) {
-        value.getOccurrences().set(i);
-    }
-
-    /**
-     * @param digits
-     * @return
-     */
-    public static
-    int toNumber ( EnumSet <EDigits7> digits/*, Class <?> clazz*/ ) {
-        int number = 0;
-        int i = 0;
-        for (EDigits7 next : digits) {
-            next.getOccurrences().set(i++);
-            number += 10;
-        }
-
-        return number;
     }
 }

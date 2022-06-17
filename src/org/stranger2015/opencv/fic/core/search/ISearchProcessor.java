@@ -1,22 +1,30 @@
 package org.stranger2015.opencv.fic.core.search;
 
-import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.transform.ITransform;
+import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  *
  */
 public
-interface ISearchProcessor<M extends IImage<A>, A extends Address <A>, G extends BitBuffer> extends Runnable {
+interface ISearchProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */,
+        G extends BitBuffer>
+
+        extends Runnable {
 
     /**
      *
      */
-    ITransform <M, A, G> searchForBestTransform ();
+    ITransform <A, G> searchForBestTransform ();
 
-    M search ();
+    /**
+     * @return
+     */
+    GrayScaleImage<A> search ();
 
     /**
      * @return
@@ -43,10 +51,10 @@ interface ISearchProcessor<M extends IImage<A>, A extends Address <A>, G extends
     /**
      * @param bestTransform
      */
-    void setBestTransform ( ITransform <M, A, G> bestTransform );
+    void setBestTransform ( ITransform <A, G> bestTransform );
 
     /**
      * @return
      */
-    ITransform <M, A, G> getBestTransform ();
+    ITransform <A, G> getBestTransform ();
 }

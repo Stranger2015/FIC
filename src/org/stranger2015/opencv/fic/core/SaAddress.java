@@ -1,6 +1,10 @@
-package org.stranger2015.opencv.fic.core;
+ package org.stranger2015.opencv.fic.core;
 
 import org.stranger2015.opencv.fic.core.codec.EAddressKind;
+import org.stranger2015.opencv.fic.core.IAddress;
+import org.stranger2015.opencv.fic.utils.Point;
+
+import static org.stranger2015.opencv.fic.core.codec.EAddressKind.*;
 
 /**
  * sa addresses
@@ -16,7 +20,7 @@ import org.stranger2015.opencv.fic.core.codec.EAddressKind;
  * {  1,  0 } 6
  */
 public
-class SaAddress<A extends Address <A>> extends Address <A> {
+class SaAddress<A extends IAddress <A>> extends Address <A> {
 
     public final static int radix = 7;
 
@@ -40,26 +44,29 @@ class SaAddress<A extends Address <A>> extends Address <A> {
             {0, 6, 1, 2, 3, 4, 5},
             };
 
-    private int number;
-
     /**
      * @param number
-     * @throws ValueError
      */
     public
-    SaAddress ( int number , EAddressKind addressKind ) throws ValueError {
+    SaAddress ( long number ) {
         super(number);
-//        this.number = number;
     }
 
+    /**
+     *
+     */
     public
-    SaAddress () throws ValueError {
-        super();
+    SaAddress () {
+        super(0);
     }
 
+    /**
+     * @param x
+     * @param y
+     */
     public
-    SaAddress ( int x, int y, EAddressKind addressKind ) throws ValueError {
-        this(x * y,  addressKind);
+    SaAddress ( int x, int y ) {
+        this((long) x * y);//x+rowStride
     }
 
     /**
@@ -71,7 +78,7 @@ class SaAddress<A extends Address <A>> extends Address <A> {
     @Override
     public
     int intValue () {
-        return getIndex();
+        return (int) getIndex();
     }
 
     /**
@@ -79,107 +86,56 @@ class SaAddress<A extends Address <A>> extends Address <A> {
      */
     @Override
     public
-    int getIndex () {
-        return address;//todo
+     EAddressKind getAddressKind () {
+        return SPIRAL;
     }
 
-//    /**
-//     * @param index
-//     * @return
-//     */
-//    @Override
-//    public
-//    A newInstance ( int index ) throws ValueError {
-//        return null;
-//    }
-
     /**
-     * Based on <b>add table</b>, the sum of 57 and 8 can be computed as:
-     * <p>
-     * 1. first 7 and 8 added to obtain 72.
-     * 2. The 7 is then carried and added to 5 to produce 6.
-     * The result is thus 62.
-     * <p>
-     * todo test!!!
-     *
-     * @param address1
-     * @param address2
      * @return
      */
-    @SuppressWarnings("unchecked")
     @Override
     public
-    A plus ( A address1, A address2 ) throws ValueError {
-//        int[][] table = getAddTable();
-//        EnumSet <EDigits7> digits1 = (EnumSet <EDigits7>) address1.getDigits();
-//        EnumSet <EDigits7> digits2 = (EnumSet <EDigits7>) address2.getDigits();
-//        EnumSet <EDigits7> result = noneOf(EDigits7.class);
-//
-//        Iterator <EDigits7> iterator1 = digits1.iterator();
-//        Iterator <EDigits7> iterator2 = digits2.iterator();
-//        IntStream.iterate(0, i -> iterator1.hasNext(), i -> i + 1).forEachOrdered(i -> {
-//            EDigits7 d1 = iterator1.next();
-//            EDigits7 d2 = iterator2.next();
-//            int r = table[d1.ordinal()][d2.ordinal()];
-//            add(result, values()[r], i);
-//        });
-//
-//        return newInstance(result);3
+    long getIndex () {
+        return longValue();//todo
+    }
+
+    /**
+     * @param address
+     * @param offset
+     * @return
+     * @throws ValueError
+     */
+    @Override
+    public
+    IAddress <A> newInstance ( long address, int offset ) throws ValueError {
+        return super.newInstance(address, offset);
+    }
+
+    /**
+     * @param table
+     * @return
+     */
+    @Override
+    public
+    IAddress <A> applyTable ( int[][] table ) {
         return null;
     }
 
     /**
-     * @param address1
-     * @param address2
+     * @param point1
+     * @param point2
      * @return
      */
-    @SuppressWarnings("unchecked")
     @Override
     public
-    A minus ( A address1, A address2 ) throws ValueError {
-//        int[][] table = getAddTable();
-//        EnumSet <EDigits7> digits1 = (EnumSet <EDigits7>) address1.getDigits();
-//        EnumSet <EDigits7> digits2 = (EnumSet <EDigits7>) address2.getDigits();
-//        EnumSet <EDigits7> result = noneOf(EDigits7.class);
-//
-//        Iterator <EDigits7> iterator1 = digits1.iterator();
-//        Iterator <EDigits7> iterator2 = digits2.iterator();
-//        IntStream.iterate(0, i -> iterator1.hasNext(), i -> i + 1).forEachOrdered(i -> {
-//            EDigits7 d1 = iterator1.next();
-//            EDigits7 d2 = iterator2.next();
-//            int r = table[d1.ordinal()][d2.ordinal()];
-//            add(result, values()[r], i);
-//        });
-//
-//        return newInstance(result);
-        return null;
+    Point plus ( Point point1, Point point2 ) {
+        return super.plus(point1, point2);
     }
 
-    /**
-     * @param address1
-     * @param address2
-     * @return
-     */
-    @SuppressWarnings("unchecked")
     @Override
     public
-    A mult ( A address1, A address2 ) throws ValueError {
-//        int[][] table = getMultTable();
-//        EnumSet <EDigits7> digits1 = (EnumSet <EDigits7>) address1.getDigits();
-//        EnumSet <EDigits7> digits2 = (EnumSet <EDigits7>) address2.getDigits();
-//        EnumSet <EDigits7> result = noneOf(EDigits7.class);
-//
-//        Iterator <EDigits7> iterator1 = digits1.iterator();
-//        Iterator <EDigits7> iterator2 = digits2.iterator();
-//        IntStream.iterate(0, i -> iterator1.hasNext(), i -> i + 1).forEachOrdered(i -> {
-//            EDigits7 d1 = iterator1.next();
-//            EDigits7 d2 = iterator2.next();
-//            int r = table[d1.ordinal()][d2.ordinal()];
-//            add(result, values()[r], i);
-//        });
-//
-//        return newInstance(result);
-        return null;
+    Point mult ( Point point1, int number ) {
+        return super.mult(point1, number);
     }
 
     /**
@@ -208,31 +164,18 @@ class SaAddress<A extends Address <A>> extends Address <A> {
     int radix () {
         return radix;
     }
-
-    /**
-     * @return
-     */
-    public
-    int getNumber () {
-        return number;
-    }
-
-    /*
-     * sa addresses
-     * 0,        1,      2,       3,      4,      5,      6
-     *
-     * Cartesian coordinates
-     * {  0,  0 }  0
-     * {  0, -1 }  1
-     * { -1, -1 }  2
-     * { -1,  0 }  3
-     * {  0,  1 }  4
-     * {  1,  1 }  5
-     * {  1,  0 }  6
-     */
-
-//    @Override
-//    public
-//    AddressedPoint getCartesianCoords ( int addressBase, int radix, int scale ) {
-//        AddressedPoint p = CENTER;
 }
+
+/*
+ * sa addresses
+ * 0,        1,      2,       3,      4,      5,      6
+ *
+ * Cartesian coordinates
+ * {  0,  0 }  0
+ * {  0, -1 }  1
+ * { -1, -1 }  2
+ * { -1,  0 }  3
+ * {  0,  1 }  4
+ * {  1,  1 }  5
+ * {  1,  0 }  6
+ */

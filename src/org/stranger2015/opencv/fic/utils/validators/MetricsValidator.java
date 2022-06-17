@@ -2,6 +2,7 @@ package org.stranger2015.opencv.fic.utils.validators;
 
 import com.beust.jcommander.IParameterValidator;
 import com.beust.jcommander.ParameterException;
+import com.beust.jcommander.validators.NoValidator;
 import org.stranger2015.opencv.fic.core.search.EMetrics;
 
 
@@ -10,7 +11,7 @@ import org.stranger2015.opencv.fic.core.search.EMetrics;
  *
  * @see EMetrics
  */
-public class MetricsValidator implements IParameterValidator {
+public class MetricsValidator extends NoValidator implements IParameterValidator {
 
     @Override
     public void validate(String arg, String val) throws ParameterException {

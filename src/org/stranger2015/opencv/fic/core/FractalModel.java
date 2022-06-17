@@ -1,12 +1,15 @@
 package org.stranger2015.opencv.fic.core;
 
+import ar.com.hjg.pngj.ImageInfo;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfInt;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.Compressor;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
+import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.fic.utils.Point;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.io.Serializable;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -40,18 +43,22 @@ import java.util.Map.Entry;
  * @see Compressor
  */
 public
-class FractalModel<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
-        implements Serializable {
+class FractalModel<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>{
 
-    private final Map <M, Map <ImageTransform <M, A, G>, Set <Point>>> fModel;
+    private final Map <IImage<A>, Map <ImageTransform <A, G>, Set <Point>>> model;
+    private ImageInfo imageInfo;
+
+    private final MatOfInt mat = new MatOfInt();
+
+    private int originalImageWidth;
+    private int originalImageHeight;
 
     /**
      * @param simpleModel
      */
     public
-    FractalModel ( Map <Point, Entry <M, ImageTransform <M, A, G>>> simpleModel) {
-        fModel = new HashMap <>();
-
+    FractalModel ( Map <Point, Entry <IImage<A>, ImageTransform <A, G>>> simpleModel ) {
+        model = new HashMap <>();
         analyze(simpleModel);
     }
 
@@ -61,23 +68,24 @@ class FractalModel<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
      * the transform and the range points.
      * finally, add the point.
      */
+    @SuppressWarnings({"unchecked"})
     private
-    void analyze ( Map <Point, Entry <M, ImageTransform <M, A, G>>> simpleModel ) {
+    void analyze ( Map <Point, Entry <IImage<A>, ImageTransform <A, G>>> simpleModel ) {
         for (Point point : simpleModel.keySet()) {
-            M domain = (M) new Image <>(simpleModel.get(point).getKey());
-            ImageTransform <M, A, G> transform = simpleModel.get(point).getValue();
-            if (!fModel.containsKey(domain)) {
-                fModel.put(domain, new HashMap <>());
-                fModel.get(domain).put(transform, new HashSet <>());
+            IImage<A> domain = new GrayScaleImage <>((Mat) simpleModel.get(point).getKey());
+            ImageTransform <A, G> transform = simpleModel.get(point).getValue();
+            if (!model.containsKey(domain)) {
+                model.put(domain, new HashMap <>());
+                model.get(domain).put(transform, new HashSet <>());
             }
-            else if (!fModel.get(domain).containsKey(transform)) {
+            else if (!model.get(domain).containsKey(transform)) {
                 /*
                  * if the domain is not new, but the transform is new,
                  * add the transform and create a map for the range points
                  */
-                fModel.get(domain).put(transform, new HashSet <>());
+                model.get(domain).put(transform, new HashSet <>());
             }
-            fModel.get(domain).get(transform).add(point);
+            model.get(domain).get(transform).add(point);
         }
     }
 
@@ -85,7 +93,65 @@ class FractalModel<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ext
      * @return
      */
     public
-    Map <M, Map <ImageTransform <M, A, G>, Set <Point>>> getModel () {
-        return fModel;
+    Map <IImage<A>, Map <ImageTransform<A, G>, Set <Point>>> getModel () {
+
+        return model;
+    }
+
+    /**
+     * @return
+     */
+    public
+    ImageInfo getImageInfo () {
+        return imageInfo;
+    }
+
+    /**
+     * @param imageInfo
+     */
+    public
+    void setImageInfo ( ImageInfo imageInfo ) {
+        this.imageInfo = imageInfo;
+    }
+
+    /**
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public
+    IImage<A> toImage () {
+        return  new GrayScaleImage <A>(mat);
+    }
+
+    /**
+     * @return
+     */
+    public
+    int getOriginalImageWidth () {
+        return originalImageWidth;
+    }
+
+    /**
+     * @param originalImageWidth
+     */
+    public
+    void setOriginalImageWidth ( int originalImageWidth ) {
+        this.originalImageWidth = originalImageWidth;
+    }
+
+    /**
+     * @return
+     */
+    public
+    int getOriginalImageHeight () {
+        return originalImageHeight;
+    }
+
+    /**
+     * @param originalImageHeight
+     */
+    public
+    void setOriginalImageHeight ( int originalImageHeight ) {
+        this.originalImageHeight = originalImageHeight;
     }
 }

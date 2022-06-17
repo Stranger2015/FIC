@@ -1,14 +1,12 @@
 package org.stranger2015.opencv.fic.core.search;
 
-import org.stranger2015.opencv.utils.PixelUtils;
-
 import java.awt.image.BufferedImage;
 
 /**
  * different metrics to count the distance of two integers representing pixels.<br />
  *
  * @see #distance(int, int)
- * @see PixelUtils
+// * @see PixelUtils
  * @see BufferedImage#getRGB(int, int)
  * @see BufferedImage#getRGB(int, int, int, int, int[], int, int)
  */
@@ -71,12 +69,15 @@ public enum EMetrics {
     MSE {
 
         @Override
-        public final double distance(final int a, final int b) {
-            int reddiff   = PixelUtils.getRed  (a) - PixelUtils.getRed  (b);
-            int greendiff = PixelUtils.getGreen(a) - PixelUtils.getGreen(b);
-            int bluediff  = PixelUtils.getBlue (a) - PixelUtils.getBlue (b);
+        public final double distance(final int a, final int b)
 
-            return reddiff * reddiff + greendiff * greendiff + bluediff * bluediff;
+        {
+//            int reddiff   = PixelUtils.getRed  (a) - PixelUtils.getRed  (b);
+//            int greendiff = PixelUtils.getGreen(a) - PixelUtils.getGreen(b);
+//            int bluediff  = PixelUtils.getBlue (a) - PixelUtils.getBlue (b);
+//
+//            return reddiff * reddiff + greendiff * greendiff + bluediff * bluediff;
+            return 0;
         }
     },
 
@@ -132,7 +133,7 @@ public enum EMetrics {
      * @return the distance between the two integers as defined by the metric
      *
      * @see EMetrics
-     * @see PixelUtils
+//     * @see PixelUtils
      */
     public double distance(final int a, final int b, final double fuzz) {
         return distance(a, b);
@@ -144,7 +145,7 @@ public enum EMetrics {
      * @return the distance between the two integers as defined by the metric
      *
      * @see EMetrics
-     * @see PixelUtils
+//     * @see PixelUtils
      */
     public double distance(final int a, final int b) {
         return Math.abs(a - b);

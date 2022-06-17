@@ -1,19 +1,19 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.opencv.core.Mat;
 import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.Image;
 import org.stranger2015.opencv.utils.BitBuffer;
 
+import static org.stranger2015.opencv.fic.transform.EInterpolationType.*;
 import static org.stranger2015.opencv.fic.transform.IfsTransform.SYM.*;
 
 /**
- * @param <M>
+ 
  */
 public
-class IfsTransform<M extends IImage<A>, A extends Address <A>, G extends BitBuffer>
-        extends ImageTransform <M, A, G> {
+class IfsTransform</*M extends IImage<A>,*/ A extends IAddress <A>, G extends BitBuffer>
+        extends ImageTransform <A, G> {
 
     private final static int[] ia = new int[0];
 
@@ -25,7 +25,7 @@ class IfsTransform<M extends IImage<A>, A extends Address <A>, G extends BitBuff
      */
     @Override
     public
-    M transform ( M inputImage, Mat transformMatrix, EInterpolationType type ) {
+    M transform ( M inputImage, M transformMatrix, EInterpolationType type ) {
         return null;
     }
 
@@ -66,7 +66,7 @@ class IfsTransform<M extends IImage<A>, A extends Address <A>, G extends BitBuff
                    double scale,
                    int offset , Address<A> address) {
 
-        super(image, EInterpolationType.BILINEAR, address);
+        super(image, BILINEAR, address);
 
         this.fromX = fromX;
         this.fromY = fromY;
@@ -87,20 +87,20 @@ class IfsTransform<M extends IImage<A>, A extends Address <A>, G extends BitBuff
      */
     public
     M downSample ( M src, int startX, int startY, int targetSize ) {
-        IImage<A> out = new Image<>(src);
+        IImage<A> out = new Image<>(src, address, -1, w, h);
         //        PixelValue* dest = new PixelValue[targetSize * targetSize];
 //        int srcWidth = src.width();
         int destX = 0;
-        int destY = 0;
+        int[] destY = 0;
 
         for (int y = startY; y < startY + targetSize * 2; y += 2) {
             for (int x = startX; x < startX + targetSize * 2; x += 2) {
                 // Perform simple 2x2 average
-                int pixel = (src.get(x, y, ia) +
+               int pixel = (src.get(x, y, ia) +
                                 src.get(x + 1, y, ia) +
                                 src.get(x, y + 1, ia) +
                                 src.get(x + 1, y + 1, ia)) / 4;
-                out.put(destX, destY, pixel);
+                out.putPixel(destX, destY, pixel);
                 destX++;
             }
             destY++;

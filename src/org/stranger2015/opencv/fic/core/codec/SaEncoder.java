@@ -1,42 +1,57 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.opencv.core.Size;
-import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.fic.core.ImageBlock;
+import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
+import org.stranger2015.opencv.fic.transform.ScaleTransform;
+import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  *
  */
 public
-class SaEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>,
-        G extends BitBuffer>
+class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
 
-        extends Encoder <N, A, M, G> {
+        extends Encoder <N, A, G> {
 
-    /**
-     * @param inputImage
-     * @param rangeSize
-     * @param domainSize
-     */
     public
-    SaEncoder ( M inputImage, Size rangeSize, Size domainSize ) {
-        super(inputImage, rangeSize, domainSize);
+    SaEncoder ( EPartitionScheme scheme,
+                ITreeNodeBuilder <N, A, G> nodeBuilder,
+                ISearchProcessor <N, A, G> searchProcessor,
+                ScaleTransform <A, G> scaleTransform,
+                ImageBlockGenerator <N, A, G> imageBlockGenerator,
+                IDistanceator <A> comparator,
+                Set <ImageTransform < A, G>> transforms,
+                Set <IImageFilter <M, A>> filters,
+                FractalModel <N, A, G> fractalModel
+    ) {
+        super(
+                scheme,
+                nodeBuilder,
+                searchProcessor,
+                scaleTransform,
+                imageBlockGenerator,
+                comparator,
+                transforms,
+                filters,
+                fractalModel
+        );
     }
+
 
     /**
      * @param image
      * @return
      */
-    @Override
+//    @Override
     public
-    M encode ( M image ) {
+    GrayScaleImage<A> encode ( GrayScaleImage<A>image ) throws ValueError {
         return super.encode(image);
     }
 
@@ -47,7 +62,7 @@ class SaEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extend
      * @param step
      * @return
      */
-    @Override
+//    @Override
     public
     List <ImageTransform <M, A, G>> compress ( M image,
                                                int sourceSize,
@@ -56,13 +71,17 @@ class SaEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extend
         return null;
     }
 
-    protected
-    ImageBlockGenerator <N, A, M, G> createBlockGenerator ( IEncoder <N, A, M, G> encoder,
-                                                            M image,
-                                                            Size rangeSize,
-                                                            Size domainSize ) {
+    public
+    ImageBlockGenerator <N, A, G> createBlockGenerator (
+            ITiler <N, A, G>  tiler,
+            EPartitionScheme scheme,
+            IEncoder <N, A, G> encoder,
+            GrayScaleImage <A> image,
+            IntSize rangeSize,
+            IntSize domainSize
+    ) {
 
-        return new SaImageBlockGenerator <>(encoder, image, rangeSize, domainSize);
+        return new SaImageBlockGenerator <>(tiler, scheme, encoder, image, rangeSize, domainSize);
     }
 
     /**
@@ -72,12 +91,44 @@ class SaEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extend
      * @param step
      * @return
      */
-    @Override
+//    @Override
     public
-    List <ImageBlock <A>> generateAllTransformedBlocks ( M image,
+    List <IImageBlock <A>> generateAllTransformedBlocks ( GrayScaleImage<A> image,
                                                          int sourceSize,
                                                          int destinationSize,
                                                          int step ) {
+        return (List <IImageBlock <A>>) List.of(getInputImage());//fixme
+    }
+
+    /**
+     * @param image
+     * @param axis
+     * @return
+     */
+    @Override
+    public
+    GrayScaleImage <A> flipAxis ( GrayScaleImage <A> image, int axis ) {
+        return image;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    List <IImageBlock <A>> getRangeBlocks () {
+        return rangePool;
+    }
+
+    /**
+     * @param image
+     * @param bounds
+     * @return
+     * @throws ValueError
+     */
+    @Override
+    public
+    List <RegionOfInterest <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds ) throws ValueError {
         return null;
     }
 
@@ -86,8 +137,63 @@ class SaEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extend
      */
     @Override
     public
-    List <ImageTransform <M, A, G>> getTransforms () {
-        return transforms;
+    ITiler <N, A, G> createTiler0 () {
+        return new SaTiler();
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    ITiler <N, A, G> getTiler () {
+        return null;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    FractalModel <N, A, G> getModel () {
+        return null;
+    }
+
+    /**
+     * @param filename
+     * @return
+     */
+    @Override
+    public
+    FractalModel <N, A, G> loadModel ( String filename ) {
+        return null;
+    }
+
+    /**
+     * @param node
+     */
+    @Override
+    public
+    void add ( TreeNode <N, A, G> node ) {
+
+    }
+
+    /**
+     * @param node
+     */
+    @Override
+    public
+    void addLeafNode ( TreeNode.LeafNode <N, A, G> node ) {
+
+    }
+
+    /**
+     * @param node
+     */
+    @Override
+    public
+    void addLeafNode ( TreeNode <N, A, G> node ) {
+
     }
 
     /**
@@ -95,9 +201,9 @@ class SaEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extend
      * @param transform
      * @return N4
      */
-    @Override
+//    @Override
     public
-    M randomTransform ( M image, ImageTransform <M, A, G> transform ) {
+    M randomTransform ( GrayScaleImage<A> image, ImageTransform <A, G> transform ) {
         return null;
     }
 
@@ -106,9 +212,9 @@ class SaEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extend
      * @param transform
      * @return
      */
-    @Override
+//    @Override
     public
-    M applyTransform ( M image, ImageTransform <M, A, G> transform ) {
+    GrayScaleImage<A> applyTransform ( GrayScaleImage<A> image, ImageTransform <A, G> transform ) {
         return null;
     }
 
@@ -117,16 +223,16 @@ class SaEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extend
      * @param transform
      * @return
      */
-    @Override
+//    @Override
     public
-    M applyAffineTransform ( M image, AffineTransform <M, A, G> transform ) {
+    GrayScaleImage<A> applyAffineTransform ( GrayScaleImage<A> image, AffineTransform <A, G> transform ) {
         return null;
     }
 
     /**
      *
      */
-    @Override
+//    @Override
     public
     void onPreprocess () {
 
@@ -135,7 +241,7 @@ class SaEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extend
     /**
      *
      */
-    @Override
+//    @Override
     public
     void onProcess () {
 
@@ -144,9 +250,45 @@ class SaEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extend
     /**
      *
      */
-    @Override
+//    @Override
     public
     void onPostprocess () {
 
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    IPipeline <IImage <A>, IImage <A>> getLinkedObject () {
+        return null;
+    }
+
+    /**
+     * @param link
+     */
+    @Override
+    public
+    void setNext ( ISingleLinked <IPipeline <IImage <A>, IImage <A>>> link ) {
+
+    }
+
+    @Override
+    public
+    ISingleLinked <IPipeline <IImage <A>, IImage <A>>> getNext () {
+        return null;
+    }
+
+    @Override
+    public
+    IImage <A> getInput () {
+        return null;
+    }
+
+    @Override
+    public
+    IImage <A> getOutput () {
+        return null;
     }
 }

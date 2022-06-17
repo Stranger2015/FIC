@@ -1,52 +1,573 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.Contract;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfDouble;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
+import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
-import org.stranger2015.opencv.fic.core.codec.Pixel;
-import org.stranger2015.opencv.fic.core.codec.SipAddress;
+import org.stranger2015.opencv.fic.core.codec.RegionOfInterest;
+import org.stranger2015.opencv.fic.transform.ImageTransform;
+import org.stranger2015.opencv.fic.utils.ColorImage;
+import org.stranger2015.opencv.fic.utils.GrayScaleImage;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.stranger2015.opencv.fic.core.IAddress.valueOf;
 
 /**
  *
  */
-public
-class Image<A extends Address <A>> extends MatOfDouble implements IImage <A> {
+public abstract
+class Image<A extends IAddress <A>>
+        extends Shape <A>
+        implements IImage <A> {
 
-    protected /*final*/ IImage <A> image;
-    protected Address <A> address;
-//    private final int width;
-//    private final int height;
-    protected /*final*/ int type;
+//    protected final IIntSize size;
+//    protected final PointAddress <A> pointAddress;
+
+    protected MatOfInt actualImage;
+//    protected final IIntSize blockSize;
+
+    protected int[] pixels;// take pixel from mat  (actual image)
+    protected IAddress <A> address;
+
+    protected int type;
+
+    protected List <ImageTransform <A, ?>> transforms = new ArrayList <>();
+    protected final List <RegionOfInterest <A>> regions = new ArrayList <>();
+
+    protected int width;
+    protected int height;
+
+    protected int originalImageWidth;
+    protected int originalImageHeight;
 
     /**
      * @param image
+     * @param rows
+     * @param cols
+     * @param pixels
      */
     public
-    Image ( IImage <A> image ) {
-        this.image = image;
+    Image ( MatOfInt image, Point[] vertices, int rows, int cols, int[] pixels ) throws ValueError {
+        super(image, vertices, blockSize);
+//        super(cols, rows);
+        actualImage = image;
+        valueOf((long) rows + (long) cols * getWidth());
+        this.pixels = pixels;
+    }
+
+    /**
+     * @param imread
+     */
+    public
+    Image ( MatOfInt imread, Point[] vertices, IIntSize size ) {
+        super(image, vertices, blockSize);
+        imread.create(size.toSize(), -1);
+    }
+
+    /**
+     * @param input
+     * @param pixels
+     */
+    public
+    Image ( IImage <A> input, Point[] vertices, int[] pixels ) {
+        super(image, vertices, blockSize);
+        actualImage = (MatOfInt) input;
+        this.pixels = pixels;
+    }
+
+    public
+    Image ( MatOfInt image, Point[] vertices, IAddress <A> address, int[] pixels ) throws ValueError {
+        this(image, vertices, address, -1, pixels);
+    }
+
+    public
+    Image ( IImage <A> subImage, int rows, int cols ) throws ValueError {
+        super(image, blockSize);
+        actualImage = subImage.getMat();
+        address = valueOf((long) rows * cols);
+    }
+
+    /**
+     * @param dest
+     */
+    public
+    Image ( Mat dest ) {
+        super(image, new Point[0], blockSize);
+        actualImage = (MatOfInt) dest;
+    }
+
+    /**
+     * @param width
+     * @param height
+     */
+    public
+    Image ( Point[] vertices, int width, int height ) {
+        super(image, vertices, blockSize);
+        this.width = width;
+        this.height = height;
+    }
+
+    public
+    Image ( IImage <A> image, Point[] vertices ) {
+        super(image, vertices, blockSize);
+        actualImage = image.getMat();
+    }
+
+    /**
+     * @param mat
+     * @param vertices
+     */
+    public
+    Image ( MatOfInt mat, Point[] vertices ) {
+        super(image, vertices, blockSize);
+        actualImage = mat;
+    }
+
+    public
+    Image ( MatOfInt image, Point[] p, IAddress <A> address, int cols, int[] pixels ) {
+        super(image, p, blockSize);
     }
 
     /**
      * @param image
+     * @param vertices
      * @param address
-     * @param type
      */
     public
-    Image ( IImage <A> image, Address <A> address, int type ) {
-        this.image = image;
+    Image ( IImage <A> image, Point[] vertices, IAddress <A> address ) {
+        super(image, vertices, blockSize);
+
+        actualImage = image.getMat();
         this.address = address;
-        this.type = type;
+    }
+
+    /**
+     * @param image
+     * @param vertices
+     * @param blockSize
+     * @param address
+     */
+    public
+    Image ( IImage <A> image, Point[] vertices, IIntSize blockSize, IAddress <A> address ) {
+super(image, vertices, blockSize, address);
     }
 
     public
-    Image ( IImage <A> inputImage, Address <A> address, int width, int height ) {
-        this.image = inputImage;
-        this.address = address;
-        setOriginalImageWidth(width);
-        setOriginalImageHeight(height);
+    Image ( IImage <A> image, IIntSize blockSize, IAddress <A> address ) {
+        this(image, new Point[0], blockSize, address);
+    }
+
+    public
+    Image ( IImage <A> roi, int i, int j, int blockWidth, int blockHeight ) {
+
+
+        super(image, blockSize);
+    }
+
+    /**
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public
+    IImageBlock <A> subImage ( int rowStart, int rowEnd, int colStart, int colEnd ) {
+        return (IImageBlock <A>) submat(rowStart, rowEnd, colStart, colEnd);
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    IAddress <A> getAddress () {
+        return address;
+    }
+
+    /**
+     * @return
+     */
+//    @Override
+    public
+    int cols () {
+        return 0;
+    }//fixme
+
+    /**
+     * @return
+     */
+//    @Override
+    public
+    int rows () {
+        return 0;
+    }//fixme
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    int getWidth () {
+        return cols();
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    int getHeight () {
+        return rows();
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    IIntSize getSize () {
+        return new IntSize(rows(), cols(), originalImageWidth, originalImageHeight);
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    int get ( IAddress <A> address, int[] data ) {
+        return -1;//.(row, col, data);
+    }
+
+    /**
+     * @param addr
+     * @param data
+     * @return
+     */
+    public
+    int put ( int addr, int[] data ) throws ValueError {
+        return data[addr] = -1;//fixme
+    }
+
+    /**
+     * @param inputImage
+     * @return
+     */
+    public
+    IImage <A> reduce ( IImage <A> inputImage ) {
+        IImage <A> image = new GrayScaleImage <>(inputImage);
+        Core.reduce(inputImage.getMat(), image.getMat(), -1, -1, -2);//fixme - dim, rtype, dtype
+
+        return image;
+    }
+
+    /**
+     * @param m
+     * @param rtype
+     * @param alpha
+     * @param beta
+     */
+    public
+    void convertTo ( Mat m, int rtype, double alpha, double beta ) {
+//        super.convertTo(m, rtype, alpha, beta);
+    }
+
+    /**
+     * @param image
+     * @return
+     */
+    public
+    IImage <A> convertTo ( IImage <A> image ) {
+        return image;
+    }
+
+    /**
+     * @param addr
+     * @param data
+     * @return
+     */
+    public
+    int putPixels ( int addr, int[] data ) throws ValueError {
+        return put(addr, data);
+    }
+
+    /**
+     * @return
+     */
+    public
+    IImage <A> createInputImage ( IImage <A> image ) throws ValueError {
+        return new GrayScaleImage <>(image);
+    }
+
+    /**
+     * @param image
+     * @return
+     */
+    public
+    IImage <A> createOutputImage ( GrayScaleImage <A> image ) {
+        return new CompressedImage <>(image);
+    }
+
+    /**
+     * @param contractivity
+     * @return
+     */
+    @Override
+    public
+    IImage <A> contract ( int contractivity ) {
+        IImage <A> image = new GrayScaleImage <>(this);
+
+        int newWidth = image.getWidth() / contractivity;
+        int newHeight = image.getHeight() / contractivity;
+
+        Imgproc.resize(this.getMat(), image.getMat(), new Size(newWidth, newHeight));
+
+        return image;
+    }
+
+    /**
+     * @param rowStart
+     * @param rowEnd
+     * @param colStart
+     * @param colEnd
+     * @return
+     */
+    @Override
+    public
+    Mat submat ( int rowStart, int rowEnd, int colStart, int colEnd ) {
+        return new MatOfInt();
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    int getOriginalImageWidth () {
+        return originalImageWidth;
+    }
+
+    /**
+     * @param originalImageWidth
+     */
+//    @Override
+    public
+    void setOriginalImageWidth ( int originalImageWidth ) {
+        this.originalImageWidth = originalImageWidth;
+    }
+
+    /**
+     * @param address
+     * @param pixels
+     */
+    @Override
+    public
+    void putPixels ( IAddress <A> address, int[][] pixels ) throws ValueError {
+        IImage.super.putPixels(address, pixels);
+    }
+
+    /**
+     * @param address
+     */
+    public
+    int putPixel ( IAddress <A> address, int[] pixel ) throws ValueError {
+        return put((int) address.getIndex(), pixel);
+    }
+
+    /**
+     * @param address
+     * @return
+     */
+    public
+    int getPixel ( IAddress <A> address, int[] pixels ) {
+        return pixels[(int) address.getIndex()];
+    }
+
+    /**
+     * @return
+     */
+    public
+    MatOfInt getActualImage () {
+        return actualImage;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    boolean isGrayScale () {
+        return this instanceof GrayScaleImage <?>;
+    }
+
+    /**
+     * @param x
+     * @param y
+     */
+    @Override
+    public
+    void setAddress ( int x, int y ) throws ValueError {
+        if (this instanceof SipImageBlock) {
+            address = new SipAddress <>(x, y);
+        }
+        else if (this instanceof SaImageBlock) {
+            address = new SaAddress <>(x, y);
+        }
+        else {
+            address = new DecAddress <>(x, y);
+        }
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    List <IImage <A>> split () {
+        List <Mat> list = new ArrayList <>();
+        List <IImage <A>> layers = new ArrayList <>();
+        Core.split(getMat(), list);
+        for (Mat mat : list) {
+            layers.add(new GrayScaleImage <>(mat));
+        }
+
+        return layers;
+    }
+
+    /**
+     * @param layers
+     * @return
+     */
+    @Override
+    public final
+    IImage <A> merge ( List <IImage <A>> layers, IImage <A> inputImage ) {
+        List <Mat> l = copyOf(layers);
+        IImage <A> img = new ColorImage <>(inputImage.getMat());
+        Core.merge(l, img.getMat());
+
+        return img;
+    }
+
+    /**
+     * @param layers
+     * @return
+     */
+    private
+    List <Mat> copyOf ( List <IImage <A>> layers ) {
+        return layers.stream().map(IImage::getMat)
+                .collect(Collectors.toCollection(() -> new ArrayList <>(layers.size())));
+    }
+
+    /**
+     *
+     */
+    @Override
+    public
+    void release () {
+
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    String dump () {
+        return null;
+    }
+
+    /**
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public
+    IImageBlock <A> getSubImage ( int x, int y, int width, int height ) {
+        return new ImageBlock <A>(submat(x, y, width, height));
+    }
+
+    /**
+     * @param i
+     * @param i1
+     * @param width
+     * @param height
+     * @param img1pixels
+     * @param i2
+     * @param i3
+     */
+//    @Override
+    public
+    void getRGB ( int i, int i1, int width, int height, int[] img1pixels, int i2, int i3 ) {
+
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    List <ImageTransform <A, ?>> getTransforms () throws ValueError {
+        return transforms;
+    }
+
+    /**
+     * @param imageTransforms
+     */
+    @Override
+    public
+    void setTransforms ( List <ImageTransform <A, ?>> imageTransforms ) throws ValueError {
+        this.getTransforms().addAll(imageTransforms);
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    double[] getPixels () throws ValueError {
+        return getPixels(IAddress.valueOf(0));
+    }
+
+    private
+    int[] get ( int cols, int rows ) {
+        return new int[0];
+    }
+
+    /**
+     * @param pixels
+     */
+    public
+    void setPixels ( int[] pixels ) {
+        this.pixels = pixels;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public final
+    List <RegionOfInterest <A>> getRegions () {
+        return regions;
+    }
+
+    /**
+     * @param regions
+     */
+    public
+    void setRegions ( List <RegionOfInterest <A>> regions ) {
+        this.regions.addAll(regions);
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    int getOriginalImageHeight () {
+        return originalImageHeight;
     }
 
     /**
@@ -79,324 +600,11 @@ class Image<A extends Address <A>> extends MatOfDouble implements IImage <A> {
         }
     }
 
-    public EColorType cType;
-
-    public int originalImageWidth;
-    public int originalImageHeight;
-
-    /**
-     * @param rows
-     * @param cols
-     * @param cType
-     * @param pixelData
-     * @param image
-     */
-    public
-    Image ( int rows, int cols, EColorType/*int*/ cType, Scalar pixelData, IImage <A> image ) {
-        super(rows,
-                cols,
-                cType.getCType(),//FIXME
-                pixelData.val[0],
-                pixelData.val[1],
-                pixelData.val[2],
-                pixelData.val[3]
-        );
-        this.cType = cType;
-        this.image = image;
-    }
-
-    /**
-     * @param image
-     * @param n
-     */
-    public
-    Image ( IImage <A> image, double... n ) {
-        super(n);
-        this.image = image;
-    }
-
-    /**
-     * @param image
-     * @param w
-     * @param h
-     * @param cType
-     */
-    public
-    Image ( IImage <A> image, Address <A> address, int w, int h, EColorType cType ) {//fixme
-        this.image = image;
-        this.address = address;
-        this.cType = cType;
-
-    }
-
-    /**
-     * @param image
-     * @param address
-     * @param blockSize
-     * @param cType
-     */
-    public
-    Image ( IImage <A> image, Address <A> address, int blockSize, EColorType cType ) {
-        this(image, address, blockSize, blockSize, cType);
-    }
-
-    /**
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    public
-    IImage <A> subImage ( int rowStart, int rowEnd, int colStart, int colEnd ) {
-        return (IImage <A>) submat(rowStart, rowEnd, colStart, colEnd);
-    }
-
-    /**
-     * @param imread
-     */
-    public
-    Image ( Mat imread ) {
-        imread.create(imread.size(), type());
-    }
-
-    /**
-     * @param imread
-     */
-    public
-    Image ( Mat imread, Size size ) {
-        imread.create(size, type());
-    }
-
-    public
-    Address <A> getAddress () {
-        return address;
-    }
-
-    /**
-     * @return
-     */
-    public
-    int getWidth () {
-        return width();
-    }
-
-    /**
-     * @return
-     */
-    public
-    int getHeight () {
-        return height();
-    }
-
-    /**
-     * @return
-     */
     @Override
     public
-    Size getSize () {
-        return size();
+    IShape getShape () {
+        return shape;
     }
 
-    /**
-     * @param row
-     * @param col
-     * @return
-     */
-    @Override
-    public
-    double[] get ( int row, int col ) {
-        return super.get(row, col);
-    }
-
-    /**
-     * @param row
-     * @param col
-     * @param data
-     * @return
-     */
-    @Override
-    public
-    int put ( int row, int col, double... data ) {
-        return super.put(row, col, data);
-    }
-
-    /**
-     * @param inputImage
-     * @param outputImage
-     * @param factor
-     * @return
-     */
-    public
-    IImage <A> reduce ( IImage <A> inputImage, IImage <A> outputImage, int factor ) {
-        return outputImage;
-    }
-
-    /**
-     * @param m
-     * @param rtype
-     * @param alpha
-     * @param beta
-     */
-    @Override
-    public
-    void convertTo ( Mat m, int rtype, double alpha, double beta ) {
-        super.convertTo(m, rtype, alpha, beta);
-    }
-
-    /**
-     * @param image
-     * @return
-     */
-    public
-    IImage <A> convertTo ( IImage <A> image ) {
-        return image;
-    }
-
-    /**
-     * @param address
-     * @param data
-     * @return
-     */
-    public
-    int put ( int address, double... data ) {
-        return put(address, 0, data);
-    }
-
-    /**
-     * @return
-     */
-    public
-    IImage <A> createInputImage ( IImage <A> image ) {
-        return new Image <>(image);
-    }
-
-    /**
-     * @param image
-     * @return
-     */
-    public
-    IImage <A> createOutputImage ( IImage <A> image ) {
-        return new CompressedImage <>(image);
-    }
-
-    /**
-     * @param row
-     * @param col
-     * @return
-     */
-    public
-    Pixel getPixel ( int row, int col ) {
-        return new Pixel(get(row, col));
-    }
-
-    /**
-     * @param contractivity
-     * @return
-     */
-    @Override
-    public
-    IImage <A> contract ( int contractivity ) {
-        IImage <A> image = new Image <>((Mat) this);
-
-        int newWidth = image.getWidth() / contractivity;
-        int newHeight = image.getHeight() / contractivity;
-
-        Imgproc.resize(this, (Mat) image, new Size(newWidth, newHeight));
-
-        return image;
-    }
-
-    /**
-     * @return
-     */
-    @Override
-    public
-    int getOriginalImageWidth () {
-        return originalImageWidth;
-    }
-
-    /**
-     * @param originalImageWidth
-     */
-    @Override
-    public
-    void setOriginalImageWidth ( int originalImageWidth ) {
-        this.originalImageWidth = originalImageWidth;
-    }
-
-    /**
-     * @return
-     */
-    @Override
-    public
-    int getOriginalImageHeight () {
-        return originalImageHeight;
-    }
-
-    /**
-     * @param originalImageHeight
-     */
-    @Override
-    public
-    void setOriginalImageHeight ( int originalImageHeight ) {
-        this.originalImageHeight = originalImageHeight;
-    }
-
-    /**
-     * @param destX
-     * @param destY
-     * @param pixel
-     */
-    @Override
-    public
-    void put ( int destX, int destY, int pixel ) {
-
-    }
-
-    /**
-     * @param pixels
-     * @param v
-     * @param v1
-     * @param v2
-     * @param v3
-     */
-    @Override
-    public
-    void put ( Pixel[] pixels, double v, double v1, double v2, double v3 ) {
-
-    }
-
-    /**
-     * @param x
-     * @param y
-     */
-    @Override
-    public
-    void setAddress ( int x, int y ) throws ValueError {
-        if (this instanceof SipImageBlock) {
-            address = new SipAddress <>(x, y);
-        }
-        else if (this instanceof SaImageBlock) {
-            address = new SaAddress <A>(x, y);
-        }
-    }
-
-    /**
-     * @param x
-     * @param y
-     * @param width
-     * @param height
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public
-    <M extends IImage <A>> M getSubImage ( int x, int y, int width, int height ) {
-        return (M) submat(x, y, width, height);
-    }
-
-////        @Override
-//    public
-//    <M extends IImage <A>, N extends TreeNode <N, A, M, G>, G extends BitBuffer, A extends Address <A>>
-//    Image<A> convertImageToSipImage ( SipTree <?, A, Image<A>, ?> buildTree, Image<A> image ) {
-//        return null;
-//    }
+    protected IShape shape;
 }

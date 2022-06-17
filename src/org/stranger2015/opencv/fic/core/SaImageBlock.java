@@ -1,13 +1,27 @@
 package org.stranger2015.opencv.fic.core;
 
+import org.opencv.core.Mat;
+import org.stranger2015.opencv.fic.core.IAddress;
+
 /**
  * @param <A>
  */
 public
-class SaImageBlock<A> extends ImageBlock<A>{
+class SaImageBlock<A extends IAddress <A>> extends ImageBlock {
+    /**
+     * @param image
+     * @param x
+     * @param y
+     * @param w
+     * @param h
+     */
     public
-    <A extends Address <A>>
-    SaImageBlock ( IImage <A> image, int x, int y, int w, int h ) {
-        super(image, x,y,w,h);
+    SaImageBlock ( IImage <A> image, int x, int y, int w, int h ) throws ValueError {
+        super(image, x, y, w, h);
+    }
+
+    public
+    SaImageBlock ( Mat submat ) {
+        super(submat);
     }
 }

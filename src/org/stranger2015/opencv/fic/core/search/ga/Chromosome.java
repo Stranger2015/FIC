@@ -1,11 +1,8 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
-import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.ValueError;
-import org.stranger2015.opencv.fic.core.codec.IAddress;
+import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.transform.EInterpolationType;
-import org.stranger2015.opencv.fic.transform.ITransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.utils.BitBuffer;
 
@@ -20,8 +17,8 @@ import org.stranger2015.opencv.utils.BitBuffer;
  * @author Jeff Smith jeff@SoftTechDesign.com
  */
 public abstract
-class Chromosome<M extends IImage<A>, A extends Address <A>, G extends BitBuffer>
-        extends ImageTransform <M, A, G> {
+class Chromosome</*M extends IImage<A>,*/ A extends IAddress <A>, G extends BitBuffer>
+        extends ImageTransform <A, G> {
 
     /**
      * absolute (not relative) fitness value
@@ -59,7 +56,12 @@ class Chromosome<M extends IImage<A>, A extends Address <A>, G extends BitBuffer
                  double contrastScale,
                  int dihedralAffineTransformIndex ) {
 
-        super(image, type, address, brightnessOffset, contrastScale, dihedralAffineTransformIndex);
+        super(image,
+                type,
+                address,
+                brightnessOffset,
+                contrastScale,
+                dihedralAffineTransformIndex);
     }
 
     protected
@@ -77,12 +79,12 @@ class Chromosome<M extends IImage<A>, A extends Address <A>, G extends BitBuffer
      * Copy the genes from the given chromosome over this chromosome's genes
      */
     abstract
-    void copyChromGenes ( Chromosome <M, A, G> chromosome );
+    void copyChromGenes ( Chromosome <A, G> chromosome );
 
     /**
      * Get the number of genes in common between this chromosome and the given chromosome
      */
     abstract
-    int getNumGenesInCommon ( Chromosome <M, A, G> chromosome );
+    int getNumGenesInCommon ( Chromosome <A, G> chromosome );
 }
 

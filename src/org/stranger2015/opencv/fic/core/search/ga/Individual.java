@@ -1,16 +1,18 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
-import org.stranger2015.opencv.fic.core.Address;
+import org.opencv.core.MatOfInt;
 import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.fic.core.Image;
+import org.stranger2015.opencv.fic.core.ValueError;
+import org.stranger2015.opencv.fic.core.IAddress;
+import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import static org.stranger2015.opencv.utils.BitBuffer.allocate;
 
 @SuppressWarnings("unchecked")
 public
-class Individual<M extends IImage<A>, A extends Address <A>, G extends BitBuffer, C extends Chromosome <M, A, G>>
-        extends Image<A> {
+class Individual</*M extends IImage<A>,*/ A extends IAddress <A>, G extends BitBuffer, C extends Chromosome <M, A, G>>
+        extends GrayScaleImage <A> {
     /**
      *
      */
@@ -24,9 +26,9 @@ class Individual<M extends IImage<A>, A extends Address <A>, G extends BitBuffer
      * @param chromosomeLength
      */
     public
-    Individual ( int chromosomeLength ) {
-        super(image);
-        chromosome = (C) new BinChromosome <M, A, G>(allocate(chromosomeLength));
+    Individual ( int chromosomeLength ) throws ValueError {
+        super();
+        chromosome = (C) new BinChromosome <A, G>(allocate(chromosomeLength));
     }
 
     /**
@@ -79,14 +81,18 @@ class Individual<M extends IImage<A>, A extends Address <A>, G extends BitBuffer
 //        chromosome.getGenesAsG().set(geneIndex, newGene);
     }
 
-//    public
-//    <S>
-//    S getCandidate () {
-//        return candidate;
-//    }
+    /**
+     * @return
+     */
+    @Override
+    public
+    MatOfInt getMat () {
+        return actualImage;
+    }
 
-//    public
-//    void setCandidate ( S candidate ) {
-//        this.candidate = candidate;
-//    }
+    @Override
+    public
+    int get ( IAddress <A> address, int[] data ) {
+        return 0;
+    }
 }

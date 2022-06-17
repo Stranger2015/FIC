@@ -3,6 +3,7 @@ package org.stranger2015.opencv.fic.core.codec;
 import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
@@ -11,10 +12,21 @@ import java.util.List;
  *
  */
 public
-class SquareImageBlockGenerator<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>,
+class SquareImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */,
         G extends BitBuffer>
 
-        extends ImageBlockGenerator <N, A, M, G> {
+        extends ImageBlockGenerator <N, A, G> {
+
+    /**
+     * @param inputImage
+     * @return
+     */
+    @Override
+    public
+    List <IImageBlock <A>> generateRangeBlocks (RegionOfInterest <A> inputImage ) {
+        return super.generateRangeBlocks(inputImage);
+
+    }
 
     /**
      * @param encoder
@@ -23,13 +35,15 @@ class SquareImageBlockGenerator<N extends TreeNode <N, A, M, G>, A extends Addre
      * @param domainSize
      */
     public
-    SquareImageBlockGenerator ( ITiler <M, A> tiler,
-                                IEncoder <N, A, M, G> encoder,
+    SquareImageBlockGenerator ( ITiler <N, A, G> tiler,
+                                EPartitionScheme scheme,
+                                IEncoder <N, A, G> encoder,
                                 IImage <A> image,
-                                Size rangeSize,
-                                Size domainSize ) {
+                                IIntSize rangeSize,
+                                IIntSize domainSize
+    ) {
 
-        super(tiler, encoder, image, rangeSize, domainSize);
+        super(tiler, scheme, encoder, image, rangeSize, domainSize);
     }
 
     /**
@@ -37,7 +51,7 @@ class SquareImageBlockGenerator<N extends TreeNode <N, A, M, G>, A extends Addre
      */
     @Override
     public
-    SquareImageBlockGenerator <N, A, M, G> newInstance () {
+    SquareImageBlockGenerator <N, A, G> newInstance () {
         return this;
     }
 }

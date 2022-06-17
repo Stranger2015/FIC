@@ -1,8 +1,7 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.opencv.core.Size;
-import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.utils.BitBuffer;
 
@@ -10,17 +9,23 @@ import org.stranger2015.opencv.utils.BitBuffer;
  *
  */
 public
-class SipImageBlockGenerator<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends  IImage<A> ,
+class SipImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */,
         G extends BitBuffer>
-        extends SquareImageBlockGenerator <N, A, M, G> {
+        extends SquareImageBlockGenerator <N, A, G> {
 
     /**
+     * @param scheme
      * @param rangeSize
      * @param domainSize
      */
     public
-    SipImageBlockGenerator ( IEncoder <N, A, M, G> encoder,  IImage<A>  image, Size rangeSize, Size domainSize ) {
-        super(encoder, image, rangeSize, domainSize);
+    SipImageBlockGenerator ( ITiler <N, A, G> tiler,
+                             EPartitionScheme scheme,
+                             IEncoder <N, A, G> encoder,
+                             IImage <A> image,
+                             IIntSize rangeSize,
+                             IIntSize domainSize ) {
+        super(tiler, encoder, image, rangeSize, domainSize);
     }
 
     /**
@@ -28,7 +33,7 @@ class SipImageBlockGenerator<N extends TreeNode <N, A, M, G>, A extends Address 
      */
     @Override
     public
-    SipImageBlockGenerator <N, A, M, G> newInstance () {
+    SipImageBlockGenerator <N, A, G> newInstance () {
         return this;
     }
 }

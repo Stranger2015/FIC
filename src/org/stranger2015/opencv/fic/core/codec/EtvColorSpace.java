@@ -8,5 +8,6 @@ enum EtvColorSpace {
     YIG,
     YUV,
     Y_CB_CR,
-//    GRAYSCALE,
+    Y_PB_PR,
 }
+//

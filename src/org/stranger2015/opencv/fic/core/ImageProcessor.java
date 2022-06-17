@@ -2,85 +2,84 @@ package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.NotNull;
 import org.opencv.highgui.HighGui;
+import org.opencv.imgproc.Imgproc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.*;
-import org.stranger2015.opencv.fic.transform.ImageTransform;
+import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import static org.stranger2015.opencv.fic.core.EDirection.NORTH_WEST;
-import static org.stranger2015.opencv.fic.core.Tree.DEFAULT_BOUNDING_BOX;
+import static org.stranger2015.opencv.fic.core.Library.nearestGreaterPowerOf;
 
 /**
  *
  */
 public
-class ImageProcessor<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>, G extends BitBuffer>
-        extends BidiTask <N, A, M, G>
-        implements IImageProcessor <N, A, M, G> {
+class
+ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
 
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+        extends BidiTask <N, A, G>
+        implements IImageProcessor <N, A, G> {
 
-    private final ICompressor <N, A, M, G> compressor;
-    private final IDecompressor <N, A, M, G> decompressor;
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private final ICodec <N, A, G> codec;
     private final EPartitionScheme scheme;
-    private final ICodec <N, A, M, G> codec;
     private final EtvColorSpace colorSpace;
 
-    private M image;
-    private EncodeTask <N, A, M, G> task;
-
-    List <IImageProcessorListener> listeners = new ArrayList <>();
+    private EncodeTask <N, A, G> task;
 
     /**
-     * @param imageFilename
+     * @return
+     */
+    public
+    List <IImageProcessorListener <N, A, G>> getListeners () {
+        return listeners;
+    }
+
+    /**
+     *
+     */
+    private final List <IImageProcessorListener <N, A, G>> listeners = new ArrayList <>();
+
+    /**
+     * @param filename
      * @param scheme
      * @param codec
      */
-//    @SuppressWarnings("unchecked")
     public
-    ImageProcessor ( String imageFilename,
-                     ICompressor <N, A, M, G> compressor,
-                     IDecompressor <N, A, M, G> decompressor,
+    ImageProcessor ( String filename,
                      EPartitionScheme scheme,
-                     List <Task <N, A, M, G>> tasks,
-                     ICodec <N, A, M, G> codec,
-                     EtvColorSpace colorSpace ) {
+                     ICodec <N, A, G> codec,
+                     List <Task <N, A, G>> tasks,
+                     EtvColorSpace colorSpace
+    ) {
 
-        super(imageFilename, scheme, tasks);
-
-        this.compressor = compressor;
-        this.decompressor = decompressor;
+        super(filename, scheme, codec, tasks);
 
         this.scheme = scheme;
         this.codec = codec;
         this.colorSpace = colorSpace;
 
-        BidiTask <N, A, M, G> task1 = new NormalizeImageTask <>(imageFilename, scheme, tasks);
-        BidiTask <N, A, M, G> task2 = new ColorspaceConversionTask <>(imageFilename, scheme, colorSpace,
-                new FromRgbToTvColorspaceConversionTask <>(
-                        imageFilename,
-                        scheme,
-                        colorSpace,
-                        List.of()),
-                new FromTvToRgbColorspaceConversionTask <N, A, M, G>(
-                        imageFilename,
-                        scheme,
-                        colorSpace,
-                        List.of())
+        BidiTask <N, A, G> task1 = new NormalizeRestoreImageTask <>(filename, scheme, codec);
+        BidiTask <N, A, G> task2 = new ColorspaceConversionTask <>(
+                filename,
+                scheme,
+                codec,
+                colorSpace
         );
 
-        final List <Task <N, A, M, G>> preprocTasks = new ArrayList <>(2);
+        final List <Task <N, A, G>> preprocTasks = new ArrayList <>(2);
 
         preprocTasks.add(task1.getTask());
         preprocTasks.add(task2.getTask());
 
-        final List <Task <N, A, M, G>> postprocTasks = new ArrayList <>(2);
+        final List <Task <N, A, G>> postprocTasks = new ArrayList <>(2);
 
         postprocTasks.add(task1.getInverseTask());
         postprocTasks.add(task2.getInverseTask());
@@ -91,29 +90,27 @@ class ImageProcessor<N extends TreeNode <N, A, M, G>, A extends Address <A>, M e
 
     /**
      * @param <N>
-     * @param <M>
+     
      * @param <A>
      * @param filename
      * @return
      */
     public static
-    <N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>, G extends BitBuffer>
-    ImageProcessor <N, A, M, G> create ( String filename,
-                                         ICompressor <N, A, M, G> compressor,
-                                         IDecompressor <N, A, M, G> decompressor,
+    <N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+
+    ImageProcessor <N, A, G> create ( String filename,
                                          EPartitionScheme scheme,
-                                         List <Task <N, A, M, G>> tasks,
-                                         ICodec <N, A, M, G> codec,
+                                         ICodec <N, A, G> codec,
+                                         List <Task <N, A, G>> tasks,
                                          EtvColorSpace colorSpace ) {
 
         return new ImageProcessor <>(
                 filename,
-                compressor,
-                decompressor,
                 scheme,
-                tasks,
                 codec,
-                colorSpace);
+                tasks,
+                colorSpace
+        );
     }
 
     /**
@@ -142,85 +139,51 @@ class ImageProcessor<N extends TreeNode <N, A, M, G>, A extends Address <A>, M e
      * 6. Next domain block [1].
      *
      * @param image
+     * @return
      */
     @SuppressWarnings("unchecked")
     public
-    M process ( M image ) throws ValueError {
-//        List <M> rangeBlocks = createRangeBlocks(image, 4, 4);
-//        List <M> domainBlocks = createDomainBlocks(image, 8, 8);
-        IEncoder <N, A, M, G> encoder = codec.getEncoder();
-        FractalModel<N,A,M,G> fractalModel = compressor.compress(image, -1, -1, -2);
+    IImage <A> process ( IImage<A> image ) throws ValueError {
+        CompressedImage <A> cimg = new CompressedImage <>(image);
+        IEncoder <N, A, G> encoder = codec.getEncoder();
+        List <RegionOfInterest <A>> regions = image.getRegions();
+        for (RegionOfInterest <A> region : regions) {
+            List <GrayScaleImage <A>> list = region.split();
+            List <GrayScaleImage <A>> layers = new ArrayList <>();
 
-        for (IImageProcessorListener listener : listeners) {
-            listener.onProcess();
-        }
-
-
-        return (M) new CompressedImage <>(image);
-    }
-
-    /**
-     * @param image
-     * @param w
-     * @param h
-     * @return
-     */
-    protected @NotNull
-    List <M> createRangeBlocks ( M image, int w, int h ) {
-        return createBlocks(image, w, h);
-    }
-
-    /**
-     * @param image
-     * @param w
-     * @param h
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    private @NotNull
-    List <M> createBlocks ( M image, int w, int h ) {
-        List <M> l = new ArrayList <>();
-        for (int i = 0, width = image.getWidth(); i < width; i += w) {
-            for (int j = 0, height = image.getHeight(); j < height; j += h) {
-                l.add((M) image.submat(i, j, i + w, j + h));
+            for (GrayScaleImage <A> grayScaleImage : list) {
+                GrayScaleImage <A> layer = encoder.encode(grayScaleImage);
+                for (IImageProcessorListener <N, A, G> listener : listeners) {
+                    listener.onProcess(this, layer);
+                }
+                layer = postprocess((CompressedImage <A>) layer);
+                layers.add(layer);
             }
+            regions = (List <RegionOfInterest <A>>) region.merge(layers, region);
+            cimg = composeImage(regions, image);
+
         }
 
-        return l;
+        return saveImage(filename, cimg);
+    }
+
+    private
+    CompressedImage <A> composeImage ( List <RegionOfInterest <A>> regions, IImage <A> image ) {
+//        adjustROI();
+        return new CompressedImage <>(image);
     }
 
     /**
-     * @param image
-     * @param w
-     * @param h
+     * @param outputImage
      * @return
-     * @throws ValueError
      */
-    protected
-    List <M> createDomainBlocks ( M image, int w, int h ) throws ValueError {
-        List <M> l = new ArrayList <>();
-        TreeNodeAction <N, A, M, G> action =
-                new TreeNodeAction <N, A, M, G>(new ArrayList <>(), new ArrayList <>());
-        final Tree <N, A, M, G> tree = Tree.create("??");//fixme
-        new QuadTree <>(
-                new QuadTreeNode <>(
-                        null,
-                        NORTH_WEST,
-                        DEFAULT_BOUNDING_BOX
-                ),
-                image,
-                action);
+    @Override
+    public
+    CompressedImage <A> postprocess ( CompressedImage <A> outputImage ) {
+//        outputImage=super./postprocess(outputImage);
 
-        final TreeNode <N, A, M, G> root = tree.getRoot();
-        TreeNodeBase <N, A, M, G> node = root.getChildren().get(0);
 
-        for (int i = 0, width = image.getWidth(); i < width / w; i++, width /= 2) {
-            for (int j = 0, height = image.getHeight(); j < height / h; j++, height /= 2) {
-
-            }
-        }
-
-        return l;
+        return outputImage;
     }
 
     /**
@@ -228,21 +191,9 @@ class ImageProcessor<N extends TreeNode <N, A, M, G>, A extends Address <A>, M e
      */
     @Override
     public
-    M getImage () {
-        return image;
+    IImage<A> getImage () {
+        return inputImage;
     }
-
-//    def generate_all_transformed_blocks(img, source_size, destination_size, step):
-//    factor = source_size // destination_size
-//    transformed_blocks = []
-//            for k in range((img.shape[0] - source_size) // step + 1):
-//        for l in range((img.shape[1] - source_size) // step + 1):
-//            # Extract the source block and reduce it to the shape of a destination block
-//    S = reduce(img[k*step:k*step+source_size,l*step:l*step+source_size], factor)
-//            # Generate all possible transformed blocks
-//            for direction, angle in candidates:
-//            transformed_blocks.append((k, l, direction, angle, apply_transform(S, direction, angle)))
-//            return transformed_blocks
 
     /**
      * @param image
@@ -250,6 +201,7 @@ class ImageProcessor<N extends TreeNode <N, A, M, G>, A extends Address <A>, M e
     @SuppressWarnings("unchecked")
     protected
     M compressImage ( M image ) {
+
         M imageOut = (M) new CompressedImage <>(image);
 
         HighGui.namedWindow("OpenCV");
@@ -277,7 +229,7 @@ class ImageProcessor<N extends TreeNode <N, A, M, G>, A extends Address <A>, M e
      */
     @Override
     public
-    ICodec <N, A, M, G> getCodec () {
+    ICodec <N, A, G> getCodec () {
         return codec;
     }
 
@@ -288,35 +240,8 @@ class ImageProcessor<N extends TreeNode <N, A, M, G>, A extends Address <A>, M e
     @Override
     public
     M preprocess ( String filename ) {
-        M image=null;
-        if (this.image == null) {
-            image=task.loadImage(filename);
-        }
 
-        for (IImageProcessorListener listener : listeners) {
-            listener.onPreprocess();
-        }
-
-        return image;
-    }
-
-    /**
-     * @param image
-     * @return
-     */
-    @Override
-    public
-    M postprocess ( M image ) {
-        for (IImageProcessorListener listener : listeners) {
-            listener.onPostprocess();
-        }
-
-        return image;//todo
-    }
-
-    public
-    EncodeTask <N, A, M, G> getAction () {
-        return task;
+        return null;
     }
 
     /**
@@ -324,14 +249,105 @@ class ImageProcessor<N extends TreeNode <N, A, M, G>, A extends Address <A>, M e
      * @return
      */
     @Override
+    public
+    IImage<A> preprocess ( String filename, IImage<A> image ) throws ValueError {
+        if (filename == null) {
+            return preprocess(image);
+        }
+        if (image != null) {
+            image = this.inputImage == null ?
+                    task.loadImage(filename) :
+                    image;
+            for (IImageProcessorListener <N, A, G> listener : listeners) {
+                listener.onPreprocess(this, filename, image);
+            }
+        }
+
+        return image;
+    }
+
+//    /**
+//     *        IntSize size = image.getSize();
+//     *         int w = size.getWidth();
+//     *         int h = size.getHeight();
+//     *         int radix = image.getAddress().radix();
+//     *         size = adjustSize(radix, w, h);
+//     *
+//     *         return (M) new GrayScaleImage <>(image.getMat(), size);
+//     * @param inputImage
+//     * @return
+//     */
+//    @Override
+//    @SuppressWarnings("unchecked")
+//    public
+//    M preprocess ( M inputImage ) throws ValueError {
+////        IntSize size = adjustSize(
+////                inputImage.getAddress().radix(),
+////                inputImage.getWidth(),
+////                inputImage.getHeight()
+////        );
+////        //image or block or roi
+////        M destImage = (M) new GrayScaleImage <A>(inputImage.getMat());
+////        Imgproc.resize(
+////                inputImage.getMat(),
+////                destImage.getMat(),
+////                new Size(size.getWidth(), size.getHeight()),
+////                1.0 * size.getWidth() / size.originalImageWidth,
+////                1.0 * size.getHeight() / size.originalImageHeight
+////        );
+////
+////        return destImage;
+//    }
+
+    /**
+     * @param base
+     * @param w
+     * @param h
+     * @return
+     */
+    @Override
+    public
+    IntSize adjustSize ( int base, int w, int h ) {
+        int newW = nearestGreaterPowerOf(base, w);
+        int newH = nearestGreaterPowerOf(base, h);
+
+        IntSize size;
+        if (newW == newH) {
+            size = new IntSize(newW, newH, w, h);
+        }
+        else if (newW > newH) {
+            size = new IntSize(newW, newW / 2, w, h);
+        }
+        else {
+            size = new IntSize(newH / 2, newH, w, h);
+        }
+
+        return size;
+    }
+
+    /**
+     * @return
+     */
+    public
+    EncodeTask <N, A, G> getAction () {
+        return task;
+    }
+
+    /**
+     * @param filename
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    @Override
     protected
-    M execute ( String filename ) throws ValueError {
+    IImage<A> execute ( String filename ) throws ValueError {
+
         super.execute(filename);
 
-        M inputImage = preprocess(filename);
-        M outputimage = process(inputImage);
+        IImage<A> image;
+        image = preprocess(filename);
 
-        return postprocess(outputimage);
+        return process(image);
     }
 
     /**
@@ -348,24 +364,8 @@ class ImageProcessor<N extends TreeNode <N, A, M, G>, A extends Address <A>, M e
      */
     @Override
     public
-    <V> Function <V, M> compose ( @NotNull Function <? super V, ? extends String> before ) {
+    <V> Function <V, IImage <A>> compose ( @NotNull Function <? super V, ? extends String> before ) {
         return super.compose(before);
-    }
-
-    /**
-     * @return
-     */
-   public
-    ICompressor <N, A, M, G> getCompressor () {
-        return compressor;
-    }
-
-    /**
-     * @return
-     */
-    public
-    IDecompressor <N, A, M, G> getDecompressor () {
-        return decompressor;
     }
 
     /**
@@ -380,15 +380,24 @@ class ImageProcessor<N extends TreeNode <N, A, M, G>, A extends Address <A>, M e
      * @param image
      */
     public
-    void setImage ( M image ) {
-        this.image = image;
+    void setImage ( IImage<A> image ) {
+        this.inputImage = image;
     }
 
     /**
      * @param task
      */
     public
-    void setTask ( EncodeTask <N, A, M, G> task ) {
+    void setTask ( EncodeTask <N, A, G> task ) {
         this.task = task;
+    }
+
+    /**
+     * @param codec
+     */
+    @Override
+    public
+    void onCreated ( ICodec <N, A, G> codec ) {
+        super.onCreated(codec);
     }
 }

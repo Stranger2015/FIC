@@ -1,8 +1,25 @@
 package org.stranger2015.opencv.fic.core;
 
-public
-class Circle implements IShape{
+import static org.stranger2015.opencv.fic.core.IShape.EShape.CIRCLE;
 
+public
+class Circle extends org.stranger2015.opencv.fic.core.Shape {
+
+int radius;
+
+    public
+    Circle () {
+        super(image, blockSize);
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    IShape.EShape getShapeKind () {
+        return CIRCLE;
+    }
 
     /**
      * @return
@@ -10,6 +27,6 @@ class Circle implements IShape{
     @Override
     public
     double area () {
-        return 0;
+        return (int) (Math.PI*2*radius);//fixme
     }
 }

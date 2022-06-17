@@ -1,10 +1,11 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.NotNull;
-
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.utils.BitBuffer;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -29,7 +30,7 @@ import static org.stranger2015.opencv.fic.core.TreeTraverser.ESearchType.DEPTH_F
  * @param <N>
  */
 public
-class TreeTraverser<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer> {
+class TreeTraverser<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer> {
     public static final EnumSet <EDirection> SIDES =
             EnumSet.of(NORTH, EAST, SOUTH, WEST);
     public static final EnumSet <EDirection> QUADRANTS =
@@ -38,16 +39,16 @@ class TreeTraverser<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ex
     public static final EnumSet <EDirection> SIDES_QUADS =
             EnumSet.allOf(EDirection.class);
 
-    protected final Tree <N, A, M, G> tree;
-    protected final TreeNodeAction <N, A, M, G> action;
+    protected final Tree <N, A, G> tree;
+    protected final TreeNodeTask <N, A, G> action;
 
     protected final ESearchType searchType = DEPTH_FIRST;
-    protected final NodeList <N, A, M, G> nodes;
+    protected final List <TreeNode<N, A, G>> nodes;
     protected int depth;
     protected EOrder order = IN;
     protected EDirection dir = NORTH;
-    private NodeList <N, A, M, G> neighborsT;
-    private NodeList <N, A, M, G> neighborsA;
+    private List <TreeNode<N, A, G>> neighborsT;
+    private List <TreeNode<N, A, G>> neighborsA;
 
     /**
      * @param tree
@@ -55,9 +56,9 @@ class TreeTraverser<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ex
      * @param action
      */
     public
-    TreeTraverser ( Tree <N, A, M, G> tree,
+    TreeTraverser ( Tree <N, A, G> tree,
                     int depth,
-                    TreeNodeAction <N, A, M, G> action ) {
+                    TreeNodeTask <N, A, G> action ) {
         this.tree = tree;
         this.depth = depth;
         this.action = action;
@@ -69,8 +70,8 @@ class TreeTraverser<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ex
      * @return
      */
     protected static
-    <N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
-    void add ( NodeList <N, A, M, G> nodes, N node, EDirection dir ) {
+    <N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+    void add ( List <TreeNode<N, A, G>> nodes, N node, EDirection dir ) {
         nodes.add(dir.getOrd(), node);
     }
 
@@ -81,7 +82,7 @@ class TreeTraverser<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ex
      * @return
      */
     protected static
-    <N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
+    <N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
     N get ( List <N> nodes, EDirection dir ) {
         return nodes.get(dir.ordinal());
     }
@@ -90,7 +91,7 @@ class TreeTraverser<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ex
      * @return
      */
     protected
-    NodeList <N, A, M, G> getNodes () {
+    List <TreeNode<N, A, G>> getNodes () {
         return this.getTree().getNodes();
     }
 
@@ -101,8 +102,8 @@ class TreeTraverser<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ex
      * @return
      */
     public static
-    <N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
-    TreeNode <N, A, M, G> child ( TreeNode <N, A, M, G> node, EDirection quadrant ) {
+    <N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+    TreeNode <N, A, G> child ( TreeNode <N, A, G> node, EDirection quadrant ) {
         return node.getChildren().get(quadrant.getOrd());
     }
 
@@ -112,8 +113,8 @@ class TreeTraverser<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ex
      * @return
      */
     public
-    TreeNode <N, A, M, G> child ( EDirection nodeDir, EDirection quadrant ) {
-        TreeNode <N, A, M, G> node = nodes.getList().get(nodeDir.getOrd());
+    TreeNodeBase <N, A, G> child ( EDirection nodeDir, EDirection quadrant ) {
+        TreeNode <N, A, G> node = nodes.get(nodeDir.getOrd());
         return node.children.get(quadrant.getOrd());
     }
 
@@ -123,8 +124,8 @@ class TreeTraverser<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ex
      * @return
      */
     public
-    TreeNode <N, A, M, G> child1 ( EDirection nodeDir, EDirection quadrant ) {
-        TreeNode <N, A, M, G> node = neighborsA.getList().get(nodeDir.getOrd());
+    TreeNodeBase <N, A, G> child1 ( EDirection nodeDir, EDirection quadrant ) {
+        TreeNode <N, A, G> node = neighborsA.get(nodeDir.getOrd());
         if (!node.isGray()) {
             node = child(node, quadrant);
         }
@@ -152,7 +153,7 @@ class TreeTraverser<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ex
      * @return
      */
     public
-    Tree <N, A, M, G> getTree () {
+    Tree <N, A, G> getTree () {
         return tree;
     }
 
@@ -167,10 +168,10 @@ class TreeTraverser<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ex
      */
     @SuppressWarnings("unchecked")
     public
-    void traverse ( TreeNode <N, A, M, G> node,
+    void traverse ( TreeNode <N, A, G> node,
                     int depth,
-                    NodeList <N, A, M, G> neighbors,
-                    TreeNodeAction <N, A, M, G> action )
+                    List <TreeNode<N, A, G>> neighbors,
+                    TreeNodeTask <N, A, G> action )
             throws DepthLimitExceeded {
         if (--depth == 0) {
             throw new DepthLimitExceeded();
@@ -181,14 +182,15 @@ class TreeTraverser<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ex
 
         if (node.isWhite()) {
             for (EDirection dir : SIDES) {
-                TreeNode <N, A, M, G> childNode = neighbors.get(dir);
+                TreeNode <N, A, G> childNode = neighbors.get(dir.getOrd());
                 if (childNode.isBlack()) {
 
                 }
             }
         }
         if (!node.isGray()) { // Descend a level in the tree
-            action.accept((N) node);
+            action.apply(action.getFilename());
+
             return;
         }
 
@@ -233,8 +235,8 @@ class TreeTraverser<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ex
      * @param childNode
      */
     private
-    void findNeighbor ( EDirection dir, TreeNode <N, A, M, G> childNode ) {
-        neighborsT.set(dir, childNode);
+    void findNeighbor ( EDirection dir, TreeNode <N, A, G> childNode ) {
+        neighborsT.set(dir.getOrd(), childNode);
     }
 
     /**
@@ -259,14 +261,14 @@ class TreeTraverser<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ex
      * @param level
      */
     public static
-    <N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
-    void qmatToQuadTree ( TreeNode <N, A, M, G> node, int level ) {
+    <N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+    void qmatToQuadTree ( TreeNode <N, A, G> node, int level ) {
         //Given a QMAT rooted at node P spanning a 2LEVEL x 2LEVEL space, find its corresponding quadtree
         if (node.isBlack()) {
             if (node.getDistance() > (1 << (level - 1))) {
                 //Node P  subsumes  some  of  its  neighbors
                 for (EDirection dir : SIDES) {
-                    TreeNode <N, A, M, G> q = makeEqualAdjacentNeighbor(node, dir);
+                    TreeNode <N, A, G> q = makeEqualAdjacentNeighbor(node, dir);
                     if (q != null) {
                         propagateAdjacent(q,
                                 level,
@@ -295,8 +297,8 @@ class TreeTraverser<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ex
 
     // its appropriate children are to be converted to BLACK nodes if they are not already BLACK.
     private static
-    <N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
-    void propagateCorner ( TreeNode <N, A, M, G> node, int level, int t, EDirection dir ) {
+    <N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+    void propagateCorner ( TreeNode <N, A, G> node, int level, int t, EDirection dir ) {
         if (1 << level > t) {
             // P is too large to be totally subsumed by its corner adjacent QMAT node
             if (node.isBlack()) {
@@ -349,15 +351,15 @@ class TreeTraverser<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ex
      * @return
      */
     public static
-    <N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
-    TreeNode <N, A, M, G> makeEqualAdjacentNeighbor ( TreeNode <N, A, M, G> node, EDirection dir ) {
-        TreeNode <N, A, M, G> q = node.getParent() != null && dir.adjacent(childType(node)) ?
+    <N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+    TreeNode <N, A, G> makeEqualAdjacentNeighbor ( TreeNode <N, A, G> node, EDirection dir ) {
+        TreeNode <N, A, G> q = node.getParent() != null && dir.adjacent(childType(node)) ?
                 // Find a common ancestor
                 makeEqualAdjacentNeighbor(node.getParent(), dir) :
                 node.getParent();
         // Follow the reflected path to locate the neighbor
         if (q != null && !q.isBlack()) {
-            NodeList <N, A, M, G> l;
+            List <TreeNode<N, A, G>> l;
 //            if (node.isGray()) {
 //                l = child(q,
 //                        dir.reflect(childType(node))
@@ -379,14 +381,14 @@ class TreeTraverser<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ex
      */
     @SuppressWarnings("unchecked")
     private static
-    <N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
-    @NotNull NodeList <N, A, M, G> addFourWhiteChildren ( TreeNode <N, A, M, G> node ) {
-        final NodeList <N, A, M, G> l = new NodeList <>(4);
+    <N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+    @NotNull List <TreeNode<N, A, G>> addFourWhiteChildren ( TreeNode <N, A, G> node ) {
+        final List <TreeNode<N, A, G>> l = new ArrayList <>(4);
         node.setType(GRAY);
         QUADRANTS.forEach(quadrant -> {
             int w = node.boundingBox.width / 2;
             int h = node.boundingBox.height / 2;
-            TreeNode <N, A, M, G> ch = null;
+            TreeNode <N, A, G> ch = null;
             ch = node.createChild(
                     quadrant.getOrd(),
                     new Rectangle(node.boundingBox.x,
@@ -403,8 +405,8 @@ class TreeTraverser<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ex
     }
 
     private static
-    <N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
-    EDirection childType ( TreeNode <N, A, M, G> node ) {
+    <N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+    EDirection childType ( TreeNode <N, A, G> node ) {
         return node.getQuadrant();
     }
 
@@ -420,9 +422,9 @@ class TreeTraverser<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ex
      * @return
      */
     public static
-    <N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
-    TreeNode <N, A, M, G> makeEqualCornerNeighbor ( TreeNode <N, A, M, G> node, EDirection quadrant ) {
-        TreeNode <N, A, M, G> q;// Find a common ancestor
+    <N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+    TreeNode <N, A, G> makeEqualCornerNeighbor ( TreeNode <N, A, G> node, EDirection quadrant ) {
+        TreeNode <N, A, G> q;// Find a common ancestor
         if (node.getParent() != null && childType(node) != quadrant.opQuad()) {
             if (childType(node) == quadrant) {
                 q = makeEqualCornerNeighbor(node.getParent(), quadrant);
@@ -451,8 +453,8 @@ class TreeTraverser<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ex
      * @param dir
      */
     private static
-    <N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
-    void propagateAdjacent ( TreeNode <N, A, M, G> node, int level, int t, EDirection dir ) {
+    <N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+    void propagateAdjacent ( TreeNode <N, A, G> node, int level, int t, EDirection dir ) {
         if ((1 << level) > t) {
             // P is too large to be totally subsumed by its adjacent QMAT node
             if (node.isBlack()) {
@@ -490,7 +492,8 @@ class TreeTraverser<N extends TreeNode <N, A, M, G>, A extends Address <A>, M ex
      */
     static
     class
-    Neighbors<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer> extends NodeList <N, A, M, G> {
+    Neighbors<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+            extends ArrayList<TreeNode <N, A, G>> {
 
         /**
          *

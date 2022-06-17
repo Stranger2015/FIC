@@ -1,10 +1,6 @@
 package org.stranger2015.opencv.fic.transform;
 
 import org.opencv.core.Range;
-import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.CompressedImage;
-import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.fic.core.Image;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayList;
@@ -13,9 +9,9 @@ import java.util.ArrayList;
  *
  */
 public
-class AffineTransforms<M extends IImage<A>, A extends Address <A>, G extends BitBuffer>
-
+class AffineTransforms</*M extends IImage<A>,*/ A extends IAddress <A>, G extends BitBuffer>
         extends ArrayList<ImageTransform<M, A, G>> {
+
     /**
      * @param x
      * @param axis

@@ -4,19 +4,21 @@ import org.jetbrains.annotations.NotNull;
 import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.ValueError;
-import org.stranger2015.opencv.fic.core.codec.IAddress;
+import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.transform.EInterpolationType;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 
 /**
- * @param <M>
+ 
  * @param <A>
  * @param <G>
  */
 public
-class BinChromosome<M extends IImage<A>, A extends Address <A>, G extends BitBuffer> extends Chromosome <M, A, G> {
+class BinChromosome</*M extends IImage<A>,*/ A extends IAddress <A>, G extends BitBuffer>
+
+        extends Chromosome <A, G> {
 
     protected G genes;
     protected Address <A> address;
@@ -48,11 +50,19 @@ class BinChromosome<M extends IImage<A>, A extends Address <A>, G extends BitBuf
                     int brightnessOffset,
                     double contrastScale,
                     int dihedralAffineTransformIndex ) {
-        super(image, type, address, brightnessOffset, contrastScale, dihedralAffineTransformIndex);//todo genes
+
+        super(
+                image,
+                type,
+                address,
+                brightnessOffset,
+                contrastScale,
+                dihedralAffineTransformIndex);//todo genes
     }
 
     public
-    BinChromosome ( @NotNull BitBuffer allocate ) {
+    BinChromosome ( @NotNull BitBuffer allocate ) throws ValueError {
+        super();
         genes= (G) allocate;
     }
 
@@ -70,7 +80,7 @@ class BinChromosome<M extends IImage<A>, A extends Address <A>, G extends BitBuf
      * @param chromosome
      */
     @Override
-    void copyChromGenes ( Chromosome <M, A, G> chromosome ) {
+    void copyChromGenes ( Chromosome <A, G> chromosome ) {
 
     }
 
@@ -80,7 +90,7 @@ class BinChromosome<M extends IImage<A>, A extends Address <A>, G extends BitBuf
      * @param chromosome
      */
     @Override
-    int getNumGenesInCommon ( Chromosome <M, A, G> chromosome ) {
+    int getNumGenesInCommon ( Chromosome <A, G> chromosome ) {
         return 0;
     }
 
@@ -89,7 +99,7 @@ class BinChromosome<M extends IImage<A>, A extends Address <A>, G extends BitBuf
      */
     @Override
     public
-    Address <A> getAddress () {
+    IAddress <A> getAddress () {
         return address;
     }
 }

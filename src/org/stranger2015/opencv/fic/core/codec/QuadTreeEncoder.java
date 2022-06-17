@@ -1,64 +1,47 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.opencv.core.Size;
-import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.fic.core.ImageBlock;
-import org.stranger2015.opencv.fic.core.RectangularTiler;
+import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.io.FractalReader;
+import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
+import org.stranger2015.opencv.fic.transform.ScaleTransform;
+import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
+import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @param <N>
- * @param <M>
+ 
  * @param <A>
  */
 public
-class QuadTreeEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
-        extends Encoder <N, A, M, G> {
+class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
+        extends BinTreeEncoder <N, A, G> {
 
     /**
      * @param inputImage
-     * @param rangeSize
-     * @param domainSize
-     */
-    protected
-    QuadTreeEncoder ( M inputImage, Size rangeSize, Size domainSize ) {
-        super(inputImage, rangeSize, domainSize);
-    }
-
-    /**
-     *
-     * @param encoder
-     * @param image
-     * @param rangeSize
-     * @param domainSize
-     * @return
-     */
-    @Override
-    protected
-    ImageBlockGenerator <N, A, M, G> createBlockGenerator ( IEncoder <N, A, M, G> encoder,
-                                                            M image,
-                                                            Size rangeSize,
-                                                            Size domainSize ) {
-        return new SquareImageBlockGenerator <>(
-                new RectangularTiler <>(8),
-                encoder,
-                image,
-                rangeSize,
-                domainSize);
-    }
-
-    /**
-     * @param blockGenerator
      */
     public
-    QuadTreeEncoder ( ImageBlockGenerator <N, A, M, G> blockGenerator ) {
-        super(blockGenerator);
+    QuadTreeEncoder (
+            IImage<A> inputImage,
+            Set <ImageTransform <A, G>> transforms,
+            ScaleTransform <A, G> scaleTransform,
+            IDistanceator <A> comparator,
+            Set <IImageFilter <A>> filters,
+            FractalModel <N, A, G> fractalModel
+    ) {
+        super(inputImage,
+                transforms,
+                scaleTransform,
+                comparator,
+                filters,
+                fractalModel
+        );
     }
 
     /**
@@ -66,46 +49,33 @@ class QuadTreeEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M 
      * @param transform
      * @return
      */
-    @Override
-    public
-    M randomTransform ( M image, ImageTransform <M, A, G> transform ) {
-        return null;//todo
-    }
-
-    /**
-     * @param image
-     * @param transform
-     * @return
-     */
-    @Override
-    public
-    M applyTransform ( M image, ImageTransform <M, A, G> transform ) {
-        return null;//todo
-    }
-
-    /**
-     * @param image
-     * @param transform
-     * @return
-     */
-    @Override
-    public
-    M applyAffineTransform ( M image, AffineTransform <M, A, G> transform ) {
-        return null;//todo
-    }
-
-//    /**
-//     * @param image
-//     * @param sourceSize
-//     * @param destinationSize
-//     * @param step
-//     * @return
-//     */
 //    @Override
-//    public
-//    List <ImageTransform <M, A, G>> compress ( M image, int sourceSize, int destinationSize, int step ) {
-//        return null;//todo
-//    }
+    public
+    IImage<A> randomTransform ( IImage<A> image, ImageTransform <A, G> transform ) {
+        return image;//todo
+    }
+
+    /**
+     * @param image
+     * @param transform
+     * @return
+     */
+//    @Override
+    public
+    IImage<A> applyTransform ( IImage<A> image, ImageTransform <A, G> transform ) {
+        return image;//todo
+    }
+
+    /**
+     * @param image
+     * @param transform
+     * @return
+     */
+//    @Override
+    public
+    IImage<A> applyAffineTransform ( IImage<A> image, AffineTransform <A, G> transform ) {
+        return image;//todo
+    }
 
     /**
      * @param image
@@ -114,36 +84,100 @@ class QuadTreeEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M 
      * @param step
      * @return
      */
-    @Override
+//    @Override
     public
-    List <ImageBlock<A>> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
+    List <IImageBlock <A>> generateAllTransformedBlocks ( IImage<A> image,
+                                                        int sourceSize,
+                                                        int destinationSize,
+                                                        int step ) {
         return null;//todo
     }
+//
+    /**
 
     /**
-     *
+     * @param tiler
+     * @param encoder
+     * @param image
+     * @param rangeSize
+     * @param domainSize
+     * @return
      */
-    @Override
+//    @Override
     public
-    void onPreprocess () {
-
+    ImageBlockGenerator <N, A, G> createBlockGenerator ( ITiler <N, A, G> tiler,
+                                                            EPartitionScheme scheme,
+                                                            IEncoder <N, A, G> encoder,
+                                                            IImage <A> image,
+                                                            IIntSize rangeSize,
+                                                            IIntSize domainSize ) {
+        return new QuadTreeImageBlockGenerator<N,A,G>(
+                tiler,
+                scheme,
+                encoder,
+                image,
+                rangeSize,
+                domainSize
+        );
     }
 
     /**
-     *
+     * @return
      */
     @Override
     public
-    void onProcess () {
-
+    ITiler <N, A, G> getTiler () {
+        return null;
     }
 
     /**
-     *
+     * @return
      */
     @Override
     public
-    void onPostprocess () {
+    FractalModel <N, A, G> getModel () {
+        return null;
+    }
 
+       /**
+     * @param image
+     * @return
+     */
+    @Override
+    public
+    IImage<A> encode ( IImage<A> image ) {
+        return image;
+    }
+
+    /**
+     * @param image
+     * @param axis
+     * @return
+     */
+    @Override
+    public
+    IImage <A> flipAxis ( IImage <A> image, int axis ) {
+        return image;
+    }
+
+    /**
+     * @return
+     */
+//    @Override
+    public
+    ISearchProcessor <N, A, G> createSearchProcessor () {
+        return null;
+    }
+
+
+    /**
+     * @param filename
+     * @return
+     */
+    @Override
+    public
+    FractalModel <N, A, G> loadModel ( String filename ) {
+        FractalReader <N, A, G> reader = new FractalReader <>(new File(filename));
+        return new FractalModel <>(null);
     }
 }

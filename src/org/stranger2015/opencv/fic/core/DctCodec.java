@@ -1,28 +1,31 @@
 package org.stranger2015.opencv.fic.core;
 
+import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.core.codec.Codec;
-import org.stranger2015.opencv.fic.core.codec.IDecoder;
-import org.stranger2015.opencv.fic.core.codec.IEncoder;
+import org.stranger2015.opencv.fic.core.codec.*;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
  * @param <A>
- * @param <M>
+ 
  */
 public
-class DctCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
-        extends Codec<N, A, M, G> {
+class DctCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+        extends Codec <N, A, G> {
+
     /**
      * @param scheme
-     * @param action
-     * @return
+     * @param paramTypes
+     * @param params
      */
-    @Override
-    public
-    Codec <N, A, M, G> create ( EPartitionScheme scheme, EncodeAction action ) {
-        return null;
+    protected
+    DctCodec ( EPartitionScheme scheme,
+               Class <?>[] paramTypes,
+               Object... params ) {
+
+        super(scheme, paramTypes, params);
     }
 
     /**
@@ -31,9 +34,9 @@ class DctCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends
      * @param domainSize
      * @return
      */
-    @Override
+//    @Override
     public
-    IEncoder <N, A, M, G> getEncoder ( M image, Size rangeSize, Size domainSize ) {
+    IEncoder <N, A, G> getEncoder ( IImage<A> image, Size rangeSize, Size domainSize ) {
         return null;
     }
 
@@ -42,7 +45,7 @@ class DctCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends
      */
     @Override
     public
-    IEncoder <N, A, M, G> getEncoder () {
+    IEncoder <N, A, G> getEncoder () {
         return null;
     }
 
@@ -51,7 +54,7 @@ class DctCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends
      */
     @Override
     public
-    IDecoder <M> getDecoder () {
+    IDecoder <M, A> getDecoder () {
         return null;
     }
 
@@ -62,5 +65,16 @@ class DctCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends
     public
     int getImageSizeBase () {
         return 2;
+    }
+
+    /**
+     * @param address
+     * @return
+     * @throws ValueError
+     */
+    @Override
+    public
+    IAddress <A> createAddress ( int address ) throws ValueError {
+        return null;
     }
 }

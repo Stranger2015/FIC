@@ -1,19 +1,17 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.fic.core.IAddress;
+import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.utils.BitBuffer;
-
-import java.nio.ByteBuffer;
 
 import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
 
 /**
- * @param <M>
+ 
  */
 public abstract
-class ShiftTransform<M extends IImage<A>, A extends Address <A>, G extends BitBuffer>
-        extends ImageTransform<M, A, G>{
+class ShiftTransform</*M extends IImage<A>,*/ A extends IAddress <A>, G extends BitBuffer>
+        extends ImageTransform<A, G>{
 
     private final float intensity;
     private final int channelAxis;
@@ -25,7 +23,7 @@ class ShiftTransform<M extends IImage<A>, A extends Address <A>, G extends BitBu
      * @param address
      */
     protected
-    ShiftTransform (M image, float intensity, int channelAxis, Address<A> address) {
+    ShiftTransform ( GrayScaleImage<A> image, float intensity, int channelAxis, IAddress <A> address) {
         super(image, BILINEAR, address);
 
         this.intensity = intensity;

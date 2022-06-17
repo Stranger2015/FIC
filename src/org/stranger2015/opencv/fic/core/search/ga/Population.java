@@ -2,6 +2,9 @@ package org.stranger2015.opencv.fic.core.search.ga;
 
 import org.jetbrains.annotations.NotNull;
 import org.stranger2015.opencv.fic.core.Address;
+import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.fic.core.TreeNodeBase;
+import org.stranger2015.opencv.fic.core.ValueError;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayList;
@@ -9,31 +12,31 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static org.stranger2015.opencv.fic.core.search.ga.GaProcessor.getRandom;
+import static org.stranger2015.opencv.fic.core.search.ga.GaSearchProcessor.getRandom;
 
 /**
  *
  */
 @SuppressWarnings("unchecked")
 public
-class Population<T extends Individual <T, A, G, C>, A extends Address <A>, G extends BitBuffer,
-        C extends Chromosome <T, A, G>>
+class Population<N extends TreeNodeBase.TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer,
+        C extends Chromosome <M, A, G>>
 
-        implements Iterable <T> {
+        implements Iterable <M> {
 
-    protected final List <T> list = new ArrayList <>();
+    protected final List <M> list = new ArrayList <>();
 
     public int popSize = 100;
     protected int chromosomeLength = 31;
 
-    protected T fittest;
+    protected M fittest;
     protected double populationFitness;
 
     /**
      * @param list
      */
     public
-    Population ( List <T> list ) {
+    Population ( List <M> list ) {
         this.list.addAll(list);
     }
 
@@ -43,13 +46,11 @@ class Population<T extends Individual <T, A, G, C>, A extends Address <A>, G ext
      * @param toIndex
      */
     public
-    Population ( List <T> list, int fromIndex, int toIndex ) {
+    Population ( List <M> list, int fromIndex, int toIndex ) {
         this(list.subList(fromIndex, toIndex));
     }
 
     /**
-     *
-     *
      * @param popSize
      * @param chromosomeLength
      */
@@ -60,13 +61,11 @@ class Population<T extends Individual <T, A, G, C>, A extends Address <A>, G ext
     }
 
     /**
-     *
-     *
      * @param population
      * @param chromosomeLength
      */
     public
-    Population ( Population <T, A, G, C> population, int chromosomeLength ) {
+    Population ( Population <N, A, M, G, C> population, int chromosomeLength ) {
         this.chromosomeLength = chromosomeLength;
         popSize = population.size();
         list.addAll(population.list);
@@ -77,7 +76,14 @@ class Population<T extends Individual <T, A, G, C>, A extends Address <A>, G ext
      */
     public
     void init () {
-        IntStream.range(0, list.size()).mapToObj(this::apply).forEachOrdered(list::add);
+        IntStream.range(0, list.size()).mapToObj(( int i ) -> {
+            try {
+                return apply(i);
+            } catch (ValueError e) {
+                e.printStackTrace();
+            }
+            return null;//fixme
+        }).forEachOrdered(list::add);
     }
 
     /**
@@ -85,17 +91,16 @@ class Population<T extends Individual <T, A, G, C>, A extends Address <A>, G ext
      * @return
      */
     public
-    T getFittest ( int popIndex ) {
+    M getFittest ( int popIndex ) throws ValueError {
 //        populations[];
-        return (T) new Individual <T, A, G, C>(chromosomeLength);
+        return (M) new Individual <M, A, G, C>(chromosomeLength);
     }
 
     /**
      * @return
      */
-    public
-    T[] getIndividuals () {
-        return list.toArray((T[]) new Individual[list.size()]);
+    M[] getIndividuals () {
+        return list.toArray((M[]) new Individual[list.size()]);
     }
 
     /**
@@ -111,7 +116,7 @@ class Population<T extends Individual <T, A, G, C>, A extends Address <A>, G ext
      * @param individual
      */
     public
-    void setIndividual ( int popIndex, T individual ) {
+    void setIndividual ( int popIndex, M individual ) {
         list.set(popIndex, individual);
     }
 
@@ -129,7 +134,7 @@ class Population<T extends Individual <T, A, G, C>, A extends Address <A>, G ext
      * @return
      */
     public
-    Population <T, A, G, C> getRange ( int fromIdx, int toIdx ) {
+    Population<N, A, M, G, C> getRange ( int fromIdx, int toIdx ) {
         return new Population <>(list.subList(fromIdx, toIdx));
     }
 
@@ -144,7 +149,7 @@ class Population<T extends Individual <T, A, G, C>, A extends Address <A>, G ext
         // current population size
         int size = this.size();
         // create temporary copy of the population
-        Population <T, A, G, C> tempPopulation = this.getRange(0, size);
+        Population <N, A, M, G, C> tempPopulation = this.getRange(0, size);
         // clear current population and refill it randomly
         this.list.clear();
         while (size > 0) {
@@ -161,7 +166,7 @@ class Population<T extends Individual <T, A, G, C>, A extends Address <A>, G ext
      * @return
      */
     public
-    T getIndividual ( int i ) {
+    M getIndividual ( int i ) {
         return list.get(i);
     }
 
@@ -173,7 +178,7 @@ class Population<T extends Individual <T, A, G, C>, A extends Address <A>, G ext
     @NotNull
     @Override
     public
-    Iterator <T> iterator () {
+    Iterator <M> iterator () {
         return list.listIterator();
     }
 
@@ -190,7 +195,7 @@ class Population<T extends Individual <T, A, G, C>, A extends Address <A>, G ext
      * @return
      */
     protected
-    T apply ( int i ) {
-        return (T) new Individual <T, A, G, C>(chromosomeLength);
+    M apply ( int i ) throws ValueError {
+        return (M) new Individual <M, A, G, C>(chromosomeLength);
     }
 }

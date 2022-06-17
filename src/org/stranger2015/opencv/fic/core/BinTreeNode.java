@@ -1,23 +1,22 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.NotNull;
-import org.opencv.core.Rect;
-import org.stranger2015.opencv.fic.core.QuadTreeNode.QuadLeafNode;
+import org.opencv.core.MatOfInt;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.core.codec.DecAddress;
-import org.stranger2015.opencv.fic.core.codec.IAddress;
-import org.stranger2015.opencv.fic.utils.Point;
+import org.stranger2015.opencv.fic.core.codec.RegionOfInterest;
+import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * @param <N>
  * @param <A>
  */
 public
-class BinTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends  IImage<A> , G extends BitBuffer>
-        extends TreeNode <N, A, M, G> {
+class BinTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
+        extends TreeNode <N, A, G> {
 
     /**
      * @param parent
@@ -25,62 +24,67 @@ class BinTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exte
      * @param rect
      */
     public
-    BinTreeNode ( TreeNode <N, A, M, G> parent, EDirection quadrant, Rect rect )
-            throws ValueError {
-
-        super(parent, rect);
+    BinTreeNode ( TreeNodeBase <N, A, G> parent, EDirection quadrant, IIntSize rect ) throws ValueError {
+        super(parent, quadrant, rect);
     }
 
     public
-    BinTreeNode ( TreeNode <N, A, M, G> parent, Rect boundingBox ) throws ValueError {
-
-        super(parent, boundingBox);
-    }
-
-    public
-    BinTreeNode ( LeafNode <N, A, M, G> node, Point point, int layerIndex, int clusterIndex, IAddress <A> address ) {
-        super(node, point,layerIndex,clusterIndex, address);
-
-
-
-
-    }
-
-    public
-    BinTreeNode ( TreeNode <N, A, M, G> parent, DecAddress <A> address ) {
-        super(parent, new Rectangle(0,0,0,0),0,0,address );
+    BinTreeNode ( TreeNodeBase <N, A, G> parent, IAddress <A> address ) {
+        super(parent, address);
     }
 
     /**
+     * @param imageBlock
      * @param address
      * @return
      * @throws ValueError
      */
-    @Override
     public
-    TreeNode <N, A, M, G> createChild ( int address ) throws ValueError {
-        return new BinTreeNode <>(this, new DecAddress <>(address));
+    TreeNodeBase <N, A, G> createChild ( TreeNodeBase <N, A, G> parent,
+                                         IImageBlock <A> imageBlock,
+                                         IAddress <A> address )
+            throws ValueError {
+
+        return imageBlock == null ?
+                new BinTreeNode <>(parent, address) :
+                new LeafNode <>(parent, imageBlock);
     }
 
     /**
-     * @param point
+     * @param parent
+     * @param boundingBox
+     * @return
+     */
+    @Override
+    public
+    TreeNodeBase <N, A, G> createNode ( TreeNodeBase <N, A, G> parent, IIntSize boundingBox )
+            throws ValueError {
+
+        return new BinTreeNode<>(parent, boundingBox);
+    }
+
+    /**
+     * @param node
+     * @param bb
+     */
+    public
+    BinTreeNode ( TreeNodeBase <N, A, G> node, IIntSize bb ) throws ValueError {
+        super(node, bb);
+    }
+
+
+    /**
      * @param layerIndex
      * @param clusterIndex
      * @param address
      * @return
      * @throws ValueError
      */
-    @Override
     public
-    TreeNode <N, A, M, G> createChild ( Point point, int layerIndex, int clusterIndex, Address <A> address )
+    TreeNodeBase <N, A, G> createChild ( int layerIndex, int clusterIndex, IAddress <A> address )
             throws ValueError {
-        return null;
-    }
 
-    //    @Override
-    public
-    TreeNode <N, A, M, G> createChild ( int layerIndex, int clusterIndex, Address <A> address )
-            throws ValueError {
+        //  return createChild(new Point(0, 0), layerIndex, clusterIndex, address);
         return null;
     }
 
@@ -124,9 +128,14 @@ class BinTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exte
         return super.hashCode();
     }
 
-    //    @Override
+    /**
+     * @param quadrant
+     * @param boundingBox
+     * @return
+     * @throws ValueError
+     */
     public
-    TreeNode <N, A, M, G> createChild ( EDirection quadrant, Rect boundingBox ) throws ValueError {
+    TreeNodeBase <N, A, G> createChild ( EDirection quadrant, IIntSize boundingBox ) throws ValueError {
         return new BinTreeNode <>(this, quadrant, boundingBox);
     }
 
@@ -135,16 +144,17 @@ class BinTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exte
      * @param boundingBox
      * @return
      */
-//    @Override
     public
-    TreeNodeBase <N, A, M, G> createNode ( TreeNode <N, A, M, G> parent, Rect boundingBox ) throws ValueError {
+    TreeNodeBase <N, A, G> createNode ( TreeNode <N, A, G> parent, IIntSize boundingBox ) throws ValueError {
         return new BinTreeNode <>(parent, boundingBox);
     }
 
     public
-    BinTreeNode <N, A, M, G> createNode ( BinTreeNode <N, A, M, G> parent,
-                                          EDirection quadrant, Rect boundingBox )
+    BinTreeNode <N, A, G> createNode ( BinTreeNode <N, A, G> parent,
+                                       EDirection quadrant,
+                                       IIntSize boundingBox )
             throws ValueError {
+
         return new BinTreeNode <>(parent, quadrant, boundingBox);
     }
 
@@ -266,123 +276,347 @@ class BinTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exte
      * @throws ClassCastException   if the specified object's type prevents it
      *                              from being compared to this object.
      */
-    @Override
+//    @Override
     public
     int compareTo ( @NotNull N o ) {
         return 0;
     }
 
     /**
-     * @param <N>
-     * @param <A>
-     * @param <M>
-     * @param <G>
+     * @param i
+     * @param i1
+     * @param sideSize
+     * @param img1pixels
+     * @param i2
+     * @param i3
      */
-    public static
-    class BinLeafNode<N extends LeafNode <N, A, M, G>, A extends Address <A>, M extends  IImage<A> ,
-            G extends BitBuffer>
-            extends LeafNode <N, A, M, G> {
+//    @Override
+    public
+    void getRGB ( int i, int i1, int sideSize, int[] img1pixels, int i2, int i3 ) {
 
-        /**
-         * @param parent
-         * @param image
-         * @param rect
-         */
-        protected
-        BinLeafNode ( TreeNode <N, A, M, G> parent, M image, Rect rect ) {
-            super(parent, image, rect);
-        }
+    }
 
-        public
-        BinLeafNode ( BinLeafNode <N, A, M, G> parent, M image ) {
-            this(parent, image, new Rectangle(0,0, 0,0));
-        }
+    /**
+     * @param address
+     * @return
+     */
+//    @Override
+    public
+    int[] get ( int address ) {
+        return new int[0];
+    }
 
-        /**
-         * @param point
-         * @param layerIndex
-         * @param clusterIndex
-         * @param address
-         * @return
-         * @throws ValueError
-         */
+    //    @Override
+    public
+    int[] getPixels ( IAddress <A> address ) {
+        return new int[0];
+    }
+
+    //    @Override
+    public
+    int pixelValues ( int addr, int i ) {
+        return 0;
+    }
+
+    /**
+     * @return
+     */
         @Override
-        public
-        TreeNode <N, A, M, G> createChild ( Point point, int layerIndex, int clusterIndex, Address <A> address )
-                throws ValueError {
+    public
+    int getWidth () {
+        return 0;
+    }
 
-            return new BinLeafNode <N, A, M, G>(this, null);
-        }
-
-        /**
-         * @param parent
-         * @param boundingBox
-         * @return
-         */
+    /**
+     * @return
+     */
         @Override
-        public
-        TreeNode <N, A, M, G> createNode ( TreeNode <N, A, M, G> parent, Rect boundingBox )
-                throws ValueError {
+    public
+    int getHeight () {
+        return 0;
+    }
 
-            return null;
-        }
-
+    /**
+     * @return
+     */
         @Override
-        public
-        TreeNode <N, A, M, G> createNode ( TreeNode <N, A, M, G> parent, M image, Rect boundingBox ) throws ValueError {
-            return new BinLeafNode <>(parent, image, boundingBox);
-        }
+    public
+    double getBeta () {
+        return 0;
+    }
 
-        /**
-         * @param parent
-         * @param quadrant
-         * @param boundingBox
-         * @return
-         */
+    /**
+     * @return
+     */
 //        @Override
-        public
-        TreeNode <N, A, M, G> createNode ( TreeNode <N, A, M, G> parent,
-                                           EDirection quadrant,
-                                           Rect boundingBox )
-                throws ValueError {
+    public
+    int pixelAmount () {
+        return 0;
+    }
 
-            return null;//todo
-        }
+    /**
+     * @param address
+     */
+//        @Override
+    public
+    void setAddress ( IAddress <A> address ) {
 
-        /**
-         * @return
-         */
-        @Override
-        public
-        int getX () {
-            return 0;
-        }
+    }
 
-        /**
-         * @return
-         */
-        @Override
-        public
-        int getY () {
-            return 0;
-        }
+    /**
+     * @param n
+     * @return
+     */
+//        @Override
+    public
+    int plus ( int... n ) {
+        return 0;
+    }
 
-        @Override
-        public
-        M getMat () {
-            return null;
-        }
+    /**
+     * @param rowStart
+     * @param rowEnd
+     * @param colStart
+     * @param colEnd
+     * @return
+     */
+    @Override
+    public
+    IImageBlock <A> subImage ( int rowStart, int rowEnd, int colStart, int colEnd ) {
+        return null;
+    }
 
-        @Override
-        public
-        M getImage () {
-            return null;
-        }
+    /**
+     * @return
+     */
+//        @Override
+    public
+    IIntSize getSize () {
+        return size;
+    }
 
-        @Override
-        public
-        Rect getBoundingBox () {
-            return null;
-        }
+    /**
+     * Sets a sample in the specified band for the pixel located at (x,y)
+     * in the DataBuffer using an int for input.
+     * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
+     * not in bounds.
+     *
+     * @param address
+     * @param b       The band to set.
+     * @param s       The input sample as an int.
+     * @throws NullPointerException           if data is null.
+     * @throws ArrayIndexOutOfBoundsException if the coordinates or
+     *                                        the band index are not in bounds.
+     */
+//        @Override
+    public
+    void setSample ( IAddress <A> address, int b, int s ) {
+
+    }
+
+    /**
+     * Returns the sample in a specified band for the pixel located
+     * at (x,y) as an int.
+     * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
+     * not in bounds.
+     *
+     * @param address
+     * @param b       The band to return.
+     * @return the sample in a specified band for the specified pixel.
+     * @throws NullPointerException           if data is null.
+     * @throws ArrayIndexOutOfBoundsException if the coordinates or
+     *                                        the band index are not in bounds.
+     */
+//        @Override
+    public
+    int getSample ( IAddress <A> address, int b ) {
+        return 0;
+    }
+
+    /**
+     * @param x
+     * @param y
+     */
+//        @Override
+    public
+    void setAddress ( int x, int y ) throws ValueError {
+
+    }
+
+    /**
+     *
+     */
+//        @Override
+    public
+    List <IImage <A>> split () {
+        return null;
+    }
+
+    /**
+     * @param layers
+     * @param inputImage
+     * @return
+     */
+//        @Override
+    public
+    IImage <A> merge ( List <IImage <A>> layers, IImage <A> inputImage ) {
+        return null;
+    }
+
+    /**
+     *
+     */
+//    @Override
+    public
+    void release () {
+
+    }
+
+    /**
+     * @return
+     */
+//    @Override
+    public
+    String dump () {
+        return null;
+    }
+
+    //    @Override
+    public
+    MatOfInt getMat () {
+        return getImage().getMat();
+    }
+
+    /**
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     * @return
+     */
+//    @Override
+    public
+    IImageBlock <A> getSubImage ( int x, int y, int width, int height ) throws ValueError {
+        return null;
+    }
+
+    /**
+     * @return
+     */
+//    @Override
+    public
+    List <ImageTransform <A, ?>> getTransforms () throws ValueError {
+        return null;
+    }
+
+    /**
+     * @param imageTransforms
+     */
+//    @Override
+    public
+    void setTransforms ( List <ImageTransform <A, ?>> imageTransforms ) throws ValueError {
+
+    }
+
+    /**
+     * @return
+     */
+//    @Override
+    public
+    int[] getPixels () {
+        return new int[0];
+    }
+
+    /**
+     * @return
+     */
+//    @Override
+    public
+    boolean isGrayScale () {
+        return false;
+    }
+
+    /**
+     * @return
+     */
+//    @Override
+    public
+    List <IImage <A>> getComponents () {
+        return null;
+    }
+
+    /**
+     * @return
+     */
+//    @Override
+    public
+    List <RegionOfInterest <A>> getRegions () {
+        return null;
+    }
+
+    /**
+     * @param regions
+     */
+//    @Override
+    public
+    void setRegions ( List <RegionOfInterest <A>> regions ) {
+
+    }
+
+    public
+    void put ( int x, int i ) {
+
+    }
+
+    //        @Override
+    public
+    IImage <A> getImage () {
+        return null;
+    }
+
+    /**
+     * @param addr
+     * @return
+     * @throws ValueError
+     */
+    @Override
+    public
+    TreeNodeBase <N, A, G> createChild ( int addr ) throws ValueError {
+        return null;
+    }
+
+    /**
+     * @param imageBlock
+     * @param address
+     * @return
+     * @throws ValueError
+     */
+    @Override
+    public
+    TreeNodeBase <N, A, G> createChild ( IImageBlock <A> imageBlock, IAddress <A> address ) throws ValueError {
+        return null;
+    }
+
+    /**
+     * @param image
+     * @param layerIndex
+     * @param clusterIndex
+     * @param address
+     * @return
+     * @throws ValueError
+     */
+//        @Override
+    public
+    TreeNode <N, A, G> createChild ( IImage <A> image,
+                                     int layerIndex,
+                                     int clusterIndex,
+                                     IAddress <A> address ) throws ValueError {
+        return null;
+    }
+
+    @Override
+    public
+    IIntSize getBoundingBox () {
+        return boundingBox;
     }
 }

@@ -1,21 +1,19 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.CompressedImage;
 import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.fic.core.Image;
+import org.stranger2015.opencv.fic.core.IAddress;
+import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.nio.ByteBuffer;
-
 /**
- * @param <M>
+ 
  * @param <A>
  * @param <G>
  */
 public
-class ChannelShift<M extends IImage<A>, A extends Address <A>, G extends BitBuffer>
-        extends ShiftTransform<M, A, G>{
+class ChannelShift</*M extends IImage<A>,*/ A extends IAddress <A>, G extends BitBuffer>
+        extends ShiftTransform<A, G>{
+
     /**
      * @param image
      * @param intensity
@@ -23,7 +21,7 @@ class ChannelShift<M extends IImage<A>, A extends Address <A>, G extends BitBuff
      * @param address
      */
     protected
-    ChannelShift ( M image, float intensity, int channelAxis, Address<A> address ) {
+    ChannelShift ( GrayScaleImage<A> image, float intensity, int channelAxis, IAddress<A> address ) {
         super(image, intensity, channelAxis, address);
     }
 }

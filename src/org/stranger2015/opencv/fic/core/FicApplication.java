@@ -1,54 +1,50 @@
 package org.stranger2015.opencv.fic.core;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
 import org.opencv.osgi.OpenCVNativeLoader;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.*;
 import org.stranger2015.opencv.fic.core.io.FractalReader;
 import org.stranger2015.opencv.fic.core.io.FractalWriter;
-import org.stranger2015.opencv.fic.core.search.ImageComparator;
-import org.stranger2015.opencv.fic.transform.*;
+import org.stranger2015.opencv.fic.transform.ImageTransform;
+import org.stranger2015.opencv.fic.transform.ScaleTransform;
 import org.stranger2015.opencv.fic.utils.Config;
+import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImageOp;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.File;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
-import static java.util.List.of;
-
 /**
  * Command line utility to compress an image using
  * fractal image compression methods.
- *
+ * <p>
  * Configuration:
  * TODO: add configuration of filters and transforms
- *
+ * <p>
  * Comparators:
  * FIXME: the current compressor cannot handle scale transforms due to
  * ImageComparator's limitation to same-size image comparison only
- *
+ * <p>
  * Metric:
  * NOTE: currently implemented: AE MSE RMSE
  * NOTE: currently only AE is affected by fuzz
- *
+ * <p>
  * Compression:
  * TODO: FUTURE: multi-threading
- *
+ * <p>
  * Tilers:
  * TODO: FUTURE: intelligent tilers - HV/Quadtree partitioning
  */
 public
-class FicApplication<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>, G extends BitBuffer>
+class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
 
         implements Runnable, Consumer <String> {
 
@@ -56,99 +52,196 @@ class FicApplication<N extends TreeNode <N, A, M, G>, A extends Address <A>, M e
 
     private final Consumer <String> action = this;
     private final EPartitionScheme scheme;
-    private final String filename;
+
     private final EtvColorSpace colorSpace;
-    private final Config config;
+    private final Config <N, A, G> config;
+    private final File input;
+    private final File output;
+
+    private FractalModel <N, A, G> fractalModel;
+    private Set <ImageTransform <M, A, G>> transforms = new HashSet <>();
+
+    private IntSize rangeSize;
+    private IntSize domainSize;
+
+    private ImageProcessor <N, A, G> processor;
 
     /**
      * @param config
      */
     public
-    FicApplication (Config config ) {
-
+    FicApplication ( Config <N, A, G> config ) {
         this.config = config;
-        colorSpace = EtvColorSpace.valueOf(config.);
+        colorSpace = config.colorSpace();
+        scheme = config.partitionScheme();
+        input = config.command().getInput();
+        output = config.command().getOutput();
     }
 
-    private
-   M readImage() {
-        M image = null;
-
-        try {
-            image = (M) Imgcodecs.imread("");
-        } catch (IOException ioe) {
-            System.err.println(EError.FILE_READ.description(configuration.input().getName()));
-            System.exit(EError.FILE_READ.errcode());
-        }
-
-        return image;
-    }
-    public FractalModel<N,A,M,G> compress(M image) {
-        Compressor<N,A,M,G> compressor = new Compressor<N, A, M, G>(
-                config.domainScale(),
-                config.tiler(),
-                new ImageComparator<>(config.metrics(), config.fuzz()),
-                new HashSet <ImageTransform<M,A,G>>(6) {{
-                    add(new NoneTransform<>(image,image, ));
-                    add(new FlipTransform<>());
-                    add(new FlopTransform<>());
-                    add(new AffineRotateQuadrantsTransform<>(1));
-                    add(new AffineRotateQuadrantsTransform<>(2));
-                    add(new AffineRotateQuadrantsTransform<>(3));
-                }},
-                new HashSet<BufferedImageOp>(1) {{
-                    add(new GrayscaleFilter());
-                }},
-                this);
-
-        return compressor.compress(image);
+    @SuppressWarnings({"unchecked"})
+    public
+    IImage<A> readImage ( File input ) {
+        return (M) Imgcodecs.imread(input.getAbsolutePath());
     }
 
-    public void writeModel(FractalModel<N,A,M,G> fmodel) {
-        try {
-            FractalWriter fwriter = new FractalWriter(new BufferedOutputStream(getOutStream()));
-            fwriter.write(fmodel);
-            fwriter.close();
-        } catch (IOException ioe) {
-            System.err.println(EError.STREAM_WRITE.description());
-            System.exit(EError.STREAM_WRITE.errcode());
-        }
+    /**
+     * @param image
+     * @return
+     */
+    public
+    FractalModel <N, A, G> compress ( GrayScaleImage <A> image ) throws ValueError, ReflectiveOperationException {
+
+        final ImageBlockGenerator <N, A, G> imageBlockGenerator =
+                createBlockGenerator(
+                        config.tiler(),
+                        config.partitionScheme(),
+                        Encoder.create(
+                                config.partitionScheme(),
+                                new Class[]{
+                                        GrayScaleImage.class,//  IImage<A> inputImage,
+                                        IntSize.class,// rangeSize,
+                                        IntSize.class, //domainSize,
+                                        Set.class,// <ImageTransform <M, A, G>> //transforms,
+                                        ScaleTransform.class,// <A, G>, //scaleTransform,
+                                        IDistanceator.class,// <M, A> ,//comparator,
+                                        Set.class,// <IImageFilter <M, A>> //filters,
+                                        FractalModel.class// <N, A, G> //fractalModel
+                                },
+                                new Object[]{
+                                        image,
+                                        getConfig().tiler().getRangeSize(),
+                                        getConfig().tiler().getDomainSize(),
+                                        new HashSet <>(),
+                                        getConfig().domainScale(),
+                                        new ImageComparator <M, A>(
+                                                getConfig().metrics(),
+                                                getConfig().fuzz()
+                                        ),
+                                        new HashSet <IImageFilter <M, A>>(1) {{
+                                            add(new NoneFilter <>());
+                                        }},
+                                        new FractalModel <>(new HashMap <>())
+                                }
+                        ),
+                        image,
+                        getConfig().tiler().getRangeSize(),
+                        getConfig().tiler().getDomainSize()
+                );
+
+        return new FractalModel <>(new HashMap <>());
     }
 
-    private
-
-    OutputStream getOutStream () {
-        return null;
+    /**
+     * @param fractalModel
+     */
+    void decompress ( FractalModel <N, A, G> fractalModel ) {
+        fractalModel.getModel();
     }
 
-    public FractalModel<N,A,M,G> readModel() {
-        FractalModel<N,A,M,G> fmodel = null;
+    /**
+     * @param tiler
+     * @param encoder
+     * @param image
+     * @param rangeSize
+     * @param domainSize
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    @Contract(value = "_, _, _, _, _ -> new", pure = true)
+    private @NotNull
+    ImageBlockGenerator <N, A, G> createBlockGenerator (
+            ITiler <M, A> tiler,
+            EPartitionScheme scheme,
+            IEncoder <N, A, G> encoder,
+            GrayScaleImage <A> image,
+            IntSize rangeSize,
+            IntSize domainSize
+    ) {
 
-        try {
-            FractalReader freader = new FractalReader(config.input());
-            fmodel = freader.read();
-            freader.close();
-        } catch (ClassNotFoundException | IOException e) {
-            System.err.println(EError.FILE_READ.description(config.input().getName()));
-            System.exit(EError.FILE_READ.errcode());
-        }
-
-        return fmodel;
+        return new ImageBlockGenerator <>(
+                tiler,
+                scheme,
+                encoder,
+                image,
+                rangeSize,
+                domainSize
+        );
     }
 
-    public M decompress(FractalModel<N,A,M,G> fmodel) {
-        Decompressor<N,A,M,G> decompressor = new Decompressor<>(this);
-
-        return decompressor.decompress(fmodel);
+    /**
+     * @return
+     */
+    public
+    IImageProcessor <N, A, G> getProcessor () {
+        return processor;
     }
 
-    public void writeImage(M image) {
-        try {
-            Imgcodecs.imwrite("");
-        } catch (IOException ioe) {
-            System.err.println(EError.STREAM_WRITE.description());
-            System.exit(EError.STREAM_WRITE.errcode());
-        }
+//    final IDistanceator <M, A> comparator=
+//        final Set <ImageTransform <M, A, G>> transforms,
+//        final Set <IImageFilter <M, A>> filters,
+//        FractalModel <N, A, G> fractalModel ) throws NullPointerException {
+
+//            ICompressor <N, A, G> compressor = new Compressor <N, A, G>(
+//                config.domainScale(),
+//                new SquareImageBlockGenerator <N, A, G>(
+//                        config.tiler(),
+//                        image, image.getAddress(). new IntSize(0, 0), new IntSize(1, 1)
+//                ),
+//                new ImageComparator <>(config.metrics(), config.fuzz()),
+//                new HashSet <ImageTransform <M, A, G>>(6) {{
+//                    add(new NoneTransform <>(
+//                            image,
+//                            BILINEAR,
+//                            new DecAddress <>(0),
+//                            0,
+//                            0,
+//                            -1));
+//                    add(new FlipTransform <>(image, false, new DecAddress <>(0)));
+//                    add(new FlopTransform <>(image, BILINEAR, new DecAddress <>(0)));
+//                    add(new AffineRotateQuadrantsTransform <A, G>(image, 1, new DecAddress <>(0)));
+//                    add(new AffineRotateQuadrantsTransform <A, G>(image, 2, new DecAddress <>(0)));
+//                    add(new AffineRotateQuadrantsTransform <A, G>(image, 3, new DecAddress <>(0)));
+//                }},
+//                new HashSet <IImageFilter <M, A>>(1) {{
+//                    add(new NoneFilter <>());
+//                }},
+//                this);
+
+//        return compressor.compress(image, 0, 0, 0);//fixme
+
+
+    /**
+     * @return
+     */
+    public
+    FractalModel <N, A, G> readModel () {
+
+        FractalModel <N, A, G> model = null;
+
+        FractalReader <N, A, G> fractalReader = new FractalReader <>(config.command().getInput());
+        model = fractalReader.readModel();
+        fractalReader.close();
+
+        return model;
+    }
+
+
+    /**
+     * @param model
+     */
+    public
+    void writeModel ( FractalModel <N, A, G> model, boolean allowOverwrite ) {
+        FractalWriter <N, A, G> writer = new FractalWriter <>(output, model.getImageInfo(), allowOverwrite);
+        writer.writeModel(model);
+        writer.close();
+    }
+
+    /**
+     * @param image
+     */
+    public
+    void writeImage ( IImage<A> image ) {
+        Imgcodecs.imwrite(output.getAbsolutePath(), image.getMat());
     }
 
     /**
@@ -156,23 +249,15 @@ class FicApplication<N extends TreeNode <N, A, M, G>, A extends Address <A>, M e
      *
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        Config configuration = new Config(args);
-        Runnable fic = new FicApplication<>(configuration);
+
+    public static
+    <N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+    void main ( String[] args ) {
+        Config <N, A, G> configuration = new Config <>(args);
+        Runnable fic = new FicApplication <>(configuration);
 
         fic.run();
     }
-
-//     switch (args[0]) {
-//        case "-e":
-//        case "-d":
-//            scheme = EPartitionScheme.valueOf(args[1]);
-//            filename = args[2];
-//            colorSpace = EtvColorSpace.valueOf(args[3]);
-//             break;
-//        default:
-//            throw new IllegalStateException("Unexpected value: " + args[0]);
-//    }
 
     /**
      *
@@ -197,9 +282,12 @@ class FicApplication<N extends TreeNode <N, A, M, G>, A extends Address <A>, M e
     public
     void run () {
         init();
-        action.accept(filename);
+        action.accept(input.getAbsolutePath());
     }
 
+    /**
+     * @return
+     */
     public
     Consumer <String> getAction () {
         return action;
@@ -213,32 +301,45 @@ class FicApplication<N extends TreeNode <N, A, M, G>, A extends Address <A>, M e
     @Override
     public
     void accept ( String filename ) {
-
-        ICompressor <N, A, M, G> compressor = new Compressor <>(
-                scaleTransform,
-                imageBlockGenerator,
-                comparator,
-                transforms,
-                fractalModel);
-        IDecompressor <N, A, M, G> decompressor= new Decompressor <>();
-
-        IEncoder <N, A, M, G> encoder = Encoder.create(getScheme().getEncoderClassName());
-        IDecoder <M, A> decoder = Decoder.create(getScheme().getDecoderClassName());
-
-        EncodeTask <N, A, M, G> encodeTask = new EncodeTask <>(filename, getScheme(), List.of(), encoder);
-        ICodec <N, A, M, G> codec = Codec.create(getScheme());
-
-        ImageProcessor <N, A, M, G> processor = ImageProcessor.create(
-                filename,
-                compressor,
-                decompressor,
-                scheme,
-                of(),
-                codec,
-                colorSpace);
         try {
+            Class <?>[] pt = new Class <?>[]{};
+            Object[] p = new Object[]{};
+
+            IEncoder <N, A, G> encoder = Encoder.create(getScheme(), pt, p);//todo invoke encoder before codec
+            IDecoder <N, A, G> decoder = Decoder.create(getScheme(), pt, p);
+
+            ICodec <N, A, G> codec = Codec.create(
+                    getScheme(),
+                    new Class <?>[]{},
+                    new Object[]{});
+
+            EncodeTask <N, A, G> encodeTask = new EncodeTask <>(
+                    filename,
+                    getScheme(),
+                    codec,
+                    List.of()
+            );
+            DecodeTask <N, A, G> decodeTask = new DecodeTask <>(
+                    filename,
+                    getScheme(),
+                    codec,
+                    List.of()
+            );
+
+            codec.addTask(encodeTask);
+            codec.addTask(decodeTask);
+
+            processor = new ImageProcessor <>(
+                    filename,
+                    getScheme(),
+                    codec,
+                    List.of(encodeTask, decodeTask),
+                    colorSpace
+            );
+
             processor.execute(filename);
-        } catch (ValueError e) {
+
+        } catch (ReflectiveOperationException | ValueError e) {
             e.printStackTrace();
             System.exit(-1);
         }
@@ -247,9 +348,18 @@ class FicApplication<N extends TreeNode <N, A, M, G>, A extends Address <A>, M e
     /**
      * @return
      */
+    @Contract(pure = true)
+    private
+    Set <ImageTransform <M, A, G>> createTransforms () {
+        return transforms;
+    }
+
+    /**
+     * @return
+     */
     public
     String getFilename () {
-        return filename;
+        return getConfig().command().getInput().getAbsolutePath();
     }
 
     /**
@@ -268,8 +378,67 @@ class FicApplication<N extends TreeNode <N, A, M, G>, A extends Address <A>, M e
         return colorSpace;
     }
 
+    /**
+     * @return
+     */
     public
-    Config getConfig () {
+    Config <N, A, G> getConfig () {
         return config;
+    }
+
+    /**
+     * @param fractalModel
+     */
+    public
+    void setFractalModel ( FractalModel <N, A, G> fractalModel ) {
+        this.fractalModel = fractalModel;
+    }
+
+    /**
+     * @param transforms
+     */
+    public
+    void setTransforms ( Set <ImageTransform <M, A, G>> transforms ) {
+        this.transforms = transforms;
+    }
+
+    /**
+     * @return
+     */
+    public
+    IntSize getRangeSize () {
+        return rangeSize;
+    }
+
+    /**
+     * @param rangeSize
+     */
+    public
+    void setRangeSize ( IntSize rangeSize ) {
+        this.rangeSize = rangeSize;
+    }
+
+    /**
+     * @return
+     */
+    public
+    IntSize getDomainSize () {
+        return domainSize;
+    }
+
+    /**
+     * @param domainSize
+     */
+    public
+    void setDomainSize ( IntSize domainSize ) {
+        this.domainSize = domainSize;
+    }
+
+    /**
+     * @return
+     */
+    public
+    FractalModel <N, A, G> getFractalModel () {
+        return fractalModel;
     }
 }

@@ -1,10 +1,12 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
+import org.slf4j.ILoggerFactory;
+import org.slf4j.LoggerFactory;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.core.codec.ICodecListener;
-import org.stranger2015.opencv.fic.core.codec.IImageProcessorListener;
+import org.stranger2015.opencv.fic.core.codec.*;
+import org.stranger2015.opencv.fic.utils.ColorImage;
+import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.fic.utils.SipLibrary;
 import org.stranger2015.opencv.utils.BitBuffer;
 
@@ -13,29 +15,45 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.logging.Logger;
 
+import static java.lang.String.format;
+import static java.util.stream.IntStream.range;
 import static org.stranger2015.opencv.fic.core.EPartitionScheme.SIP;
 
 /**
  *
  */
 public abstract
-class Task<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>, G extends BitBuffer>
-        implements Function <String, M>,
-                   IImageProcessorListener,
-                   ICodecListener {
+class Task<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
+        implements Function <String, IImage<A>>,
+                   IImageProcessorListener <N, A, G>,
+                   ICodecListener <N, A, G> {
 
-    protected Logger logger = Logger.getLogger(String.valueOf(getClass()));
+    protected final Logger logger = (Logger) LoggerFactory.getLogger(getClass());
 
-    protected final List <Task <N, A, M, G>> tasks = new ArrayList <>();
+    protected final List <Task <N, A, G>> tasks = new ArrayList <>();
 
     protected final String filename;
-    protected M image;
+    protected IImage<A> inputImage;
+    protected List <GrayScaleImage <A>> layers = new ArrayList <>(4);
     protected EPartitionScheme scheme;
+    protected IImageProcessor <N, A, G> processor;
+    protected ICodec <N, A, G> codec;
+    protected CompressedImage <A> outputImage;
 
+    /**
+     * @param filename
+     * @param scheme
+     * @param tasks
+     */
     public
-    Task ( String filename, EPartitionScheme scheme, List <Task <N, A, M, G>> tasks ) {
+    Task ( String filename,
+           EPartitionScheme scheme,
+           ICodec <N, A, G> codec,
+           List <Task <N, A, G>> tasks ) {
+
         this.filename = filename;
         this.scheme = scheme;
+        this.codec = codec;
         this.tasks.addAll(tasks);
     }
 
@@ -43,21 +61,21 @@ class Task<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IIm
      * @return
      */
     public
-    List <IImageProcessorListener> getImageProcessorListeners () {
+    List <IImageProcessorListener <N, A, G>> getImageProcessorListeners () {
         return processorListeners;
     }
 
-    private final List <IImageProcessorListener> processorListeners = new ArrayList <>();
+    private final List <IImageProcessorListener <N, A, G>> processorListeners = new ArrayList <>();
 
     /**
      * @return
      */
     public
-    List <IImageProcessorListener> getCodecListeners () {
+    List <ICodecListener <N, A, G>> getCodecListeners () {
         return codecListeners;
     }
 
-    private final List <IImageProcessorListener> codecListeners = new ArrayList <>();
+    private final List <ICodecListener <N, A, G>> codecListeners = new ArrayList <>();
 
     /**
      * @return
@@ -71,7 +89,7 @@ class Task<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IIm
      * @param task
      */
     protected
-    void addTask ( Task <N, A, M, G> task ) {
+    void addTask ( Task <N, A, G> task ) {
         tasks.add(task);
     }
 
@@ -81,8 +99,12 @@ class Task<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IIm
      */
     @SuppressWarnings("unchecked")
     final public
-    M loadImage ( String fn ) {
-        return (M) new Image <A>(Imgcodecs.imread(fn));
+    IImage<A> loadImage ( String fn ) {
+        if (inputImage == null) {
+            return new ColorImage <A>(Imgcodecs.imread(fn));
+        }
+
+        return inputImage;
     }
 
     /**
@@ -92,22 +114,23 @@ class Task<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IIm
      */
     @SuppressWarnings("unchecked")
     final public
-    M loadSipImage ( String fn ) throws ValueError {
-        M image = loadImage(fn);
+    IImage<A> loadSipImage ( String fn ) throws ValueError {
+        IImage<A> image = loadImage(fn);
         SipLibrary <A> sipLib = new SipLibrary <>();
-        SipTreeNodeBuilder <N, A, M, G> builder = new SipTreeNodeBuilder <>(image);
+        SipTreeNodeBuilder <N, A, G> builder = new SipTreeNodeBuilder <>(image);
 
-        return (M) sipLib.convertImageToSipImage(builder.buildTree(), image);
+        return sipLib.convertImageToSipImage(builder.buildTree(new SipImageBlock<A>(image.getMat())));
     }
 
     /**
      * @param fn
      * @param image
      */
-    public
-    final
-    void saveImage ( String fn, M image ) {
-        Imgcodecs.imwrite(fn, (Mat) image);
+    public final
+    CompressedImage <A> saveImage ( String fn, CompressedImage <A> image ) {
+        Imgcodecs.imwrite(fn, image.getMat());
+
+        return image;
     }
 
     /**
@@ -118,11 +141,10 @@ class Task<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IIm
      */
     @Override
     public final
-    M apply ( String filename ) {
+    IImage<A> apply ( String filename ) {
         logger.info("Executing task " + getClass());
-
         try {
-            image = ((scheme == SIP) ? loadSipImage(filename) : loadImage(filename));
+            inputImage = ((scheme == SIP) ? loadSipImage(filename) : loadImage(filename));
 
             return execute(filename);
 
@@ -139,11 +161,21 @@ class Task<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IIm
      * @return
      */
     protected
-    M execute ( String filename ) throws ValueError {
-        M image = null;
-        for (int i = 0; i < tasks.size(); i++) {
-            image = tasks.get(0).execute(filename);
+    IImage<A> execute ( String filename ) throws ValueError {
+        IImage<A> image = null;
+        for (Task <N, A, G> task : tasks) {
+            image = task.execute(filename);
         }
+        //todo pre-, post-??
+        int bound = getImageProcessorListeners().size();
+        for (int i = 0; i < bound; i++) {
+            getImageProcessorListeners().get(i).onPreprocess(processor, filename, null);
+            getImageProcessorListeners().get(i).onProcess(processor, inputImage);
+            getImageProcessorListeners().get(i).onPostprocess(processor, outputImage);
+        }
+
+        range(0, getCodecListeners().size())
+                .forEach(j -> getCodecListeners().get(j).onCreated(codec));
 
         return image;
     }
@@ -153,7 +185,8 @@ class Task<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IIm
      */
     @Override
     public
-    void onPreprocess () {
+    void onPreprocess ( IImageProcessor <N, A, G> processor, String filename, IImage<A> image) throws ValueError {
+        logger.info("On preprocessing \n");
 
     }
 
@@ -162,7 +195,8 @@ class Task<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IIm
      */
     @Override
     public
-    void onProcess () {
+    void onProcess ( IImageProcessor <N, A, G> processor, IImage<A> inputImage ) {
+        logger.info("On processing \n");
 
     }
 
@@ -171,34 +205,17 @@ class Task<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IIm
      */
     @Override
     public
-    void onPostprocess () {
+    void onPostprocess ( IImageProcessor <N, A, G> processor, CompressedImage <A> outputImage ) {
+        logger.info("On postprocessing \n");
 
     }
 
     /**
-     *
+     * @param codec
      */
     @Override
     public
-    void onCreateCodec () {
-
-    }
-
-    /**
-     *
-     */
-    @Override
-    public
-    void onEncode () {
-
-    }
-
-    /**
-     *
-     */
-    @Override
-    public
-    void onDecode () {
-
+    void onCreated ( ICodec <N, A, G> codec ) {
+        logger.info(format("On codec created '%s'\n", codec));
     }
 }

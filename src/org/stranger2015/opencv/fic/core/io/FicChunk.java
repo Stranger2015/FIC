@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
+@Deprecated
 public
 class FicChunk extends ChunkRaw {
 
@@ -85,11 +86,12 @@ class FicChunk extends ChunkRaw {
         }
 
         public static void addPropChunk(String orig, String dest, Properties p) {
-            if (orig.equals(dest))
+            if (orig.equals(dest)) {
                 throw new RuntimeException("orig == dest???");
+            }
             PngReader pngr = new PngReader(new File(orig));
             PngWriter pngw = new PngWriter(new File(dest), pngr.imgInfo, true);
-            System.out.println("Reading : " + pngr.toString());
+            System.out.println("Reading : " + pngr);
             pngw.copyChunksFrom(pngr.getChunksList(), ChunkCopyBehaviour.COPY_ALL_SAFE);
             PngChunkPROP mychunk = new PngChunkPROP(pngw.imgInfo);
             mychunk.getProps().putAll(p);
@@ -101,14 +103,15 @@ class FicChunk extends ChunkRaw {
             }
             pngr.end();
             pngw.end();
-            System.out.printf("Done. Writen : " + dest);
+            System.out.printf("Done. Written : %s", dest);
         }
 
         static class MyCustomChunkFactory extends ChunkFactory { // this could also be an anonymous class
             @Override
             protected PngChunk createEmptyChunkExtended(String id, ImageInfo imgInfo) {
-                if (id.equals(PngChunkPROP.ID))
+                if (id.equals(PngChunkPROP.ID)) {
                     return new PngChunkPROP(imgInfo);
+                }
                 return super.createEmptyChunkExtended(id, imgInfo);
             }
         }
@@ -118,7 +121,7 @@ class FicChunk extends ChunkRaw {
             // it
             PngReader pngr = new PngReader(new File(ori));
             pngr.getChunkseq().setChunkFactory(new MyCustomChunkFactory());
-            System.out.println("Reading : " + pngr.toString());
+            System.out.printf("Reading : %s\n", pngr);
             pngr.readSkippingAllRows();
             pngr.end();
             // we know there can be at most one chunk of this type...

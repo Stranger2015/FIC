@@ -1,34 +1,83 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.opencv.core.Size;
-import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.fic.core.ImageBlock;
+import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
+import org.stranger2015.opencv.fic.transform.ScaleTransform;
+import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @param <N>
- * @param <M>
+ 
  */
 public
-class SipEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>, G extends BitBuffer>
-        extends SaEncoder <N, A, M, G> {
+class SipEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+        extends SaEncoder <N, A, G> {
 
     /**
-     * @param inputImage
-     * @param rangeSize
-     * @param domainSize
+     *
+     * @param scheme
+     * @param nodeBuilder
+     * @param searchProcessor
+     * @param scaleTransform
+     * @param imageBlockGenerator
+     * @param comparator
+     * @param transforms
+     * @param filters
+     * @param fractalModel
      */
     public
-    SipEncoder ( M inputImage, Size rangeSize, Size domainSize ) {
-        super(inputImage, rangeSize, domainSize);
+    SipEncoder (
+            EPartitionScheme scheme,
+            ITreeNodeBuilder <N, A, G> nodeBuilder,
+            ISearchProcessor <N, A, G> searchProcessor,
+            ScaleTransform <A, G> scaleTransform,
+            ImageBlockGenerator <N, A, G> imageBlockGenerator,
+            IDistanceator <A> comparator,
+            Set <ImageTransform <A, G>> transforms,
+            Set <IImageFilter <M, A>> filters,
+            FractalModel <N, A, G> fractalModel
+    ) {
+        super(scheme,
+                nodeBuilder,
+                searchProcessor,
+                scaleTransform,
+                imageBlockGenerator,
+                comparator,
+                transforms,
+                filters,
+                fractalModel
+        );
+    }
+
+    public
+    SipEncoder ( IImage<A> image, IIntSize rangeSize, IIntSize domainSize ) {
+        super(image, rangeSize, domainSize);
+    }
+
+    public
+    ImageBlockGenerator <N, A, G> createBlockGenerator ( ITiler<N, A, G> tiler,
+                                                            EPartitionScheme scheme,
+                                                            IEncoder <N, A, G> encoder,
+                                                            IImage <A> image,
+                                                            IIntSize rangeSize,
+                                                            IIntSize domainSize
+    ) {
+        return new SipImageBlockGenerator <>(
+                tiler,
+                scheme,
+                encoder,
+                image,
+                rangeSize,
+                domainSize
+        );
     }
 
     /**
@@ -47,8 +96,8 @@ class SipEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exten
      */
     @Override
     public
-    M randomTransform ( M image, ImageTransform <M, A, G> transform ) {
-        return null;//todo
+    M randomTransform ( M image, ImageTransform <A, G> transform ) {
+        return image;//todo
     }
 
     /**
@@ -58,8 +107,8 @@ class SipEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exten
      */
     @Override
     public
-    M applyTransform ( M image, ImageTransform <M, A, G> transform ) {
-        return null;//todo
+    M applyTransform ( M image, ImageTransform <A, G> transform ) {
+        return image;//todo
     }
 
     /**
@@ -69,8 +118,8 @@ class SipEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exten
      */
     @Override
     public
-    M applyAffineTransform ( M image, AffineTransform <M, A, G> transform ) {
-        return null;//todo
+    M applyAffineTransform ( M image, AffineTransform <A, G> transform ) {
+        return image;//todo
     }
 
     /**
@@ -129,17 +178,23 @@ class SipEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exten
      * @param rangeSize
      * @return
      */
-    @Override
     public
-    ImageBlockGenerator <N, A, M, G> createBlockGenerator ( IEncoder <N, A, M, G> encoder,
-                                                            M image,
-                                                            Size rangeSize,
-                                                            Size domainSize ) {
+    ImageBlockGenerator <N, A, G> createBlockGenerator (
+            ITiler <N, A, G> tiler,
+            EPartitionScheme scheme,
+            IEncoder <N, A, G> encoder,
+            GrayScaleImage<A> image,
+            IntSize rangeSize,
+            IntSize domainSize
+    ) {
         return new SipImageBlockGenerator <>(
+                tiler,
+                scheme,
                 encoder,
                 image,
                 rangeSize,
-                domainSize);
+                domainSize
+        );
     }
 
     /**
@@ -149,9 +204,13 @@ class SipEncoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exten
      * @param step
      * @return
      */
+   @SuppressWarnings("unchecked")
     @Override
     public
-    List <ImageBlock <A>> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
-        return Collections.emptyList(); //todo
+    List <IImageBlock <A>> generateAllTransformedBlocks ( GrayScaleImage<A> image,
+                                                         int sourceSize,
+                                                         int destinationSize,
+                                                         int step ) {
+        return (List <IImageBlock <A>>) List.of(image); //fixme
     }
 }

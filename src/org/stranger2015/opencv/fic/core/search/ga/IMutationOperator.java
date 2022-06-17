@@ -1,11 +1,12 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
-/**
- * @param <T>
- */
-public
-interface IMutationOperator<T extends Individual <T, ?, ?, ?>> extends IUnaryOperator <T> {
+import org.stranger2015.opencv.fic.core.Address;
+import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.utils.BitBuffer;
 
+public
+interface IMutationOperator</*T extends Individual <T, ?, ?, ?>*/ /* M extends IImage <A> */, A extends Address<A>,
+        G extends BitBuffer> {
     /**
      * @param geneIndex
      */

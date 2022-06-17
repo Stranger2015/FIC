@@ -2,13 +2,16 @@ package org.stranger2015.opencv.fic.utils.validators;
 
 import com.beust.jcommander.IParameterValidator;
 import com.beust.jcommander.ParameterException;
+import com.beust.jcommander.validators.NoValidator;
 import org.stranger2015.opencv.fic.utils.Options;
+
+import static java.lang.String.*;
 
 /**
  * validate the given value is a number greater than zero
  */
 public
-class ScalerValidator implements IParameterValidator {
+class ScalerValidator extends NoValidator implements IParameterValidator {
     @Override
     public
     void validate ( String arg, String val ) throws ParameterException {
@@ -19,7 +22,7 @@ class ScalerValidator implements IParameterValidator {
                     throw new NumberFormatException();
                 }
             } catch (NumberFormatException nfe) {
-                throw new ParameterException(String.format("Parameter %s has an invalid value: %s", arg, num));
+                throw new ParameterException(format("Parameter %s has an invalid value: %s", arg, num));
             }
         }
     }

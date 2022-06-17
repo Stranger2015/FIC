@@ -2,15 +2,14 @@ package org.stranger2015.opencv.fic.transform;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.stranger2015.opencv.fic.core.*;
-import org.stranger2015.opencv.fic.core.codec.DecAddress;
-import org.stranger2015.opencv.fic.core.codec.IAddress;
+import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.io.Serializable;
+import static org.stranger2015.opencv.fic.core.IAddress.valueOf;
+import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
 
 /**
  * Produces transformed copies of a given input image.
@@ -28,8 +27,8 @@ import java.io.Serializable;
  * [   0    0    1   ]     [  0   0     1  ]
  */
 public abstract
-class ImageTransform<M extends  IImage<A> , A extends Address <A>, G extends BitBuffer>
-        implements ITransform <M, A, G>, Serializable {
+class ImageTransform<A extends IAddress <A>, G extends BitBuffer>
+        implements ITransform <A, G> {
 
     /**
      * @param image
@@ -37,7 +36,7 @@ class ImageTransform<M extends  IImage<A> , A extends Address <A>, G extends Bit
      * @param address
      */
     public
-    ImageTransform ( M image, EInterpolationType type, IAddress <A> address ) {
+    ImageTransform ( IImage <A> image, EInterpolationType type, IAddress <A> address ) {
         this(image, type, address, 0, 1.0, -1);
     }
 
@@ -46,9 +45,17 @@ class ImageTransform<M extends  IImage<A> , A extends Address <A>, G extends Bit
      */
     protected
     ImageTransform () throws ValueError {
-        address = new DecAddress <>(0);
+        address = valueOf(0);
         outputImage = null;
-        type = EInterpolationType.BILINEAR;
+        type = BILINEAR;
+    }
+
+    /**
+     * @param address
+     */
+    public
+    void setAddress ( @NotNull IAddress <A> address ) {
+        this.address = address;
     }
 
     /**
@@ -81,7 +88,7 @@ class ImageTransform<M extends  IImage<A> , A extends Address <A>, G extends Bit
         }
     }
 
-    protected final M outputImage;
+    protected final IImage <A> outputImage;
     protected final EInterpolationType type;
 
     protected IAddress <A> address;//16 bits        >>> 16
@@ -95,9 +102,9 @@ class ImageTransform<M extends  IImage<A> , A extends Address <A>, G extends Bit
      * @param contrastScale
      * @param dihedralAffineTransformIndex
      */
-    @SuppressWarnings("unchecked")
+//    @SuppressWarnings("unchecked")
     public
-    ImageTransform ( M image,
+    ImageTransform ( IImage <A> image,
                      EInterpolationType type,
                      IAddress <A> address,
                      int brightnessOffset,
@@ -110,21 +117,21 @@ class ImageTransform<M extends  IImage<A> , A extends Address <A>, G extends Bit
         this.contrastScale = contrastScale;
         this.dihedralAffineTransformIndex = dihedralAffineTransformIndex;
 
-        outputImage = (M) new CompressedImage<>(image);
+        outputImage = new CompressedImage <>(image);
     }
 
     /**
      * @param image
      * @param address
-     * @param <M>
      * @param <A>
      * @param <G>
      * @return
      */
     @Contract("_, _ -> new")
+    @SuppressWarnings("unchecked")
     public static
-    <M extends  IImage<A> , A extends Address <A>, G extends BitBuffer>
-    @NotNull ImageTransform <M, A, G> create ( M image, IAddress <A> address ) {
+    <A extends IAddress <A>, G extends BitBuffer>
+    @NotNull ImageTransform <A, G> create ( IImage <A> image, IAddress <A> address ) {
         return new NoneTransform <>(
                 image,
                 null,
@@ -135,31 +142,46 @@ class ImageTransform<M extends  IImage<A> , A extends Address <A>, G extends Bit
     }
 
     /**
-     *
-     *
+     * @param inputImage
+     * @param transformMatrix
+     * @param type
+     * @return
+     */
+    @Override
+    public
+    IImage <A> transform ( @NotNull IImage <A> inputImage,
+                           IImage <A> transformMatrix,
+                           EInterpolationType type ) {
+
+        return ITransform.super.transform(inputImage, transformMatrix, type);
+    }
+
+    /**
      * @return
      */
     public
-    M getOutputImage () {
+    IImage <A> getOutputImage () {
         return outputImage;
     }
 
     /**
-     *
-     *
      * @param inputImage
      * @param transformMatrix
      * @param interpolationType
      * @return
      */
-    @SuppressWarnings("unchecked")
+//    @SuppressWarnings("unchecked")
     @Override
-    public
-    Mat warpAffine ( Mat inputImage, Mat transformMatrix, EInterpolationType interpolationType ) {
-        M outputImage = (M) new Image <>(inputImage);
-        Imgproc.warpAffine( inputImage, outputImage.getMat(), transformMatrix, new Size(1,1));//fixme
+    public final
+    IImage <A> warpAffine ( IImage <A> inputImage, IImage <A> transformMatrix, EInterpolationType interpolationType ) {
+        IImage <A> outputImage = new GrayScaleImage <>(inputImage);
+        Imgproc.warpAffine(
+                inputImage.getMat(),
+                outputImage.getMat(),
+                transformMatrix.getMat(),
+                new Size(1, 1));//fixme
 
-        return outputImage.getMat();
+        return outputImage;
     }
 
     /**
@@ -176,7 +198,7 @@ class ImageTransform<M extends  IImage<A> , A extends Address <A>, G extends Bit
      */
     @Override
     public final
-    void writeBits ( G bb, ImageTransform <M, A, G> transform ) {
+    void writeBits ( G bb, ImageTransform <A, G> transform ) {
         bb.writeBits(transform.dihedralAffineTransformIndex, 3);
         bb.writeBits((long) transform.contrastScale * 255, 7);
         bb.writeBits(transform.brightnessOffset, 5);
@@ -189,7 +211,7 @@ class ImageTransform<M extends  IImage<A> , A extends Address <A>, G extends Bit
      */
     @Override
     public final
-    ImageTransform <M, A, G> readBits ( G bb ) throws ValueError {
+    ImageTransform <A, G> readBits ( G bb ) throws ValueError {
         address.newInstance((int) bb.readBits(16));
         brightnessOffset = (int) bb.readBits(5);
         contrastScale = bb.readBits(7) / 255.0;

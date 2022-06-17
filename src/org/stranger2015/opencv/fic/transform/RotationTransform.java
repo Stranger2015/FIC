@@ -2,15 +2,15 @@ package org.stranger2015.opencv.fic.transform;
 
 import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.fic.core.codec.IAddress;
+import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * functor class to rotate an image by the given degrees
  */
 public
-class RotationTransform<M extends IImage<A>, A extends Address <A>, G extends BitBuffer>
-        extends PreserveAlphaTransform <M, A, G> {
+class RotationTransform</*M extends IImage<A>,*/ A extends IAddress <A>, G extends BitBuffer>
+        extends PreserveAlphaTransform <A, G> {
 
     private final double degrees;
     private final double pointX;//int

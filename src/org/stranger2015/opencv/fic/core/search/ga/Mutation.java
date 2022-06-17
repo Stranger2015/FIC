@@ -17,7 +17,7 @@ class Mutation<T extends Individual<T,A,G>, A extends Address<A>, G extends BitB
      * @param rate
      */
     protected
-    Mutation ( GaProcessor <T, A,G,C> gaProcessor, double rate ) {
+    Mutation ( GaSearchProcessor <T, A,G,C> gaProcessor, double rate ) {
         super(gaProcessor, rate);
     }
 

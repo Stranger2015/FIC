@@ -1,22 +1,30 @@
 package org.stranger2015.opencv.fic.core.codec;
 
+import org.stranger2015.opencv.fic.core.Address;
+import org.stranger2015.opencv.fic.core.IAddress;
+import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.utils.BitBuffer;
+
 /**
  *
  */
 public
-interface ICodecListener {
-   /**
-    *
-    */
-   void onCreateCodec ();
+interface ICodecListener<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */,
+        G extends BitBuffer>
 
-   /**
-    *
-    */
-   void onEncode();
+        extends IListener <ICodec <N, A, G>> {
 
-   /**
-    *
-    */
-   void onDecode();
+//    /**
+//     *
+//     */
+//    void onCreated ( ICodec <N, A, G> codec );
+
+    /**
+     *
+     */
+    default
+    void onCodecCreated ( ICodec <N, A, G> codec ) {
+        onCreated(codec);
+    }
 }

@@ -1,18 +1,17 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.opencv.core.Mat;
-import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.fic.core.codec.IAddress;
+import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
- * @param <M>
+ 
  * @param <A>
  * @param <G>
  */
 public
-class FlopTransform<M extends IImage <A>, A extends Address <A>, G extends BitBuffer> extends ImageTransform <M, A, G> {
+class FlopTransform</* M extends IImage <A> */, A extends IAddress <A>, G extends BitBuffer>
+        extends ImageTransform <A, G> {
+
     /**
      * @param image
      * @param type
@@ -31,7 +30,7 @@ class FlopTransform<M extends IImage <A>, A extends Address <A>, G extends BitBu
      */
     @Override
     public
-    M transform ( M inputImage, Mat transformMatrix, EInterpolationType type ) {
+    M transform ( M inputImage, M transformMatrix, EInterpolationType type ) {
         return null;
     }
 }

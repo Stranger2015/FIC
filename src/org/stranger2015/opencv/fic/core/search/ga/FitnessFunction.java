@@ -1,17 +1,19 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
 import org.stranger2015.opencv.fic.core.Address;
+import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.search.SearchProcessorEvaluator;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
- * @param <T>
+ 
  */
 public
-class FitnessFunction<T extends Individual <T, A, G, C>, A extends Address <A>, G extends BitBuffer,
-        C extends Chromosome <T, A, G>>
+class FtnessFunction</*T extends Individual <T, A, G, C>*/ /* M extends IImage <A> */, A extends IAddress <A>,
+        G extends BitBuffer>
+//        C extends Chromosome <T, A, G>>
 
-        extends SearchProcessorEvaluator <T, A> {
+        extends SearchProcessorEvaluator <M, A,G> {
 
     /**
      * Applies this function to the given argument.
@@ -20,7 +22,7 @@ class FitnessFunction<T extends Individual <T, A, G, C>, A extends Address <A>, 
      */
     @Override
     public
-    Number apply ( T i ) {
+    Number apply ( M i ) {
         // Loop over population evaluating individuals and suming population
         // fitness
         double fitness = calcFitness(i);
@@ -35,8 +37,13 @@ class FitnessFunction<T extends Individual <T, A, G, C>, A extends Address <A>, 
     }
 
     protected
-    double calcFitness ( T individual ) {
+    double calcFitness ( M individual ) {
 
         return 0;
+    }
+
+    public
+    Number apply ( Population <A, G> population ) {
+        return null;
     }
 }

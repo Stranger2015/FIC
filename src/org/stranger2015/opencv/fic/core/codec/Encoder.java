@@ -1,44 +1,170 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.jetbrains.annotations.Contract;
-import org.opencv.core.Size;
-import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.CompressedImage;
-import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.fic.core.ImageBlock;
+import org.jetbrains.annotations.NotNull;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfInt;
+import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.io.FractalReader;
+import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
+import org.stranger2015.opencv.fic.transform.ScaleTransform;
+import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
+import java.util.*;
+
+import static java.util.stream.IntStream.range;
+import static org.opencv.core.Core.flip;
+import static org.opencv.core.Core.reduce;
+import static org.stranger2015.opencv.fic.core.codec.ESplitKind.VERTICAL;
 
 /**
  * @param <N>
- * @param <M>
  */
 public abstract
-class Encoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>, G extends BitBuffer>
-        implements IEncoder <N, A, M, G>, IConstants {
+class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
 
-    public static final Size ZERO_SIZE = new Size(0, 0);
+        implements IEncoder <N, A, G> {
 
-    protected final ImageBlockGenerator <N, A, M, G> blockGenerator;
+    static {
+        @SuppressWarnings("raw") final Map <Class <?>, Class <?>> encoderToTilerMap = new HashMap <>();
 
-    protected M inputImage;
-    protected M outputImage;
+        encoderToTilerMap.put(BinTreeEncoder.class, BinTreeTiler.class);
+        encoderToTilerMap.put(QuadTreeEncoder.class, QuadTreeTiler.class);
+    }
 
-    public final List <ImageBlock <A>> rangeBlocks = new ArrayList <>();
-    public final List <ImageBlock <A>> domainBlocks = new ArrayList <>();
-    public final List <ImageBlock <A>> codebookBlocks = new ArrayList <>();
+    protected ISearchProcessor <N, A, G> searchProcessor;
+    protected ITreeNodeBuilder <N, A, G> nodeBuilder;
 
-    protected final List <ImageTransform <M, A, G>> transforms = new ArrayList <>();
+    protected ITreeNodeBuilderFactory <N, A, G> nodeBuilderFactory;
 
+    protected IImage <A> inputImage;
+    protected CompressedImage <A> outputImage;
+
+    protected IImage <A> image;
+
+    protected IIntSize rangeSize;
+    protected IIntSize domainSize;
+
+    public
+    Encoder ( EPartitionScheme scheme, Class <?>[] paramTypes, Object... params ) {
+        this(scheme, paramTypes, params);
+//                new Class<?>[]{ ScaleTransform.class, ImageBlockGenerator.class, IDistanceator.class,Set.class,Set.class},
+//                scheme,b}
+//        );
+    }
+
+    public
+    EPartitionScheme getScheme () {
+        return scheme;
+    }
+
+    protected final EPartitionScheme scheme;
+    protected final ScaleTransform <A, G> scaleTransform;
+    protected ImageBlockGenerator <N, A, G> imageBlockGenerator;
+    protected final IDistanceator <A> comparator;
+    protected final Set <ImageTransform <A, G>> transforms;
+    protected final Set <IImageFilter <A>> filters;
+
+    protected final FractalModel <N, A, G> fractalModel;
+
+    protected ITiler <N, A, G> tiler;
+
+    protected final List <RegionOfInterest <A>> roiBlocks = new ArrayList <>();//FIXME HERE??
+
+    /**
+     *
+     */
+    @SuppressWarnings("unchecked")
+    protected
+    Encoder (
+            EPartitionScheme scheme,
+            ITreeNodeBuilder <N, A, G> nodeBuilder,
+            ISearchProcessor <N, A, G> searchProcessor,
+            ScaleTransform <A, G> scaleTransform,
+            ImageBlockGenerator <N, A, G> imageBlockGenerator,
+            IDistanceator <A> comparator,
+            Set <ImageTransform <A, G>> transforms,
+            Set <IImageFilter <A>> filters,
+            FractalModel <N, A, G> fractalModel
+    ) {
+        this.scheme = scheme;
+        this.nodeBuilder = nodeBuilder;
+        this.searchProcessor = searchProcessor;
+        this.scaleTransform = scaleTransform;
+        this.transforms = transforms;
+        this.comparator = comparator;
+        this.filters = filters;
+        this.fractalModel = fractalModel;
+
+        outputImage = new CompressedImage <>(inputImage);
+        this.imageBlockGenerator = imageBlockGenerator;
+    }
+
+    @SuppressWarnings("unchecked")
     public static
-    <N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>, G extends BitBuffer>
-    IEncoder <N, A, M, G> create ( String encoderClassName ) {
+    <N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
+    IEncoder <N, A, G> create ( @NotNull EPartitionScheme scheme,
+                                Class <?>[] paramTypes,
+                                Object... params )
+            throws ReflectiveOperationException {
 
+        return (IEncoder <N, A, G>) Utils.create(
+                scheme.getEncoderClassName(),
+                List.of(),
+                paramTypes,
+                params
+        );
+    }
+
+    /**
+     * @return
+     */
+    public final
+    List <RegionOfInterest <A>> getRegionBlocks () {
+        return roiBlocks;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    IImage <A> getInputImage () {
+        return inputImage;
+    }
+
+    /**
+     * @param tiler
+     * @param scheme
+     * @param encoder
+     * @param image
+     * @param rangeSize
+     * @param domainSize
+     * @return
+     */
+    @Override
+    public
+    ImageBlockGenerator <N, A, G> createBlockGenerator ( ITiler <N, A, G> tiler,
+                                                         EPartitionScheme scheme,
+                                                         IEncoder <N, A, G> encoder,
+                                                         IImage <A> image,
+                                                         IIntSize rangeSize,
+                                                         IIntSize domainSize
+    ) {
+        return null;//TODO
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    ITiler <N, A, G> createTiler0 () {
         return null;
     }
 
@@ -47,8 +173,8 @@ class Encoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends 
      */
     @Override
     public
-    List <ImageBlock <A>> getRangeBlocks () {
-        return rangeBlocks;
+    ITiler <N, A, G> getTiler () {
+        return tiler;
     }
 
     /**
@@ -56,165 +182,204 @@ class Encoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends 
      */
     @Override
     public
-    List <ImageBlock <A>> getDomainBlocks () {
-        return domainBlocks;
+    FractalModel <N, A, G> getModel () {
+        return fractalModel;
     }
 
     /**
+     * @param filename
      * @return
      */
+    @SuppressWarnings("unchecked")
     @Override
     public
-    List <ImageBlock <A>> getCodebookBlocks () {
-        return codebookBlocks;
+    FractalModel <N, A, G> loadModel ( String filename ) {
+        return (FractalModel <N, A, G>) new FractalReader <>(new File(filename)).readModel();
+    }
+
+    /**
+     * @param imageBlock
+     * @return
+     */
+    @Contract(pure = true)
+    private
+    ESplitKind chooseDirection ( IImageBlock <A> imageBlock ) {
+        return VERTICAL;//fixme
     }
 
     /**
      * @return
      */
-    @Override
     public
-    M getInputImage () {
-        return inputImage;
-    }
-
-    /**
-     * @return
-     */
-    public
-    M getOutputImage () {
+    CompressedImage <A> getOutputImage () {
         return outputImage;
     }
 
     /**
-     * @param inputImage
-     * @param rangeSize
-     * @param domainSize
+     *
      */
-    @SuppressWarnings("unchecked")
-    protected
-    Encoder ( M inputImage, Size rangeSize, Size domainSize ) {
-        this.inputImage = inputImage;
-        outputImage = (M) new CompressedImage <>(inputImage);
+    @Override
+    public
+    void segmentRegion ( RegionOfInterest <A> roi )
+            throws ValueError {
 
-        outputImage.setOriginalImageWidth(inputImage.getWidth());
-        outputImage.setOriginalImageHeight(inputImage.getHeight());
-
-        blockGenerator = createBlockGenerator(this, inputImage, rangeSize, domainSize);
-
-//        compressor = new Compressor <N, A, M, G>(domainSize);
+        imageBlockGenerator.generateRangeBlocks(roi);
+        imageBlockGenerator.generateDomainBlocks(roi);
+        imageBlockGenerator.createCodebookBlocks(roi);
     }
 
     /**
      * @return
      */
     public
-    void segmentImage ( M inputImage ) {
+    IImage <A> encode ( IImage <A> image ) throws ValueError {
+        assert image != null : "Cannot compress null image";
+        final List <RegionOfInterest <A>> regions = segmentImage(image);
+        List <List <IImageBlock <A>>> list = handleRegionList(regions);
+//        for (int i = 0; i < list.size(); i++) {
+//            List <IImageBlock <A>> ranges = list.get(i);
+//            for (int j = 0; j < ranges.size();j++) {
+//
 
-        blockGenerator.generateRangeBlocks(inputImage);
-        blockGenerator.generateDomainBlocks(inputImage);
-        blockGenerator.createCodebookBlocks(inputImage, domainBlocks);
+//            }
+
+//        }
+
+        return searchProcessor.search();
     }
 
-    /**
-     * @param encoder
-     * @param rangeSize
-     * @param domainSize
-     * @return
-     */
-    protected abstract
-    ImageBlockGenerator <N, A, M, G> createBlockGenerator (
-            IEncoder <N, A, M, G> encoder,
-            M image,
-            Size rangeSize,
-            Size domainSize );
+    private
+    List <List <IImageBlock <A>>> handleRegionList ( List <RegionOfInterest <A>> regions ) {
+        List <List <IImageBlock <A>>> list = new ArrayList <>();
+        ImageBlockGenerator <N, A, G> imageBlockGenerator =
+                createBlockGenerator(
+                        getTiler(),
+                        getScheme(),
+                        this,
+                        getImage(),
+                        getTiler().getRangeSize(),
+                        getTiler().getDomainSize()
+                );
+        for (RegionOfInterest <A> roi : regions) {
+            IImage <A> roiImage = roi;
+            /*
+             * Normalization. Before tiling the image, pass it throw a set of filters.
+             * This might improve results, if used wisely.
+             */
+            for (IImageFilter <A> filter : filters) {
+                roi = (RegionOfInterest <A>) filter.filter(roiImage);
+            }
+//            rangeBlocks=<List <IImageBlock <A>>
+            list.add(imageBlockGenerator.generateRangeBlocks(roi));
+        }
 
-    /**
-     * @return
-     */
-    public
-    M encode ( M image ) {
-        segmentImage(image);
-
-        return iterateRangeBlocks(image);
+        return list;
     }
 
     /**
      * @param image
      * @return
      */
-    @SuppressWarnings("unchecked")
-    protected
-    M iterateRangeBlocks ( M image ) {
-        rangeBlocks.forEach(rangeBlock -> {
-            int percent = 100 * (rangeBlocks.indexOf(rangeBlock) + 1) / rangeBlocks.size();
-            System.err.printf("%d%%", percent);
-            ImageTransform <M, A, G> bestTransform = ImageTransform.create(image, rangeBlock.getAddress());
-            int minDistance = Integer.MAX_VALUE;
-            iterateDomainBlocks(rangeBlock, bestTransform, minDistance);
-            getTransforms().add(bestTransform);
-        });
-        ((ICompressedImage <A>) outputImage).getTransforms().addAll(transforms);
-
-        return outputImage;
-    }
-
-    /**
-     * @param rangeBlock
-     * @param bestTransform
-     * @param minDistance
-     */
-    protected
-    void iterateDomainBlocks ( ImageBlock <A> rangeBlock, ImageTransform <M, A, G> bestTransform, int minDistance ) {
-        for (ImageBlock <A> domainBlock : domainBlocks) {
-            double alpha = 0;
-            for (int i = 0; i < domainBlock.width; i++) {
-                for (int j = 0; j < domainBlock.height; j++) {
-                    int[] data = new int[4];//fixme
-                    alpha += (domainBlock.get(i, j, data) - domainBlock.meanPixelValue);
-                }
-            }
-
-            double contrast = alpha / domainBlock.beta;//byte
-            int brightness = (int) (rangeBlock.meanPixelValue - contrast * domainBlock.meanPixelValue);
-
-            for (int index = 0; index < 8; index++) {
-                ImageBlock <A> transformedDomainBlock =
-                        new ImageBlock <>(
-                                inputImage,
-                                domainBlock.getAddress(),
-                                domainBlock.width,
-                                domainBlock.height);
-
-                for (int x = 0; x < domainBlock.width; x++) {
-                    for (int y = 0; y < domainBlock.height; y++) {
-                        int newX = x * dihedralAffineTransforms[index][0] + y * dihedralAffineTransforms[index][1];
-                        int newY = x * dihedralAffineTransforms[index][2] + y * dihedralAffineTransforms[index][3];
-                        if (newX < 0) {
-                            newX += domainBlock.width;
-                        }
-                        if (newY < 0) {
-                            newY += domainBlock.height;
-                        }
-                        short newPixelValue = (short) (contrast * domainBlock.put(x, y) + brightness);
-                        transformedDomainBlock.put(newX, newY, ((newPixelValue < MAX_PIXEL_VALUE) &&
-                                (newPixelValue >= 0))
-                                ? newPixelValue :
-                                (MAX_PIXEL_VALUE / 2.0));
-                    }
-                }
-                int distance = getDistance(rangeBlock, transformedDomainBlock);
-                if ((distance < minDistance) && (distance != 0)) {
-                    minDistance = distance;
-                    bestTransform.dihedralAffineTransformIndex = index;
-//                    bestTransform.setAddress(transformedDomainBlock.domainBlock.getx, domainBlock.y);
-                    // bestTransform.originalDomainY = domainBlock.y;
-                    bestTransform.brightnessOffset = brightness;
-                    bestTransform.contrastScale = contrast;
-                }
-            }
+    @Contract("_ -> param1")
+    private
+    IImage <A> iterateRegions ( IImage <A> image ) {
+        for (int i = 0, size = image.getRegions().size(); i < size; i++) {
+            RegionOfInterest <A>region = image.getRegions().get(i);
         }
+
+        return image;
     }
+
+//    /**
+//     * @param image
+//     * @return
+//     */
+//    @SuppressWarnings("unchecked")
+//    protected
+//    IImage <A> iterateRangeBlocks ( IImage <A> image ) {
+//        rangeBlocks.forEach(rangeBlock -> {
+//            int percent = 100 * (rangeBlocks.indexOf(rangeBlock) + 1) / rangeBlocks.size();
+//            System.err.printf("%d%%", percent);
+//            ImageTransform <A, G> bestTransform = ImageTransform.create(image, rangeBlock.getAddress());
+//            int minDistance = Integer.MAX_VALUE;
+//            try {
+//                iterateDomainBlocks(rangeBlock, bestTransform, minDistance);
+//            } catch (ValueError e) {
+//                e.printStackTrace();
+//            }
+//            getTransforms().add(bestTransform);
+//        });
+//        outputImage.getTransforms().addAll(transforms);
+//
+//        return outputImage;
+//    }
+
+//    /**
+//     * @param rangeBlock
+//     * @param bestTransform
+//     * @param minDistance
+//     */
+//    protected
+//    void iterateDomainBlocks ( ImageBlock <A> rangeBlock,
+//                               ImageTransform <A, G> bestTransform,
+//                               int minDistance ) throws ValueError {
+//        for (ImageBlock <A> domainBlock : domainBlocks) {
+//            double alpha = 0;
+//            for (int i = 0; i < domainBlock.width; i++) {
+//                for (int j = 0; j < domainBlock.height; j++) {
+//                    int[] data = new int[4];//fixme
+//                    alpha += (domainBlock.get(i, j, data) - domainBlock.meanPixelValue);
+//                }
+//            }
+//
+//            for (int addr = 0; addr < domainBlock.getSideSize(); addr++) {
+//                int[] data = new int[4];//fixme
+//                alpha += (domainBlock.get(domainBlock.getAddress().newInstance(addr), data) - domainBlock.meanPixelValue);
+//            }
+
+//            double contrast = alpha / domainBlock.beta;//byte
+//            int brightness = (int) (rangeBlock.meanPixelValue - contrast * domainBlock.meanPixelValue);
+//
+//            for (int index = 0; index < 8; index++) {
+//                ImageBlock <A> transformedDomainBlock =
+//                        new ImageBlock <A>(
+//                                inputImage,
+//                                domainBlock.getSideSize(),
+//                                domainBlock.getAddress()
+//                        );
+//                int pixelAmount = domainBlock.getSideSize() * domainBlock.getSideSize();
+//                for (int addr = 0; addr < pixelAmount; addr++) {
+//                    for (int y = 0; y < domainBlock.height; y++) {
+//                    int newAddr = addr * -1; // fixme dihedralAffineTransforms[index][0] + y * dihedralAffineTransforms[index][1];
+//                        int newY = x * dihedralAffineTransforms[index][2] + y * dihedralAffineTransforms[index][3];
+//                    if (newAddr < 0) {
+//                        newAddr += domainBlock.getSideSize();
+//                    }
+//                        if (newY < 0) {
+//                            newY += domainBlock.height;
+//                        }
+//                    int newPixelValue = (short) (contrast * domainBlock.put(addr, new int[1]) + brightness);
+//                    transformedDomainBlock.put(
+//                            newAddr,
+//                            new int[]{
+//                                    ((newPixelValue < MAX_PIXEL_VALUE) && (newPixelValue >= 0)) ?
+//                                            newPixelValue :
+//                                            (MAX_PIXEL_VALUE / 2)
+//                            }//Originally was double
+//                    );
+////                    }
+//                }
+//                int distance = getDistance(rangeBlock, transformedDomainBlock);
+//                if ((distance < minDistance) && (distance != 0)) {
+//                    minDistance = distance;
+//                    bestTransform.dihedralAffineTransformIndex = index;
+//                    bestTransform.setAddress(transformedDomainBlock.getAddress());
+//                    bestTransform.brightnessOffset = brightness;
+//                    bestTransform.contrastScale = contrast;
+//                }
+//            }
+//        }
+//    }
 
     /**
      * @param range
@@ -222,49 +387,87 @@ class Encoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends 
      * @return
      */
     public
-    int getDistance ( ImageBlock <A> range, ImageBlock <A> domain ) {
-        double error = 0;
-        for (int i = 0; i < range.getWidth(); i++) {
-            for (int j = 0; j < range.getHeight(); j++) {
-                error += Math.pow(range.meanPixelValue - domain.meanPixelValue, 2);
-            }
-        }
+    int getDistance ( IImageBlock <A> range, IImageBlock <A> domain ) {
+        double error = range(0, range.getWidth().flatMap(i ->
+                range(0, range.getHeight())).mapToDouble(j ->
+                Math.pow(range.getMeanPixelValue() - domain.getMeanPixelValue(), 2)).sum();
         error = error / (double) (range.getWidth() * range.getHeight());
 
         return (int) error;
     }
 
     /**
-     *
-     */
-    @Contract(pure = true)
-    protected
-    void createCodebookBlocks ( M image, List <ImageBlock <A>> domainBlocks ) {
-//        for (int i = 0; i < domainBlocks.size(); i++) {
-//            domainBlocks.get(i);
-//        }
-    }
-
-    /**
      * @return
      */
     @Override
     public
-    List <ImageTransform <M, A, G>> getTransforms () {
+    Set <ImageTransform <A, G>> getTransforms () {
         return transforms;
     }
 
     /**
-     * @param x
+     * x = np.asarray(x).swapaxes (axis, 0);
+     * x = x[::-1, ...]
+     * x = x.swapaxes(0, axis);
+     *
+     * @param image
      * @param axis
      * @return
      */
+//    @SuppressWarnings("unchecked")
     public
-    M flipAxis ( M x, int axis ) {
-//        x = np.asarray(x).swapaxes (axis, 0);
-//        x = x[::-1, ...]
-//        x = x.swapaxes(0, axis);
-        return x;
+    IImage <A> flipAxis ( IImage <A> image, int axis ) {
+        Mat dest = new Mat(image.getMat().nativeObj);
+        flip(image.getMat(), dest, axis);
+
+        return new GrayScaleImage <>(dest) {
+            /**
+             * Sets a sample in the specified band for the pixel located at (x,y)
+             * in the DataBuffer using an int for input.
+             * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
+             * not in bounds.
+             *
+             * @param address
+             * @param b       The band to set.
+             * @param s       The input sample as an int.
+             * @throws NullPointerException           if data is null.
+             * @throws ArrayIndexOutOfBoundsException if the coordinates or
+             *                                        the band index are not in bounds.
+             */
+            @Override
+            public
+            void setSample ( IAddress <A> address, int b, int s ) {
+
+            }
+
+            /**
+             * Returns the sample in a specified band for the pixel located
+             * at (x,y) as an int.
+             * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
+             * not in bounds.
+             *
+             * @param address
+             * @param b       The band to return.
+             * @return the sample in a specified band for the specified pixel.
+             * @throws NullPointerException           if data is null.
+             * @throws ArrayIndexOutOfBoundsException if the coordinates or
+             *                                        the band index are not in bounds.
+             */
+            @Override
+            public
+            int getSample ( IAddress <A> address, int b ) {
+                return 0;
+            }
+
+            /**
+             * @return
+             */
+            @Override
+            public
+            MatOfInt getMat () {
+                return null;
+            }
+        };
     }
 
     /**
@@ -274,8 +477,8 @@ class Encoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends 
      */
     @Override
     public
-    M randomTransform ( M image, ImageTransform <M, A, G> transform ) {
-        return null;
+    IImage <A> randomTransform ( IImage <A> image, ImageTransform <A, G> transform ) {
+        return image;
     }
 
     /**
@@ -285,8 +488,8 @@ class Encoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends 
      */
     @Override
     public
-    M applyTransform ( M image, ImageTransform <M, A, G> transform ) {
-        return null;
+    IImage <A> applyTransform ( IImage <A> image, ImageTransform <A, G> transform ) {
+        return image;
     }
 
     /**
@@ -296,23 +499,10 @@ class Encoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends 
      */
     @Override
     public
-    M applyAffineTransform ( M image, AffineTransform <M, A, G> transform ) {
-        return null;
+    IImage <A> applyAffineTransform ( IImage <A> image, AffineTransform <A, G> transform ) {
+        return image;
     }
 
-//    /**
-//     * @param image
-//     * @param sourceSize
-//     * @param destinationSize
-//     * @param step
-//     * @return
-//     */
-//    @Override
-//    public
-//    List <ImageTransform <M, A, G>> compress ( M image, int sourceSize, int destinationSize, int step ) {
-//        return null;
-//    }
-//
     /**
      * @param image
      * @param sourceSize
@@ -322,69 +512,59 @@ class Encoder<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends 
      */
     @Override
     public
-    List <ImageBlock <A>> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
-        return null;
+    List <IImageBlock <A>> generateAllTransformedBlocks ( IImage <A> image,
+                                                          int sourceSize,
+                                                          int destinationSize,
+                                                          int step ) {
+        double factor = sourceSize; // destination_size
+        final List <IImageBlock <A>> transformedBlocks = new ArrayList <>();
+
+        for (int i = 0; i < image.getWidth() - sourceSize / step + 1; i++) {
+            for (int j = 0; j < image.getHeight() - sourceSize / step + 1; j++) {
+//Extract the source block and reduce it to the shape of a destination block
+                Mat dest = new Mat();
+                reduce(image.getMat(), dest, -1, -1, -1);
+            }
+        }
+//        for k in range((img.shape[0] - source_size) // step + 1):
+//        for l in range((img.shape[1] - source_size) // step + 1):
+//
+//                S = reduce(img[k*step:k*step+source_size,l*step:l*step+source_size], factor)
+//            # Generate all possible transformed blocks
+//        for direction, angle in candidates:
+
+//        transformedBlocks.add(n(k, l, direction, angle, applyTransformation(S, direction, angle));
+
+        return transformedBlocks;
     }
 
     /**
-     *
+     * @return
      */
-    protected
-    Encoder ( ImageBlockGenerator <N, A, M, G> blockGenerator ) {
-        this.blockGenerator = blockGenerator;
-    }
-
-    /**
-     *
-     */
-    @Override
     public
-    void onPreprocess () {
-
+    ImageBlockGenerator <N, A, G> getImageBlockGenerator () {
+        return imageBlockGenerator;
     }
 
     /**
-     *
+     * @return
      */
-    @Override
     public
-    void onProcess () {
-
+    ScaleTransform <A, G> getScaleTransform () {
+        return scaleTransform;
     }
 
     /**
-     *
+     * @return
      */
-    @Override
     public
-    void onPostprocess () {
-
+    IDistanceator <A> getComparator () {
+        return comparator;
     }
 
-    /**
-     *
-     */
-    @Override
     public
-    void onCreateCodec () {
-
+    IImage <A> getImage () {
+        return image;
     }
 
-    /**
-     *
-     */
-    @Override
-    public
-    void onEncode () {
-
-    }
-
-    /**
-     *
-     */
-    @Override
-    public
-    void onDecode () {
-
-    }
 }

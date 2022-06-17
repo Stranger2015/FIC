@@ -1,29 +1,40 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.fic.core.Image;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Unmodifiable;
+import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.core.ValueError;
 import org.stranger2015.opencv.utils.BitBuffer;
+
+import java.util.List;
 
 /**
  * @param <N>
  * @param <A>
- * @param <M>
+ 
  */
 public
-interface ICodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer> {
+interface ICodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+        extends Runnable {
 
     /**
      * @return
      */
-    IEncoder <N, A, M, G> getEncoder ();
+    @Contract(pure = true)
+    static @Unmodifiable
+    List <IListener <?>> getListeners () {
+        return List.of();
+    }
 
     /**
      * @return
      */
-    IDecoder <M,A> getDecoder ();
+    IEncoder <N, A, G> getEncoder ();
+
+    /**
+     * @return
+     */
+    IDecoder <N, A, G> getDecoder ();
 
     /**
      * @return
@@ -35,5 +46,10 @@ interface ICodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exten
      * @return
      * @throws ValueError
      */
-    Address<A> createAddress( int address ) throws ValueError;
+    IAddress <A> createAddress ( int address ) throws ValueError;
+
+    /**
+     * @param task
+     */
+    void addTask ( Task <N, A, G> task );
 }

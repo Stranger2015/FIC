@@ -10,28 +10,31 @@ import java.util.List;
  *
  */
 public
-class DecodeTask<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>, G extends BitBuffer>
-        extends Task<N, A, M, G> {
+class DecodeTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+        extends Task<N, A, G> {
 
-        private final IDecoder <M, A> decoder;
+        private final IDecoder <N, A, G> decoder;
 
     /**
      * @param filename
-     * @param decoder
      */
     public
     DecodeTask ( String filename,
                  EPartitionScheme scheme,
-                 List <Task <N, A, M, G>> tasks,
-                 IDecoder <M, A> decoder ) {
+                 ICodec <N, A, G> codec,
+                 List <Task <N, A, G>> tasks
+               /*  IDecoder <N, A, G> decoder */) {
 
-        super(filename, scheme, tasks );
+        super(filename, scheme, codec, tasks );
 
-        this.decoder = decoder;
+        this.decoder = codec.getDecoder();
     }
 
+    /**
+     * @return
+     */
     public
-    IDecoder <M, A> getDecoder () {
+    IDecoder <N, A, G> getDecoder () {
         return decoder;
     }
 
@@ -42,7 +45,10 @@ class DecodeTask<N extends TreeNode <N, A, M, G>, A extends Address <A>, M exten
     @Override
     protected
     M execute ( String filename ) throws ValueError {
+        M image = super.execute(filename);
 
-        return super.execute(filename);
+        FractalModel <N, A, G> fm =  codec.getEncoder().getModel();
+
+        return decoder.decode(fm);
     }
 }

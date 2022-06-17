@@ -1,9 +1,11 @@
 package org.stranger2015.opencv.fic.core;
 
+import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
+import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.fic.utils.Point;
 import org.stranger2015.opencv.utils.BitBuffer;
 
@@ -11,16 +13,18 @@ import org.stranger2015.opencv.utils.BitBuffer;
  * @param <N>
  * @param <A>
  */
-public class HvTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
-        extends TreeNodeBase <N, A, M, G> {
+public class HvTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, M extends IImage<A>, G extends BitBuffer>
+
+       extends TreeNodeBase <N, A, G> {
+
     /**
      * @param parent
      * @param quadrant
      * @param rect
      */
     public
-    HvTreeNode ( TreeNode <N, A, M, G> parent, EDirection quadrant, Rect rect ) {
-        super(parent, null, rect);
+    HvTreeNode ( TreeNode <N, A, G> parent, EDirection quadrant, Rect rect ) throws ValueError {
+        super(parent, quadrant, rect);
     }
 
     /**
@@ -29,7 +33,7 @@ public class HvTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, 
      * @return
      */
     public
-    HvTreeNode <N, A, M, G> createChild ( EDirection quadrant, Rect boundingBox ) throws ValueError {
+    HvTreeNode <N, A, G> createChild ( EDirection quadrant, Rect boundingBox ) throws ValueError {
         return new HvTreeNode <>(null, quadrant, boundingBox);
     }
 
@@ -41,15 +45,29 @@ public class HvTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, 
      */
 //    @Override
     public
-    HvTreeNode <N, A, M, G> createNode ( TreeNode <N, A, M, G> parent, EDirection quadrant, Rect boundingBox )
+    HvTreeNode <N, A, G> createNode ( TreeNode <N, A, G> parent, EDirection quadrant, Rect boundingBox )
             throws ValueError {
         return new HvTreeNode <>(parent, quadrant, boundingBox);
     }
 
     @Override
     public
-    TreeNode <N, A, M, G> createChild ( int address ) throws ValueError {
+    TreeNode <N, A, G> createChild ( int address ) throws ValueError {
       throw new UnsupportedOperationException();//  return new HvTreeNode<N, A,M>();
+    }
+
+    /**
+     * @param point
+     * @param layerIndex
+     * @param clusterIndex
+     * @param address
+     * @return
+     * @throws ValueError
+     */
+    @Override
+    public
+    TreeNode <N, A, G> createChild ( GrayScaleImage <A> point, int layerIndex, int clusterIndex, IAddress <A> address ) throws ValueError {
+        return null;
     }
 
     /**
@@ -62,16 +80,16 @@ public class HvTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, 
      * @return
      * @throws ValueError
      */
-    @Override
+//    @Override
     public
-    TreeNode <N, A, M, G> createChild ( Point point, int layerIndex, int clusteIndex, int x, int y, int address )
+    TreeNode <N, A, G> createChild ( Point point, int layerIndex, int clusteIndex, int x, int y, int address )
             throws ValueError {
         return null;
     }
 
 //    @Override
     public
-    TreeNode <N, A, M, G> createChild ( int layerIndex, int imageBlock, int address ) throws ValueError {
+    TreeNode <N, A, G> createChild ( int layerIndex, int imageBlock, int address ) throws ValueError {
         throw new UnsupportedOperationException();
     }
 
@@ -82,7 +100,7 @@ public class HvTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, 
      */
     @Override
     public
-    TreeNode<N, A, M, G> createNode ( TreeNode <N, A, M, G> parent, Rect boundingBox ) throws ValueError {
+    TreeNode<N, A, G> createNode ( TreeNode <N, A, G> parent, Rect boundingBox ) throws ValueError {
         return null;
     }
 
@@ -90,20 +108,21 @@ public class HvTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, 
      * @param <N>
      * @param <A>
      */
-    public
-    class HvLeafNode<N extends HvLeafNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
-            extends LeafNode <N, A, M, G>
-            implements ILeaf <N, A, M, G> {
+    public static
+    class HvLeafNode<N extends HvLeafNode <N, A, G>, A extends IAddress <A>, M extends IImage<A>, G extends BitBuffer>
+            extends LeafNode <N, A, G>
+            implements ILeaf <N, A, G> {
+
+        private M image;
 
         /**
          * @param parent
          * @param image
          * @param rect
-         * @throws ValueError
          */
         protected
-        HvLeafNode ( TreeNode <N, A, M, G> parent, M image, Rect rect ) throws ValueError {
-            super(parent, null, rect);//fixme
+        HvLeafNode ( TreeNode <N, A, G> parent, M image, Rect rect ) {
+            super(parent, point, image, rect);
         }
 
         /**
@@ -116,7 +135,21 @@ public class HvTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, 
          */
         @Override
         public
-        TreeNode <N, A, M, G> createChild ( Point point, int layerIndex, int clusterIndex, Address <A> address ) throws ValueError {
+        TreeNode <N, A, G> createChild ( GrayScaleImage <A> point, int layerIndex, int clusterIndex, IAddress <A> address ) throws ValueError {
+            throw new UnsupportedOperationException();
+        }
+
+        /**
+         * @param point
+         * @param layerIndex
+         * @param clusterIndex
+         * @param address
+         * @return
+         * @throws ValueError
+         */
+//        @Override
+        public
+        TreeNode <N, A, G> createChild ( Point point, int layerIndex, int clusterIndex, Address <A> address ) throws ValueError {
             return null;
         }
 
@@ -130,9 +163,9 @@ public class HvTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, 
          * @return
          * @throws ValueError
          */
-        @Override
+//        @Override
         public
-        TreeNode <N, A, M, G> createChild ( Point point, int layerIndex, int clusterIndex, int x, int y, int address )
+        TreeNode <N, A, G> createChild ( Point point, int layerIndex, int clusterIndex, int x, int y, int address )
                 throws ValueError {
             return null;
         }
@@ -145,14 +178,14 @@ public class HvTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, 
          */
 //        @Override
         public
-        HvLeafNode <N, A, M, G> createNode ( TreeNode<N, A, M, G> parent, EDirection quadrant, Rect boundingBox )
+        HvLeafNode <N, A, G> createNode ( TreeNode<N, A, G> parent, EDirection quadrant, Rect boundingBox )
                 throws ValueError {
             return new HvLeafNode <>(parent, null, boundingBox);//fixme
         }
 
         //        @Override
         public
-        HvLeafNode <N, A, M, G> createNode ( TreeNode <N, A, M, G> parent, M image, Rect boundingBox )
+        HvLeafNode <N, A, G> createNode ( TreeNode <N, A, G> parent, M image, Rect boundingBox )
                 throws ValueError {
             return new HvLeafNode <>(parent, image, boundingBox);
         }
@@ -164,7 +197,7 @@ public class HvTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, 
          */
         @Override
         public
-        TreeNodeBase <N, A, M, G> createNode ( TreeNode <N, A, M, G> parent, Rect boundingBox )
+        TreeNodeBase <N, A, G> createNode ( TreeNode <N, A, G> parent, Rect boundingBox )
                 throws ValueError {
             return null;
         }
@@ -192,8 +225,8 @@ public class HvTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, 
          */
         @Override
         public
-        M getMat () {
-            return null;
+        Mat getMat () {
+            return image.getMat();
         }
 
         /**
@@ -216,8 +249,13 @@ public class HvTreeNode<N extends TreeNode <N, A, M, G>, A extends Address <A>, 
 
 //        @Override
         public
-        TreeNode <N, A, M, G> createChild ( int layerIndex, int imageBlock, int address ) throws ValueError {
+        TreeNode <N, A, G> createChild ( int layerIndex, int imageBlock, int address ) throws ValueError {
             return null;
+        }
+
+        public
+        void setImage ( M image ) {
+            this.image = image;
         }
     }
 }

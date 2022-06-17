@@ -1,9 +1,9 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.opencv.core.Mat;
-import org.stranger2015.opencv.fic.core.Address;
+import org.jetbrains.annotations.NotNull;
+import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.fic.core.codec.IAddress;
+import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
@@ -12,25 +12,24 @@ import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
  *
  */
 public
-class AffineFlipTransform<M extends IImage<A>, A extends Address <A>, G extends BitBuffer>
-        extends AffineTransform <M, A, G> {
-
+class AffineFlipTransform</*M extends IImage<A>,*/ A extends IAddress <A>, G extends BitBuffer>
+        extends AffineTransform <A, G> {
 
     /**
      * @param image
      * @param interpolationType
      */
     public
-    AffineFlipTransform ( M image, EInterpolationType interpolationType, IAddress <A> address ) {
+    AffineFlipTransform ( GrayScaleImage<A> image, EInterpolationType interpolationType, IAddress <A> address ) {
         super(image, interpolationType, address );
     }
 
-    /**
-     * @param image
+     /**
+     * @param inputImage
      */
     public
-    AffineFlipTransform ( M image, IAddress<A> address ) {
-        this(image, BILINEAR, address);
+    AffineFlipTransform (GrayScaleImage<A> inputImage, IAddress<A> address ) {
+        this(inputImage, BILINEAR, address);
     }
 
     /**
@@ -41,7 +40,9 @@ class AffineFlipTransform<M extends IImage<A>, A extends Address <A>, G extends 
      */
     @Override
     public
-    M transform ( M inputImage, Mat transformMatrix, EInterpolationType type ) {
+    GrayScaleImage<A> transform ( @NotNull GrayScaleImage<A> inputImage,
+                                  GrayScaleImage<A> transformMatrix,
+                                  EInterpolationType type ) {
         return null;
     }
 }

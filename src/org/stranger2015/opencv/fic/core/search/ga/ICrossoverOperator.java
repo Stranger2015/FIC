@@ -1,23 +1,25 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
 import org.stranger2015.opencv.fic.core.Address;
+import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <T>
  */
 public
-interface ICrossoverOperator<T extends Individual <T, A, G, C>, A extends Address <A>, G extends BitBuffer,
-        C extends Chromosome <T, A, G>>
-        extends IBinOperator <T,A,G,C> {
+interface ICrossoverOperator</*T extends Individual <M, A, G, C>*/ /* M extends IImage <A> */, A extends IAddress <A>,
+        G extends BitBuffer>
+//        C extends Chromosome <M, A, G>>
+        extends IBinOperator <M,A,G> {
     /**
      * @param <T>
      */
     abstract
-    class Crossover<T extends Individual <T, A, G, C>, A extends Address <A>, G extends BitBuffer,
-            C extends Chromosome <T, A, G>>
-            extends Operator <T, A, G, C>
-            implements ICrossoverOperator <T, A, G, C> {
+    class Crossover</*T extends Individual <A, G>*/ /* M extends IImage <A> */, A extends IAddress <A>, G extends BitBuffer,
+            C extends Chromosome <M, A, G>>
+            extends Operator <A, G>
+            implements ICrossoverOperator <A, G> {
 
         protected double fitness;
 
@@ -26,7 +28,7 @@ interface ICrossoverOperator<T extends Individual <T, A, G, C>, A extends Addres
          * @param rate
          */
         protected
-        Crossover ( GaProcessor <T, A, G, C> gaProcessor, double rate ) {
+        Crossover ( GaSearchProcessor <M, A, G, C> gaProcessor, double rate ) {
             super(gaProcessor, rate);
         }
 
@@ -42,7 +44,7 @@ interface ICrossoverOperator<T extends Individual <T, A, G, C>, A extends Addres
         public
         T apply ( T parent1, T parent2 ) {
             // Initialize offspring
-            T offspring = (T) new Individual <T, A, G, C>(parent1.getChromosomeLength());
+            T offspring = (T) new Individual <M, A, G, C>(parent1.getChromosomeLength());
             int swapPoint = (int) (Math.random() * (parent1.getChromosomeLength() + 1));
 
             // Loop over genome
@@ -66,15 +68,15 @@ interface ICrossoverOperator<T extends Individual <T, A, G, C>, A extends Addres
          * @param <C>
          */
         static
-        class OnePointCrossover<T extends Individual <T, A, G, C>, A extends Address <A>, G extends BitBuffer,
-                C extends Chromosome <T, A, G>>
-                extends Crossover <T, A, G, C> {
+        class OnePointCrossover<T extends Individual <M, A, G, C>, A extends IAddress <A>, G extends BitBuffer,
+                C extends Chromosome <M, A, G>>
+                extends Crossover <M, A, G, C> {
 
             /**
              * @param rate
              */
             protected
-            OnePointCrossover ( GaProcessor <T, A, G, C> gaProcessor, double rate ) {
+            OnePointCrossover ( GaSearchProcessor <M, A, G, C> gaProcessor, double rate ) {
                 super(gaProcessor, rate);
             }
 
@@ -112,15 +114,15 @@ interface ICrossoverOperator<T extends Individual <T, A, G, C>, A extends Addres
          * @param <T>
          */
         static
-        class TwoPointCrossover<T extends Individual <T, A, G, C>, A extends Address <A>, G extends BitBuffer,
-                C extends Chromosome <T, A, G>>
-                extends OnePointCrossover <T, A, G, C> {
+        class TwoPointCrossover<T extends Individual <M, A, G, C>, A extends IAddress <A>, G extends BitBuffer,
+                C extends Chromosome <M, A, G>>
+                extends OnePointCrossover <M, A, G, C> {
 
             /**
              * @param rate
              */
             protected
-            TwoPointCrossover ( GaProcessor <T, A, G, C> gaProcessor, double rate ) {
+            TwoPointCrossover ( GaSearchProcessor <M, A, G, C> gaProcessor, double rate ) {
                 super(gaProcessor, rate);
             }
 
@@ -142,14 +144,14 @@ interface ICrossoverOperator<T extends Individual <T, A, G, C>, A extends Addres
          * @param <T>
          */
         static
-        class UniformCrossover<T extends Individual <T, A, G, C>, A extends Address <A>, G extends BitBuffer,
-                C extends Chromosome <T, A, G>> extends Crossover <T, A, G, C> {
+        class UniformCrossover<T extends Individual <M, A, G, C>, A extends IAddress <A>, G extends BitBuffer,
+                C extends Chromosome <M, A, G>> extends Crossover <M, A, G, C> {
 
             /**
              * @param rate
              */
             public
-            UniformCrossover ( GaProcessor <T, A, G, C> gaProcessor, double rate ) {
+            UniformCrossover ( GaSearchProcessor <M, A, G, C> gaProcessor, double rate ) {
                 super(gaProcessor, rate);
             }
 

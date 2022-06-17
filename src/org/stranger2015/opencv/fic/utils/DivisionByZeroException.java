@@ -2,6 +2,9 @@ package org.stranger2015.opencv.fic.utils;
 
 import org.stranger2015.opencv.fic.core.ValueError;
 
+/**
+ *
+ */
 public
 class DivisionByZeroException extends ValueError {
     /**

@@ -9,7 +9,7 @@ import java.util.function.BinaryOperator;
  *
  */
 public
-interface IBinOperator<T extends Individual <T, A, G, C>, A extends Address <A>, G extends BitBuffer,
+interface IBinOperator<T extends Individual <T, A, G, C>, A extends IAddress <A>, G extends BitBuffer,
         C extends Chromosome <T, A, G>> extends BinaryOperator <T> {
 
     /**

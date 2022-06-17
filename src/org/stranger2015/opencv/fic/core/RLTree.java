@@ -4,8 +4,8 @@ import org.opencv.core.Rect;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 
 public
-class RLTree<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
-        extends Tree <N, A, M, G> {
+class RLTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, M extends IImage<A>, G extends BitBuffer>
+        extends Tree <N, A, G> {
     /**
      * Constructs a new object.
      *
@@ -14,7 +14,7 @@ class RLTree<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends I
      * @param action
      */
     public
-    RLTree ( TreeNode <N, A, M, G> root, M image, TreeNodeAction <N, A, M, G> action ) {
+    RLTree ( TreeNode <N, A, G> root, M image, TreeNodeTask <N, A, G> action ) {
         this(root, image, action, DEFAULT_BOUNDING_BOX, DEFAULT_DEPTH);
     }
 
@@ -28,7 +28,7 @@ class RLTree<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends I
      * @param depth
      */
     protected
-    RLTree ( TreeNode <N, A, M, G> root, M image, TreeNodeAction <N, A, M, G> action, Rect area, int depth ) {
+    RLTree ( TreeNode <N, A, G> root, M image, TreeNodeTask <N, A, G> action, Rect area, int depth ) {
         super(root, image, action, area, depth);
     }
 
@@ -39,7 +39,7 @@ class RLTree<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends I
      * @return
      */
     public
-    TreeNode <N, A, M, G> nodeInstance ( TreeNode <N, A, M, G> parent, EDirection quadrant, Rect rect )
+    TreeNode <N, A, G> nodeInstance ( TreeNode <N, A, G> parent, EDirection quadrant, Rect rect )
             throws ValueError {
         return new RLTreeNode <>(parent, quadrant, rect);
     }
@@ -47,7 +47,7 @@ class RLTree<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends I
     @SuppressWarnings("unchecked")
     @Override
     public
-    Class <? extends TreeNode <N, A, M, G>> getNodeClass ( TreeNode <N, A, M, G> clazz ) {
-        return (Class <? extends TreeNode <N, A, M, G>>) clazz.getClass();
+    Class <? extends TreeNode <N, A, G>> getNodeClass ( TreeNode <N, A, G> clazz ) {
+        return (Class <? extends TreeNode <N, A, G>>) clazz.getClass();
     }
 }

@@ -2,62 +2,50 @@ package org.stranger2015.opencv.fic.core.codec;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-
-import static org.stranger2015.opencv.fic.core.codec.Encoder.ZERO_SIZE;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @param <N>
- * @param <M>
+ 
  * @param <A>
  */
 public abstract
-class Codec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>, G extends BitBuffer>
-        implements ICodec <N, A, M, G> {
+class Codec<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+        implements ICodec <N, A, G> {
 
     protected final EPartitionScheme scheme;
 
-    protected final EncodeTask <N, A, M, G> encodeTask;
-    protected final DecodeTask <N, A, M, G> decodeTask;
+    protected Class <?>[] paramTypes;
+    protected Object[] params;
+
+    protected IEncoder <N, A, G> encoder;
+    protected IDecoder <N, A, G> decoder;
+
+    protected EncodeTask <N, A, G> encodeTask;
+    protected DecodeTask <N, A, G> decodeTask;
+
+    protected final List <ICodecListener <N, A, G>> listeners = new ArrayList <>();
 
     /**
      * @param scheme
-     * @param encodeTask
+     * @param paramTypes
+     * @param params
      */
+    @SuppressWarnings("unchecked")
     @Contract(pure = true)
     protected
-    Codec ( EPartitionScheme scheme, EncodeTask <N, A, M, G> encodeTask, DecodeTask <N, A, M, G> decodeTask ) {
-
+    Codec ( EPartitionScheme scheme, Class <?>[] paramTypes, Object... params ) {
         this.scheme = scheme;
-        this.encodeTask = encodeTask;
-        this.decodeTask = decodeTask;
+        this.paramTypes = paramTypes;
+        this.params = params;
+        this.encodeTask = (EncodeTask <N, A, G>) params[0];
+        this.decodeTask = (DecodeTask <N, A, G>) params[1];
     }
-
-//    /**
-//     *
-//     */
-//    protected
-//    Codec () {
-//        this(QUAD_TREE,
-//                new EncodeTask <>(null,
-//                        QUAD_TREE,
-//                        List.of(),
-//                        new QuadTreeEncoder <>(
-//                                new SquareImageBlockGenerator <N, A, M, G>(
-//                                        new RectangularTiler <>(8),
-//                                        //    QUAD_TREE,
-//                                        List.of()))),
-//                new DecodeTask <>(null,
-//                        QUAD_TREE,
-//                        List.of(),
-//                        new QuadTreeDecoder <M, A>()));
-//    }
 
     /**
      * @return
@@ -71,57 +59,137 @@ class Codec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends II
      * @return
      */
     public
-    EncodeTask <N, A, M, G> getAction () {
+    EncodeTask <N, A, G> getEncodeTask () {
         return encodeTask;
     }
 
-//    /**
-//     * @param image
-//     * @param rangeSize
-//     * @param domainSize
-//     * @return
-//     */
-//    public
-//    IEncoder <N, A, M, G> getEncoder ( M image, Size rangeSize, Size domainSize ) {
-//        return encoder;
-//    }
-
-    /**
-     * @param <N>
-     * @param <A>
-     * @param <M>
-     * @param scheme
-     * @return
-     */
     @SuppressWarnings("unchecked")
     public static
-    <N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage <A>, G extends BitBuffer>
-    @NotNull ICodec <N, A, M, G> create ( @NotNull EPartitionScheme scheme ) {//????? fixme
-        try {
-            Class <ICodec <N, A, M, G>> codecClass = (Class <ICodec <N, A, M, G>>) Class
-                    .forName(scheme.getCodecClassName());
-            Constructor <ICodec <N, A, M, G>> ctor = codecClass.getDeclaredConstructor(
-                    Image.class,
-                    Size.class,
-                    Size.class);
+    <N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+    ICodec <N, A, G> create ( @NotNull EPartitionScheme scheme,
+                                 Class <?>[] paramTypes,
+                                 Object... params ) throws ReflectiveOperationException {
 
-            return ctor.newInstance(encodeTask.loadImage(encodeTask.getFilename()), ZERO_SIZE, ZERO_SIZE);
-
-        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException |
-                InvocationTargetException e) {
-
-            e.printStackTrace();
-            System.exit(0);
-        }
-
-        throw new IllegalStateException();
+        return (ICodec <N, A, G>) Utils.create(
+                scheme.getCodecClassName(),
+                ICodec.getListeners(),
+                paramTypes,
+                params
+        );
     }
 
     /**
      * @return
      */
     public
-    DecodeTask <N, A, M, G> getDecodeTask () {
+    DecodeTask <N, A, G> getDecodeTask () {
         return decodeTask;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    IEncoder <N, A, G> getEncoder () {
+        return encoder;
+    }
+
+    /**
+     * @param scheme
+     * @param encoder
+     * @param decoder
+     */
+    @Contract(pure = true)
+    public
+    Codec ( EPartitionScheme scheme, IEncoder <N, A, G> encoder, IDecoder <N, A, G> decoder ) {
+        this.scheme = scheme;
+        this.encoder = encoder;
+        this.decoder = decoder;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    IDecoder <N, A, G> getDecoder () {
+        return decoder;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    int getImageSizeBase () {
+        return 0;//fixme
+    }
+
+    /**
+     * @param address
+     * @return
+     * @throws ValueError
+     */
+    @Override
+    public abstract
+    IAddress <A> createAddress ( int address ) throws ValueError;
+
+    /**
+     * @param task
+     */
+    @Override
+    public
+    void addTask ( Task <N, A, G> task ) {
+//todo
+    }
+
+    /**
+     * @return
+     */
+    public
+    Class <?>[] getParamTypes () {
+        return paramTypes;
+    }
+
+    /**
+     * @return
+     */
+    public
+    Object[] getParams () {
+        return params;
+    }
+
+    /**
+     * When an object implementing interface <code>Runnable</code> is used
+     * to create a thread, starting the thread causes the object's
+     * <code>run</code> method to be called in that separately executing
+     * thread.
+     * <p>
+     * The general contract of the method <code>run</code> is that it may
+     * take any action whatsoever.
+     *
+     * @see Thread#run()
+     */
+    @Override
+    public
+    void run () {
+        fireCodecInvoked(listeners);
+    }
+
+    /**
+     * @param listeners
+     */
+    private
+    void fireCodecCreated ( List <ICodecListener <N, A, G>> listeners ) {
+        listeners.forEach(listener -> listener.onCreated(this));
+    }
+
+    /**
+     * @param listeners
+     */
+    private
+    void fireCodecInvoked ( List <ICodecListener <N, A, G>> listeners ) {
+        listeners.forEach(listener -> listener.onCreated(this));
     }
 }

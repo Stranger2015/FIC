@@ -1,31 +1,45 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.opencv.core.Size;
-import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.EPartitionScheme;
-import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.fic.core.Image;
+import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
  * @param <A>
- * @param <M>
+ 
  */
 public
-class SearchlessCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M extends IImage<A>, G extends BitBuffer>
-        extends Codec <N, A, M, G> {
+class SearchlessCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, M extends IImage<A>, G extends BitBuffer>
+        extends Codec <N, A, G> {
     /**
      * @param scheme
-     * @param action
-     * @return
+     * @param encodeTask
+     * @param decodeTask
      */
-    @Override
-    public
-    Codec <N, A, M, G> create ( EPartitionScheme scheme, EncodeAction action ) {
-        return new SearchlessCodec <>();
+    protected
+    SearchlessCodec ( EPartitionScheme scheme,
+                      EncodeTask <N, A, G> encodeTask,
+                      DecodeTask <N, A, G> decodeTask ) {
+
+        super(scheme, encodeTask, decodeTask);
     }
+//
+//     /**
+//     * @param scheme
+//     * @param encodeTask
+//     * @param decodeTask
+//      *
+//     * @return
+//     */
+////    @Override
+//    public
+//    ICodec <N, A, G> create ( EPartitionScheme scheme,
+//                                EncodeTask <N, A, G> encodeTask,
+//                                DecodeTask <N, A, G> decodeTask  ) {
+//        return new SearchlessCodec <>(scheme, encodeTask, decodeTask );
+//    }
 
     /**
      * @param image
@@ -33,10 +47,10 @@ class SearchlessCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M 
      * @param domainSize
      * @return
      */
-    @Override
+//    @Override
     public
-    IEncoder <N, A, M, G> getEncoder ( M image, Size rangeSize, Size domainSize ) {
-        return new SearchlessEncoder <N, A, M, G>(image, rangeSize, domainSize);
+    IEncoder <N, A, G> getEncoder ( M image, ISearchProcessor <N, A, G> rangeSize, ImageBlockGenerator <N, A, G> domainSize ) {
+        return new SearchlessEncoder <>(image, rangeSize, domainSize);
     }
 
     /**
@@ -45,8 +59,8 @@ class SearchlessCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M 
      */
     @Override
     public
-    IEncoder <N, A, M, G> getEncoder () {
-        return null;
+    IEncoder <N, A, G> getEncoder () {
+        return getEncoder(ac);
     }
 
     /**
@@ -54,7 +68,7 @@ class SearchlessCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M 
      */
     @Override
     public
-    IDecoder <M> getDecoder () {
+    IDecoder <M,A> getDecoder () {
         return null;
     }
 
@@ -65,5 +79,16 @@ class SearchlessCodec<N extends TreeNode <N, A, M, G>, A extends Address <A>, M 
     public
     int getImageSizeBase () {
         return 2;
+    }
+
+    /**
+     * @param address
+     * @return
+     * @throws ValueError
+     */
+    @Override
+    public
+    IAddress <A> createAddress ( int address ) throws ValueError {
+        return new DecAddress <>(address);
     }
 }

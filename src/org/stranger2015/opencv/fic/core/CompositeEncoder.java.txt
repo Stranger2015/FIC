@@ -1,0 +1,134 @@
+package org.stranger2015.opencv.fic.core;
+
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
+import org.stranger2015.opencv.fic.core.codec.*;
+import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
+import org.stranger2015.opencv.fic.transform.ImageTransform;
+import org.stranger2015.opencv.fic.transform.ScaleTransform;
+import org.stranger2015.opencv.fic.utils.GrayScaleImage;
+import org.stranger2015.opencv.utils.BitBuffer;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * @param <N>
+ * @param <A>
+ 
+ * @param <G>
+ */
+public
+class CompositeEncoder<N extends TreeNode <N, A, M, G>, A extends IAddress <A>, M extends IImage <A>,
+        G extends BitBuffer>
+        extends Encoder <N, A, M, G> {
+
+    protected final List <IEncoder <N, A, M, G>> encoderPipeline = new ArrayList <>();
+    protected Object dataExchange;
+
+    protected
+    void addEncoder ( IEncoder <N, A, M, G> encoder ) {
+        encoderPipeline.add(encoder);
+        //encoder setINPUT/OUTPUT
+    }
+
+    protected
+    void removeEncoder ( IEncoder <N, A, M, G> encoder ) {
+        encoderPipeline.remove(encoder);
+    }
+
+    /**
+     * @param scheme
+     * @param nodeBuilder
+     * @param searchProcessor
+     * @param scaleTransform
+     * @param imageBlockGenerator
+     * @param comparator
+     * @param imageTransforms
+     * @param iImageFilters
+     * @param fractalModel
+     */
+    protected
+    CompositeEncoder ( EPartitionScheme scheme,
+                       ITreeNodeBuilder <N, A, M, G> nodeBuilder,
+                       ISearchProcessor <N, A, M, G> searchProcessor,
+                       ScaleTransform <A, G> scaleTransform,
+                       ImageBlockGenerator <N, A, M, G> imageBlockGenerator,
+                       IDistanceator <A> comparator,
+                       Set <ImageTransform <A, G>> imageTransforms,
+                       Set <IImageFilter <M, A>> iImageFilters,
+                       FractalModel <N, A, M, G> fractalModel
+    ) {
+        super(
+                scheme,
+                nodeBuilder,
+                searchProcessor,
+                scaleTransform,
+                imageBlockGenerator,
+                comparator,
+                imageTransforms,
+                iImageFilters,
+                fractalModel
+        );
+    }
+
+    /**
+     * @param image
+     * @param bounds
+     * @return
+     * @throws ValueError
+     */
+//    @Override
+    public
+    List <RegionOfInterest <A>> segmentImage ( GrayScaleImage <A> image, List <Rectangle> bounds ) throws ValueError {
+        List <RegionOfInterest <A>> l = segmentImage0(image, bounds);
+
+
+        return l;
+    }
+
+    private
+    List <RegionOfInterest <A>> segmentImage0 ( IImage <A> image, List <Rectangle> bounds ) {
+        List <RegionOfInterest <A>> l = new ArrayList <>();
+
+        for (IEncoder <N, A, M, G> encoder : encoderPipeline) {
+            encoder.createBlockGenerator(
+                    getTiler(),
+                    getScheme(),
+                    encoder,
+                    image,
+                    getTiler().getRangeSize(),
+                    getTiler().getDomainSize();
+        }
+
+        return l;
+    }
+
+    /**
+     * @param node
+     */
+    @Override
+    public
+    void add ( TreeNode <N, A, M, G> node ) {
+
+    }
+
+    /**
+     * @param node
+     */
+    @Override
+    public
+    void addLeafNode ( LeafNode <N, A, M, G> node ) {
+
+    }
+
+    /**
+     * @param node
+     */
+    @Override
+    public
+    void addLeafNode ( TreeNode <N, A, M, G> node ) {
+
+    }
+}

@@ -18,7 +18,6 @@
 
 package org.stranger2015.opencv.fic.utils;
 
-import com.beust.jcommander.IParameterValidator;
 import com.beust.jcommander.IStringConverter;
 import com.beust.jcommander.IValueValidator;
 import com.beust.jcommander.converters.CommaParameterSplitter;
@@ -73,7 +72,7 @@ public
     int arity () default -1;
 
     /**
-     * If true, this parameter is a password and it will be prompted on the console
+     * If true, this parameter is a password, and it will be prompted on the console
      * (if available).
      */
     boolean password () default false;
@@ -99,8 +98,9 @@ public
 
     /**
      * Validate the parameter found on the command line.
+     * @return
      */
-    Class <? extends IParameterValidator> validateWith () default NoValidator.class;
+    Class <? extends NoValidator> validateWith ();
 
     /**
      * Validate the value for this parameter.
