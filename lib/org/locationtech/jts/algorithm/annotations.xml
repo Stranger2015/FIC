@@ -1,0 +1,5 @@
+<root>
+    <item name='org.locationtech.jts.algorithm.LineIntersector void computeIntersection(org.locationtech.jts.geom.Coordinate, org.locationtech.jts.geom.Coordinate, org.locationtech.jts.geom.Coordinate, org.locationtech.jts.geom.Coordinate) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

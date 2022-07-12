@@ -1,9 +1,5 @@
 package org.stranger2015.opencv.fic.core.geom;
 
-import org.stranger2015.opencv.fic.core.geom.CoordinateSequences;
-import org.stranger2015.opencv.fic.core.geom.Dimension;
-import org.stranger2015.opencv.fic.core.geom.LineString;
-
 /**
  * Models an OGC SFS <code>LinearRing</code>.
  * A <code>LinearRing</code> is a {@link LineString} which is both closed and simple.
@@ -64,7 +60,7 @@ public class LinearRing extends LineString
     
     /**
      * Constructs a <code>LinearRing</code> with the vertices
-     * specified by the given {@link CoordinateSequence}.
+     * specified by the given {@link ICoordinateSequence}.
      *
      *@param  points  a sequence points forming a closed and simple linestring, or
      *      <code>null</code> to create the empty geometry.
@@ -72,7 +68,7 @@ public class LinearRing extends LineString
      * @throws IllegalArgumentException if the ring is not closed, or has too few points
      *
      */
-    public LinearRing(CoordinateSequence points, GeometryFactory factory) {
+    public LinearRing( ICoordinateSequence points, GeometryFactory factory) {
         super(points, factory);
         
         validateConstruction();
@@ -134,7 +130,7 @@ public class LinearRing extends LineString
     }
 
     public LinearRing reverseInternal() {
-        CoordinateSequence seq = points.copy();
+        ICoordinateSequence seq = points.copy();
     
         CoordinateSequences.reverse(seq);
 

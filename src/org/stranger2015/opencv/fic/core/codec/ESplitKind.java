@@ -7,5 +7,6 @@ public
 enum ESplitKind {
     HORIZONTAL,
     VERTICAL,
-    DIAGONAL
+    DIAGONAL,
+    TRIANGULATION
 }

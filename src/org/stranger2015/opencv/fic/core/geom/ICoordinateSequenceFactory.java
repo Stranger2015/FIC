@@ -1,40 +1,40 @@
 package org.stranger2015.opencv.fic.core.geom;
 
 /**
- * A factory to create concrete instances of {@link CoordinateSequence}s.
+ * A factory to create concrete instances of {@link ICoordinateSequence}s.
  * Used to configure {@link GeometryFactory}s
  * to provide specific kinds of CoordinateSequences.
  *
  * @version 1.7
  */
 public
-interface CoordinateSequenceFactory {
+interface ICoordinateSequenceFactory {
 
     /**
-     * Returns a {@link CoordinateSequence} based on the given array.
+     * Returns a {@link ICoordinateSequence} based on the given array.
      * Whether the array is copied or simply referenced
      * is implementation-dependent.
      * This method must handle null arguments by creating an empty sequence.
      *
      * @param coordinates the coordinates
      */
-    CoordinateSequence create ( Coordinate[] coordinates );
+    ICoordinateSequence create ( Coordinate[] coordinates );
 
     /**
-     * Creates a {@link CoordinateSequence} which is a copy
-     * of the given {@link CoordinateSequence}.
+     * Creates a {@link ICoordinateSequence} which is a copy
+     * of the given {@link ICoordinateSequence}.
      * This method must handle null arguments by creating an empty sequence.
      *
      * @param coordSeq the coordinate sequence to copy
      */
-    CoordinateSequence create ( CoordinateSequence coordSeq );
+    ICoordinateSequence create ( ICoordinateSequence coordSeq );
 
     /**
-     * Creates a {@link CoordinateSequence} of the specified size and dimension.
-     * For this to be useful, the {@link CoordinateSequence} implementation must
+     * Creates a {@link ICoordinateSequence} of the specified size and dimension.
+     * For this to be useful, the {@link ICoordinateSequence} implementation must
      * be mutable.
      * <p>
-     * If the requested dimension is larger than the CoordinateSequence implementation
+     * If the requested dimension is larger than the ICoordinateSequence implementation
      * can provide, then a sequence of maximum possible dimension should be created.
      * An error should not be thrown.
      *
@@ -42,14 +42,14 @@ interface CoordinateSequenceFactory {
      * @param dimension the dimension of the coordinates in the sequence (if user-specifiable,
      *                  otherwise ignored)
      */
-    CoordinateSequence create ( int size, int dimension );
+    ICoordinateSequence create ( int size, int dimension );
 
     /**
-     * Creates a {@link CoordinateSequence} of the specified size and dimension with measure support.
-     * For this to be useful, the {@link CoordinateSequence} implementation must
+     * Creates a {@link ICoordinateSequence} of the specified size and dimension with measure support.
+     * For this to be useful, the {@link ICoordinateSequence} implementation must
      * be mutable.
      * <p>
-     * If the requested dimension or measures are larger than the CoordinateSequence implementation
+     * If the requested dimension or measures are larger than the ICoordinateSequence implementation
      * can provide, then a sequence of maximum possible dimension should be created.
      * An error should not be thrown.
      *
@@ -60,7 +60,7 @@ interface CoordinateSequenceFactory {
      *                  otherwise ignored)
      */
     default
-    CoordinateSequence create ( int size, int dimension, int measures ) {
+    ICoordinateSequence create ( int size, int dimension, int measures ) {
         return create(size, dimension);
     }
 }

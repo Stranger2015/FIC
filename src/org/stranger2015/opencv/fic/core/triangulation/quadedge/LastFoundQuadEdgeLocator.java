@@ -9,7 +9,7 @@ import java.util.Collection;
  *
  * @author Martin Davis
  */
-public class LastFoundQuadEdgeLocator implements QuadEdgeLocator {
+public class LastFoundQuadEdgeLocator implements IQuadEdgeLocator {
     private final QuadEdgeSubdivision subdiv;
     private QuadEdge lastEdge = null;
 

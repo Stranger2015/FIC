@@ -11,10 +11,10 @@ package org.stranger2015.opencv.fic.core.operation.valid;
  * http://www.eclipse.org/org/documents/edl-v10.php.
  */
 
-import org.locationtech.jts.geom.*;
-import org.locationtech.jts.operation.valid.IndexedNestedPolygonTester;
+import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.operation.valid.PolygonTopologyAnalyzer;
 import org.locationtech.jts.operation.valid.TopologyValidationError;
+import org.stranger2015.opencv.fic.core.operation.valid.IndexedNestedPolygonTester;
 
 import java.util.stream.IntStream;
 
@@ -221,13 +221,19 @@ class IsValidOp {
     private
     boolean isValid ( LinearRing g ) {
         checkCoordinateInvalid(g.getCoordinates());
-        if (hasInvalidError()) return false;
+        if (hasInvalidError()) {
+            return false;
+        }
 
         checkRingNotClosed(g);
-        if (hasInvalidError()) return false;
+        if (hasInvalidError()) {
+            return false;
+        }
 
         checkRingTooFewPoints(g);
-        if (hasInvalidError()) return false;
+        if (hasInvalidError()) {
+            return false;
+        }
 
         checkSelfIntersectingRing(g);
         return validErr == null;
@@ -384,23 +390,31 @@ class IsValidOp {
         }
         for (int i = 0; i < poly.getNumInteriorRing(); i++) {
             checkRingNotClosed(poly.getInteriorRingN(i));
-            if (hasInvalidError()) return;
+            if (hasInvalidError()) {
+                return;
+            }
         }
     }
 
     private
     void checkRingsTooFewPoints ( Polygon poly ) {
         checkRingTooFewPoints(poly.getExteriorRing());
-        if (hasInvalidError()) return;
+        if (hasInvalidError()) {
+            return;
+        }
         for (int i = 0; i < poly.getNumInteriorRing(); i++) {
             checkRingTooFewPoints(poly.getInteriorRingN(i));
-            if (hasInvalidError()) return;
+            if (hasInvalidError()) {
+                return;
+            }
         }
     }
 
     private
     void checkRingTooFewPoints ( LinearRing ring ) {
-        if (ring.isEmpty()) return;
+        if (ring.isEmpty()) {
+            return;
+        }
         checkTooFewPoints(ring, MIN_SIZE_RING);
     }
 
@@ -445,7 +459,6 @@ class IsValidOp {
         if (areaAnalyzer.hasInvalidIntersection()) {
             logInvalid(areaAnalyzer.getInvalidCode(),
                     areaAnalyzer.getInvalidLocation());
-            return;
         }
     }
 
@@ -476,14 +489,18 @@ class IsValidOp {
     private
     void checkHolesOutsideShell ( Polygon poly ) {
         // skip test if no holes are present
-        if (poly.getNumInteriorRing() <= 0) return;
+        if (poly.getNumInteriorRing() <= 0) {
+            return;
+        }
 
         LinearRing shell = poly.getExteriorRing();
         boolean isShellEmpty = shell.isEmpty();
 
         for (int i = 0; i < poly.getNumInteriorRing(); i++) {
             LinearRing hole = poly.getInteriorRingN(i);
-            if (hole.isEmpty()) continue;
+            if (hole.isEmpty()) {
+                continue;
+            }
 
             Coordinate invalidPt = null;
             if (isShellEmpty) {
@@ -494,7 +511,9 @@ class IsValidOp {
             }
             if (invalidPt != null) {
                 logInvalid(TopologyValidationError.HOLE_OUTSIDE_SHELL,
-                        invalidPt);
+                        invalidPt
+                );
+
                 return;
             }
         }
@@ -536,7 +555,9 @@ class IsValidOp {
     private
     void checkHolesNested ( Polygon poly ) {
         // skip test if no holes are present
-        if (poly.getNumInteriorRing() <= 0) return;
+        if (poly.getNumInteriorRing() <= 0) {
+            return;
+        }
 
         IndexedNestedHoleTester nestedTester = new IndexedNestedHoleTester(poly);
         if (nestedTester.isNested()) {
@@ -561,7 +582,7 @@ class IsValidOp {
         // skip test if only one shell present
         if (mp.getNumGeometries() <= 1) return;
 
-        IndexedNestedPolygonTester nestedTester = new IndexedNestedPolygonTester(mp);
+        var nestedTester = new IndexedNestedPolygonTester(mp);
         if (nestedTester.isNested()) {
             logInvalid(TopologyValidationError.NESTED_SHELLS,
                     nestedTester.getNestedPoint());

@@ -305,7 +305,7 @@ public class GeometryEditor
     }
 
     /**
-     * A {@link GeometryEditor.GeometryEditorOperation} which edits the {@link CoordinateSequence}
+     * A {@link GeometryEditor.GeometryEditorOperation} which edits the {@link ICoordinateSequence}
      * of a {@link Geometry}.
      * Operates on Geometry subclasses which contains a single coordinate list.
      */
@@ -335,13 +335,13 @@ public class GeometryEditor
         }
 
         /**
-         * Edits a {@link CoordinateSequence} from a {@link Geometry}.
+         * Edits a {@link ICoordinateSequence} from a {@link Geometry}.
          *
          * @param coordSeq the coordinate array to operate on
          * @param geometry the geometry containing the coordinate list
          * @return an edited coordinate sequence (which may be the same as the input)
          */
-        public abstract CoordinateSequence edit(CoordinateSequence coordSeq,
+        public abstract ICoordinateSequence edit(ICoordinateSequence coordSeq,
                                                 Geometry geometry);
     }
 }

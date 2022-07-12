@@ -1,8 +1,6 @@
 package org.stranger2015.opencv.fic.core.geom;
 
-import org.locationtech.jts.geom.CoordinateFilter;
-import org.locationtech.jts.geom.GeometryComponentFilter;
-import org.locationtech.jts.geom.GeometryFilter;
+import org.stranger2015.opencv.fic.utils.Assert;
 
 import java.util.Arrays;
 import java.util.TreeSet;
@@ -52,6 +50,7 @@ public class GeometryCollection extends Geometry {
         if (isEmpty()) {
             return null;
         }
+
         return geometries[0].getCoordinate();
     }
 
@@ -64,41 +63,38 @@ public class GeometryCollection extends Geometry {
      *
      * @return the collected coordinates
      *    */
-    public org.stranger2015.opencv.fic.core.geom.Coordinate[] getCoordinates() {
-        org.stranger2015.opencv.fic.core.geom.Coordinate[] coordinates = new org.stranger2015.opencv.fic.core.geom.Coordinate[getNumPoints()];
+    public Coordinate[] getCoordinates() {
+        Coordinate[] coordinates = new Coordinate[getNumPoints()];
         int k = -1;
-        for (int i = 0; i < geometries.length; i++) {
-            Coordinate[] childCoordinates = geometries[i].getCoordinates();
-            for (int j = 0; j < childCoordinates.length; j++) {
+        for (Geometry geometry : geometries) {
+            Coordinate[] childCoordinates = geometry.getCoordinates();
+            for (Coordinate childCoordinate : childCoordinates) {
                 k++;
-                coordinates[k] = childCoordinates[j];
+                coordinates[k] = childCoordinate;
             }
         }
         return coordinates;
     }
 
     public boolean isEmpty() {
-        for (int i = 0; i < geometries.length; i++) {
-            if (!geometries[i].isEmpty()) {
-                return false;
-            }
-        }
-        return true;
+        return IntStream.range(0, geometries.length).allMatch(i -> geometries[i].isEmpty());
     }
 
     public int getDimension() {
         int dimension = Dimension.FALSE;
-        for (int i = 0; i < geometries.length; i++) {
-            dimension = Math.max(dimension, geometries[i].getDimension());
+        for (Geometry geometry : geometries) {
+            dimension = Math.max(dimension, geometry.getDimension());
         }
+
         return dimension;
     }
 
     public int getBoundaryDimension() {
         int dimension = Dimension.FALSE;
-        for (int i = 0; i < geometries.length; i++) {
-            dimension = Math.max(dimension, geometries[i].getBoundaryDimension());
+        for (Geometry geometry : geometries) {
+            dimension = Math.max(dimension, geometry.getBoundaryDimension());
         }
+
         return dimension;
     }
 
@@ -111,11 +107,7 @@ public class GeometryCollection extends Geometry {
     }
 
     public int getNumPoints() {
-        int numPoints = 0;
-        for (int i = 0; i < geometries.length; i++) {
-            numPoints += geometries[i].getNumPoints();
-        }
-        return numPoints;
+        return Arrays.stream(geometries).mapToInt(Geometry::getNumPoints).sum();
     }
 
     public String getGeometryType() {
@@ -123,9 +115,10 @@ public class GeometryCollection extends Geometry {
     }
 
     public
-    org.stranger2015.opencv.fic.core.geom.Geometry getBoundary() {
+    Geometry getBoundary() {
         checkNotGeometryCollection(this);
         Assert.shouldNeverReachHere();
+
         return null;
     }
 
@@ -136,20 +129,12 @@ public class GeometryCollection extends Geometry {
      */
     public double getArea()
     {
-        double area = 0.0;
-        for (int i = 0; i < geometries.length; i++) {
-            area += geometries[i].getArea();
-        }
-        return area;
+        return Arrays.stream(geometries).mapToDouble(Geometry::getArea).sum();
     }
 
     public double getLength()
     {
-        double sum = 0.0;
-        for (int i = 0; i < geometries.length; i++) {
-            sum += (geometries[i]).getLength();
-        }
-        return sum;
+        return Arrays.stream(geometries).mapToDouble(Geometry::getLength).sum();
     }
 
     public boolean equalsExact(Geometry other, double tolerance) {
@@ -166,90 +151,89 @@ public class GeometryCollection extends Geometry {
 
     @Override
     public
-    void apply ( org.stranger2015.opencv.fic.core.geom.CoordinateFilter filter ) {
-
+    void apply ( ICoordinateFilter filter ) {
+        IntStream.range(0, geometries.length)
+                .forEachOrdered(i -> geometries[i].apply(filter));
     }
 
+    /**
+     * @param filter the filter to apply
+     */
     @Override
-    public
-    void apply ( org.stranger2015.opencv.fic.core.geom.CoordinateSequenceFilter filter ) {
-
-    }
-
-    public void apply( CoordinateFilter filter) {
-        for (int i = 0; i < geometries.length; i++) {
-            geometries[i].apply(filter);
-        }
-    }
-
-    public void apply( CoordinateSequenceFilter filter) {
-        if (geometries.length == 0) {
-            return;
-        }
-        for (int i = 0; i < geometries.length; i++) {
-            geometries[i].apply(filter);
-            if (filter.isDone()) {
-                break;
+    public void apply( ICoordinateSequenceFilter filter) {
+        if (geometries.length != 0) {
+            for (Geometry geometry : geometries) {
+                geometry.apply(filter);
+                if (filter.isDone()) {
+                    break;
+                }
             }
-        }
-        if (filter.isGeometryChanged())
-            geometryChanged();
-    }
-
-    public void apply( GeometryFilter filter) {
-        filter.filter(this);
-        for (int i = 0; i < geometries.length; i++) {
-            geometries[i].apply(filter);
-        }
-    }
-
-    @Override
-    public
-    void apply ( GeometryComponentFilter filter ) {
-
-    }
-
-    public void apply(GeometryComponentFilter filter) {
-        filter.filter(this);
-        for (int i = 0; i < geometries.length; i++) {
-            geometries[i].apply(filter);
+            if (filter.isGeometryChanged())
+                geometryChanged();
         }
     }
 
     /**
-     * Creates and returns a full copy of this {@link org.stranger2015.opencv.fic.core.geom.GeometryCollection} object.
+     * @param filter the filter to apply to this <code>Geometry</code> (and
+     */
+    @Override
+    public void apply( IGeometryFilter filter) {
+        filter.filter(this);
+        IntStream.range(0, geometries.length)
+                .forEachOrdered(i -> geometries[i].apply(filter));
+    }
+
+    @Override
+    public void apply(IGeometryComponentFilter filter) {
+        filter.filter(this);
+        IntStream.range(0, geometries.length).forEachOrdered(i -> geometries[i].apply(filter));
+    }
+
+    /**
+     * Creates and returns a full copy of this {@link GeometryCollection} object.
      * (including all coordinates contained by it).
      *
      * @return a clone of this instance
      * @deprecated
      */
+    @Override
     public Object clone() {
-        return copy();
+//        Object clone = super.copy();
+        return copy();///fixme
     }
 
     protected
     MultiLineString copyInternal() {
         Geometry[] geometries = new Geometry[this.geometries.length];
-        for (int i = 0; i < geometries.length; i++) {
-            geometries[i] = this.geometries[i].copy();
-        }
-        return new org.stranger2015.opencv.fic.core.geom.GeometryCollection(geometries, factory);
+        Arrays.setAll(geometries, i -> this.geometries[i].copy());
+
+        return new MultiLineString( geometries, factory);
     }
 
     public void normalize() {
-        for (int i = 0; i < geometries.length; i++) {
-            geometries[i].normalize();
-        }
+        IntStream.range(0, geometries.length).forEachOrdered(i -> geometries[i].normalize());
         Arrays.sort(geometries);
     }
 
     protected
-    org.stranger2015.opencv.fic.core.geom.Envelope computeEnvelopeInternal() {
-        org.stranger2015.opencv.fic.core.geom.Envelope envelope = new Envelope();
-        for (int i = 0; i < geometries.length; i++) {
-            envelope.expandToInclude(geometries[i].getEnvelopeInternal());
-        }
+    Envelope computeEnvelopeInternal() {
+        Envelope envelope = new Envelope();
+        Arrays.stream(geometries).map(Geometry::getEnvelopeInternal)
+                .forEachOrdered(envelope::expandToInclude);
+
         return envelope;
+    }
+
+    @Override
+    protected
+    <T extends Geometry> int compareToSameClass ( T o ) {
+        return 0;
+    }
+
+    @Override
+    protected
+    <T extends Geometry> int compareToSameClass ( T o, CoordinateSequenceComparator comp ) {
+        return 0;
     }
 
     protected int compareToSameClass(Object o) {

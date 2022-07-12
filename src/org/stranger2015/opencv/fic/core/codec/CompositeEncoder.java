@@ -69,6 +69,12 @@ protected IPipeline<IImage<A>, IImage<A>> pipeline;
         );
     }
 
+    @Override
+    public
+    void initialize () {
+
+    }
+
     /**
      * @param image
      * @return
@@ -114,6 +120,12 @@ protected IPipeline<IImage<A>, IImage<A>> pipeline;
         ///return image;
     }
 
+    @Override
+    public
+    IImage <A> doEncode ( IImage <A> image ) {
+        return null;
+    }
+
     /**
      * @param image
      * @param bounds
@@ -122,9 +134,7 @@ protected IPipeline<IImage<A>, IImage<A>> pipeline;
     @Override
     public
     List <RegionOfInterest <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds ) throws ValueError{
-        List <RegionOfInterest <A>> list=new ArrayList <>();
-
-        return list;
+        return new ArrayList <>();
     }
 
     /**
@@ -217,9 +227,9 @@ protected IPipeline<IImage<A>, IImage<A>> pipeline;
     /**
      * @param node
      */
-    @Override
+//    @Override
     public
-    void addLeafNode ( TreeNodeBase.TreeNode <N, A, G> node ) {
+    void addLeafNode ( TreeNode <N, A, G> node ) {
 
     }
 

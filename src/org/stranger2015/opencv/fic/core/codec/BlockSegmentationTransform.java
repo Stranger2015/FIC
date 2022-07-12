@@ -1,27 +1,27 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.jetbrains.annotations.NotNull;
+import org.stranger2015.opencv.fic.core.IAddress;
+import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.ValueError;
 import org.stranger2015.opencv.fic.transform.EInterpolationType;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
-import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
- 
  * @param <A>
  * @param <G>
  */
 public
-class BlockSegmentationTransform</*M extends IImage<A>,*/ A extends IAddress<A>, G extends BitBuffer>
-        extends ImageTransform<M,A,G>{
+class BlockSegmentationTransform<A extends IAddress <A>, G extends BitBuffer>
+        extends ImageTransform <A, G> {
     /**
      * @param image
      * @param type
      * @param address
      */
     public
-    BlockSegmentationTransform ( GrayScaleImage<A> image, EInterpolationType type, IAddress <A> address ) {
+    BlockSegmentationTransform ( IImage <A> image, EInterpolationType type, IAddress <A> address ) {
         super(image, type, address);
     }
 
@@ -41,13 +41,14 @@ class BlockSegmentationTransform</*M extends IImage<A>,*/ A extends IAddress<A>,
      * @param dihedralAffineTransformIndex
      */
     public
-    BlockSegmentationTransform ( GrayScaleImage<A> image,
+    BlockSegmentationTransform ( IImage <A> image,
                                  EInterpolationType type,
                                  IAddress <A> address,
                                  int brightnessOffset,
                                  double contrastScale,
                                  int dihedralAffineTransformIndex ) {
-        super(image,
+        super(
+                image,
                 type,
                 address,
                 brightnessOffset,
@@ -63,7 +64,7 @@ class BlockSegmentationTransform</*M extends IImage<A>,*/ A extends IAddress<A>,
      */
     @Override
     public
-    GrayScaleImage<A> transform ( @NotNull GrayScaleImage<A> inputImage, GrayScaleImage<A> transformMatrix, EInterpolationType type ) {
+    IImage <A> transform ( @NotNull IImage <A> inputImage, IImage <A> transformMatrix, EInterpolationType type ) {
         return super.transform(inputImage, transformMatrix, type);
     }
 }

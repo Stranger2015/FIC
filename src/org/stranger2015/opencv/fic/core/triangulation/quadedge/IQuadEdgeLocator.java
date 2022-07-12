@@ -9,6 +9,6 @@ package org.stranger2015.opencv.fic.core.triangulation.quadedge;
  *
  * @author Martin Davis
  */
-public interface QuadEdgeLocator {
+public interface IQuadEdgeLocator {
     QuadEdge locate( Vertex v);
 }

@@ -4,7 +4,7 @@ package org.stranger2015.opencv.fic.core.geom;
 import java.util.Comparator;
 
 /**
- * Compares two {@link CoordinateSequence}s.
+ * Compares two {@link ICoordinateSequence}s.
  * For sequences of the same dimension, the ordering is lexicographic.
  * Otherwise, lower dimensions are sorted before higher.
  * The dimensions compared can be limited; if this is done
@@ -15,7 +15,7 @@ import java.util.Comparator;
  */
 public
 class CoordinateSequenceComparator
-        implements Comparator <CoordinateSequence> {
+        implements Comparator <ICoordinateSequence> {
     /**
      * Compare two <code>double</code>s, allowing for NaN values.
      * NaN is treated as being less than any valid number.
@@ -71,16 +71,16 @@ class CoordinateSequenceComparator
     }
 
     /**
-     * Compares the same coordinate of two {@link CoordinateSequence}s
+     * Compares the same coordinate of two {@link ICoordinateSequence}s
      * along the given number of dimensions.
      *
-     * @param s1 a {@link CoordinateSequence}
-     * @param s2 a {@link CoordinateSequence}
+     * @param s1 a {@link ICoordinateSequence}
+     * @param s2 a {@link ICoordinateSequence}
      * @param i the index of the coordinate to test
      * @param dimension the number of dimensions to test
      * @return -1, 0, or 1 depending on whether s1[i] is less than, equal to, or greater than s2[i]
      */
-    protected int compareCoordinate( CoordinateSequence s1, CoordinateSequence s2, int i, int dimension)
+    protected int compareCoordinate( ICoordinateSequence s1, ICoordinateSequence s2, int i, int dimension)
     {
         for (int d = 0; d < dimension; d++) {
             double ord1 = s1.getOrdinate(i, d);
@@ -96,7 +96,7 @@ class CoordinateSequenceComparator
 
     @Override
     public
-    int compare ( CoordinateSequence s1, CoordinateSequence s2 ) {
+    int compare ( ICoordinateSequence s1, ICoordinateSequence s2 ) {
 
         int size1 = s1.size();
         int size2 = s2.size();

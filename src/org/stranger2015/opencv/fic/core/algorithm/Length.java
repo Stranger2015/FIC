@@ -13,7 +13,7 @@ package org.stranger2015.opencv.fic.core.algorithm;
  */
 
 import org.stranger2015.opencv.fic.core.geom.Coordinate;
-import org.stranger2015.opencv.fic.core.geom.CoordinateSequence;
+import org.stranger2015.opencv.fic.core.geom.ICoordinateSequence;
 
 /**
  * Functions for computing length.
@@ -29,7 +29,7 @@ public class Length {
      * @param pts the points specifying the linestring
      * @return the length of the linestring
      */
-    public static double ofLine(CoordinateSequence pts)
+    public static double ofLine( ICoordinateSequence pts)
     {
         // optimized for processing CoordinateSequences
         int n = pts.size();

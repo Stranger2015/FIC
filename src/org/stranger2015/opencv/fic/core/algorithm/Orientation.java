@@ -1,8 +1,8 @@
 package org.stranger2015.opencv.fic.core.algorithm;
 
+import org.stranger2015.opencv.fic.core.geom.ICoordinateSequence;
 import org.stranger2015.opencv.fic.core.geom.impl.CoordinateArraySequence;
 import org.stranger2015.opencv.fic.core.geom.Coordinate;
-import org.stranger2015.opencv.fic.core.geom.CoordinateSequence;
 
 /**
  * Functions to compute the orientation of basic geometric structures
@@ -114,12 +114,12 @@ public class Orientation {
      */
     public static boolean isCCW(Coordinate[] ring)
     {
-        // wrap with an XY CoordinateSequence
+        // wrap with an XY ICoordinateSequence
         return isCCW(new CoordinateArraySequence(ring, 2, 0));
     }
 
     /**
-     * Tests if a ring defined by a {@link CoordinateSequence} is
+     * Tests if a ring defined by a {@link ICoordinateSequence} is
      * oriented counter-clockwise.
      * <ul>
      * <li>The list of points is assumed to have the first and last points equal.
@@ -133,10 +133,10 @@ public class Orientation {
      * If the ring is "more" invalid (e.g. self-crosses or touches),
      * the computed result may not be correct.
      *
-     * @param ring a CoordinateSequence forming a ring (with first and last point identical)
+     * @param ring a ICoordinateSequence forming a ring (with first and last point identical)
      * @return true if the ring is oriented counter-clockwise.
      */
-    public static boolean isCCW( CoordinateSequence ring)
+    public static boolean isCCW( ICoordinateSequence ring)
     {
         // # of points without closing endpoint
         int nPts = ring.size() - 1;

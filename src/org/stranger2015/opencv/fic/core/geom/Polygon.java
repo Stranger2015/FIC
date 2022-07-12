@@ -1,12 +1,14 @@
 package org.stranger2015.opencv.fic.core.geom;
 
-import org.locationtech.jts.geom.CoordinateFilter;
 import org.locationtech.jts.geom.CoordinateSequenceComparator;
+import org.locationtech.jts.geom.CoordinateSequenceFilter;
 import org.stranger2015.opencv.fic.core.algorithm.Area;
 import org.stranger2015.opencv.fic.core.algorithm.Orientation;
 
 import java.util.Arrays;
 import java.util.stream.IntStream;
+
+import static org.stranger2015.opencv.fic.core.algorithm.Area.*;
 
 /**
  * Represents a polygon with linear edges, which may include holes.
@@ -202,7 +204,7 @@ class Polygon
             return false;
         }
 
-        CoordinateSequence seq = shell.getCoordinateSequence();
+        ICoordinateSequence seq = shell.getCoordinateSequence();
 
         // check vertices have correct values
         Envelope env = getEnvelopeInternal();
@@ -277,10 +279,11 @@ class Polygon
     public
     double getArea () {
         double area = 0.0;
-        area += Area.ofRing(shell.getCoordinateSequence());
+        area += ofRing(shell.getCoordinateSequence());
         for (LinearRing hole : holes) {
-            area -= Area.ofRing(hole.getCoordinateSequence());
+            area -= ofRing(hole.getCoordinateSequence());
         }
+
         return area;
     }
 
@@ -340,34 +343,10 @@ class Polygon
         return 0;
     }
 
-    @Override
-    protected
-    <T extends Geometry> int compareToSameClass ( T o, org.stranger2015.opencv.fic.core.geom.CoordinateSequenceComparator comp ) {
-        return 0;
-    }
-
-    //    @Override
-    protected
-    <T extends Geometry> int compareToSameClass ( T o, CoordinateSequenceComparator comp ) {
-        return 0;
-    }
-
-//    @Override
-//    protected
-//    <T extends Geometry> int compareToSameClass ( T o, CoordinateSequenceComparator comp ) {
-//        return 0;
-//    }
-//
-    /**
-     * @param o    a <code>Geometry</code> having the same class as this <code>Geometry</code>
-     * @param comp a <code>CoordinateSequenceComparator</code>
-     * @param <T>
-     * @return
-     */
 //    @Override
     protected
     <T extends Geometry> int compareToSameClass ( T o, CoordinateSequenceComparator comp ) {
-        return 0;//todo
+        return 0;
     }
 
     public
@@ -386,17 +365,23 @@ class Polygon
         }
 
         return IntStream.range(0, holes.length)
-                .allMatch(i -> ((Geometry) holes[i]).equalsExact(otherPolygon.holes[i], tolerance));
+                .allMatch(i -> ((Geometry) holes[i])
+                        .equalsExact(otherPolygon.holes[i], tolerance));
     }
 
+    @Override
     public
-    void apply ( CoordinateFilter filter ) {
+    void apply ( ICoordinateFilter filter ) {
         shell.apply(filter);
         IntStream.range(0, holes.length).forEachOrdered(i -> holes[i].apply(filter));
     }
 
+    @Override
     public
-    void apply ( CoordinateSequenceFilter filter ) {
+    void apply ( ICoordinateSequenceFilter filter ) {
+        if (filter.isGeometryChanged()) {
+            geometryChanged();
+        }
         shell.apply(filter);
         if (!filter.isDone()) {
             for (LinearRing hole : holes) {
@@ -406,9 +391,7 @@ class Polygon
                 }
             }
         }
-        if (filter.isGeometryChanged()) {
-            geometryChanged();
-        }
+
     }
 
     public
@@ -417,13 +400,15 @@ class Polygon
     }
 
 
+    /**
+     * @param filter the filter to apply to this <code>Geometry</code>.
+     */
+    @Override
     public
     void apply ( IGeometryComponentFilter filter ) {
         filter.filter(this);
         shell.apply(filter);
-        for (int i = 0; i < holes.length; i++) {
-            holes[i].apply(filter);
-        }
+        IntStream.range(0, holes.length).forEachOrdered(i -> holes[i].apply(filter));
     }
 
     /**
@@ -433,9 +418,10 @@ class Polygon
      * @return a clone of this instance
      * @deprecated
      */
+    @Override
     public
     Object clone () {
-
+        Object clone = super.clone();
         return copy();
     }
 
@@ -476,8 +462,8 @@ class Polygon
         int nHole2 = ((Polygon) o).getNumInteriorRing();
         int i = 0;
         while (i < nHole1 && i < nHole2) {
-            LinearRing thisHole = (LinearRing) getInteriorRingN(i);
-            LinearRing otherHole = (LinearRing) poly.getInteriorRingN(i);
+            LinearRing thisHole = getInteriorRingN(i);
+            LinearRing otherHole = poly.getInteriorRingN(i);
             int holeComp = thisHole.compareToSameClass(otherHole);
             if (holeComp != 0) return holeComp;
             i++;
@@ -488,27 +474,32 @@ class Polygon
     }
 
     protected
+    <T extends Polygon>
     int compareToSameClass ( T poly, CoordinateSequenceComparator comp ) {
 //        Polygon poly = (Polygon) o;
 
         LinearRing thisShell = shell;
         LinearRing otherShell = poly.shell;
         int shellComp = thisShell.compareToSameClass(otherShell, comp);
-        if (shellComp != 0) return shellComp;
+        if (shellComp != 0) {
+            return shellComp;
+        }
 
         int nHole1 = getNumInteriorRing();
         int nHole2 = poly.getNumInteriorRing();
         int i = 0;
         while (i < nHole1 && i < nHole2) {
-            LinearRing thisHole = (LinearRing) getInteriorRingN(i);
-            LinearRing otherHole = (LinearRing) poly.getInteriorRingN(i);
+            LinearRing thisHole = getInteriorRingN(i);
+            LinearRing otherHole = poly.getInteriorRingN(i);
             int holeComp = thisHole.compareToSameClass(otherHole, comp);
-            if (holeComp != 0) return holeComp;
+            if (holeComp != 0) {
+                return holeComp;
+            }
             i++;
         }
-        if (i < nHole1) return 1;
-        if (i < nHole2) return -1;
-        return 0;
+
+        return i < nHole1 ? 1 : i < nHole2 ? -1 : 0;
+
     }
 
     protected
@@ -529,7 +520,7 @@ class Polygon
             return;
         }
 
-        CoordinateSequence seq = ring.getCoordinateSequence();
+        ICoordinateSequence seq = ring.getCoordinateSequence();
         int minCoordinateIndex = CoordinateSequences.minCoordinateIndex(seq, 0, seq.size() - 2);
         CoordinateSequences.scroll(seq, minCoordinateIndex, true);
         if (Orientation.isCCW(seq) == clockwise)
@@ -543,10 +534,10 @@ class Polygon
 
     protected
     Polygon reverseInternal () {
-        LinearRing shell = (LinearRing) getExteriorRing().reverse();
+        LinearRing shell = getExteriorRing().reverse();
         LinearRing[] holes = new LinearRing[getNumInteriorRing()];
         for (int i = 0; i < holes.length; i++) {
-            holes[i] = (LinearRing) getInteriorRingN(i).reverse();
+            holes[i] = getInteriorRingN(i).reverse();
         }
 
         return getFactory().createPolygon(shell, holes);

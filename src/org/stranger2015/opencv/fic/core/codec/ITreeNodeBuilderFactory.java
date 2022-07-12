@@ -40,7 +40,6 @@ interface ITreeNodeBuilderFactory<N extends TreeNode <N, A, G>, A extends IAddre
                         encoder,
                         library);
                 break;
-            break;
             case DCT:
                 break;
             case CONST_SIZE_DOMAIN_POOL:
@@ -54,17 +53,22 @@ interface ITreeNodeBuilderFactory<N extends TreeNode <N, A, G>, A extends IAddre
             case QUADRILATERAL:
                 break;
             case QUAD_TREE:
-                result = new QuadTreeNodeBuilder <N, A, G>(
+                result = new QuadTreeNodeBuilder <>(
                         image,
                         rangeSize,
                         domainSize,
                         encoder,
                         library);
                 break;
-            break;
             case TRIANGULAR:
                 break;
             case SPLIT_AND_MERGE_0:
+                result = new BushTreeNodeBuilder <>(
+                        image,
+                        rangeSize,
+                        domainSize,
+                        encoder,
+                        library);
                 break;
             case SPLIT_AND_MERGE_1:
                 break;

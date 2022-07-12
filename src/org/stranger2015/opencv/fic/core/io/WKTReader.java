@@ -63,9 +63,9 @@ import java.util.Locale;
  *
  * <i>WKTPoint:</i> <b>POINT</b><i>[Dimension]</i> <b>( </b><i>Coordinate</i> <b>)</b>
  *
- * <i>WKTLineString:</i> <b>LINESTRING</b><i>[Dimension]</i> <i>CoordinateSequence</i>
+ * <i>WKTLineString:</i> <b>LINESTRING</b><i>[Dimension]</i> <i>ICoordinateSequence</i>
  *
- * <i>WKTLinearRing:</i> <b>LINEARRING</b><i>[Dimension]</i> <i>CoordinateSequence</i>
+ * <i>WKTLinearRing:</i> <b>LINEARRING</b><i>[Dimension]</i> <i>ICoordinateSequence</i>
  *
  * <i>WKTPolygon:</i> <b>POLYGON</b><i>[Dimension]</i> <i>CoordinateSequenceList</i>
  *
@@ -88,10 +88,10 @@ import java.util.Locale;
  *         | <b>EMPTY</b>
  *
  * <i>CoordinateSequenceList:</i>
- *         <b>(</b> <i>CoordinateSequence {</i> <b>,</b> <i>CoordinateSequence }</i> <b>)</b>
+ *         <b>(</b> <i>ICoordinateSequence {</i> <b>,</b> <i>ICoordinateSequence }</i> <b>)</b>
  *         | <b>EMPTY</b>
  *
- * <i>CoordinateSequence:</i>
+ * <i>ICoordinateSequence:</i>
  *         <b>(</b> <i>Coordinate {</i> , <i>Coordinate }</i> <b>)</b>
  *         | <b>EMPTY</b>
  *
@@ -117,8 +117,8 @@ public class WKTReader
     private static final String NAN_SYMBOL = "NaN";
 
     private GeometryFactory geometryFactory;
-    private final CoordinateSequenceFactory csFactory;
-    private static final CoordinateSequenceFactory csFactoryXYZM = CoordinateArraySequenceFactory.instance();
+    private final ICoordinateSequenceFactory csFactory;
+    private static final ICoordinateSequenceFactory csFactoryXYZM = CoordinateArraySequenceFactory.instance();
     private final PrecisionModel precisionModel;
 
     /**
@@ -235,18 +235,19 @@ public class WKTReader
     /**
      * Reads a <code>Coordinate</Code> from a stream using the given {@link StreamTokenizer}.
      * <p>
-     *   All ordinate values are read, but -depending on the {@link CoordinateSequenceFactory} of the
+     *   All ordinate values are read, but -depending on the {@link ICoordinateSequenceFactory} of the
      *   underlying {@link GeometryFactory}- not necessarily all can be handled. Those are silently dropped.
      * </p>
      * @param tokenizer the tokenizer to use
      * @param ordinateFlags a bit-mask defining the ordinates to read.
      * @param tryParen a value indicating if a starting {@link #L_PAREN} should be probed.
-     * @return a {@link CoordinateSequence} of length 1 containing the read ordinate values
+     * @return a {@link ICoordinateSequence} of length 1 containing the read ordinate values
      *
      *@throws  IOException     if an I/O error occurs
      *@throws  ParseException  if an unexpected token was encountered
      */
-    private CoordinateSequence getCoordinate(StreamTokenizer tokenizer, EnumSet<Ordinate> ordinateFlags, boolean tryParen)
+    private
+    ICoordinateSequence getCoordinate( StreamTokenizer tokenizer, EnumSet<Ordinate> ordinateFlags, boolean tryParen)
             throws IOException, ParseException
     {
 
@@ -258,18 +259,18 @@ public class WKTReader
 
         // create a sequence for one coordinate
         int offsetM = ordinateFlags.contains(Ordinate.Z) ? 1 : 0;
-        CoordinateSequence sequence = csFactory.create(1, toDimension(ordinateFlags), ordinateFlags.contains(Ordinate.M) ? 1 : 0);
-        sequence.setOrdinate(0, CoordinateSequence.X, precisionModel.makePrecise(getNextNumber(tokenizer)));
-        sequence.setOrdinate(0, CoordinateSequence.Y, precisionModel.makePrecise(getNextNumber(tokenizer)));
+        ICoordinateSequence sequence = csFactory.create(1, toDimension(ordinateFlags), ordinateFlags.contains(Ordinate.M) ? 1 : 0);
+        sequence.setOrdinate(0, ICoordinateSequence.X, precisionModel.makePrecise(getNextNumber(tokenizer)));
+        sequence.setOrdinate(0, ICoordinateSequence.Y, precisionModel.makePrecise(getNextNumber(tokenizer)));
 
         // additionally read other vertices
         if (ordinateFlags.contains(Ordinate.Z))
-            sequence.setOrdinate(0, CoordinateSequence.Z, getNextNumber(tokenizer));
+            sequence.setOrdinate(0, ICoordinateSequence.Z, getNextNumber(tokenizer));
         if (ordinateFlags.contains(Ordinate.M))
-            sequence.setOrdinate(0, CoordinateSequence.Z + offsetM, getNextNumber(tokenizer));
+            sequence.setOrdinate(0, ICoordinateSequence.Z + offsetM, getNextNumber(tokenizer));
 
         if (ordinateFlags.size() == 2 && this.isAllowOldJtsCoordinateSyntax && isNumberNext(tokenizer)) {
-            sequence.setOrdinate(0, CoordinateSequence.Z, getNextNumber(tokenizer));
+            sequence.setOrdinate(0, ICoordinateSequence.Z, getNextNumber(tokenizer));
         }
 
         // read close token if it was opened here
@@ -283,7 +284,7 @@ public class WKTReader
     /**
      * Reads a <code>Coordinate</Code> from a stream using the given {@link StreamTokenizer}.
      * <p>
-     *   All ordinate values are read, but -depending on the {@link CoordinateSequenceFactory} of the
+     *   All ordinate values are read, but -depending on the {@link ICoordinateSequenceFactory} of the
      *   underlying {@link GeometryFactory}- not necessarily all can be handled. Those are silently dropped.
      * </p>
      * <p>
@@ -291,12 +292,13 @@ public class WKTReader
      * </p>
      * @param tokenizer the tokenizer to use
      * @param ordinateFlags a bit-mask defining the ordinates to read.
-     * @return a {@link CoordinateSequence} of length 1 containing the read ordinate values
+     * @return a {@link ICoordinateSequence} of length 1 containing the read ordinate values
      *
      *@throws  IOException     if an I/O error occurs
      *@throws  ParseException  if an unexpected token was encountered
      */
-    private CoordinateSequence getCoordinateSequence(StreamTokenizer tokenizer, EnumSet<Ordinate> ordinateFlags)
+    private
+    ICoordinateSequence getCoordinateSequence( StreamTokenizer tokenizer, EnumSet<Ordinate> ordinateFlags)
             throws IOException, ParseException {
         if (getNextEmptyOrOpener(tokenizer).equals(WKTConstants.EMPTY))
             return this.csFactory.create(0, toDimension(ordinateFlags), ordinateFlags.contains(Ordinate.M) ? 1 : 0);
@@ -309,21 +311,22 @@ public class WKTReader
         return mergeSequences(coordinates, ordinateFlags);  }
 
     /**
-     * Reads a <code>CoordinateSequence</Code> from a stream using the given {@link StreamTokenizer}
+     * Reads a <code>ICoordinateSequence</Code> from a stream using the given {@link StreamTokenizer}
      * for an old-style JTS MultiPoint (Point coordinates not enclosed in parentheses).
      * <p>
-     * All ordinate values are read, but -depending on the {@link CoordinateSequenceFactory} of the
+     * All ordinate values are read, but -depending on the {@link ICoordinateSequenceFactory} of the
      * underlying {@link GeometryFactory}- not necessarily all can be handled. Those are silently dropped.
      * </p>
      * @param tokenizer the tokenizer to use
      * @param ordinateFlags a bit-mask defining the ordinates to read.
-     * @return a {@link CoordinateSequence} of length 1 containing the read ordinate values
+     * @return a {@link ICoordinateSequence} of length 1 containing the read ordinate values
      *
      * @throws  IOException     if an I/O error occurs
      * @throws  ParseException  if an unexpected token was encountered S
      */
-    private CoordinateSequence getCoordinateSequenceOldMultiPoint(StreamTokenizer tokenizer,
-                                                                  EnumSet<Ordinate> ordinateFlags)
+    private
+    ICoordinateSequence getCoordinateSequenceOldMultiPoint( StreamTokenizer tokenizer,
+                                                            EnumSet<Ordinate> ordinateFlags)
             throws IOException, ParseException {
 
         List<Coordinate> coordinates = new ArrayList<>();
@@ -357,26 +360,27 @@ public class WKTReader
     }
 
     /**
-     * Merges an array of one-coordinate-{@link CoordinateSequence}s into one {@link CoordinateSequence}.
+     * Merges an array of one-coordinate-{@link ICoordinateSequence}s into one {@link ICoordinateSequence}.
      *
      * @param sequences an array of coordinate sequences. Each sequence contains <b>exactly one</b> coordinate.
      * @param ordinateFlags a bit-mask of required ordinates.
      * @return a coordinate sequence containing all coordinate
      */
-    private CoordinateSequence mergeSequences(List<Coordinate> sequences, EnumSet<Ordinate> ordinateFlags) {
+    private
+    ICoordinateSequence mergeSequences( List<Coordinate> sequences, EnumSet<Ordinate> ordinateFlags) {
 
         // if the sequences array is empty or null create an empty sequence
         if (sequences == null || sequences.size() == 0)
             return csFactory.create(0, toDimension(ordinateFlags));
 
         if (sequences.size() == 1)
-            return (CoordinateSequence) sequences.get(0);
+            return (ICoordinateSequence) sequences.get(0);
 
         EnumSet<Ordinate> mergeOrdinates;
         if (this.isAllowOldJtsCoordinateSyntax && ordinateFlags.size() == 2) {
             mergeOrdinates = ordinateFlags.clone();
             for (Coordinate sequence : sequences) {
-                if (((CoordinateSequence) sequence).hasZ()) {
+                if (((ICoordinateSequence) sequence).hasZ()) {
                     mergeOrdinates.add(Ordinate.Z);
                     break;
                 }
@@ -386,16 +390,16 @@ public class WKTReader
             mergeOrdinates = ordinateFlags;
 
         // create and fill the result sequence
-        CoordinateSequence sequence = this.csFactory.create(sequences.size(), toDimension(mergeOrdinates),
+        ICoordinateSequence sequence = this.csFactory.create(sequences.size(), toDimension(mergeOrdinates),
                 mergeOrdinates.contains(Ordinate.M) ? 1 : 0);
 
-        int offsetM = CoordinateSequence.Z + (mergeOrdinates.contains(Ordinate.Z) ? 1 : 0);
+        int offsetM = ICoordinateSequence.Z + (mergeOrdinates.contains(Ordinate.Z) ? 1 : 0);
         for (int i = 0; i < sequences.size(); i++) {
-            CoordinateSequence item = (CoordinateSequence)sequences.get(i);
-            sequence.setOrdinate(i, CoordinateSequence.X, item.getOrdinate(0, CoordinateSequence.X));
-            sequence.setOrdinate(i, CoordinateSequence.Y, item.getOrdinate(0, CoordinateSequence.Y));
+            ICoordinateSequence item = (ICoordinateSequence)sequences.get(i);
+            sequence.setOrdinate(i, ICoordinateSequence.X, item.getOrdinate(0, ICoordinateSequence.X));
+            sequence.setOrdinate(i, ICoordinateSequence.Y, item.getOrdinate(0, ICoordinateSequence.Y));
             if (mergeOrdinates.contains(Ordinate.Z))
-                sequence.setOrdinate(i, CoordinateSequence.Z, item.getOrdinate(0, CoordinateSequence.Z));
+                sequence.setOrdinate(i, ICoordinateSequence.Z, item.getOrdinate(0, ICoordinateSequence.Z));
             if (mergeOrdinates.contains(Ordinate.M))
                 sequence.setOrdinate(i, offsetM, item.getOrdinate(0, offsetM));
         }
@@ -416,7 +420,7 @@ public class WKTReader
      *@throws  IOException     if an I/O error occurs
      *@throws  ParseException  if an unexpected token was encountered
      *
-     *@deprecated in favor of functions returning {@link CoordinateSequence}s
+     *@deprecated in favor of functions returning {@link ICoordinateSequence}s
      */
     private Coordinate[] getCoordinates( StreamTokenizer tokenizer) throws IOException, ParseException {
         String nextToken = getNextEmptyOrOpener(tokenizer);
@@ -444,7 +448,7 @@ public class WKTReader
      *@throws  IOException     if an I/O error occurs
      *@throws  ParseException  if an unexpected token was encountered
      *
-     *@deprecated in favor of functions returning {@link CoordinateSequence}s
+     *@deprecated in favor of functions returning {@link ICoordinateSequence}s
      */
     private Coordinate[] getCoordinatesNoLeftParen(StreamTokenizer tokenizer) throws IOException, ParseException {
         String nextToken = null;
@@ -469,7 +473,7 @@ public class WKTReader
      *@throws  IOException     if an I/O error occurs
      *@throws  ParseException  if an unexpected token was encountered
      *
-     *@deprecated in favor of functions returning {@link CoordinateSequence}s
+     *@deprecated in favor of functions returning {@link ICoordinateSequence}s
      */
     private Coordinate getPreciseCoordinate(StreamTokenizer tokenizer)
             throws IOException, ParseException
@@ -772,7 +776,7 @@ public class WKTReader
 
         // if we can create a sequence with the required dimension everything is ok, otherwise
         // we need to take a different coordinate sequence factory.
-        // It would be good to not have to try/catch this but if the CoordinateSequenceFactory
+        // It would be good to not have to try/catch this but if the ICoordinateSequenceFactory
         // exposed a value indicating which min/max dimension it can handle or even an
         // ordinate bit-flag.
         try {

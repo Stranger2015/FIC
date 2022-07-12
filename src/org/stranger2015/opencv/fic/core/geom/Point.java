@@ -11,11 +11,8 @@ package org.stranger2015.opencv.fic.core.geom;
  * http://www.eclipse.org/org/documents/edl-v10.php.
  */
 
-import org.stranger2015.opencv.fic.core.geom.CoordinateSequenceComparator;
-import org.stranger2015.opencv.fic.core.geom.Dimension;
 import org.stranger2015.opencv.fic.core.geom.GeometryComponentFilter;
 import org.stranger2015.opencv.fic.core.geom.Puntal;
-import org.stranger2015.opencv.fic.core.geom.PrecisionModel;
 import org.stranger2015.opencv.fic.utils.Assert;
 
 /**
@@ -37,7 +34,7 @@ public class Point
     /**
      *  The <code>Coordinate</code> wrapped by this <code>Point</code>.
      */
-    private CoordinateSequence coordinates;
+    private ICoordinateSequence coordinates;
 
     /**
      *  Constructs a <code>Point</code> with the given coordinate.
@@ -60,12 +57,12 @@ public class Point
      *@param  coordinates      contains the single coordinate on which to base this <code>Point</code>
      *      , or <code>null</code> to create the empty geometry.
      */
-    public Point(CoordinateSequence coordinates, GeometryFactory factory) {
+    public Point( ICoordinateSequence coordinates, GeometryFactory factory) {
         super(factory);
         init(coordinates);
     }
 
-    private void init(CoordinateSequence coordinates)
+    private void init( ICoordinateSequence coordinates)
     {
         if (coordinates == null) {
             coordinates = getFactory().getCoordinateSequenceFactory().create(new Coordinate[]{});
@@ -254,7 +251,8 @@ public class Point
         return Geometry.TYPECODE_POINT;
     }
 
-    public CoordinateSequence getCoordinateSequence() {
+    public
+    ICoordinateSequence getCoordinateSequence() {
         return coordinates;
     }
 }

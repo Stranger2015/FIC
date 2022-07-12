@@ -15,7 +15,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
  */
 @SuppressWarnings(value = {"rawtypes"})
 public
-class Config<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer> {
+class Config<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer> {
 
     private Commands command;
 
@@ -34,7 +34,7 @@ class Config<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends 
      * @param args the args to parse
      */
     public
-    Config ( String[] args ) {
+    Config ( String[] args ) throws ClassNotFoundException, NoSuchMethodException {
         parser = new JCommander(this.options = new Options<>());
 
         parser.setProgramName(FicApplication.class.getCanonicalName());
@@ -128,7 +128,7 @@ class Config<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends 
      * @return
      */
     public
-    ITiler <M, A> tiler () {
+    ITiler <N, A, G> tiler () {
         return options.tiler;
     }
 

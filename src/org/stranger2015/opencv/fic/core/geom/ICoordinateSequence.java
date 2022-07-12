@@ -13,8 +13,6 @@ package org.stranger2015.opencv.fic.core.geom;
  */
 
 import org.stranger2015.opencv.fic.core.geom.impl.CoordinateArraySequenceFactory;
-import org.stranger2015.opencv.fic.core.geom.impl.PackedCoordinateSequenceFactory;
-import org.stranger2015.opencv.utils.geom.Geometry;
 
 /**
  * The internal representation of a list of coordinates inside a Geometry.
@@ -27,13 +25,13 @@ import org.stranger2015.opencv.utils.geom.Geometry;
  * Or a custom coordinate class might support extra attributes like M-values.
  * <p>
  * Implementing a custom coordinate storage structure
- * requires implementing the {@link CoordinateSequence} and
- * {@link CoordinateSequenceFactory} interfaces.
- * To use the custom CoordinateSequence, create a
- * new {@link GeometryFactory} parameterized by the CoordinateSequenceFactory
+ * requires implementing the {@link ICoordinateSequence} and
+ * {@link ICoordinateSequenceFactory} interfaces.
+ * To use the custom ICoordinateSequence, create a
+ * new {@link GeometryFactory} parameterized by the ICoordinateSequenceFactory
  * The {@link GeometryFactory} can then be used to create new {@link Geometry}s.
  * The new Geometries
- * will use the custom CoordinateSequence implementation.
+ * will use the custom ICoordinateSequence implementation.
  * <p>
  * For an example, see the code for ExtendedCoordinateExample.
  *
@@ -42,7 +40,7 @@ import org.stranger2015.opencv.utils.geom.Geometry;
  * @see PackedCoordinateSequenceFactory
  */
 public
-interface CoordinateSequence
+interface ICoordinateSequence
         extends Cloneable {
     /**
      * Standard ordinate index value for, where X is 0
@@ -148,7 +146,7 @@ interface CoordinateSequence
      * <p>
      * Note that in the future the semantics of this method may change
      * to guarantee that the Coordinate returned is always a copy.
-     * Callers should not to assume that they can modify a CoordinateSequence by
+     * Callers should not to assume that they can modify a ICoordinateSequence by
      * modifying the object returned by this method.
      *
      * @param i the index of the coordinate to retrieve
@@ -290,5 +288,5 @@ interface CoordinateSequence
      *
      * @return a copy of the coordinate sequence containing copies of all points
      */
-    CoordinateSequence copy ();
+    ICoordinateSequence copy ();
 }

@@ -7,11 +7,11 @@ import org.stranger2015.opencv.fic.core.io.MultiPoint;
 
 import java.util.*;
 
-import static org.stranger2015.opencv.fic.core.operation.BoundaryNodeRule.MOD2_BOUNDARY_RULE;
+import static org.stranger2015.opencv.fic.core.operation.IBoundaryNodeRule.MOD2_BOUNDARY_RULE;
 
 /**
  * Computes the boundary of a {@link Geometry}.
- * Allows specifying the {@link BoundaryNodeRule} to be used.
+ * Allows specifying the {@link IBoundaryNodeRule} to be used.
  * This operation will always return a {@link Geometry} of the appropriate
  * dimension for the boundary (even if the input geometry is empty).
  * The boundary of zero-dimensional geometries (Points) is
@@ -37,13 +37,13 @@ public class BoundaryOp
 
     /**
      * Computes a geometry representing the boundary of a geometry,
-     * using an explicit {@link BoundaryNodeRule}.
+     * using an explicit {@link IBoundaryNodeRule}.
      *
      * @param g the input geometry
      * @param bnRule the Boundary Node Rule to use
      * @return the computed boundary
      */
-    public static Geometry getBoundary(Geometry g, BoundaryNodeRule bnRule)
+    public static Geometry getBoundary(Geometry g, IBoundaryNodeRule bnRule)
     {
         BoundaryOp bop = new BoundaryOp(g, bnRule);
         return bop.getBoundary();
@@ -56,7 +56,7 @@ public class BoundaryOp
      * <li>Empty geometries do not have boundaries.
      * <li>Points do not have boundaries.
      * <li>For linear geometries the existence of the boundary
-     * is determined by the {@link BoundaryNodeRule}.
+     * is determined by the {@link IBoundaryNodeRule}.
      * <li>Non-empty polygons always have a boundary.
      * </ul>
      *
@@ -64,7 +64,7 @@ public class BoundaryOp
      * @param boundaryNodeRule  the Boundary Node Rule to use
      * @return true if the boundary exists
      */
-    public static boolean hasBoundary(Geometry geom, BoundaryNodeRule boundaryNodeRule) {
+    public static boolean hasBoundary(Geometry geom, IBoundaryNodeRule boundaryNodeRule) {
         // Note that this does not handle geometry collections with a non-empty linear element
         if (geom.isEmpty()) {
             return false;
@@ -85,7 +85,7 @@ public class BoundaryOp
 
     private final Geometry geom;
     private final GeometryFactory geomFact;
-    private final BoundaryNodeRule bnRule;
+    private final IBoundaryNodeRule bnRule;
 
     /**
      * Creates a new instance for the given geometry.
@@ -103,7 +103,7 @@ public class BoundaryOp
      * @param geom the input geometry
      * @param bnRule the Boundary Node Rule to use
      */
-    public BoundaryOp(Geometry geom, BoundaryNodeRule bnRule)
+    public BoundaryOp(Geometry geom, IBoundaryNodeRule bnRule)
     {
         this.geom = geom;
         geomFact = geom.getFactory();

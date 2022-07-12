@@ -10,9 +10,6 @@ enum ChildOrder {
     NE,
     SE;
 
-
-//    private ECornerDirection cornerDirection;
-//
     ChildOrder ( ) {
     }
 }

@@ -6,7 +6,7 @@ import org.stranger2015.opencv.fic.core.io.OrdinateFormat;
 import java.util.stream.IntStream;
 
 /**
- * Utility functions for manipulating {@link CoordinateSequence}s
+ * Utility functions for manipulating {@link ICoordinateSequence}s
  *
  * @version 1.7
  */
@@ -17,7 +17,7 @@ public class CoordinateSequences {
      *
      * @param seq the coordinate sequence to reverse
      */
-    public static void reverse( CoordinateSequence seq)
+    public static void reverse( ICoordinateSequence seq)
     {
         if (seq.size() <= 1) return;
 
@@ -33,7 +33,7 @@ public class CoordinateSequences {
      * @param i the index of a coordinate to swap
      * @param j the index of a coordinate to swap
      */
-    public static void swap( CoordinateSequence seq, int i, int j)
+    public static void swap( ICoordinateSequence seq, int i, int j)
     {
         if (i == j) return;
         for (int dim = 0; dim < seq.getDimension(); dim++) {
@@ -44,7 +44,7 @@ public class CoordinateSequences {
     }
 
     /**
-     * Copies a section of a {@link CoordinateSequence} to another {@link CoordinateSequence}.
+     * Copies a section of a {@link ICoordinateSequence} to another {@link ICoordinateSequence}.
      * The sequences may have different dimensions;
      * in this case only the common dimensions are copied.
      *
@@ -54,7 +54,7 @@ public class CoordinateSequences {
      * @param destPos the position in the destination sequence to copy to
      * @param length the number of coordinates to copy
      */
-    public static void copy( CoordinateSequence src, int srcPos, CoordinateSequence dest, int destPos, int length)
+    public static void copy( ICoordinateSequence src, int srcPos, ICoordinateSequence dest, int destPos, int length)
     {
         for (int i = 0; i < length; i++) {
             copyCoord(src, srcPos + i, dest, destPos + i);
@@ -62,7 +62,7 @@ public class CoordinateSequences {
     }
 
     /**
-     * Copies a coordinate of a {@link CoordinateSequence} to another {@link CoordinateSequence}.
+     * Copies a coordinate of a {@link ICoordinateSequence} to another {@link ICoordinateSequence}.
      * The sequences may have different dimensions;
      * in this case only the common dimensions are copied.
      *
@@ -71,7 +71,7 @@ public class CoordinateSequences {
      * @param dest the sequence to copy to
      * @param destPos the destination coordinate to copy to
      */
-    public static void copyCoord( CoordinateSequence src, int srcPos, CoordinateSequence dest, int destPos)
+    public static void copyCoord( ICoordinateSequence src, int srcPos, ICoordinateSequence dest, int destPos)
     {
         int minDim = Math.min(src.getDimension(), dest.getDimension());
         for (int dim = 0; dim < minDim; dim++) {
@@ -80,7 +80,7 @@ public class CoordinateSequences {
     }
 
     /**
-     * Tests whether a {@link CoordinateSequence} forms a valid {@link LinearRing},
+     * Tests whether a {@link ICoordinateSequence} forms a valid {@link LinearRing},
      * by checking the sequence length and closure
      * (whether the first and last points are identical in 2D). 
      * Self-intersection is not checked.
@@ -89,7 +89,7 @@ public class CoordinateSequences {
      * @return true if the sequence is a ring
      * @see LinearRing
      */
-    public static boolean isRing( CoordinateSequence seq)
+    public static boolean isRing( ICoordinateSequence seq)
     {
         int n = seq.size();
         if (n == 0) return true;
@@ -97,24 +97,24 @@ public class CoordinateSequences {
         if (n <= 3)
             return false;
         // test if closed
-        return seq.getOrdinate(0, CoordinateSequence.X) == seq.getOrdinate(n-1, CoordinateSequence.X)
-                && seq.getOrdinate(0, CoordinateSequence.Y) == seq.getOrdinate(n-1, CoordinateSequence.Y);
+        return seq.getOrdinate(0, ICoordinateSequence.X) == seq.getOrdinate(n-1, ICoordinateSequence.X)
+                && seq.getOrdinate(0, ICoordinateSequence.Y) == seq.getOrdinate(n-1, ICoordinateSequence.Y);
     }
 
     /**
-     * Ensures that a CoordinateSequence forms a valid ring, 
+     * Ensures that a ICoordinateSequence forms a valid ring,
      * returning a new closed sequence of the correct length if required.
      * If the input sequence is already a valid ring, it is returned 
      * without modification.
      * If the input sequence is too short or is not closed, 
      * it is extended with one or more copies of the start point.
      *
-     * @param fact the CoordinateSequenceFactory to use to create the new sequence
+     * @param fact the ICoordinateSequenceFactory to use to create the new sequence
      * @param seq the sequence to test
      * @return the original sequence, if it was a valid ring, or a new sequence which is valid.
      */
     public static
-    CoordinateSequence ensureValidRing( CoordinateSequenceFactory fact, CoordinateSequence seq)
+    ICoordinateSequence ensureValidRing( ICoordinateSequenceFactory fact, ICoordinateSequence seq)
     {
         int n = seq.size();
         // empty sequence is valid
@@ -123,17 +123,17 @@ public class CoordinateSequences {
         if (n <= 3)
             return createClosedRing(fact, seq, 4);
 
-        boolean isClosed = seq.getOrdinate(0, CoordinateSequence.X) == seq.getOrdinate(n-1, CoordinateSequence.X)
-                && seq.getOrdinate(0, CoordinateSequence.Y) == seq.getOrdinate(n-1, CoordinateSequence.Y);
+        boolean isClosed = seq.getOrdinate(0, ICoordinateSequence.X) == seq.getOrdinate(n-1, ICoordinateSequence.X)
+                && seq.getOrdinate(0, ICoordinateSequence.Y) == seq.getOrdinate(n-1, ICoordinateSequence.Y);
         if (isClosed) return seq;
         // make a new closed ring
         return createClosedRing(fact, seq, n+1);
     }
 
     private static
-    CoordinateSequence createClosedRing( CoordinateSequenceFactory fact, CoordinateSequence seq, int size)
+    ICoordinateSequence createClosedRing( ICoordinateSequenceFactory fact, ICoordinateSequence seq, int size)
     {
-        CoordinateSequence newseq = fact.create(size, seq.getDimension());
+        ICoordinateSequence newseq = fact.create(size, seq.getDimension());
         int n = seq.size();
         copy(seq, 0, newseq, 0, n);
         // fill remaining coordinates with start point
@@ -143,9 +143,9 @@ public class CoordinateSequences {
     }
 
     public static
-    CoordinateSequence extend( CoordinateSequenceFactory fact, CoordinateSequence seq, int size)
+    ICoordinateSequence extend( ICoordinateSequenceFactory fact, ICoordinateSequence seq, int size)
     {
-        CoordinateSequence newseq = fact.create(size, seq.getDimension());
+        ICoordinateSequence newseq = fact.create(size, seq.getDimension());
         int n = seq.size();
         copy(seq, 0, newseq, 0, n);
         // fill remaining coordinates with end point, if it exists
@@ -157,18 +157,18 @@ public class CoordinateSequences {
     }
 
     /**
-     * Tests whether two {@link CoordinateSequence}s are equal.
+     * Tests whether two {@link ICoordinateSequence}s are equal.
      * To be equal, the sequences must be the same length.
      * They do not need to be of the same dimension, 
      * but the ordinate values for the smallest dimension of the two
      * must be equal.
      * Two <code>NaN</code> ordinates values are considered to be equal. 
      *
-     * @param cs1 a CoordinateSequence
-     * @param cs2 a CoordinateSequence
+     * @param cs1 a ICoordinateSequence
+     * @param cs2 a ICoordinateSequence
      * @return true if the sequences are equal in the common dimensions
      */
-    public static boolean isEqual( CoordinateSequence cs1, CoordinateSequence cs2) {
+    public static boolean isEqual( ICoordinateSequence cs1, ICoordinateSequence cs2) {
         int cs1Size = cs1.size();
         int cs2Size = cs2.size();
         if (cs1Size != cs2Size) return false;
@@ -193,7 +193,7 @@ public class CoordinateSequences {
     }
 
     /**
-     * Creates a string representation of a {@link CoordinateSequence}.
+     * Creates a string representation of a {@link ICoordinateSequence}.
      * The format is:
      * <pre>
      *   ( ord0,ord1.. ord0,ord1,...  ... )
@@ -202,7 +202,7 @@ public class CoordinateSequences {
      * @param cs the sequence to output
      * @return the string representation of the sequence
      */
-    public static String toString( CoordinateSequence cs)
+    public static String toString( ICoordinateSequence cs)
     {
         int size = cs.size();
         if (size == 0)
@@ -228,7 +228,7 @@ public class CoordinateSequences {
      *@return  the minimum coordinate in the sequence, found using <code>compareTo</code>
      */
     public static
-    Coordinate minCoordinate( CoordinateSequence seq)
+    Coordinate minCoordinate( ICoordinateSequence seq)
     {
         Coordinate minCoord = null;
         for (int i = 0; i < seq.size(); i++) {
@@ -246,7 +246,7 @@ public class CoordinateSequences {
      *@param  seq  the coordinate sequence to search
      *@return  the index of the minimum coordinate in the sequence, found using <code>compareTo</code>
      */
-    public static int minCoordinateIndex( CoordinateSequence seq) {
+    public static int minCoordinateIndex( ICoordinateSequence seq) {
         return minCoordinateIndex(seq, 0, seq.size() - 1);
     }
 
@@ -260,7 +260,7 @@ public class CoordinateSequences {
      *@param  to    the upper search index
      *@return  the index of the minimum coordinate in the sequence, found using <code>compareTo</code>
      */
-    public static int minCoordinateIndex( CoordinateSequence seq, int from, int to)
+    public static int minCoordinateIndex( ICoordinateSequence seq, int from, int to)
     {
         int minCoordIndex = -1;
         Coordinate minCoord = null;
@@ -281,7 +281,7 @@ public class CoordinateSequences {
      *@param  seq      the coordinate sequence to rearrange
      *@param  firstCoordinate  the coordinate to make first
      */
-    public static void scroll( CoordinateSequence seq, Coordinate firstCoordinate) {
+    public static void scroll( ICoordinateSequence seq, Coordinate firstCoordinate) {
         int i = indexOf(firstCoordinate, seq);
         if (i <= 0) return;
         scroll(seq, i);
@@ -295,7 +295,7 @@ public class CoordinateSequences {
      *@param  seq      the coordinate sequence to rearrange
      *@param  indexOfFirstCoordinate  the index of the coordinate to make first
      */
-    public static void scroll( CoordinateSequence seq, int indexOfFirstCoordinate)
+    public static void scroll( ICoordinateSequence seq, int indexOfFirstCoordinate)
     {
         scroll(seq, indexOfFirstCoordinate, CoordinateSequences.isRing(seq));
     }
@@ -310,12 +310,12 @@ public class CoordinateSequences {
      *@param  ensureRing
      *                 makes sure that {@code} will be a closed ring upon exit
      */
-    public static void scroll( CoordinateSequence seq, int indexOfFirstCoordinate, boolean ensureRing) {
+    public static void scroll( ICoordinateSequence seq, int indexOfFirstCoordinate, boolean ensureRing) {
         int i = indexOfFirstCoordinate;
         if (i <= 0) return;
 
         // make a copy of the sequence
-        CoordinateSequence copy = seq.copy();
+        ICoordinateSequence copy = seq.copy();
 
         // test if ring, determine last index
         int last = ensureRing ? seq.size() - 1: seq.size();
@@ -335,7 +335,7 @@ public class CoordinateSequences {
     }
 
     /**
-     *  Returns the index of <code>coordinate</code> in a {@link CoordinateSequence}
+     *  Returns the index of <code>coordinate</code> in a {@link ICoordinateSequence}
      *  The first position is 0; the second, 1; etc.
      *
      *@param  coordinate   the <code>Coordinate</code> to search for
@@ -343,10 +343,10 @@ public class CoordinateSequences {
      *@return              the position of <code>coordinate</code>, or -1 if it is
      *      not found
      */
-    public static int indexOf( Coordinate coordinate, CoordinateSequence seq) {
+    public static int indexOf( Coordinate coordinate, ICoordinateSequence seq) {
         for (int i = 0; i < seq.size(); i++) {
-            if (coordinate.x == seq.getOrdinate(i, CoordinateSequence.X) &&
-                    coordinate.y == seq.getOrdinate(i, CoordinateSequence.Y)) {
+            if (coordinate.x == seq.getOrdinate(i, ICoordinateSequence.X) &&
+                    coordinate.y == seq.getOrdinate(i, ICoordinateSequence.Y)) {
                 return i;
             }
         }

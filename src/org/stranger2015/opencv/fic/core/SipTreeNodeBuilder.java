@@ -403,4 +403,14 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
     void setImage ( SipImage <A> image ) {
         this.image = image;
     }
+
+    public
+    int getLayerIndex () {
+        return layerIndex;
+    }
+
+    public
+    int getClusterIndex () {
+        return clusterIndex;
+    }
 }

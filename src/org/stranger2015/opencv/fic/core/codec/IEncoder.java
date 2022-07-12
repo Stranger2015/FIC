@@ -153,7 +153,7 @@ import java.util.Set;
  * Step 13: Apply a fractal compression algorithm to obtain a compressed IFS code.
  */
 public
-interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
         extends IPipeline <IImage <A>, IImage <A>>,
                 IImageProcessorListener <N, A, G>,
                 ICodecListener <N, A, G>,

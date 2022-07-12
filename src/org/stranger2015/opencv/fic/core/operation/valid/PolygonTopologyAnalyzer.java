@@ -15,24 +15,20 @@ package org.stranger2015.opencv.fic.core.operation.valid;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.locationtech.jts.algorithm.LineIntersector;
-import org.locationtech.jts.algorithm.Orientation;
-import org.locationtech.jts.algorithm.PointLocation;
-import org.locationtech.jts.algorithm.RobustLineIntersector;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.CoordinateArrays;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.LinearRing;
-import org.locationtech.jts.geom.Location;
-import org.locationtech.jts.geom.Polygon;
-import org.locationtech.jts.noding.BasicSegmentString;
-import org.locationtech.jts.noding.MCIndexNoder;
-import org.locationtech.jts.noding.SegmentString;
-import org.locationtech.jts.operation.valid.PolygonIntersectionAnalyzer;
-import org.locationtech.jts.operation.valid.PolygonNode;
-import org.locationtech.jts.operation.valid.PolygonRing;
+import org.stranger2015.opencv.fic.core.algorithm.LineIntersector;
+import org.stranger2015.opencv.fic.core.algorithm.Orientation;
+import org.stranger2015.opencv.fic.core.algorithm.PointLocation;
+import org.stranger2015.opencv.fic.core.algorithm.RobustLineIntersector;
+import org.stranger2015.opencv.fic.core.geom.Coordinate;
+import org.stranger2015.opencv.fic.core.geom.CoordinateArrays;
+import org.stranger2015.opencv.fic.core.geom.Geometry;
+import org.stranger2015.opencv.fic.core.geom.LinearRing;
+import org.stranger2015.opencv.fic.core.geom.Polygon;
+import org.stranger2015.opencv.fic.core.noding.BasicSegmentString;
+import org.stranger2015.opencv.fic.core.noding.MCIndexNoder;
+import org.stranger2015.opencv.fic.core.noding.SegmentString;
 
-import static org.locationtech.jts.operation.valid.PolygonNode.*;
+import static org.stranger2015.opencv.fic.core.operation.valid.PolygonNode.*;
 
 /**
  * Analyzes the topology of polygonal geometry

@@ -1,20 +1,17 @@
 package org.stranger2015.opencv.fic.core.geom.impl;
 
-import org.stranger2015.opencv.fic.core.geom.CoordinateArrays;
-import org.stranger2015.opencv.fic.core.geom.Coordinates;
-import org.stranger2015.opencv.fic.core.geom.Coordinate;
-import org.stranger2015.opencv.fic.core.geom.CoordinateSequence;
-import org.stranger2015.opencv.fic.core.geom.Envelope;
+import org.stranger2015.opencv.fic.core.geom.*;
+import org.stranger2015.opencv.fic.core.geom.ICoordinateSequence;
 import org.stranger2015.opencv.utils.geom.Geometry;
 
 import java.io.Serializable;
 
 /**
- * A {@link CoordinateSequence} backed by an array of {@link Coordinate}s.
+ * A {@link ICoordinateSequence} backed by an array of {@link Coordinate}s.
  * This is the implementation that {@link Geometry}s use by default.
  * Coordinates returned by #toArray and #getCoordinate are live --
  * modifications to them are actually changing the
- * CoordinateSequence's underlying data.
+ * ICoordinateSequence's underlying data.
  * A dimension may be specified for the coordinates in the sequence,
  * which may be 2 or 3.
  * The actual coordinates will always have 3 ordinates,
@@ -23,7 +20,7 @@ import java.io.Serializable;
  * @version 1.8
  */
 public class CoordinateArraySequence
-        implements CoordinateSequence, Serializable
+        implements ICoordinateSequence, Serializable
 {
     //With contributions from Markus Schaber [schabios@logi-track.com] 2004-03-26
     private static final long serialVersionUID = -915438501601840650L;
@@ -133,12 +130,12 @@ public class CoordinateArraySequence
     }
 
     /**
-     * Creates a new sequence based on a deep copy of the given {@link CoordinateSequence}.
+     * Creates a new sequence based on a deep copy of the given {@link ICoordinateSequence}.
      * The coordinate dimension is set to equal the dimension of the input.
      *
      * @param coordSeq the coordinate sequence that will be copied.
      */
-    public CoordinateArraySequence( CoordinateSequence coordSeq)
+    public CoordinateArraySequence( ICoordinateSequence coordSeq)
     {
         // NOTE: this will make a sequence of the default dimension
         if (coordSeq == null) {
@@ -155,7 +152,7 @@ public class CoordinateArraySequence
     }
 
     /**
-     * @see CoordinateSequence#getDimension()
+     * @see ICoordinateSequence#getDimension()
      */
     public int getDimension()
     {
@@ -208,28 +205,28 @@ public class CoordinateArraySequence
     }
 
     /**
-     * @see CoordinateSequence#getX(int)
+     * @see ICoordinateSequence#getX(int)
      */
     public void getCoordinate(int index, Coordinate coord) {
         coord.setCoordinate(coordinates[index]);
     }
 
     /**
-     * @see CoordinateSequence#getX(int)
+     * @see ICoordinateSequence#getX(int)
      */
     public double getX(int index) {
         return coordinates[index].x;
     }
 
     /**
-     * @see CoordinateSequence#getY(int)
+     * @see ICoordinateSequence#getY(int)
      */
     public double getY(int index) {
         return coordinates[index].y;
     }
 
     /**
-     * @see CoordinateSequence#getZ(int)
+     * @see ICoordinateSequence#getZ(int)
      */
     public double getZ(int index)
     {
@@ -242,7 +239,7 @@ public class CoordinateArraySequence
     }
 
     /**
-     * @see CoordinateSequence#getM(int)
+     * @see ICoordinateSequence#getM(int)
      */
     public double getM(int index) {
         if (hasM()) {
@@ -254,13 +251,13 @@ public class CoordinateArraySequence
     }
 
     /**
-     * @see CoordinateSequence#getOrdinate(int, int)
+     * @see ICoordinateSequence#getOrdinate(int, int)
      */
     public double getOrdinate(int index, int ordinateIndex)
     {
         switch (ordinateIndex) {
-            case CoordinateSequence.X:  return coordinates[index].x;
-            case CoordinateSequence.Y:  return coordinates[index].y;
+            case ICoordinateSequence.X:  return coordinates[index].x;
+            case ICoordinateSequence.Y:  return coordinates[index].y;
             default:
                 return coordinates[index].getOrdinate(ordinateIndex);
         }
@@ -300,15 +297,15 @@ public class CoordinateArraySequence
     }
 
     /**
-     * @see CoordinateSequence#setOrdinate(int, int, double)
+     * @see ICoordinateSequence#setOrdinate(int, int, double)
      */
     public void setOrdinate(int index, int ordinateIndex, double value)
     {
         switch (ordinateIndex) {
-            case CoordinateSequence.X:
+            case ICoordinateSequence.X:
                 coordinates[index].x = value;
                 break;
-            case CoordinateSequence.Y:
+            case ICoordinateSequence.Y:
                 coordinates[index].y = value;
                 break;
             default:

@@ -50,12 +50,32 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
     protected IIntSize rangeSize;
     protected IIntSize domainSize;
 
+    /**
+     * @param scheme
+     * @param paramTypes
+     * @param scheme1
+     * @param scaleTransform
+     * @param comparator
+     * @param transforms
+     * @param filters
+     * @param fractalModel
+     * @param params
+     */
     public
-    Encoder ( EPartitionScheme scheme, Class <?>[] paramTypes, Object... params ) {
-        this(scheme, paramTypes, params);
-//                new Class<?>[]{ ScaleTransform.class, ImageBlockGenerator.class, IDistanceator.class,Set.class,Set.class},
-//                scheme,b}
-//        );
+    Encoder ( EPartitionScheme scheme, Class <?>[] paramTypes, Object ... params ) {
+        this.scheme = scheme;
+        this.scaleTransform = scaleTransform;
+        this.comparator = comparator;
+        this.transforms = transforms;
+        this.filters = filters;
+        this.fractalModel = fractalModel;
+    }
+
+    public
+    Encoder ( IImage <A> image, IIntSize rangeSize, IIntSize domainSize ) {
+        this.image = image;
+        this.rangeSize = rangeSize;
+        this.domainSize = domainSize;
     }
 
     public
@@ -63,14 +83,14 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
         return scheme;
     }
 
-    protected final EPartitionScheme scheme;
-    protected final ScaleTransform <A, G> scaleTransform;
+    protected EPartitionScheme scheme;
+    protected ScaleTransform <A, G> scaleTransform;
     protected ImageBlockGenerator <N, A, G> imageBlockGenerator;
-    protected final IDistanceator <A> comparator;
-    protected final Set <ImageTransform <A, G>> transforms;
-    protected final Set <IImageFilter <A>> filters;
+    protected IDistanceator <A> comparator;
+    protected Set<ImageTransform <A, G>> transforms;
+    protected Set <IImageFilter <A>> filters;
 
-    protected final FractalModel <N, A, G> fractalModel;
+    protected FractalModel <N, A, G> fractalModel;
 
     protected ITiler <N, A, G> tiler;
 
@@ -156,7 +176,7 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
                                                          IIntSize rangeSize,
                                                          IIntSize domainSize
     ) {
-        return null;//TODO
+        return imageBlockGenerator.newInstance();//TODO
     }
 
     /**
@@ -236,14 +256,6 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
         assert image != null : "Cannot compress null image";
         final List <RegionOfInterest <A>> regions = segmentImage(image);
         List <List <IImageBlock <A>>> list = handleRegionList(regions);
-//        for (int i = 0; i < list.size(); i++) {
-//            List <IImageBlock <A>> ranges = list.get(i);
-//            for (int j = 0; j < ranges.size();j++) {
-//
-
-//            }
-
-//        }
 
         return searchProcessor.search();
     }
@@ -269,7 +281,6 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
             for (IImageFilter <A> filter : filters) {
                 roi = (RegionOfInterest <A>) filter.filter(roiImage);
             }
-//            rangeBlocks=<List <IImageBlock <A>>
             list.add(imageBlockGenerator.generateRangeBlocks(roi));
         }
 
@@ -284,7 +295,7 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
     private
     IImage <A> iterateRegions ( IImage <A> image ) {
         for (int i = 0, size = image.getRegions().size(); i < size; i++) {
-            RegionOfInterest <A>region = image.getRegions().get(i);
+            RegionOfInterest <A> region = image.getRegions().get(i);
         }
 
         return image;
@@ -388,9 +399,13 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
      */
     public
     int getDistance ( IImageBlock <A> range, IImageBlock <A> domain ) {
-        double error = range(0, range.getWidth().flatMap(i ->
-                range(0, range.getHeight())).mapToDouble(j ->
-                Math.pow(range.getMeanPixelValue() - domain.getMeanPixelValue(), 2)).sum();
+        double error;
+        int boundOuter = range.getWidth();
+        error = range(0, boundOuter)
+                .map(i -> range.getHeight())
+                .flatMap(bound -> range(0, bound)).mapToDouble(j -> Math
+                        .pow(range.getMeanPixelValue() - domain.getMeanPixelValue(), 2)).sum();
+        ;
         error = error / (double) (range.getWidth() * range.getHeight());
 
         return (int) error;
@@ -519,13 +534,11 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
         double factor = sourceSize; // destination_size
         final List <IImageBlock <A>> transformedBlocks = new ArrayList <>();
 
-        for (int i = 0; i < image.getWidth() - sourceSize / step + 1; i++) {
-            for (int j = 0; j < image.getHeight() - sourceSize / step + 1; j++) {
-//Extract the source block and reduce it to the shape of a destination block
-                Mat dest = new Mat();
-                reduce(image.getMat(), dest, -1, -1, -1);
-            }
-        }
+        //Extract the source block and reduce it to the shape of a destination block
+        range(0, image.getWidth() - sourceSize / step + 1)
+                .flatMap(i -> range(0, image.getHeight() - sourceSize / step + 1))
+                .mapToObj(j -> new Mat())
+                .forEachOrdered(dest -> reduce(image.getMat(), dest, -1, -1, -1));
 //        for k in range((img.shape[0] - source_size) // step + 1):
 //        for l in range((img.shape[1] - source_size) // step + 1):
 //
@@ -562,9 +575,11 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
         return comparator;
     }
 
+    /**
+     * @return
+     */
     public
     IImage <A> getImage () {
         return image;
     }
-
 }

@@ -12,13 +12,13 @@ import java.util.List;
 public
 class Library<A extends IAddress <A>> implements IPowers {
 
-//    public int clusterIndex;
-//    public int clustersAmount;
+    public int clusterIndex;
+    //    public int clustersAmount;
 //    public int layersAmount;
-//    public int layerIndex;
+    public int layerIndex;
     public int addr;
     public A pixelCapacity;
-    protected Tree <?, A, ?, ?> tree;
+    protected Tree <?, A, ?> tree;
     private List <Point> list;
     protected IIntSize size;
 
@@ -26,7 +26,7 @@ class Library<A extends IAddress <A>> implements IPowers {
      *
      */
     @Contract(pure = true)
-    protected
+    public
     Library () {
     }
 
@@ -36,13 +36,12 @@ class Library<A extends IAddress <A>> implements IPowers {
      */
     @Contract(pure = true)
     public
-    Library ( Tree <?, A, ?, ?> tree, int clusterIndex ) {
+    Library ( Tree <?, A, ?> tree/*, int clusterIndex */ ) {
         this.tree = tree;
-        this.clusterIndex = clusterIndex;
+//        this.clusterIndex = clusterIndex;
     }
 
     /**
-     *
      * @param base
      * @param power
      * @return
@@ -117,7 +116,7 @@ class Library<A extends IAddress <A>> implements IPowers {
      * @param clusterIndex
      */
     public
-    void derivePixelShifts ( Tree <?, A, ?, ?> tree,
+    void derivePixelShifts ( Tree <?, A, ?> tree,
                              List <Point> list,
                              IntSize size,
                              int layerIndex,
@@ -162,5 +161,10 @@ class Library<A extends IAddress <A>> implements IPowers {
     public
     IIntSize getSize () {
         return size;
+    }
+
+    public
+    void setTree ( Tree <?, A, ?> tree ) {
+        this.tree = tree;
     }
 }

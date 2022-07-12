@@ -1,20 +1,15 @@
 package org.stranger2015.opencv.fic.core.geom;
 
-import org.locationtech.jts.algorithm.BoundaryNodeRule;
-import org.locationtech.jts.algorithm.LineIntersector;
-import org.locationtech.jts.algorithm.RobustLineIntersector;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryCollection;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.*;
 import org.locationtech.jts.geom.util.LinearComponentExtracter;
-import org.locationtech.jts.noding.BasicSegmentString;
-import org.locationtech.jts.noding.MCIndexNoder;
 import org.locationtech.jts.noding.SegmentIntersector;
-import org.locationtech.jts.noding.SegmentString;
+import org.stranger2015.opencv.fic.core.algorithm.BasicSegmentString;
+import org.stranger2015.opencv.fic.core.algorithm.LineIntersector;
+import org.stranger2015.opencv.fic.core.algorithm.RobustLineIntersector;
+import org.stranger2015.opencv.fic.core.io.MultiPoint;
+import org.stranger2015.opencv.fic.core.noding.ISegmentString;
+import org.stranger2015.opencv.fic.core.noding.MCIndexNoder;
+import org.stranger2015.opencv.fic.core.operation.IBoundaryNodeRule;
+import org.stranger2015.opencv.fic.core.noding.ISegmentString;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -26,7 +21,7 @@ import java.util.stream.IntStream;
 /**
  * Tests whether a <code>Geometry</code> is simple as defined by the OGC SFS specification.
  * <p>
- * Simplicity is defined for each {@link org.locationtech.jts.geom.Geometry} type as follows:
+ * Simplicity is defined for each {@link Geometry} type as follows:
  * <ul>
  * <li><b>Point</b> geometries are simple.
  * <li><b>MultiPoint</b> geometries are simple if every point is unique
@@ -46,15 +41,15 @@ import java.util.stream.IntStream;
  * <li>Empty geometries are simple
  * </ul>
  * For {@link Lineal} geometries the evaluation of simplicity
- * can be customized by supplying a {@link BoundaryNodeRule}
+ * can be customized by supplying a {@link IBoundaryNodeRule}
  * to define how boundary points are determined.
- * The default is the SFS-standard {@link BoundaryNodeRule#MOD2_BOUNDARY_RULE}.
+ * The default is the SFS-standard {@link IBoundaryNodeRule#MOD2_BOUNDARY_RULE}.
  * <p>
  * Note that under the <tt>Mod-2</tt> rule, closed <tt>LineString</tt>s (rings)
  * have no boundary.
  * This means that an intersection at their endpoints makes the geometry non-simple.
  * If it is required to test whether a set of <code>LineString</code>s touch
- * only at their endpoints, use {@link BoundaryNodeRule#ENDPOINT_BOUNDARY_RULE}.
+ * only at their endpoints, use {@link IBoundaryNodeRule#ENDPOINT_BOUNDARY_RULE}.
  * For example, this can be used to validate that a collection of lines
  * form a topologically valid linear network.
  * <p>
@@ -64,8 +59,8 @@ import java.util.stream.IntStream;
  * via {@link #getNonSimpleLocations()}.
  * This can be used to find all intersection points in a linear network.
  *
- * @version 1.7
- * @see BoundaryNodeRule
+ * @version 1.8
+ * @see IBoundaryNodeRule
  * @see Geometry#isValid()
  */
 public
@@ -78,7 +73,7 @@ class IsSimpleOp {
      */
     public static
     boolean isSimple ( Geometry geom ) {
-        org.locationtech.jts.operation.valid.IsSimpleOp op = new org.locationtech.jts.operation.valid.IsSimpleOp(geom);
+        IsSimpleOp op = new IsSimpleOp(geom);
         return op.isSimple();
     }
 
@@ -90,7 +85,7 @@ class IsSimpleOp {
      */
     public static
     Coordinate getNonSimpleLocation ( Geometry geom ) {
-        org.locationtech.jts.operation.valid.IsSimpleOp op = new org.locationtech.jts.operation.valid.IsSimpleOp(geom);
+        IsSimpleOp op = new IsSimpleOp(geom);
         return op.getNonSimpleLocation();
     }
 
@@ -108,17 +103,17 @@ class IsSimpleOp {
      */
     public
     IsSimpleOp ( Geometry geom ) {
-        this(geom, BoundaryNodeRule.MOD2_BOUNDARY_RULE);
+        this(geom, IBoundaryNodeRule.MOD2_BOUNDARY_RULE);
     }
 
     /**
-     * Creates a simplicity checker using a given {@link BoundaryNodeRule}
+     * Creates a simplicity checker using a given {@link IBoundaryNodeRule}
      *
      * @param geom             the geometry to test
      * @param boundaryNodeRule the boundary node rule to use.
      */
     public
-    IsSimpleOp ( Geometry geom, BoundaryNodeRule boundaryNodeRule ) {
+    IsSimpleOp ( Geometry geom, IBoundaryNodeRule boundaryNodeRule ) {
         this.inputGeom = geom;
         isClosedEndpointsInInterior = !boundaryNodeRule.isInBoundary(2);
     }
@@ -156,8 +151,7 @@ class IsSimpleOp {
     public
     Coordinate getNonSimpleLocation () {
         compute();
-        if (nonSimplePts.size() == 0) return null;
-        return nonSimplePts.get(0);
+        return nonSimplePts.size() == 0 ? null : nonSimplePts.get(0);
     }
 
     /**
@@ -173,22 +167,28 @@ class IsSimpleOp {
 
     private
     void compute () {
-        if (nonSimplePts != null) return;
-        nonSimplePts = new ArrayList <Coordinate>();
+        if (nonSimplePts != null) {
+            return;
+        }
+        nonSimplePts = new ArrayList <>();
         isSimple = computeSimple(inputGeom);
     }
 
     private
     boolean computeSimple ( Geometry geom ) {
-        if (geom.isEmpty()) return true;
-        if (geom instanceof Point) return true;
-        if (geom instanceof LineString) return isSimpleLinearGeometry(geom);
-        if (geom instanceof MultiLineString) return isSimpleLinearGeometry(geom);
-        if (geom instanceof MultiPoint) return isSimpleMultiPoint((MultiPoint) geom);
-        if (geom instanceof Polygonal) return isSimplePolygonal(geom);
-        if (geom instanceof GeometryCollection) return isSimpleGeometryCollection(geom);
+        return
+                geom.isEmpty() ||
+                        geom instanceof Point ||
+                        (geom instanceof LineString ||
+                                geom instanceof MultiLineString ?
+                                isSimpleLinearGeometry(geom)
+                                : geom instanceof MultiPoint ?
+                                        isSimpleMultiPoint((MultiPoint) geom)
+                                        : geom instanceof IPolygonal ? isSimplePolygonal(geom) :
+                                                !(geom instanceof GeometryCollection) ||
+                                                        isSimpleGeometryCollection(geom));
+
         // all other geometry types are simple by definition
-        return true;
     }
 
     private
@@ -226,10 +226,12 @@ class IsSimpleOp {
         for (Geometry ring : rings) {
             if (!isSimpleLinearGeometry(ring)) {
                 isSimple = false;
-                if (!isFindAllLocations)
+                if (!isFindAllLocations) {
                     break;
+                }
             }
         }
+
         return isSimple;
     }
 
@@ -259,7 +261,7 @@ class IsSimpleOp {
         if (geom.isEmpty()) {
             return true;
         }
-        List <SegmentString> segStrings = extractSegmentStrings(geom);
+        List <ISegmentString> segStrings = extractSegmentStrings(geom);
         IsSimpleOp.NonSimpleIntersectionFinder segInt = new IsSimpleOp.NonSimpleIntersectionFinder(isClosedEndpointsInInterior, isFindAllLocations, nonSimplePts);
         MCIndexNoder noder = new MCIndexNoder();
         noder.setSegmentIntersector(segInt);
@@ -269,7 +271,7 @@ class IsSimpleOp {
     }
 
     private static
-    List <SegmentString> extractSegmentStrings ( Geometry geom ) {
+    List <ISegmentString> extractSegmentStrings ( Geometry geom ) {
         return IntStream.range(0, geom.getNumGeometries())
                 .mapToObj(i -> (LineString) geom.getGeometryN(i))
                 .map(line -> new BasicSegmentString(line.getCoordinates(), null))
@@ -279,6 +281,7 @@ class IsSimpleOp {
     private static
     class NonSimpleIntersectionFinder
             implements SegmentIntersector {
+
         private final boolean isClosedEndpointsInInterior;
         private final boolean isFindAll;
 
@@ -306,7 +309,7 @@ class IsSimpleOp {
 
         @Override
         public
-        void processIntersections ( SegmentString ss0, int segIndex0, SegmentString ss1, int segIndex1 ) {
+        void processIntersections ( ISegmentString ss0, int segIndex0, ISegmentString ss1, int segIndex1 ) {
             // don't test a segment with itself
             boolean isSameSegString = ss0 == ss1;
             boolean isSameSegment = isSameSegString && segIndex0 == segIndex1;
@@ -323,7 +326,7 @@ class IsSimpleOp {
         }
 
         private
-        boolean findIntersection ( SegmentString ss0, int segIndex0, SegmentString ss1, int segIndex1 ) {
+        boolean findIntersection ( ISegmentString ss0, int segIndex0, ISegmentString ss1, int segIndex1 ) {
             Coordinate p00 = ss0.getCoordinate(segIndex0);
             Coordinate p01 = ss0.getCoordinate(segIndex0 + 1);
             Coordinate p10 = ss1.getCoordinate(segIndex1);
@@ -399,7 +402,7 @@ class IsSimpleOp {
          * @return true if the intersection vertex is an endpoint
          */
         private static
-        boolean isIntersectionEndpoint ( SegmentString ss,
+        boolean isIntersectionEndpoint ( ISegmentString ss,
                                          int ssIndex,
                                          LineIntersector li,
                                          int liSegmentIndex ) {
@@ -444,6 +447,5 @@ class IsSimpleOp {
 
             return intersectionPts.size() > 0;
         }
-
     }
 }

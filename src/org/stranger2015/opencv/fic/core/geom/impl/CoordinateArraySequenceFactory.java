@@ -1,18 +1,18 @@
 package org.stranger2015.opencv.fic.core.geom.impl;
 
 import org.stranger2015.opencv.fic.core.geom.Coordinate;
-import org.stranger2015.opencv.fic.core.geom.CoordinateSequence;
-import org.stranger2015.opencv.fic.core.geom.CoordinateSequenceFactory;
+import org.stranger2015.opencv.fic.core.geom.ICoordinateSequence;
+import org.stranger2015.opencv.fic.core.geom.ICoordinateSequenceFactory;
 
 import java.io.Serializable;
 
 /**
- * Creates {@link CoordinateSequence}s represented as an array of {@link Coordinate}s.
+ * Creates {@link ICoordinateSequence}s represented as an array of {@link Coordinate}s.
  *
  * @version 1.7
  */
 public final class CoordinateArraySequenceFactory
-        implements CoordinateSequenceFactory, Serializable
+        implements ICoordinateSequenceFactory, Serializable
 {
     private static final long serialVersionUID = -4099577099607551657L;
     private static final CoordinateArraySequenceFactory instanceObject = new CoordinateArraySequenceFactory();
@@ -41,19 +41,20 @@ public final class CoordinateArraySequenceFactory
      *            the coordinates, which may not be null nor contain null
      *            elements
      */
-//    public CoordinateSequence create(Coordinate[] coordinates) {
+//    public ICoordinateSequence create(Coordinate[] coordinates) {
 //        return new CoordinateArraySequence(coordinates);
 //    }
 
     /**
      * 
      */
-    public CoordinateSequence create(CoordinateSequence coordSeq) {
+    public
+    ICoordinateSequence create( ICoordinateSequence coordSeq) {
         return new CoordinateArraySequence(coordSeq);
     }
 
     /**
-     * Returns a {@link CoordinateSequence} based on the given array.
+     * Returns a {@link ICoordinateSequence} based on the given array.
      * Whether the array is copied or simply referenced
      * is implementation-dependent.
      * This method must handle null arguments by creating an empty sequence.
@@ -62,12 +63,12 @@ public final class CoordinateArraySequenceFactory
      */
     @Override
     public
-    CoordinateSequence create ( Coordinate[] coordinates ) {
+    ICoordinateSequence create ( Coordinate[] coordinates ) {
         return null;
     }
 
     /**
-     * Returns a {@link CoordinateSequence} based on the given array.
+     * Returns a {@link ICoordinateSequence} based on the given array.
      * Whether the array is copied or simply referenced
      * is implementation-dependent.
      * This method must handle null arguments by creating an empty sequence.
@@ -76,20 +77,20 @@ public final class CoordinateArraySequenceFactory
      */
     @Override
     public
-   CoordinateSequence create (Coordinate[] coordinates ) {
+    ICoordinateSequence create ( Coordinate[] coordinates ) {
         return null;
     }
 
     /**
-     * Creates a {@link CoordinateSequence} which is a copy
-     * of the given {@link CoordinateSequence}.
+     * Creates a {@link ICoordinateSequence} which is a copy
+     * of the given {@link ICoordinateSequence}.
      * This method must handle null arguments by creating an empty sequence.
      *
      * @param coordSeq the coordinate sequence to copy
      */
     @Override
     public
-   CoordinateSequence create (CoordinateSequence coordSeq ) {
+    ICoordinateSequence create ( ICoordinateSequence coordSeq ) {
         return null;
     }
 
@@ -99,7 +100,8 @@ public final class CoordinateArraySequenceFactory
      * @seeCoordinateSequenceFactory#create(int, int)
      *
      */
-    public CoordinateSequence create(int size, int dimension) {
+    public
+    ICoordinateSequence create( int size, int dimension) {
         if (dimension > 3)
             dimension = 3;
         //throw new IllegalArgumentException("dimension must be <= 3");
@@ -111,7 +113,8 @@ public final class CoordinateArraySequenceFactory
         return new CoordinateArraySequence(size, dimension);
     }
 
-    public CoordinateSequence create(int size, int dimension, int measures) {
+    public
+    ICoordinateSequence create( int size, int dimension, int measures) {
         int spatial = dimension - measures;
 
         if (measures > 1) {

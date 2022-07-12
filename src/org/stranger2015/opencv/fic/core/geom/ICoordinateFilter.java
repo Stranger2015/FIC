@@ -11,7 +11,7 @@ package org.stranger2015.opencv.fic.core.geom;
  * <b>Note</b>: it is not recommended to use these filters to mutate the coordinates.
  * There is no guarantee that the coordinate is the actual object stored in the source geometry.
  * In particular, modified values may not be preserved if the source Geometry uses a non-default
- * {@link CoordinateSequence}.
+ * {@link ICoordinateSequence}.
  * If in-place mutation is required, use {@link CoordinateSequenceFilter}.
  *
  * @see CoordinateSequenceFilter

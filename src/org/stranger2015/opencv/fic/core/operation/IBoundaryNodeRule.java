@@ -1,26 +1,24 @@
 package org.stranger2015.opencv.fic.core.operation;
 
 import org.stranger2015.opencv.fic.core.algorithm.PointLocator;
+import org.stranger2015.opencv.fic.core.geom.IsSimpleOp;
 import org.stranger2015.opencv.fic.core.geom.LineString;
-import org.stranger2015.opencv.fic.core.geom.Lineal;
 import org.stranger2015.opencv.fic.core.geom.LinearRing;
 import org.stranger2015.opencv.fic.core.geom.MultiLineString;
-import org.stranger2015.opencv.fic.core.operation.BoundaryOp;
 import org.stranger2015.opencv.fic.core.operation.relate.RelateOp;
-import org.stranger2015.opencv.fic.core.operation.valid.IsSimpleOp;
 
 /**
  * An interface for rules which determine whether node points
- * which are in boundaries of {@link Lineal} geometry components
+ * which are in boundaries of {@link ILineal} geometry components
  * are in the boundary of the parent geometry collection.
  * The SFS specifies a single kind of boundary node rule,
- * the {@link BoundaryNodeRule.Mod2BoundaryNodeRule} rule.
+ * the {@link IBoundaryNodeRule.Mod2BoundaryNodeRule} rule.
  * However, other kinds of Boundary Node Rules are appropriate
  * in specific situations (for instance, linear network topology
- * usually follows the {@link BoundaryNodeRule.EndPointBoundaryNodeRule}.)
+ * usually follows the {@link IBoundaryNodeRule.EndPointBoundaryNodeRule}.)
  * Some JTS operations
- * (such as {@link RelateOp}, {@link org.stranger2015.opencv.fic.core.operation.BoundaryOp} and {@link IsSimpleOp})
- * allow the BoundaryNodeRule to be specified,
+ * (such as {@link RelateOp}, {@link BoundaryOp} and {@link IsSimpleOp})
+ * allow the IBoundaryNodeRule to be specified,
  * and respect the supplied rule when computing the results of the operation.
  * <p>
  * An example use case for a non-SFS-standard Boundary Node Rule is
@@ -30,8 +28,8 @@ import org.stranger2015.opencv.fic.core.operation.valid.IsSimpleOp;
  * turn-around is only valid when it touches the turn-around ring
  * at the single (common) endpoint.  This is equivalent
  * to requiring the set of <tt>LineString</tt>s to be
- * <b>simple</b> under the {@link BoundaryNodeRule.EndPointBoundaryNodeRule}.
- * The SFS-standard {@link BoundaryNodeRule.Mod2BoundaryNodeRule} is not
+ * <b>simple</b> under the {@link IBoundaryNodeRule.EndPointBoundaryNodeRule}.
+ * The SFS-standard {@link IBoundaryNodeRule.Mod2BoundaryNodeRule} is not
  * sufficient to perform this test, since it
  * states that closed rings have <b>no</b> boundary points.
  * <p>
@@ -39,15 +37,13 @@ import org.stranger2015.opencv.fic.core.operation.valid.IsSimpleOp;
  *
  * @author Martin Davis
  * @version 1.8
- *
  * @see RelateOp
  * @see BoundaryOp
  * @see IsSimpleOp
  * @see PointLocator
  */
-public interface BoundaryNodeRule
-{
-
+public
+interface IBoundaryNodeRule {
     /**
      * Tests whether a point that lies in <tt>boundaryCount</tt>
      * geometry component boundaries is considered to form part of the boundary
@@ -56,41 +52,46 @@ public interface BoundaryNodeRule
      * @param boundaryCount the number of component boundaries that this point occurs in
      * @return true if points in this number of boundaries lie in the parent boundary
      */
-    boolean isInBoundary(int boundaryCount);
+    boolean isInBoundary ( int boundaryCount );
 
     /**
      * The Mod-2 Boundary Node Rule (which is the rule specified in the OGC SFS).
-     * @see BoundaryNodeRule.Mod2BoundaryNodeRule
+     *
+     * @see IBoundaryNodeRule.Mod2BoundaryNodeRule
      */
-    BoundaryNodeRule  MOD2_BOUNDARY_RULE = new BoundaryNodeRule.Mod2BoundaryNodeRule();
+    IBoundaryNodeRule MOD2_BOUNDARY_RULE = new IBoundaryNodeRule.Mod2BoundaryNodeRule();
 
     /**
      * The Endpoint Boundary Node Rule.
-     * @see BoundaryNodeRule.EndPointBoundaryNodeRule
+     *
+     * @see IBoundaryNodeRule.EndPointBoundaryNodeRule
      */
-    BoundaryNodeRule ENDPOINT_BOUNDARY_RULE = new BoundaryNodeRule.EndPointBoundaryNodeRule();
+    IBoundaryNodeRule ENDPOINT_BOUNDARY_RULE = new IBoundaryNodeRule.EndPointBoundaryNodeRule();
 
     /**
      * The MultiValent Endpoint Boundary Node Rule.
-     * @see BoundaryNodeRule.MultiValentEndPointBoundaryNodeRule
+     *
+     * @see IBoundaryNodeRule.MultiValentEndPointBoundaryNodeRule
      */
-    BoundaryNodeRule MULTIVALENT_ENDPOINT_BOUNDARY_RULE = new BoundaryNodeRule.MultiValentEndPointBoundaryNodeRule();
+    IBoundaryNodeRule MULTIVALENT_ENDPOINT_BOUNDARY_RULE = new IBoundaryNodeRule.MultiValentEndPointBoundaryNodeRule();
 
     /**
      * The Monovalent Endpoint Boundary Node Rule.
-     * @see BoundaryNodeRule.MonoValentEndPointBoundaryNodeRule
+     *
+     * @see IBoundaryNodeRule.MonoValentEndPointBoundaryNodeRule
      */
-    BoundaryNodeRule MONOVALENT_ENDPOINT_BOUNDARY_RULE = new BoundaryNodeRule.MonoValentEndPointBoundaryNodeRule();
+    IBoundaryNodeRule MONOVALENT_ENDPOINT_BOUNDARY_RULE = new IBoundaryNodeRule.MonoValentEndPointBoundaryNodeRule();
 
     /**
      * The Boundary Node Rule specified by the OGC Simple Features Specification,
      * which is the same as the Mod-2 rule.
-     * @see BoundaryNodeRule.Mod2BoundaryNodeRule
+     *
+     * @see IBoundaryNodeRule.Mod2BoundaryNodeRule
      */
-    BoundaryNodeRule OGC_SFS_BOUNDARY_RULE = MOD2_BOUNDARY_RULE;
+    IBoundaryNodeRule OGC_SFS_BOUNDARY_RULE = MOD2_BOUNDARY_RULE;
 
     /**
-     * A {@link BoundaryNodeRule} specifies that points are in the
+     * A {@link IBoundaryNodeRule} specifies that points are in the
      * boundary of a lineal geometry iff
      * the point lies on the boundary of an odd number
      * of components.
@@ -104,17 +105,16 @@ public interface BoundaryNodeRule
      * @version 1.7
      */
     class Mod2BoundaryNodeRule
-            implements BoundaryNodeRule
-    {
-        public boolean isInBoundary(int boundaryCount)
-        {
+            implements IBoundaryNodeRule {
+        public
+        boolean isInBoundary ( int boundaryCount ) {
             // the "Mod-2 Rule"
             return boundaryCount % 2 == 1;
         }
     }
 
     /**
-     * A {@link BoundaryNodeRule} which specifies that any points which are endpoints
+     * A {@link IBoundaryNodeRule} which specifies that any points which are endpoints
      * of lineal components are in the boundary of the
      * parent geometry.
      * This corresponds to the "intuitive" topological definition
@@ -136,16 +136,15 @@ public interface BoundaryNodeRule
      * @version 1.7
      */
     class EndPointBoundaryNodeRule
-            implements BoundaryNodeRule
-    {
-        public boolean isInBoundary(int boundaryCount)
-        {
+            implements IBoundaryNodeRule {
+        public
+        boolean isInBoundary ( int boundaryCount ) {
             return boundaryCount > 0;
         }
     }
 
     /**
-     * A {@link BoundaryNodeRule} which determines that only
+     * A {@link IBoundaryNodeRule} which determines that only
      * endpoints with valency greater than 1 are on the boundary.
      * This corresponds to the boundary of a {@link MultiLineString}
      * being all the "attached" endpoints, but not
@@ -155,16 +154,15 @@ public interface BoundaryNodeRule
      * @version 1.7
      */
     class MultiValentEndPointBoundaryNodeRule
-            implements BoundaryNodeRule
-    {
-        public boolean isInBoundary(int boundaryCount)
-        {
+            implements IBoundaryNodeRule {
+        public
+        boolean isInBoundary ( int boundaryCount ) {
             return boundaryCount > 1;
         }
     }
 
     /**
-     * A {@link BoundaryNodeRule} which determines that only
+     * A {@link IBoundaryNodeRule} which determines that only
      * endpoints with valency of exactly 1 are on the boundary.
      * This corresponds to the boundary of a {@link MultiLineString}
      * being all the "unattached" endpoints.
@@ -173,10 +171,9 @@ public interface BoundaryNodeRule
      * @version 1.7
      */
     class MonoValentEndPointBoundaryNodeRule
-            implements BoundaryNodeRule
-    {
-        public boolean isInBoundary(int boundaryCount)
-        {
+            implements IBoundaryNodeRule {
+        public
+        boolean isInBoundary ( int boundaryCount ) {
             return boundaryCount == 1;
         }
     }

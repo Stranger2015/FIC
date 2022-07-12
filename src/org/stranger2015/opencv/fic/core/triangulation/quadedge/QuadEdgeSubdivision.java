@@ -31,7 +31,6 @@ import java.util.*;
  */
 public
 class QuadEdgeSubdivision {
-    protected Triangle triangleCursor;
 
     /**
      * Gets the edges for the triangle to the left of the given {@link QuadEdge}.
@@ -64,7 +63,7 @@ class QuadEdgeSubdivision {
     private final double edgeCoincidenceTolerance;
     private final Vertex[] frameVertex = new Vertex[3];
     private Envelope frameEnv;
-    private QuadEdgeLocator locator = null;
+    private IQuadEdgeLocator locator = null;
 
     /**
      * Creates a new instance of a quad-edge subdivision based on a frame triangle
@@ -146,13 +145,13 @@ class QuadEdgeSubdivision {
     }
 
     /**
-     * Sets the {@link QuadEdgeLocator} to use for locating containing triangles
+     * Sets the {@link IQuadEdgeLocator} to use for locating containing triangles
      * in this subdivision.
      *
-     * @param locator a QuadEdgeLocator
+     * @param locator a IQuadEdgeLocator
      */
     public
-    void setLocator ( QuadEdgeLocator locator ) {
+    void setLocator ( IQuadEdgeLocator locator ) {
         this.locator = locator;
     }
 
@@ -228,7 +227,7 @@ class QuadEdgeSubdivision {
      * @param v         the location to search for
      * @param startEdge an edge of the subdivision to start searching at
      * @return a QuadEdge which contains v, or is on the edge of a triangle containing v
-     * @throws LocateFailureException if the location algorithm fails to converge in a reasonable
+     * @throws LocateFailureException__ if the location algorithm fails to converge in a reasonable
      *                                number of iterations
      */
     public
@@ -594,21 +593,21 @@ class QuadEdgeSubdivision {
         return edges;
     }
 
-    /**
-     * @return
-     */
-    public
-    Iterator <Triangle> getTriangleIterator () {
-        return new TriangleIterator(this, null );
-    }
+//    /**
+//     * @return
+//     */
+//    public
+//    Iterator <Triangle> getTriangleIterator () {
+//        return new TriangleIterator(this, null );
+//    }
 
-    /**
-     * @param triangleCursor
-     */
-    public
-    void setTriangleCursor ( Triangle triangleCursor ) {
-        this.triangleCursor = triangleCursor;
-    }
+//    /**
+//     * @param triangleCursor
+//     */
+//    public
+//    void setTriangleCursor ( Triangle triangleCursor ) {
+//        this.triangleCursor = triangleCursor;
+//    }
 
     /**
      * A TriangleVisitor which computes and sets the
@@ -897,7 +896,7 @@ class QuadEdgeSubdivision {
      */
     public
     Geometry getVoronoiDiagram ( GeometryFactory geomFact ) {
-        List vorCells = getVoronoiCellPolygons(geomFact);
+        var vorCells = getVoronoiCellPolygons(geomFact);
         return geomFact.createGeometryCollection(GeometryFactory.toGeometryArray(vorCells));
     }
 

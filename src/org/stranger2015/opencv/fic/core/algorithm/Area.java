@@ -1,7 +1,7 @@
 package org.stranger2015.opencv.fic.core.algorithm;
 
 import org.stranger2015.opencv.fic.core.geom.Coordinate;
-import org.stranger2015.opencv.fic.core.geom.CoordinateSequence;
+import org.stranger2015.opencv.fic.core.geom.ICoordinateSequence;
 
 /**
  * Functions for computing area.
@@ -29,7 +29,7 @@ class Area {
      * @return the area of the ring
      */
     public static
-    double ofRing ( CoordinateSequence ring ) {
+    double ofRing ( ICoordinateSequence ring ) {
         return Math.abs(ofRingSigned(ring));
     }
 
@@ -73,7 +73,7 @@ class Area {
      * @return the signed area of the ring
      */
     public static
-    double ofRingSigned ( CoordinateSequence ring ) {
+    double ofRingSigned ( ICoordinateSequence ring ) {
         int n = ring.size();
         if (n < 3) {
             return 0.0;

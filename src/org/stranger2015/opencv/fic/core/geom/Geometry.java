@@ -1,16 +1,16 @@
 package org.stranger2015.opencv.fic.core.geom;
 
 import org.jetbrains.annotations.NotNull;
-import org.locationtech.jts.geom.CoordinateFilter;
-import org.locationtech.jts.operation.buffer.BufferOp;
-import org.locationtech.jts.operation.distance.DistanceOp;
-import org.locationtech.jts.operation.predicate.RectangleContains;
-import org.locationtech.jts.operation.predicate.RectangleIntersects;
+import org.stranger2015.opencv.fic.core.geom.ICoordinateFilter;
+import org.stranger2015.opencv.fic.core.operation.buffer.BufferOp;
+import org.stranger2015.opencv.fic.core.operation.distance.DistanceOp;
+import org.stranger2015.opencv.fic.core.operation.predicate.RectangleContains;
+import org.stranger2015.opencv.fic.core.operation.predicate.RectangleIntersects;
 import org.stranger2015.opencv.fic.core.algorithm.Centroid;
 import org.stranger2015.opencv.fic.core.algorithm.InteriorPoint;
 import org.stranger2015.opencv.fic.core.io.WKTWriter;
 import org.stranger2015.opencv.fic.core.operation.buffer.BufferParameters;
-import org.stranger2015.opencv.fic.core.operation.linemerge.LineMerger;
+import org.stranger2015.opencv.fic.core.operation.linemerger.LineMerger;
 import org.stranger2015.opencv.fic.core.operation.relate.RelateOp;
 import org.stranger2015.opencv.fic.core.operation.union.UnaryUnionOp;
 import org.stranger2015.opencv.fic.core.operation.valid.IsValidOp;
@@ -238,7 +238,6 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
     boolean hasNullElements ( Object[] array ) {
         for (Object o : array) {
             if (o == null) {
-
                 return true;
             }
         }
@@ -372,14 +371,14 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * In general, the array cannot be assumed to be the actual internal
      * storage for the vertices.  Thus modifying the array
      * may not modify the geometry itself.
-     * Use the {@link CoordinateSequence#setOrdinate} method
+     * Use the {@link ICoordinateSequence#setOrdinate} method
      * (possibly on the components) to modify the underlying data.
      * If the coordinates are modified,
      * {@link #geometryChanged} must be called afterwards.
      *
      * @return the vertices of this <code>Geometry</code>
      * @see #geometryChanged
-     * @see CoordinateSequence#setOrdinate
+     * @see ICoordinateSequence#setOrdinate
      */
     public abstract
     Coordinate[] getCoordinates ();
@@ -1557,7 +1556,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * If this method modifies any coordinate values,
      * {@link #geometryChanged} must be called to update the geometry state.
      * Note that you cannot use this method to
-     * modify this Geometry if its underlying CoordinateSequence's #get method
+     * modify this Geometry if its underlying ICoordinateSequence's #get method
      * returns a copy of the Coordinate, rather than the actual Coordinate stored
      * (if it even stores Coordinate objects at all).
      *
@@ -1569,7 +1568,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
 
     /**
      * Performs an operation on the coordinates in this <code>Geometry</code>'s
-     * {@link CoordinateSequence}s.
+     * {@link ICoordinateSequence}s.
      * If the filter reports that a coordinate value has been changed,
      * {@link #geometryChanged} will be called automatically.
      *

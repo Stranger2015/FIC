@@ -1,6 +1,5 @@
 package org.stranger2015.opencv.fic.core.geom;
 
-import org.stranger2015.opencv.fic.core.geom.CoordinateSequenceComparator;
 import org.stranger2015.opencv.fic.core.geom.GeometryComponentFilter;
 
 public

@@ -23,6 +23,7 @@ public
 interface IImage<A extends IAddress <A>>
         extends Comparable <IImage <A>>,
                 IShape {
+
     /**
      * @return
      */
@@ -47,11 +48,13 @@ interface IImage<A extends IAddress <A>>
 
     static
     List <MatOfPoint> polygonListToMatList ( List <Polygon> polygonList ) {
-        return polygonList.stream()
-                .map(IImage::apply)
-                .map(MatOfPoint::new)
-                .collect(Collectors
-                        .toCollection(() -> new ArrayList <>(polygonList.size())));
+        List <MatOfPoint> matOfPoints = new ArrayList <>(polygonList.size());
+        for (Polygon polygon : polygonList) {
+            Point[] apply = apply(polygon);
+            MatOfPoint matOfPoint = new MatOfPoint(apply);
+            matOfPoints.add(matOfPoint);
+        }
+        return matOfPoints;
     }
 
     /**
@@ -152,12 +155,6 @@ interface IImage<A extends IAddress <A>>
     int[] getSamples ( IAddress <A> address, int sideSize, int dummy, int b, int[] iArray ) throws ValueError {
         int[] pixels;
         int offset = 0;
-//        int x1 = x + w;
-//        int y1 = y + h;
-//
-//        if (x < 0 || x1 < x || x1 > getWidth() || y < 0 || y1 < y || y1 > getHeight()) {
-//            throw new ArrayIndexOutOfBoundsException("Invalid coordinates.");
-//        }
 
         pixels = iArray != null ? iArray : new int[pixelAmount()];
 
@@ -433,8 +430,8 @@ interface IImage<A extends IAddress <A>>
     @Override
     int compareTo ( @NotNull IImage <A> other );
 
-    private static
+    private
     Point[] apply ( Polygon polygon ) {
-        return IShape.getVertices();
+        return getVertices();
     }
 }

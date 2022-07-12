@@ -492,7 +492,7 @@ class TreeTraverser<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M e
      */
     static
     class
-    Neighbors<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+    Neighbors<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
             extends ArrayList<TreeNode <N, A, G>> {
 
         /**

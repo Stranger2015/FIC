@@ -63,10 +63,9 @@ class PolygonNode
             aHi = a0;
             isInteriorBetween = false;
         }
-        boolean isBetween = isBetween(nodePt, b, aLo, aHi);
-        boolean isInterior = (isBetween && isInteriorBetween)
-                || (! isBetween && ! isInteriorBetween);
-        return isInterior;
+        var isBetween = isBetween(nodePt, b, aLo, aHi);
+
+        return (isBetween && isInteriorBetween) || (! isBetween && ! isInteriorBetween);
     }
 
     /**
@@ -83,7 +82,9 @@ class PolygonNode
      */
     private static boolean isBetween(Coordinate origin, Coordinate p, Coordinate e0, Coordinate e1) {
         boolean isGreater0 = isAngleGreater(origin, p, e0);
-        if (! isGreater0) return false;
+        if (! isGreater0) {
+            return false;
+        }
         boolean isGreater1 = isAngleGreater(origin, p, e1);
         return ! isGreater1;
     }
@@ -116,6 +117,7 @@ class PolygonNode
         // Check relative orientation of vectors
         // P > Q if it is CCW of Q
         int orient = Orientation.index(origin, q, p);
+
         return orient == Orientation.COUNTERCLOCKWISE;
     }
 

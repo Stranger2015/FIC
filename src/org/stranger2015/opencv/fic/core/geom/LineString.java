@@ -1,9 +1,6 @@
 package org.stranger2015.opencv.fic.core.geom;
 
 import org.stranger2015.opencv.fic.core.algorithm.Length;
-import org.stranger2015.opencv.fic.core.geom.CoordinateSequenceComparator;
-import org.stranger2015.opencv.fic.core.geom.CoordinateSequences;
-import org.stranger2015.opencv.fic.core.geom.Dimension;
 import org.stranger2015.opencv.fic.core.operation.BoundaryOp;
 import org.stranger2015.opencv.fic.core.algorithm.GeometryComponentFilter;
 import org.stranger2015.opencv.fic.core.operation.ILineal;
@@ -33,7 +30,7 @@ public class LineString
     /**
      *  The points of this <code>LineString</code>.
      */
-    protected CoordinateSequence points;
+    protected ICoordinateSequence points;
 
     /**
      *  Constructs a <code>LineString</code> with the given points.
@@ -61,12 +58,12 @@ public class LineString
      *      to create the empty geometry.
      * @throws IllegalArgumentException if too few points are provided
      */
-    public LineString(CoordinateSequence points, GeometryFactory factory) {
+    public LineString( ICoordinateSequence points, GeometryFactory factory) {
         super(factory);
         init(points);
     }
 
-    private void init(CoordinateSequence points)
+    private void init( ICoordinateSequence points)
     {
         if (points == null) {
             points = getFactory().getCoordinateSequenceFactory().create(new Coordinate[]{});
@@ -82,7 +79,7 @@ public class LineString
     }
 
     public
-   CoordinateSequence getCoordinateSequence() {
+    ICoordinateSequence getCoordinateSequence() {
         return points;
     }
 
@@ -190,7 +187,7 @@ public class LineString
     protected
     LineString reverseInternal()
     {
-        CoordinateSequence seq = points.copy();
+        ICoordinateSequence seq = points.copy();
         CoordinateSequences.reverse(seq);
         return getFactory().createLineString(seq);
     }
@@ -314,7 +311,7 @@ public class LineString
             // skip equal points on both ends
             if (!points.getCoordinate(i).equals(points.getCoordinate(j))) {
                 if (points.getCoordinate(i).compareTo(points.getCoordinate(j)) > 0) {
-                    CoordinateSequence copy = points.copy();
+                    ICoordinateSequence copy = points.copy();
                     CoordinateSequences.reverse(copy);
                     points = copy;
                 }

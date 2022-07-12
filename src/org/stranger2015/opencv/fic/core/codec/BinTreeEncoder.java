@@ -60,42 +60,9 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
     }
 
     public
-    BinTreeEncoder ( EPartitionScheme scheme, Class<?>[] paramTypes, Object[] params ) {
+    BinTreeEncoder ( EPartitionScheme scheme, Class <?>[] paramTypes, Object[] params ) {
         super(scheme, paramTypes, params);
     }
-
-//    /**
-//     * @param scheme
-//     * @param nodeBuilder
-//     * @param searchProcessor
-//     * @param scaleTransform
-//     * @param imageBlockGenerator
-//     * @param comparator
-//     * @param imageTransforms
-//     * @param filters
-//     * @param fractalModel
-//     */
-//    protected
-//    BinTreeEncoder ( EPartitionScheme scheme,
-//                     ITreeNodeBuilder <N, A, G> nodeBuilder,
-//                     ISearchProcessor <N, A, G> searchProcessor,
-//                     ScaleTransform <A, G> scaleTransform,
-//                     ImageBlockGenerator <N, A, G> imageBlockGenerator,
-//                     IDistanceator <A> comparator,
-//                     Set <ImageTransform <A, G>> imageTransforms,
-//                     Set <IImageFilter <A>> filters,
-//                     FractalModel <N, A, G> fractalModel ) {
-//        super(scheme,
-//                nodeBuilder,
-//                searchProcessor,
-//                scaleTransform,
-//                imageBlockGenerator,
-//                comparator,
-//                imageTransforms,
-//                filters,
-//                fractalModel
-//        );
-
 
     /**
      * @return
@@ -128,6 +95,7 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
         return new BinTreeImageBlockGenerator <>(
                 tiler,
                 scheme,
+
                 encoder,
                 image,
                 rangeSize,
@@ -194,7 +162,9 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
     IImageBlock <A> generateBlocks ( IImage <A> inputImage ) {
 //        int ss = inputImage;
 
-        return generateBlocks0(new BinTreeNode <>(null, (IAddress <A>) new ImageBlock <>(inputImage, i, j, blockWidth, 0)));
+        return generateBlocks0(new BinTreeNode <>(null, new ImageBlock<>(inputImage, -1,
+                new IIntSize(-1), -1, 0)))
+        ;
     }
 
     private
@@ -208,6 +178,12 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
         return false;
     }
 
+    @Override
+    public
+    void initialize () {
+
+    }
+
     /**
      * @param image
      * @return
@@ -218,6 +194,12 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
         image = super.encode(image);
 
         return image;
+    }
+
+    @Override
+    public
+    IImage <A> doEncode ( IImage <A> image ) {
+        return null;
     }
 
     /**

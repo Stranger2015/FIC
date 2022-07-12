@@ -85,8 +85,16 @@ class SplitAndMergeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>,
     @Override
     public
     IImage <A> encode ( IImage <A> image ) throws ValueError {
-        Library<A> library=new Library <>(Tree.create(clazz,TreeNode))
-        nodeBuilder = nodeBuilderFactory.createBuilder(image, getScheme(), rangeSize, domainSize, this, new Library <>(getTree()));
+        Library<A> library=new Library<>();
+        nodeBuilder = nodeBuilderFactory.createBuilder(
+                image.getSubImage(),
+                getScheme(),
+                rangeSize,
+                domainSize,
+                this,
+                library);
+        Tree <N, A, G> tree = nodeBuilder.buildTree(image.getSubImage());
+        library.setTree(tree);
         tiler = new DelaunayTriangularTiler <>(image, rangeSize, domainSize, this, nodeBuilder);
         imageBlockGenerator = createBlockGenerator(tiler, getScheme(), this, image, rangeSize, domainSize);
 

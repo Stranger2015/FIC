@@ -1,9 +1,8 @@
 package org.stranger2015.opencv.fic.utils;
 
 import com.beust.jcommander.validators.NoValidator;
-import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.EPartitionScheme;
-import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.ITiler;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.EtvColorSpace;
@@ -14,14 +13,14 @@ import org.stranger2015.opencv.fic.utils.converters.PixelTilerConverter;
 import org.stranger2015.opencv.fic.utils.validators.*;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-import static org.stranger2015.opencv.fic.core.codec.EtvColorSpace.*;
-import static org.stranger2015.opencv.fic.core.search.EMetrics.*;
+import static org.stranger2015.opencv.fic.core.codec.EtvColorSpace.YUV;
+import static org.stranger2015.opencv.fic.core.search.EMetrics.AE;
 
 /**
  * The available options to the system
  */
 public
-class Options<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer> {
+class Options<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer> {
 
     protected int blockHeight;
     protected int blockWidth;
@@ -33,7 +32,7 @@ class Options<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends
      *
      */
     public
-    Options () {
+    Options () throws ClassNotFoundException, NoSuchMethodException {
     }
 
     //==========================================================================
@@ -121,5 +120,5 @@ class Options<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends
             false,
             null);
 
-    protected ITiler <M, A> tiler = ITiler.create(blockWidth, blockHeight);
+    protected ITiler <N, A,G> tiler = (ITiler <N, A, G>) ITiler.create(Class.forName(scheme.getEncoderClassName()).getConstructor());
 }

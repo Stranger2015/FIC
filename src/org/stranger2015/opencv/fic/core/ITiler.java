@@ -6,7 +6,6 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.nio.Buffer;
 import java.util.Deque;
 import java.util.List;
 
@@ -15,8 +14,7 @@ import static org.stranger2015.opencv.fic.core.IShape.EShape;
 /**
  * @param <A>
  */
-public
-interface ITiler<N extends TreeNode <N, A, G>, A extends IAddress <A>,  G extends BitBuffer> {
+public interface ITiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer> {
 
     /**
      * @param <N>
@@ -25,10 +23,8 @@ interface ITiler<N extends TreeNode <N, A, G>, A extends IAddress <A>,  G extend
      * @return
      */
     @Contract(pure = true)
-    static
-    <N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
+    static <N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
     @NotNull ITiler <N, A, G> create ( IEncoder <N, A, G> encoder ) {
-
         @NotNull ITiler <N, A, G> tiler = encoder.getTiler().instance();
 
         return tiler;
@@ -39,10 +35,7 @@ interface ITiler<N extends TreeNode <N, A, G>, A extends IAddress <A>,  G extend
     /**
      * @return
      */
-    List <IImageBlock <A>> tile ( final IImage <A> image,
-                                  IIntSize minRangeSize,
-                                  Deque <IImageBlock <A>> queue
-    )
+    List <IImageBlock <A>> tile ( final IImage <A> image, IIntSize minRangeSize, Deque <IImageBlock <A>> queue )
             throws ValueError, MinimalRangeSizeReached;
 
     /**
@@ -58,8 +51,7 @@ interface ITiler<N extends TreeNode <N, A, G>, A extends IAddress <A>,  G extend
     /**
      * @return
      */
-    default
-    int successorAmount () {
+    default int successorAmount () {
         return 1;
     }
 
@@ -69,18 +61,17 @@ interface ITiler<N extends TreeNode <N, A, G>, A extends IAddress <A>,  G extend
      * @param minRangeSize
      * @param queue
      */
-    void segmentShape ( EShape imageBlockShape,
-                        IImageBlock <A> imageBlock,
-                        IIntSize minRangeSize,
-                        Deque <IImageBlock <A>> queue
-    ) throws ValueError;
+    void segmentShape (
+            EShape imageBlockShape,
+            IImageBlock <A> imageBlock,
+            IIntSize minRangeSize,
+            Deque <IImageBlock <A>> queue ) throws ValueError;
 
     /**
      * @param imageBlock
      * @throws ValueError
      */
-    default
-    void segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
+    default void segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
         throw new UnsupportedOperationException();
     }
 

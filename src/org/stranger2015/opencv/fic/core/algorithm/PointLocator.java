@@ -23,7 +23,7 @@ public
 class PointLocator {
     // default is to use OGC SFS rule
     private BoundaryNodeRule boundaryRule =
-            //BoundaryNodeRule.ENDPOINT_BOUNDARY_RULE;
+            //IBoundaryNodeRule.ENDPOINT_BOUNDARY_RULE;
             BoundaryNodeRule.OGC_SFS_BOUNDARY_RULE;
 
     private boolean isIn;         // true if the point lies in or on any Geometry element
@@ -144,7 +144,7 @@ class PointLocator {
         // bounding-box check
         if (!l.getEnvelopeInternal().intersects(p)) return EXTERIOR;
 
-        CoordinateSequence seq = l.getCoordinateSequence();
+        ICoordinateSequence seq = l.getCoordinateSequence();
         if (!l.isClosed()) {
             if (p.equals(seq.getCoordinate(0))
                     || p.equals(seq.getCoordinate(seq.size() - 1))) {

@@ -10,7 +10,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
 import java.util.Collection;
 import java.util.List;
 
-import static org.stranger2015.opencv.fic.core.TreeNodeBase.*;
+import static org.stranger2015.opencv.fic.core.Tree.*;
 
 /**
  * @param <N>
@@ -50,9 +50,8 @@ class BushTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
                 null,
                 imageBlock,
                 new DecAddress <>(0));
-        Tree <N, A, G> tree = Tree.create(BushTree.class, root, imageBlock);
 
-        return tree;
+        return create(BushTree.class, root, imageBlock);
     }
 
     /**

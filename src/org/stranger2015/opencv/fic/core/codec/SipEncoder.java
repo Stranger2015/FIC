@@ -6,7 +6,6 @@ import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.fic.transform.ScaleTransform;
-import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ import java.util.Set;
  
  */
 public
-class SipEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+class SipEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
         extends SaEncoder <N, A, G> {
 
     /**
@@ -42,10 +41,11 @@ class SipEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M exte
             ImageBlockGenerator <N, A, G> imageBlockGenerator,
             IDistanceator <A> comparator,
             Set <ImageTransform <A, G>> transforms,
-            Set <IImageFilter <M, A>> filters,
+            Set <IImageFilter <A>> filters,
             FractalModel <N, A, G> fractalModel
     ) {
-        super(scheme,
+        super(
+                scheme,
                 nodeBuilder,
                 searchProcessor,
                 scaleTransform,
@@ -59,31 +59,35 @@ class SipEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M exte
 
     public
     SipEncoder ( IImage<A> image, IIntSize rangeSize, IIntSize domainSize ) {
-        super(image, rangeSize, domainSize);
-    }
-
-    public
-    ImageBlockGenerator <N, A, G> createBlockGenerator ( ITiler<N, A, G> tiler,
-                                                            EPartitionScheme scheme,
-                                                            IEncoder <N, A, G> encoder,
-                                                            IImage <A> image,
-                                                            IIntSize rangeSize,
-                                                            IIntSize domainSize
-    ) {
-        return new SipImageBlockGenerator <>(
-                tiler,
-                scheme,
-                encoder,
+        super(
                 image,
                 rangeSize,
                 domainSize
         );
     }
 
+//    public
+//    ImageBlockGenerator <N, A, G> createBlockGenerator ( ITiler<N, A, G> tiler,
+//                                                            EPartitionScheme scheme,
+//                                                            IEncoder <N, A, G> encoder,
+//                                                            IImage <A> image,
+//                                                            IIntSize rangeSize,
+//                                                            IIntSize domainSize
+//    ) {
+//        return new SipImageBlockGenerator <>(
+//                tiler,
+//                scheme,
+//                encoder,
+//                image,
+//                rangeSize,
+//                domainSize
+//        );
+//    }
+
     /**
      * @return
      */
-    @Override
+//    @Override
     public
     int getImageSizeBase () {
         return 9;
@@ -94,9 +98,9 @@ class SipEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M exte
      * @param transform
      * @return
      */
-    @Override
+//    @Override
     public
-    M randomTransform ( M image, ImageTransform <A, G> transform ) {
+    IImage<A> randomTransform ( IImage<A> image, ImageTransform <A, G> transform ) {
         return image;//todo
     }
 
@@ -105,9 +109,9 @@ class SipEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M exte
      * @param transform
      * @return
      */
-    @Override
+//    @Override
     public
-    M applyTransform ( M image, ImageTransform <A, G> transform ) {
+    IImage<A> applyTransform ( IImage<A> image, ImageTransform <A, G> transform ) {
         return image;//todo
     }
 
@@ -116,16 +120,16 @@ class SipEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M exte
      * @param transform
      * @return
      */
-    @Override
+//    @Override
     public
-    M applyAffineTransform ( M image, AffineTransform <A, G> transform ) {
+    IImage<A> applyAffineTransform ( IImage<A> image, AffineTransform <A, G> transform ) {
         return image;//todo
     }
 
     /**
      *
      */
-    @Override
+//    @Override
     public
     void onPreprocess () {
         super.onPreprocess();
@@ -134,7 +138,7 @@ class SipEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M exte
     /**
      *
      */
-    @Override
+//    @Override
     public
     void onProcess () {
         super.onProcess();
@@ -143,7 +147,7 @@ class SipEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M exte
     /**
      *
      */
-    @Override
+//    @Override
     public
     void onPostprocess () {
         super.onPostprocess();
@@ -156,9 +160,9 @@ class SipEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M exte
      * @param step
      * @return
      */
-    @Override
+//    @Override
     public
-    List <ImageTransform <M, A, G>> compress ( M image, int sourceSize, int destinationSize, int step ) {
+    List <ImageTransform <A, G>> compress ( IImage<A> image, int sourceSize, int destinationSize, int step ) {
         return new ArrayList <>();
     }
 
@@ -166,9 +170,9 @@ class SipEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M exte
      * @param image
      * @return
      */
-    @Override
+//    @Override
     public
-    M encode ( M image ) {
+    IImage<A> encode ( IImage<A> image ) throws ValueError {
         return super.encode(image);
     }
 
@@ -178,14 +182,15 @@ class SipEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M exte
      * @param rangeSize
      * @return
      */
+//    @Override
     public
     ImageBlockGenerator <N, A, G> createBlockGenerator (
             ITiler <N, A, G> tiler,
             EPartitionScheme scheme,
             IEncoder <N, A, G> encoder,
-            GrayScaleImage<A> image,
-            IntSize rangeSize,
-            IntSize domainSize
+            IImage<A> image,
+            IIntSize rangeSize,
+            IIntSize domainSize
     ) {
         return new SipImageBlockGenerator <>(
                 tiler,
@@ -205,12 +210,12 @@ class SipEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M exte
      * @return
      */
    @SuppressWarnings("unchecked")
-    @Override
+//    @Override
     public
-    List <IImageBlock <A>> generateAllTransformedBlocks ( GrayScaleImage<A> image,
+    List <IImageBlock <A>> generateAllTransformedBlocks ( IImageBlock<A> image,
                                                          int sourceSize,
                                                          int destinationSize,
                                                          int step ) {
-        return (List <IImageBlock <A>>) List.of(image); //fixme
+        return List.of(image); //fixme
     }
 }

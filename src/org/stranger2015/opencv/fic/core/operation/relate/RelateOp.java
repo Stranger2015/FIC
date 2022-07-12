@@ -25,9 +25,9 @@ import org.locationtech.jts.operation.relate.RelateComputer;
  * <p>
  * If named spatial predicates are used on the result {@link IntersectionMatrix}
  * of the RelateOp, the result may or not be affected by the
- * choice of <tt>BoundaryNodeRule</tt>, depending on the exact nature of the pattern.
+ * choice of <tt>IBoundaryNodeRule</tt>, depending on the exact nature of the pattern.
  * For instance, {@link IntersectionMatrix#isIntersects()} is insensitive
- * to the choice of <tt>BoundaryNodeRule</tt>,
+ * to the choice of <tt>IBoundaryNodeRule</tt>,
  * whereas {@link IntersectionMatrix#isTouches(int, int)} is affected by the rule chosen.
  * <p>
  * <b>Note:</b> custom Boundary Node Rules do not (currently)

@@ -2,12 +2,9 @@ package org.stranger2015.opencv.fic.core;
 
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
-import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.fic.utils.Point;
-import org.stranger2015.opencv.fic.utils.SipLibrary;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayList;
@@ -100,10 +97,10 @@ class TreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>,  G e
         TreeNode <N, A, G> root = (TreeNode <N, A, G>) lastNode.createNode(
                 null,
                 imageBlock,
-                lastNode.boundingBox);//fixme
-        Tree <N, A, G> tree = Tree.create("", root, imageBlock);
+                lastNode.address);//fixme
+        Tree <N, A, G> tree = Tree.create(lastNode.getTreeClass(), root, imageBlock);
         tree.getNodes().add(root);
-        tree.getNodes().addAll(buildLayers(root));
+//        tree.getNodes().addAll(buildLayers(root));
 
         return tree;
     }

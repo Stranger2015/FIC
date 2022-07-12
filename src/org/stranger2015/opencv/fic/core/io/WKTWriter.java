@@ -60,13 +60,13 @@ class WKTWriter {
 
     /**
      * Generates the WKT for a <tt>LINESTRING</tt>
-     * specified by a {@link CoordinateSequence}.
+     * specified by a {@link ICoordinateSequence}.
      *
      * @param seq the sequence to write
      * @return the WKT string
      */
     public static
-    String toLineString ( CoordinateSequence seq ) {
+    String toLineString ( ICoordinateSequence seq ) {
         var buf = new StringBuilder();
         buf.append(LINE_STRING);
         buf.append(" ");
@@ -89,7 +89,7 @@ class WKTWriter {
 
     /**
      * Generates the WKT for a <tt>LINESTRING</tt>
-     * specified by a {@link CoordinateSequence}.
+     * specified by a {@link ICoordinateSequence}.
      *
      * @param coord the sequence to write
      * @return the WKT string
@@ -199,7 +199,7 @@ class WKTWriter {
          * @see org.stranger2015.opencv.fic.core.geom.CoordinateSequenceFilter#isGeometryChanged
          */
         public
-        void filter ( CoordinateSequence seq, int i ) {
+        void filter ( ICoordinateSequence seq, int i ) {
 
             if (checkOrdinateFlags.contains(Ordinate.Z) && !outputOrdinates.contains(Ordinate.Z)) {
                 if (!Double.isNaN(seq.getZ(i)))
@@ -820,14 +820,14 @@ class WKTWriter {
      * <p>If the {@code seq} has coordinates that are {@link double.NAN}, these are not written, even though
      * {@link #outputDimension} suggests this.
      *
-     * @param seq       the <code>CoordinateSequence</code> to process
+     * @param seq       the <code>ICoordinateSequence</code> to process
      * @param i         the index of the coordinate to write
      * @param writer    the output writer to append to
      * @param formatter the formatter to use for writing ordinate values
      */
     private
     void appendCoordinate (
-            CoordinateSequence seq,
+            ICoordinateSequence seq,
             EnumSet <Ordinate> outputOrdinates,
             int i,
             Writer writer,
@@ -892,10 +892,10 @@ class WKTWriter {
     }
 
     /**
-     * Appends all members of a <code>CoordinateSequence</code> to the stream. Each {@code Coordinate} is separated from
+     * Appends all members of a <code>ICoordinateSequence</code> to the stream. Each {@code Coordinate} is separated from
      * another using a colon, the ordinates of a {@code Coordinate} are separated by a space.
      *
-     * @param seq           the <code>CoordinateSequence</code> to process
+     * @param seq           the <code>ICoordinateSequence</code> to process
      * @param useFormatting flag indicating that
      * @param level         the indentation level
      * @param indentFirst   flag indicating that the first {@code Coordinate} of the sequence should be indented for
@@ -904,7 +904,7 @@ class WKTWriter {
      * @param formatter     the formatter to use for writing ordinate values.
      */
     private
-    void appendSequenceText ( CoordinateSequence seq,
+    void appendSequenceText ( ICoordinateSequence seq,
                               EnumSet <Ordinate> outputOrdinates,
                               boolean useFormatting,
                               int level,

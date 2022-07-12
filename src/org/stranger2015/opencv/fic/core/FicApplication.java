@@ -11,7 +11,6 @@ import org.stranger2015.opencv.fic.core.io.FractalWriter;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.fic.transform.ScaleTransform;
 import org.stranger2015.opencv.fic.utils.Config;
-import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.io.File;
@@ -44,8 +43,7 @@ import java.util.logging.Logger;
  * TODO: FUTURE: intelligent tilers - HV/Quadtree partitioning
  */
 public
-class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
-
+class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
         implements Runnable, Consumer <String> {
 
     protected final Logger logger = Logger.getLogger(String.valueOf(getClass()));
@@ -59,10 +57,10 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M 
     private final File output;
 
     private FractalModel <N, A, G> fractalModel;
-    private Set <ImageTransform <M, A, G>> transforms = new HashSet <>();
+    private Set <ImageTransform <A, G>> transforms = new HashSet <>();
 
-    private IntSize rangeSize;
-    private IntSize domainSize;
+    private IIntSize rangeSize;
+    private IIntSize domainSize;
 
     private ImageProcessor <N, A, G> processor;
 
@@ -81,7 +79,7 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M 
     @SuppressWarnings({"unchecked"})
     public
     IImage<A> readImage ( File input ) {
-        return (M) Imgcodecs.imread(input.getAbsolutePath());
+        return (IImage <A>) Imgcodecs.imread(input.getAbsolutePath());
     }
 
     /**
@@ -89,8 +87,7 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M 
      * @return
      */
     public
-    FractalModel <N, A, G> compress ( GrayScaleImage <A> image ) throws ValueError, ReflectiveOperationException {
-
+    FractalModel <N, A, G> compress (IImage <A> image ) throws ValueError, ReflectiveOperationException {
         final ImageBlockGenerator <N, A, G> imageBlockGenerator =
                 createBlockGenerator(
                         config.tiler(),
@@ -98,13 +95,13 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M 
                         Encoder.create(
                                 config.partitionScheme(),
                                 new Class[]{
-                                        GrayScaleImage.class,//  IImage<A> inputImage,
-                                        IntSize.class,// rangeSize,
-                                        IntSize.class, //domainSize,
-                                        Set.class,// <ImageTransform <M, A, G>> //transforms,
+                                        IImage.class,//  IImage<A> inputImage,
+                                        IIntSize.class,// rangeSize,
+                                        IIntSize.class, //domainSize,
+                                        Set.class,// <ImageTransform <A, G>> //transforms,
                                         ScaleTransform.class,// <A, G>, //scaleTransform,
-                                        IDistanceator.class,// <M, A> ,//comparator,
-                                        Set.class,// <IImageFilter <M, A>> //filters,
+                                        IDistanceator.class,// <A> ,//comparator,
+                                        Set.class,// <IImageFilter <A>> //filters,
                                         FractalModel.class// <N, A, G> //fractalModel
                                 },
                                 new Object[]{
@@ -113,22 +110,22 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M 
                                         getConfig().tiler().getDomainSize(),
                                         new HashSet <>(),
                                         getConfig().domainScale(),
-                                        new ImageComparator <M, A>(
+                                        new ImageComparator <A>(
                                                 getConfig().metrics(),
                                                 getConfig().fuzz()
                                         ),
-                                        new HashSet <IImageFilter <M, A>>(1) {{
-                                            add(new NoneFilter <>());
-                                        }},
-                                        new FractalModel <>(new HashMap <>())
-                                }
-                        ),
-                        image,
-                        getConfig().tiler().getRangeSize(),
-                        getConfig().tiler().getDomainSize()
-                );
+                                        new HashSet <IImageFilter <A>>(1).
+                                            add(new NoneFilter <A>())
+                                        },
+                                        new FractalModel <>(new HashMap <>())));
+        return null;
+    }
 
-        return new FractalModel <>(new HashMap <>());
+    private
+    ImageBlockGenerator <N, A, G> createBlockGenerator ( ITiler <N, A, G> tiler,
+                                                         EPartitionScheme partitionScheme,
+                                                         IEncoder <N, A, G> nagiEncoder ) {
+        return null;
     }
 
     /**
@@ -150,14 +147,13 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M 
     @Contract(value = "_, _, _, _, _ -> new", pure = true)
     private @NotNull
     ImageBlockGenerator <N, A, G> createBlockGenerator (
-            ITiler <M, A> tiler,
+            ITiler <N,A,G> tiler,
             EPartitionScheme scheme,
             IEncoder <N, A, G> encoder,
-            GrayScaleImage <A> image,
-            IntSize rangeSize,
-            IntSize domainSize
+            IImage <A> image,
+            IIntSize rangeSize,
+            IIntSize domainSize
     ) {
-
         return new ImageBlockGenerator <>(
                 tiler,
                 scheme,
@@ -208,8 +204,6 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M 
 //                this);
 
 //        return compressor.compress(image, 0, 0, 0);//fixme
-
-
     /**
      * @return
      */
@@ -251,10 +245,11 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M 
      */
 
     public static
-    <N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
-    void main ( String[] args ) {
+    <N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
+    void main ( String[] args ) throws ClassNotFoundException, NoSuchMethodException {
         Config <N, A, G> configuration = new Config <>(args);
-        Runnable fic = new FicApplication <>(configuration);
+        //Runnable fic = new FicApplication <>(configuration);
+        Runnable fic = new FicApplication<>(configuration);
 
         fic.run();
     }
@@ -350,7 +345,7 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M 
      */
     @Contract(pure = true)
     private
-    Set <ImageTransform <M, A, G>> createTransforms () {
+    Set <ImageTransform <A, G>> createTransforms () {
         return transforms;
     }
 
@@ -398,7 +393,7 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M 
      * @param transforms
      */
     public
-    void setTransforms ( Set <ImageTransform <M, A, G>> transforms ) {
+    void setTransforms ( Set <ImageTransform <A, G>> transforms ) {
         this.transforms = transforms;
     }
 
@@ -406,7 +401,7 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M 
      * @return
      */
     public
-    IntSize getRangeSize () {
+    IIntSize getRangeSize () {
         return rangeSize;
     }
 
@@ -414,7 +409,7 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M 
      * @param rangeSize
      */
     public
-    void setRangeSize ( IntSize rangeSize ) {
+    void setRangeSize ( IIntSize rangeSize ) {
         this.rangeSize = rangeSize;
     }
 
@@ -422,7 +417,7 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M 
      * @return
      */
     public
-    IntSize getDomainSize () {
+    IIntSize getDomainSize () {
         return domainSize;
     }
 
@@ -430,7 +425,7 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M 
      * @param domainSize
      */
     public
-    void setDomainSize ( IntSize domainSize ) {
+    void setDomainSize ( IIntSize domainSize ) {
         this.domainSize = domainSize;
     }
 

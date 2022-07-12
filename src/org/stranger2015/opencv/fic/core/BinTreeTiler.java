@@ -1,10 +1,12 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.Contract;
-import org.opencv.core.Point;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.ESplitKind;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
+import org.stranger2015.opencv.fic.core.geom.Coordinate;
+import org.stranger2015.opencv.fic.core.geom.GeometryFactory;
+import org.stranger2015.opencv.fic.core.geom.Triangle;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.Deque;
@@ -76,7 +78,6 @@ class BinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
 
                 break;
             case SQUARE:
-
                 segmentSquare(imageBlock);
 
                 break;
@@ -98,6 +99,9 @@ class BinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
                 break;
             case IRREGULAR:
 
+                break;
+            case TRIANGULATION:
+                segmentSquare(imageBlock);
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + imageBlockShape);
@@ -167,13 +171,14 @@ class BinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
                 r[1] = new Rectangle(w / 2, 0, w / 2, h);
                 break;
             case DIAGONAL:
-                Point p0 = new Point(0, 0);
-                Point p1 = new Point(w, 0);
-                Point p2 = new Point(0, h);
-                Point p3 = new Point(w, h);
+                GeometryFactory geomFactory = new GeometryFactory();
+                Coordinate p0 = new Coordinate(0, 0);
+                Coordinate p1 = new Coordinate(w, 0);
+                Coordinate p2 = new Coordinate(0, h);
+                Coordinate p3 = new Coordinate(w, h);
 
-                r[0] = new Triangle1 <A>(p0, p1, p2);
-                r[1] = new Triangle1 <A>(p2, p1, p3);
+                r[0] = new Triangle(geomFactory, p0, p1, p2);
+                r[1] = new Triangle(geomFactory, p2, p1, p3);
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + dir);

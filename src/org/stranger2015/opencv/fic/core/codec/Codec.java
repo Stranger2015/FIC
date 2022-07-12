@@ -15,7 +15,7 @@ import java.util.List;
  * @param <A>
  */
 public abstract
-class Codec<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+class Codec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
         implements ICodec <N, A, G> {
 
     protected final EPartitionScheme scheme;
@@ -65,7 +65,7 @@ class Codec<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends I
 
     @SuppressWarnings("unchecked")
     public static
-    <N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+    <N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
     ICodec <N, A, G> create ( @NotNull EPartitionScheme scheme,
                                  Class <?>[] paramTypes,
                                  Object... params ) throws ReflectiveOperationException {

@@ -1,10 +1,12 @@
 package org.stranger2015.opencv.fic.core.geom;
 
 import org.stranger2015.opencv.fic.utils.Assert;
-import org.stranger2015.opencv.fic.utils.NumberUtil;
 
 import java.io.Serializable;
 import java.util.Comparator;
+
+import static java.lang.String.format;
+import static org.stranger2015.opencv.fic.utils.NumberUtil.equalsWithTolerance;
 
 public
 class Coordinate implements Comparable <Coordinate>, Cloneable, Serializable {
@@ -31,7 +33,7 @@ class Coordinate implements Comparable <Coordinate>, Cloneable, Serializable {
      * Standard ordinate index value for, where Z is 2.
      *
      * <p>This constant assumes XYZM coordinate sequence definition, please check this assumption
-     * using {@link CoordinateSequence#getDimension()} and {@link CoordinateSequence#getMeasures()}
+     * using {@link ICoordinateSequence#getDimension()} and {@link ICoordinateSequence#getMeasures()}
      * before use.
      */
     public static final int Z = 2;
@@ -40,7 +42,7 @@ class Coordinate implements Comparable <Coordinate>, Cloneable, Serializable {
      * Standard ordinate index value for, where M is 3.
      *
      * <p>This constant assumes XYZM coordinate sequence definition, please check this assumption
-     * using {@link CoordinateSequence#getDimension()} and {@link CoordinateSequence#getMeasures()}
+     * using {@link ICoordinateSequence#getDimension()} and {@link ICoordinateSequence#getMeasures()}
      * before use.
      */
     public static final int M = 3;
@@ -288,10 +290,10 @@ class Coordinate implements Comparable <Coordinate>, Cloneable, Serializable {
      */
     public
     boolean equals2D ( Coordinate c, double tolerance ) {
-        if (!NumberUtil.equalsWithTolerance(this.x, c.x, tolerance)) {
+        if (!equalsWithTolerance(this.x, c.x, tolerance)) {
             return false;
         }
-        return NumberUtil.equalsWithTolerance(this.y, c.y, tolerance);
+        return equalsWithTolerance(this.y, c.y, tolerance);
     }
 
     /**
@@ -303,9 +305,11 @@ class Coordinate implements Comparable <Coordinate>, Cloneable, Serializable {
      */
     public
     boolean equals3D ( Coordinate other ) {
-        return (x == other.x) && (y == other.y) &&
-                ((getZ() == other.getZ()) ||
-                        (Double.isNaN(getZ()) && Double.isNaN(other.getZ())));
+        if (x == other.x && y == other.y) {
+            return (getZ() == other.getZ()) ||
+                    (Double.isNaN(getZ()) && Double.isNaN(other.getZ()));
+        }
+        return false;
     }
 
     /**
@@ -317,7 +321,7 @@ class Coordinate implements Comparable <Coordinate>, Cloneable, Serializable {
      */
     public
     boolean equalInZ ( Coordinate c, double tolerance ) {
-        return NumberUtil.equalsWithTolerance(this.getZ(), c.getZ(), tolerance);
+        return equalsWithTolerance(this.getZ(), c.getZ(), tolerance);
     }
 
     /**
@@ -338,7 +342,7 @@ class Coordinate implements Comparable <Coordinate>, Cloneable, Serializable {
     }
 
     /**
-     * Compares this {@link org.stranger2015.opencv.fic.core.geom.Coordinate} with the specified {@link org.stranger2015.opencv.fic.core.geom.Coordinate} for order.
+     * Compares this {@link Coordinate} with the specified {@link Coordinate} for order.
      * This method ignores the z value when making the comparison.
      * Returns:
      * <UL>
@@ -356,14 +360,8 @@ class Coordinate implements Comparable <Coordinate>, Cloneable, Serializable {
      * is less than, equal to, or greater than the specified <code>Coordinate</code>
      */
     public
-    int compareTo ( Coordinate o ) {
-        Coordinate other = o;
-
-        if (x < other.x) return -1;
-        if (x > other.x) return 1;
-        if (y < other.y) return -1;
-        if (y > other.y) return 1;
-        return 0;
+    int compareTo ( Coordinate other ) {
+        return x < other.x ? -1 : !(x > other.x) ? Double.compare(y, other.y) : 1;
     }
 
     /**
@@ -373,7 +371,7 @@ class Coordinate implements Comparable <Coordinate>, Cloneable, Serializable {
      */
     public
     String toString () {
-        return "(" + x + ", " + y + ", " + getZ() + ")";
+        return format("(%s, %s, %s)", x, y, getZ());
     }
 
     public
@@ -464,12 +462,12 @@ class Coordinate implements Comparable <Coordinate>, Cloneable, Serializable {
 
 
     /**
-     * Compares two {@link org.stranger2015.opencv.fic.core.geom.Coordinate}s, allowing for either a 2-dimensional
+     * Compares two {@link Coordinate}s, allowing for either a 2-dimensional
      * or 3-dimensional comparison, and handling NaN values correctly.
      */
     public static
     class DimensionalComparator
-            implements Comparator <org.stranger2015.opencv.fic.core.geom.Coordinate> {
+            implements Comparator <Coordinate> {
         /**
          * Compare two <code>double</code>s, allowing for NaN values.
          * NaN is treated as being less than any valid number.
@@ -516,16 +514,16 @@ class Coordinate implements Comparable <Coordinate>, Cloneable, Serializable {
         }
 
         /**
-         * Compares two {@link org.stranger2015.opencv.fic.core.geom.Coordinate}s along to the number of
+         * Compares two {@link Coordinate}s along to the number of
          * dimensions specified.
          *
-         * @param c1 a {@link org.stranger2015.opencv.fic.core.geom.Coordinate}
+         * @param c1 a {@link Coordinate}
          * @param c2 a {link Coordinate}
          * @return -1, 0, or 1 depending on whether o1 is less than,
          * equal to, or greater than 02
          */
         public
-        int compare ( org.stranger2015.opencv.fic.core.geom.Coordinate c1, org.stranger2015.opencv.fic.core.geom.Coordinate c2 ) {
+        int compare ( Coordinate c1, Coordinate c2 ) {
             int compX = compare(c1.x, c2.x);
             if (compX != 0) return compX;
 

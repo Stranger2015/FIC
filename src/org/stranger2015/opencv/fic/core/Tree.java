@@ -83,7 +83,7 @@ class Tree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBu
     @SuppressWarnings("unchecked")
     public static
     <N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-    @NotNull Tree <N, A, G> create ( Class <?> clazz, TreeNode <N, A, G> node, IImageBlock <A> imageBlock ) {
+    @NotNull Tree <T> create ( Class <?> clazz, TreeNode <N, A, G> node, IImageBlock <A> imageBlock ) {
         int rc = 0;
         try {
             Tree <N, A, G> tree = (Tree <N, A, G>) clazz.getDeclaredConstructor()

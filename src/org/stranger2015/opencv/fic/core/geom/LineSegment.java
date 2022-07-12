@@ -3,9 +3,7 @@ package org.stranger2015.opencv.fic.core.geom;
 import  org.stranger2015.opencv.fic.core.algorithm.RobustLineIntersector;
 import org.stranger2015.opencv.fic.core.algorithm.Distance;
 import org.stranger2015.opencv.fic.core.algorithm.Intersection;
-import org.stranger2015.opencv.fic.core.algorithm.LineIntersector;
 import org.stranger2015.opencv.fic.core.algorithm.Orientation;
-import org.stranger2015.opencv.fic.core.geom.LineString;
 
 import java.io.Serializable;
 

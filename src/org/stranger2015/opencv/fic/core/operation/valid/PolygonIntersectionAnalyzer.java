@@ -1,12 +1,11 @@
 package org.stranger2015.opencv.fic.core.operation.valid;
 
-
-import org.locationtech.jts.algorithm.LineIntersector;
-import org.locationtech.jts.algorithm.RobustLineIntersector;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.noding.SegmentIntersector;
+import org.stranger2015.opencv.fic.core.geom.Coordinate;
+import org.stranger2015.opencv.fic.core.noding.ISegmentIntersector;
 import org.locationtech.jts.noding.SegmentString;
 import org.locationtech.jts.operation.valid.TopologyValidationError;
+import org.stranger2015.opencv.fic.core.algorithm.LineIntersector;
+import org.stranger2015.opencv.fic.core.algorithm.RobustLineIntersector;
 
 /**
  * Finds and analyzes intersections in and between polygons,
@@ -20,7 +19,7 @@ import org.locationtech.jts.operation.valid.TopologyValidationError;
  * @author mdavis
  */
 class PolygonIntersectionAnalyzer
-        implements SegmentIntersector {
+        implements ISegmentIntersector {
     private static final int NO_INVALID_INTERSECTION = -1;
 
     private final boolean isInvertedRingValid;
@@ -78,18 +77,19 @@ class PolygonIntersectionAnalyzer
         // don't test a segment with itself
         boolean isSameSegString = ss0 == ss1;
         boolean isSameSegment = isSameSegString && segIndex0 == segIndex1;
-        if (isSameSegment) return;
-
-        int code = findInvalidIntersection(ss0, segIndex0, ss1, segIndex1);
-        /**
-         * Ensure that invalidCode is only set once,
-         * since the short-circuiting in {@link SegmentIntersector} is not guaranteed
-         * to happen immediately.
-         */
-        if (code != NO_INVALID_INTERSECTION) {
-            invalidCode = code;
-            invalidLocation = li.getIntersection(0);
+        if (!isSameSegment) {
+            int code = findInvalidIntersection(ss0, segIndex0, ss1, segIndex1);
+            /*
+             * Ensure that invalidCode is only set once,
+             * since the short-circuiting in {@link ISegmentIntersector} is not guaranteed
+             * to happen immediately.
+             */
+            if (code != NO_INVALID_INTERSECTION) {
+                invalidCode = code;
+                invalidLocation = li.getIntersection(0);
+            }
         }
+
     }
 
     private
@@ -97,6 +97,7 @@ class PolygonIntersectionAnalyzer
                                   int segIndex0,
                                   SegmentString ss1,
                                   int segIndex1 ) {
+
         int result = NO_INVALID_INTERSECTION;
         Coordinate p00 = ss0.getCoordinate(segIndex0);
         Coordinate p01 = ss0.getCoordinate(segIndex0 + 1);

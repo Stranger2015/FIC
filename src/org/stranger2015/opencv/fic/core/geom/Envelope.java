@@ -1,7 +1,6 @@
 package org.stranger2015.opencv.fic.core.geom;
 
 import org.jetbrains.annotations.NotNull;
-import org.stranger2015.opencv.utils.geom.Geometry;
 
 import java.io.Serializable;
 
@@ -22,6 +21,7 @@ import java.io.Serializable;
 public
 class Envelope
         implements Comparable <Envelope>, Serializable {
+
     private static final long serialVersionUID = 5873921885273102420L;
 
     public
@@ -300,6 +300,7 @@ class Envelope
         }
         double w = getWidth();
         double h = getHeight();
+
         return Math.sqrt(w * w + h * h);
     }
 
@@ -422,7 +423,9 @@ class Envelope
      */
     public
     void expandBy ( double deltaX, double deltaY ) {
-        if (isNull()) return;
+        if (isNull()) {
+            return;
+        }
 
         minx -= deltaX;
         maxx += deltaX;
@@ -430,8 +433,9 @@ class Envelope
         maxy += deltaY;
 
         // check for envelope disappearing
-        if (minx > maxx || miny > maxy)
+        if (minx > maxx || miny > maxy) {
             setToNull();
+        }
     }
 
     /**
@@ -585,13 +589,19 @@ class Envelope
         }
 
         double envminx = Math.min(a.x, b.x);
-        if (envminx > maxx) return false;
+        if (envminx > maxx) {
+            return false;
+        }
 
         double envmaxx = Math.max(a.x, b.x);
-        if (envmaxx < minx) return false;
+        if (envmaxx < minx) {
+            return false;
+        }
 
         double envminy = Math.min(a.y, b.y);
-        if (envminy > maxy) return false;
+        if (envminy > maxy) {
+            return false;
+        }
 
         double envmaxy = Math.max(a.y, b.y);
 
@@ -854,4 +864,3 @@ class Envelope
     }
 
 }
-

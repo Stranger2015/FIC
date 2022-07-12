@@ -26,6 +26,7 @@ interface IShape {
         CIRCLE,
         SQUIRAL,
         IRREGULAR,
+//        TRIANGULATION
     }
 
     /**
@@ -52,7 +53,7 @@ interface IShape {
      * @return
      */
 //    static
-    Point[] getVertices ();
+    Point[] tVertices ();
 
     /**
      * @return

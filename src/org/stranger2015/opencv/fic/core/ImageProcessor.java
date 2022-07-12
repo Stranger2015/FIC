@@ -2,12 +2,10 @@ package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.NotNull;
 import org.opencv.highgui.HighGui;
-import org.opencv.imgproc.Imgproc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.*;
-import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayList;
@@ -24,7 +22,7 @@ class
 ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
 
         extends BidiTask <N, A, G>
-        implements IImageProcessor <N, A, G> {
+        implements IImageProcessor<N,A,G> {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -96,7 +94,7 @@ ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      * @return
      */
     public static
-    <N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+    <N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
 
     ImageProcessor <N, A, G> create ( String filename,
                                          EPartitionScheme scheme,
@@ -118,17 +116,17 @@ ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      * <p>
      * 2. Divide  the  image  into  non-overlapping  domain  blocks,  Di.
      * <p>
-     * The  union  of  the  domain  blocks  must  cover  the  entire
+     * The  union  of  the  domain  blocks IImageust  cover  the  entire
      * image, G, but they can be any size or shape [1].
      * <p>
      * 3. Define  a  finite  set  of  contractive  affine  transformations,  wi
-     * (which map from a range block R to a domain block Di).
+     * (which IImage ap from a range block R to a domain block Di).
      * <p>
      * 4. For each domain block {
      * <p>
      * For each range block {
      * For each transformation {
-     * Calculate the Hausdorff distance h(wi(R  G), Di  G) (or use another metric)
+     * Calculate the Hausdorff distance h(wi(R  G), Di  G) (or use anotherIImageetric)
      * }
      * }
      * }
@@ -148,11 +146,10 @@ ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
         IEncoder <N, A, G> encoder = codec.getEncoder();
         List <RegionOfInterest <A>> regions = image.getRegions();
         for (RegionOfInterest <A> region : regions) {
-            List <GrayScaleImage <A>> list = region.split();
-            List <GrayScaleImage <A>> layers = new ArrayList <>();
-
-            for (GrayScaleImage <A> grayScaleImage : list) {
-                GrayScaleImage <A> layer = encoder.encode(grayScaleImage);
+            List <IImage <A>> list = region.split();
+            List <IImage <A>> layers = new ArrayList <>();
+            for (IImage <A> image1 : list) {
+                IImage <A> layer = encoder.encode(image1);
                 for (IImageProcessorListener <N, A, G> listener : listeners) {
                     listener.onProcess(this, layer);
                 }
@@ -169,7 +166,6 @@ ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
 
     private
     CompressedImage <A> composeImage ( List <RegionOfInterest <A>> regions, IImage <A> image ) {
-//        adjustROI();
         return new CompressedImage <>(image);
     }
 
@@ -191,7 +187,7 @@ ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      */
     @Override
     public
-    IImage<A> getImage () {
+    IImage <A> getImage () {
         return inputImage;
     }
 
@@ -200,9 +196,9 @@ ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      */
     @SuppressWarnings("unchecked")
     protected
-    M compressImage ( M image ) {
+   IImage<A> compressImage (IImage<A> image ) {
 
-        M imageOut = (M) new CompressedImage <>(image);
+       IImage<A> imageOut = new CompressedImage <>(image);
 
         HighGui.namedWindow("OpenCV");
 
@@ -239,7 +235,7 @@ ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      */
     @Override
     public
-    M preprocess ( String filename ) {
+    IImage <A> preprocess ( String filename ) {
 
         return null;
     }
@@ -250,7 +246,7 @@ ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      */
     @Override
     public
-    IImage<A> preprocess ( String filename, IImage<A> image ) throws ValueError {
+    IImage <A> preprocess ( String filename, IImage<A> image ) throws ValueError {
         if (filename == null) {
             return preprocess(image);
         }
@@ -280,14 +276,14 @@ ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
 //    @Override
 //    @SuppressWarnings("unchecked")
 //    public
-//    M preprocess ( M inputImage ) throws ValueError {
+//   IImage preprocess (IImage inputImage ) throws ValueError {
 ////        IntSize size = adjustSize(
 ////                inputImage.getAddress().radix(),
 ////                inputImage.getWidth(),
 ////                inputImage.getHeight()
 ////        );
 ////        //image or block or roi
-////        M destImage = (M) new GrayScaleImage <A>(inputImage.getMat());
+////       IImage destImage = (M) new GrayScaleImage <A>(inputImage.getMat());
 ////        Imgproc.resize(
 ////                inputImage.getMat(),
 ////                destImage.getMat(),
@@ -339,13 +335,11 @@ ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      */
     @SuppressWarnings("unchecked")
     @Override
-    protected
+    public
     IImage<A> execute ( String filename ) throws ValueError {
-
         super.execute(filename);
 
-        IImage<A> image;
-        image = preprocess(filename);
+        IImage<A> image = preprocess(filename);
 
         return process(image);
     }

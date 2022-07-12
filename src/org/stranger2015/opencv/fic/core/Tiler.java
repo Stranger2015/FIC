@@ -4,6 +4,7 @@ import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.fic.core.codec.ESplitKind;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
 import org.stranger2015.opencv.utils.BitBuffer;
@@ -146,7 +147,7 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
                     break;
                 case TILE_SEGMENT_SHAPE:
                     EShape imageBlockShape;
-                    switch (imageBlock.getShape()) {
+                    switch (imageBlock.getShape().getShapeKind()) {
                         case SQUARE:
                             imageBlockShape = SQUARE;
                             break;
@@ -162,7 +163,6 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
 
                     segmentShape(imageBlockShape, imageBlock, minRangeSize, queue);
                     operation = TILE_SUCCESSORS;
-
                     break;
                 case TILE_SUCCESSORS:
                     successors = builder.getSuccessors();
@@ -170,7 +170,7 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
                     builder.add(node);
 
                     if (node.isLeaf()) {
-                        builder.addLeafNode((TreeNode.LeafNode <N, A, G>) node);
+                        builder.addLeafNode((LeafNode <N, A, G>) node);
 //                        imageBlock = ((ILeaf <N, A, G>) node).getImageBlock();//todo push??
                         operation = TILE_LEAF;
                     }
@@ -178,15 +178,12 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
                         EDirection q = node.getQuadrant();
                         operation = TILE_SUCCESSOR;
                     }
-
                     break;
                 case TILE_SUCCESSOR:
                     push(imageBlock);
-
                     break;
                 case TILE_LEAF:
                     imageBlock = pop();//fixme
-
                     break;
                 case TILE_FINISH:
                     onFinish();
@@ -302,14 +299,4 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
     void segmentSquare ( IImageBlock <A> imageBlock ) throws ValueError {
 
     }
-//
-//    public
-//    int getWidth () {
-//        return width;
-//    }
-//
-//    public
-//    int getHeight () {
-//        return height;
-//    }
 }

@@ -1,8 +1,6 @@
 package org.stranger2015.opencv.fic.core.algorithm;
 
 
-import org.stranger2015.opencv.fic.core.algorithm.Intersection;
-import org.stranger2015.opencv.fic.core.algorithm.LineIntersector;
 import org.stranger2015.opencv.fic.core.geom.Coordinate;
 import org.stranger2015.opencv.fic.core.geom.Envelope;
 

@@ -44,22 +44,33 @@ class BushTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exte
 
         super(image, rangeSize, domainSize, encoder, builder);
         binTreeEncoder = null;//new BinTreeEncoder <>(
-        splitAndMergeEncoder = new SplitAndMergeEncoder <N, A, G>(
-//                scheme,
-//        nodeBuilder,
-//        searchProcessor,
-//        scaleTransform,
-//        imageBlockGenerator,
-//        comparator,
-//        transforms,
-//        filters,
-//        fractalModel
-//        );
-//        quadTreeEncoder = null;// new QuadTreeEncoder <N, A, G>();
+        splitAndMergeEncoder = new SplitAndMergeEncoder <>(
+                scheme,
+                nodeBuilder,
+                searchProcessor,
+                scaleTransform,
+                imageBlockGenerator,
+                comparator,
+                transforms,
+                filters,
+                fractalModel
+        );
+        quadTreeEncoder = null;// new QuadTreeEncoder <N, A, G>();
 
-                binTreeTiler = new BinTreeTiler <>(image, rangeSize, domainSize, binTreeEncoder, builder);
+                binTreeTiler = new BinTreeTiler <>(
+                        image,
+                        rangeSize,
+                        domainSize,
+                        binTreeEncoder,
+                        builder
+                );
         triangularTiler = new DelaunayTriangularTiler <>(
-                image, rangeSize, domainSize, splitAndMergeEncoder, builder);
+                image,
+                rangeSize,
+                domainSize,
+                splitAndMergeEncoder,
+                builder
+        );
 
         tilersPipeline.add(binTreeTiler);
         tilersPipeline.add(triangularTiler);
