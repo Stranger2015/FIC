@@ -31,7 +31,6 @@ class SearchlessEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, M 
                         ISearchProcessor <N, A, G> rangeSize,
                         ImageBlockGenerator <N, A, G> domainSize ) {
         super(inputImage,
-                scaleTransform,
                 rangeSize,
                 rangeSize,
                 domainSize,

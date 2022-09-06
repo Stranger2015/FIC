@@ -53,6 +53,7 @@ class QuadTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      * @param rect
      * @return
      */
+    @Override
     public
     TreeNode <N, A, G> nodeInstance ( TreeNodeBase <N, A, G> parent, EDirection quadrant, IIntSize rect )
             throws ValueError {

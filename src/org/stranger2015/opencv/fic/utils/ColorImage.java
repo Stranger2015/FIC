@@ -2,8 +2,9 @@ package org.stranger2015.opencv.fic.utils;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IAddress;
+import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.fic.core.Image;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,13 +13,13 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public
-class ColorImage<A extends IAddress <A>> extends GrayScaleImage <A> {
+class ColorImage<A extends IAddress <A>> extends Image <A> {
     /**
      * @param image
      */
     public
-    ColorImage ( GrayScaleImage <A> image ) {
-        super(image);
+    ColorImage ( IImage <A> image ) {
+        super(image, size);
 
         List <Mat> list = new ArrayList <>(4);//channels e.g. rgba etc
         Core.split(image.getMat(), list);
@@ -35,7 +36,7 @@ class ColorImage<A extends IAddress <A>> extends GrayScaleImage <A> {
      */
     public
     ColorImage ( Mat mat ) {
-        super(mat);
+        super(mat, size);
     }
 
     /**
@@ -43,7 +44,7 @@ class ColorImage<A extends IAddress <A>> extends GrayScaleImage <A> {
      */
     @Override
     public
-    List <GrayScaleImage <A>> getComponents () {
+    IImage <A> getComponents () {
         return components;
     }
 

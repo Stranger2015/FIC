@@ -1,9 +1,7 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
@@ -12,10 +10,27 @@ import java.util.List;
  *
  */
 public
-class SquareImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */,
-        G extends BitBuffer>
+class SquareImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
 
         extends ImageBlockGenerator <N, A, G> {
+
+//    @Override
+//    public
+//    ImageBlockGenerator <N, A, G> newInstance ( IPartitionProcessor <N, A, G> partitionProcessor,
+//                                                EPartitionScheme scheme,
+//                                                IEncoder <N, A, G> encoder,
+//                                                IImage <A> image,
+//                                                IIntSize rangeSize,
+//                                                IIntSize domainSize ) {
+//        return new SquareImageBlockGenerator <>(
+//                partitionProcessor,
+//                scheme,
+//                encoder,
+//                image,
+//                rangeSize,
+//                domainSize
+//        );
+   // }
 
     /**
      * @param inputImage
@@ -23,9 +38,11 @@ class SquareImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress
      */
     @Override
     public
-    List <IImageBlock <A>> generateRangeBlocks (RegionOfInterest <A> inputImage ) {
-        return super.generateRangeBlocks(inputImage);
+    List <IImageBlock <A>> generateRangeBlocks ( RegionOfInterest <A> roi,
+                                                 int blockWidth,
+                                                 int blockHeight ) throws ValueError {
 
+        return partitionProcessor.generateRangeBlocks(roi, blockWidth, blockHeight);
     }
 
     /**
@@ -35,7 +52,7 @@ class SquareImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress
      * @param domainSize
      */
     public
-    SquareImageBlockGenerator ( ITiler <N, A, G> tiler,
+    SquareImageBlockGenerator ( IPartitionProcessor <N, A, G> partitionProcessor,
                                 EPartitionScheme scheme,
                                 IEncoder <N, A, G> encoder,
                                 IImage <A> image,
@@ -43,15 +60,26 @@ class SquareImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress
                                 IIntSize domainSize
     ) {
 
-        super(tiler, scheme, encoder, image, rangeSize, domainSize);
+        super(partitionProcessor, scheme, encoder, image, rangeSize, domainSize);
     }
 
     /**
+     * @param partitionProcessor
+     * @param scheme
+     * @param encoder
+     * @param image
+     * @param rangeSize
+     * @param domainSize
      * @return
      */
     @Override
     public
-    SquareImageBlockGenerator <N, A, G> newInstance () {
+    HvBlockGenerator <N, A, G> newInstance ( IPartitionProcessor <N, A, G> partitionProcessor,
+                                                      EPartitionScheme scheme,
+                                                      IEncoder <N, A, G> encoder,
+                                                      IImage <A> image,
+                                                      IIntSize rangeSize,
+                                                      IIntSize domainSize ) {
         return this;
     }
 }

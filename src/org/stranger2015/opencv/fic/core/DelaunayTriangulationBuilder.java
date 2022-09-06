@@ -12,12 +12,22 @@ package org.stranger2015.opencv.fic.core;
  * http://www.eclipse.org/org/documents/edl-v10.php.
  */
 
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.codec.tilers.DelaunayTriangularTopDownTiler;
+import org.stranger2015.opencv.fic.core.codec.tilers.TriangularTiler;
 import org.stranger2015.opencv.fic.core.geom.*;
+import org.stranger2015.opencv.fic.core.triangulation.DelaunayTriangulation;
 import org.stranger2015.opencv.fic.core.triangulation.IncrementalDelaunayTriangulator;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.QuadEdgeSubdivision;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
+import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import static org.stranger2015.opencv.fic.core.geom.CoordinateArrays.BidirectionalComparator;
 
 /**
  * A utility class which creates Delaunay Triangulations
@@ -27,7 +37,9 @@ import java.util.*;
  * @author Martin Davis
  */
 public
-class DelaunayTriangulationBuilder {
+class DelaunayTriangulationBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer> {
+
+    private final Class <? extends TriangularTiler <N, A, G>> clazz;
 
     /**
      * Extracts the unique {@link Coordinate}s from the given {@link Geometry}.
@@ -36,7 +48,7 @@ class DelaunayTriangulationBuilder {
      * @return a List of the unique Coordinates
      */
     public static
-    CoordinateList extractUniqueCoordinates ( Geometry geom ) {
+    CoordinateList extractUniqueCoordinates ( Geometry<?> geom ) {
         if (geom == null) {
             return new CoordinateList();
         }
@@ -48,7 +60,7 @@ class DelaunayTriangulationBuilder {
 
     public static
     CoordinateList unique ( Coordinate[] coords ) {
-        Coordinate[] coordsCopy = CoordinateArrays.BidirectionalComparator.copyDeep(coords);
+        Coordinate[] coordsCopy = BidirectionalComparator.copyDeep(coords);
         Arrays.sort(coordsCopy);
 
         return new CoordinateList(coordsCopy, false);
@@ -62,7 +74,7 @@ class DelaunayTriangulationBuilder {
      */
     public static
     List <Vertex> toVertices ( Collection <Coordinate> coords ) {
-        List<Vertex> verts = new ArrayList<>();
+        List <Vertex> verts = new ArrayList <>();
         for (Coordinate coord : coords) {
             verts.add(new Vertex(coord));
         }
@@ -88,13 +100,15 @@ class DelaunayTriangulationBuilder {
 
     private Collection <Coordinate> siteCoords;
     private double tolerance = 0.0;
-    private QuadEdgeSubdivision subdiv = null;
+    private DelaunayTriangulation <N, A, G> subdiv = new DelaunayTriangulation <>(
+            new Envelope(), tolerance);
 
     /**
      * Creates a new triangulation builder.
      */
     public
-    DelaunayTriangulationBuilder () {
+    DelaunayTriangulationBuilder ( Class <? extends DelaunayTriangularTopDownTiler> clazz ) {
+        this.clazz = clazz;
     }
 
     /**
@@ -118,7 +132,7 @@ class DelaunayTriangulationBuilder {
     public
     void setSites ( Collection <Coordinate> coords ) {
         // remove any duplicate points (they will cause the triangulation to fail)
-        siteCoords = unique(CoordinateArrays.BidirectionalComparator.toCoordinateArray(coords));
+        siteCoords = unique(BidirectionalComparator.toCoordinateArray(coords));
     }
 
     /**
@@ -141,8 +155,8 @@ class DelaunayTriangulationBuilder {
         if (subdiv == null) {
             Envelope siteEnv = envelope(siteCoords);
             List <Vertex> vertices = toVertices(siteCoords);
-            subdiv = new QuadEdgeSubdivision(siteEnv, tolerance);
-            IncrementalDelaunayTriangulator triangulator = new IncrementalDelaunayTriangulator(subdiv);
+            subdiv = new DelaunayTriangulation <>(siteEnv, tolerance);
+            IncrementalDelaunayTriangulator <N, A, G> triangulator = new IncrementalDelaunayTriangulator <>(subdiv);
             triangulator.insertSites(vertices);
         }
     }
@@ -180,6 +194,15 @@ class DelaunayTriangulationBuilder {
     public
     Geometry getTriangles ( GeometryFactory geomFact ) {
         create();
+
         return subdiv.getTriangles(geomFact);
+    }
+
+    List<Triangle> getTriangles(CoordinateList coordinates){
+        return subdiv.getTriangles(coordinates);
+    }
+    public
+    Class <? extends TriangularTiler <N, A, G>> getClazz () {
+        return clazz;
     }
 }

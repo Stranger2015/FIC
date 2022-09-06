@@ -5,6 +5,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.Compressor;
+import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.fic.utils.Point;
@@ -70,10 +71,10 @@ class FractalModel<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      */
     @SuppressWarnings({"unchecked"})
     private
-    void analyze ( Map <Point, Entry <IImage<A>, ImageTransform <A, G>>> simpleModel ) {
-        for (Point point : simpleModel.keySet()) {
-            IImage<A> domain = new GrayScaleImage <>((Mat) simpleModel.get(point).getKey());
-            ImageTransform <A, G> transform = simpleModel.get(point).getValue();
+    void analyze ( Map <Vertex, Entry <IImage<A>, ImageTransform <A, G>>> simpleModel ) {
+        for (Vertex vertex : simpleModel.keySet()) {
+            IImage<A> domain = new GrayScaleImage <>((Mat) simpleModel.get(vertex).getKey());
+            ImageTransform <A, G> transform = simpleModel.get(vertex).getValue();
             if (!model.containsKey(domain)) {
                 model.put(domain, new HashMap <>());
                 model.get(domain).put(transform, new HashSet <>());
@@ -85,7 +86,7 @@ class FractalModel<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
                  */
                 model.get(domain).put(transform, new HashSet <>());
             }
-            model.get(domain).get(transform).add(point);
+            model.get(domain).get(transform).add(vertex);
         }
     }
 
@@ -93,7 +94,7 @@ class FractalModel<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      * @return
      */
     public
-    Map <IImage<A>, Map <ImageTransform<A, G>, Set <Point>>> getModel () {
+    Map <IImage<A>, Map <ImageTransform<A, G>, Set <Vertex>>> getModel () {
 
         return model;
     }

@@ -2,10 +2,13 @@ package org.stranger2015.opencv.fic.transform;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-import org.stranger2015.opencv.fic.core.*;
-import org.stranger2015.opencv.fic.utils.GrayScaleImage;
+import org.stranger2015.opencv.fic.core.CompressedImage;
+import org.stranger2015.opencv.fic.core.IAddress;
+import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.fic.core.ValueError;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import static org.stranger2015.opencv.fic.core.IAddress.valueOf;
@@ -149,8 +152,8 @@ class ImageTransform<A extends IAddress <A>, G extends BitBuffer>
      */
     @Override
     public
-    IImage <A> transform ( @NotNull IImage <A> inputImage,
-                           IImage <A> transformMatrix,
+    IImage <A> transform ( IImage <A> inputImage,
+                           Mat transformMatrix,
                            EInterpolationType type ) {
 
         return ITransform.super.transform(inputImage, transformMatrix, type);
@@ -173,12 +176,11 @@ class ImageTransform<A extends IAddress <A>, G extends BitBuffer>
 //    @SuppressWarnings("unchecked")
     @Override
     public final
-    IImage <A> warpAffine ( IImage <A> inputImage, IImage <A> transformMatrix, EInterpolationType interpolationType ) {
-        IImage <A> outputImage = new GrayScaleImage <>(inputImage);
+    IImage <A> warpAffine ( IImage <A> inputImage, Mat transformMatrix, EInterpolationType interpolationType ) {
         Imgproc.warpAffine(
                 inputImage.getMat(),
                 outputImage.getMat(),
-                transformMatrix.getMat(),
+                transformMatrix,
                 new Size(1, 1));//fixme
 
         return outputImage;

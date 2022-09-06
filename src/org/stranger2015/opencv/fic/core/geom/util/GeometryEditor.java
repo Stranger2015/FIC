@@ -12,7 +12,9 @@ package org.stranger2015.opencv.fic.core.geom.util;
  */
 
 import org.stranger2015.opencv.fic.core.geom.*;
-import org.stranger2015.opencv.fic.core.util.Assert;
+import org.stranger2015.opencv.fic.core.io.MultiPoint;
+import org.stranger2015.opencv.fic.core.io.MultiPolygon;
+import org.stranger2015.opencv.fic.utils.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +27,7 @@ import java.util.List;
  * Geometry objects are intended to be treated as immutable.
  * This class "modifies" Geometrys
  * by traversing them, applying a user-defined
- * {@link org.stranger2015.opencv.fic.core.geom.util.GeometryEditor.GeometryEditorOperation}, {@link org.stranger2015.opencv.fic.core.geom.util.GeometryEditor.CoordinateSequenceOperation} or {@link org.stranger2015.opencv.fic.core.geom.util.GeometryEditor.CoordinateOperation}
+ * {@link GeometryEditorOperation}, {@link CoordinateSequenceOperation} or {@link CoordinateOperation}
  * and creating new Geometrys with the same structure but
  * (possibly) modified components.
  * <p>
@@ -60,13 +62,12 @@ import java.util.List;
  * <li>By default the UserData of the input geometry is not copied to the result.
  * </ul>
  *
+ * @version 1.7
  * @see GeometryTransformer
  * @see Geometry#isValid
- *
- * @version 1.7
  */
-public class GeometryEditor
-{
+public
+class GeometryEditor {
     /**
      * The factory used to create the modified Geometry.
      * If <tt>null</tt> the GeometryFactory of the input is used.
@@ -78,8 +79,8 @@ public class GeometryEditor
      * Creates a new GeometryEditor object which will create
      * edited {@link Geometry}s with the same {@link GeometryFactory} as the input Geometry.
      */
-    public GeometryEditor()
-    {
+    public
+    GeometryEditor () {
     }
 
     /**
@@ -88,8 +89,8 @@ public class GeometryEditor
      *
      * @param factory the GeometryFactory to create  edited Geometrys with
      */
-    public GeometryEditor(GeometryFactory factory)
-    {
+    public
+    GeometryEditor ( GeometryFactory factory ) {
         this.factory = factory;
     }
 
@@ -99,22 +100,22 @@ public class GeometryEditor
      *
      * @param isUserDataCopied true if the input user data should be copied.
      */
-    public void setCopyUserData(boolean isUserDataCopied)
-    {
+    public
+    void setCopyUserData ( boolean isUserDataCopied ) {
         this.isUserDataCopied = isUserDataCopied;
     }
 
     /**
      * Edit the input {@link Geometry} with the given edit operation.
-     * Clients can create subclasses of {@link org.stranger2015.opencv.fic.core.geom.util.GeometryEditor.GeometryEditorOperation} or
-     * {@link org.stranger2015.opencv.fic.core.geom.util.GeometryEditor.CoordinateOperation} to perform required modifications.
+     * Clients can create subclasses of {@link GeometryEditorOperation} or
+     * {@link CoordinateOperation} to perform required modifications.
      *
-     * @param geometry the Geometry to edit
+     * @param geometry  the Geometry to edit
      * @param operation the edit operation to carry out
      * @return a new {@link Geometry} which is the result of the editing (which may be empty)
      */
-    public Geometry edit(Geometry geometry, GeometryEditor.GeometryEditorOperation operation)
-    {
+    public
+    Geometry edit ( Geometry geometry, GeometryEditorOperation operation ) {
         // nothing to do
         if (geometry == null) return null;
 
@@ -126,8 +127,8 @@ public class GeometryEditor
         return result;
     }
 
-    private Geometry editInternal(Geometry geometry, GeometryEditor.GeometryEditorOperation operation)
-    {
+    private
+    Geometry editInternal ( Geometry geometry, GeometryEditorOperation operation ) {
         // if client did not supply a GeometryFactory, use the one from the input Geometry
         if (factory == null)
             factory = geometry.getFactory();
@@ -138,7 +139,7 @@ public class GeometryEditor
         }
 
         if (geometry instanceof Polygon) {
-            return editPolygon((Polygon) geometry, operation);
+            return editPolygon((Polygon <?>) geometry, operation);
         }
 
         if (geometry instanceof Point) {
@@ -153,48 +154,58 @@ public class GeometryEditor
         return null;
     }
 
-    private Polygon editPolygon(Polygon polygon,
-                                org.stranger2015.opencv.fic.core.geom.util.GeometryEditor.GeometryEditorOperation operation) {
-        Polygon newPolygon = (Polygon) operation.edit(polygon, factory);
+    private
+    Polygon <?> editPolygon ( Polygon <?> polygon,
+                              GeometryEditorOperation operation ) {
+        Polygon <?> result;
+        Polygon <?> newPolygon = (Polygon <?>) operation.edit(polygon, factory);
         // create one if needed
-        if (newPolygon == null)
+        if (newPolygon == null) {
             newPolygon = factory.createPolygon();
+        }
         if (newPolygon.isEmpty()) {
             //RemoveSelectedPlugIn relies on this behaviour. [Jon Aquino]
-            return newPolygon;
+            result = newPolygon;
         }
-
-        LinearRing shell = (LinearRing) edit(newPolygon.getExteriorRing(), operation);
-        if (shell == null || shell.isEmpty()) {
-            //RemoveSelectedPlugIn relies on this behaviour. [Jon Aquino]
-            return factory.createPolygon();
-        }
-
-        List<LinearRing> holes = new ArrayList<>();
-        for (int i = 0; i < newPolygon.getNumInteriorRing(); i++) {
-            LinearRing hole = (LinearRing) edit(newPolygon.getInteriorRingN(i), operation);
-            if (hole == null || hole.isEmpty()) {
-                continue;
+        else {
+            LinearRing shell = (LinearRing) edit(newPolygon.getExteriorRing(), operation);
+            if (shell == null || shell.isEmpty()) {
+                //RemoveSelectedPlugIn relies on this behaviour. [Jon Aquino]
+                result = factory.createPolygon();
             }
-            holes.add(hole);
+            else {
+                List <LinearRing> holes = new ArrayList <>();
+                for (int i = 0; i < newPolygon.getNumInteriorRing(); i++) {
+                    LinearRing hole = (LinearRing) edit(newPolygon.getInteriorRingN(i), operation);
+                    if (hole == null || hole.isEmpty()) {
+                        continue;
+                    }
+                    holes.add(hole);
+                }
+                result = factory.createPolygon(shell, holes.toArray(new LinearRing[]{}));
+            }
         }
 
-        return factory.createPolygon(shell,
-                (LinearRing[]) holes.toArray(new LinearRing[] {  }));
+        return result;
     }
 
-    private GeometryCollection editGeometryCollection(
-            GeometryCollection collection,
-            GeometryEditor.GeometryEditorOperation operation) {
+    /**
+     * @param collection
+     * @param operation
+     * @return
+     */
+    private
+    GeometryCollection editGeometryCollection ( GeometryCollection collection, GeometryEditorOperation operation ) {
+        GeometryCollection result;
         // first edit the entire collection
         // MD - not sure why this is done - could just check original collection?
         GeometryCollection collectionForType = (GeometryCollection) operation.edit(collection,
                 factory);
 
         // edit the component geometries
-        List<Geometry> geometries = new ArrayList<>();
+        List <Geometry <?>> geometries = new ArrayList <>();
         for (int i = 0; i < collectionForType.getNumGeometries(); i++) {
-            Geometry geometry = edit(collectionForType.getGeometryN(i), operation);
+            Geometry <?> geometry = edit(collectionForType.getGeometryN(i), operation);
             if (geometry == null || geometry.isEmpty()) {
                 continue;
             }
@@ -202,19 +213,22 @@ public class GeometryEditor
         }
 
         if (collectionForType.getClass() == MultiPoint.class) {
-            return factory.createMultiPoint((Point[]) geometries.toArray(
-                    new Point[] {  }));
+            result = factory.createMultiPoint(geometries. <Point<?>>toArray(
+                    new Geometry[0]));
         }
-        if (collectionForType.getClass() == MultiLineString.class) {
-            return factory.createMultiLineString((LineString[]) geometries.toArray(
-                    new LineString[] {  }));
+        else if (collectionForType.getClass() == MultiLineString.class) {
+            result = factory.createMultiLineString(geometries.toArray(
+                    new LineString[]{}));
         }
-        if (collectionForType.getClass() == MultiPolygon.class) {
-            return factory.createMultiPolygon((Polygon[]) geometries.toArray(
-                    new Polygon[] {  }));
+        else if (collectionForType.getClass() == MultiPolygon.class) {
+            result = factory.createMultiPolygon(geometries.toArray(
+                    new Polygon[]{}));
         }
-        return factory.createGeometryCollection((Geometry[]) geometries.toArray(
-                new Geometry[] {  }));
+        else {
+            result = factory.createGeometryCollection(geometries.toArray(
+                    new Geometry[]{}));
+        }
+        return result;
     }
 
     /**
@@ -222,8 +236,8 @@ public class GeometryEditor
      *
      * @version 1.7
      */
-    public interface GeometryEditorOperation
-    {
+    public
+    interface GeometryEditorOperation {
         /**
          * Edits a Geometry by returning a new Geometry with a modification.
          * The returned geometry may be:
@@ -234,12 +248,12 @@ public class GeometryEditor
          * </ul>
          *
          * @param geometry the Geometry to modify
-         * @param factory the factory with which to construct the modified Geometry
-         * (may be different to the factory of the input geometry)
+         * @param factory  the factory with which to construct the modified Geometry
+         *                 (may be different to the factory of the input geometry)
          * @return a new Geometry which is a modification of the input Geometry
          * @return null if the Geometry is to be deleted completely
          */
-        Geometry edit(Geometry geometry, GeometryFactory factory);
+        Geometry edit ( Geometry geometry, GeometryFactory factory );
     }
 
     /**
@@ -249,25 +263,25 @@ public class GeometryEditor
      * GeometryFactory (including PrecisionModel and SRID).
      *
      * @author mbdavis
-     *
      */
-    public static class NoOpGeometryOperation
-            implements GeometryEditor.GeometryEditorOperation
-    {
-        public Geometry edit(Geometry geometry, GeometryFactory factory)
-        {
+    public static
+    class NoOpGeometryOperation
+            implements GeometryEditorOperation {
+        public
+        Geometry edit ( Geometry geometry, GeometryFactory factory ) {
             return geometry;
         }
     }
 
     /**
-     * A {@link GeometryEditor.GeometryEditorOperation} which edits the coordinate list of a {@link Geometry}.
+     * A {@link GeometryEditorOperation} which edits the coordinate list of a {@link Geometry}.
      * Operates on Geometry subclasses which contains a single coordinate list.
      */
-    public abstract static class CoordinateOperation
-            implements GeometryEditor.GeometryEditorOperation
-    {
-        public final Geometry edit(Geometry geometry, GeometryFactory factory) {
+    public abstract static
+    class CoordinateOperation
+            implements GeometryEditorOperation {
+        public final
+        Geometry edit ( Geometry geometry, GeometryFactory factory ) {
             if (geometry instanceof LinearRing) {
                 return factory.createLinearRing(edit(geometry.getCoordinates(),
                         geometry));
@@ -297,37 +311,40 @@ public class GeometryEditor
          * and returned.
          *
          * @param coordinates the coordinate array to operate on
-         * @param geometry the geometry containing the coordinate list
+         * @param geometry    the geometry containing the coordinate list
          * @return an edited coordinate array (which may be the same as the input)
          */
-        public abstract Coordinate[] edit(Coordinate[] coordinates,
-                                          Geometry geometry);
+        public abstract
+        Coordinate[] edit ( Coordinate[] coordinates,
+                            Geometry geometry );
     }
 
     /**
-     * A {@link GeometryEditor.GeometryEditorOperation} which edits the {@link ICoordinateSequence}
+     * A {@link GeometryEditorOperation} which edits the {@link ICoordinateSequence}
      * of a {@link Geometry}.
      * Operates on Geometry subclasses which contains a single coordinate list.
      */
-    public abstract static class CoordinateSequenceOperation
-            implement GeometryEditor.GeometryEditorOperation {
+    public abstract static
+    class CoordinateSequenceOperation extends GeometryEditor {
 
-        public final Geometry edit(Geometry geometry, GeometryFactory factory) {
+
+        public final
+        Geometry <?> edit ( Geometry <?> geometry, GeometryFactory factory ) {
             if (geometry instanceof LinearRing) {
                 return factory.createLinearRing(edit(
-                        ((LinearRing)geometry).getCoordinateSequence(),
+                        ((LinearRing) geometry).getCoordinateSequence(),
                         geometry));
             }
 
             if (geometry instanceof LineString) {
                 return factory.createLineString(edit(
-                        ((LineString)geometry).getCoordinateSequence(),
+                        ((LineString) geometry).getCoordinateSequence(),
                         geometry));
             }
 
             if (geometry instanceof Point) {
                 return factory.createPoint(edit(
-                        ((Point)geometry).getCoordinateSequence(),
+                        ((Point) geometry).getCoordinateSequence(),
                         geometry));
             }
 
@@ -341,7 +358,7 @@ public class GeometryEditor
          * @param geometry the geometry containing the coordinate list
          * @return an edited coordinate sequence (which may be the same as the input)
          */
-        public abstract ICoordinateSequence edit(ICoordinateSequence coordSeq,
-                                                Geometry geometry);
+        public abstract
+        ICoordinateSequence edit ( ICoordinateSequence coordSeq, Geometry <?> geometry );
     }
 }

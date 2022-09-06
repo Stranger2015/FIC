@@ -12,10 +12,16 @@ package org.stranger2015.opencv.fic.core.triangulation;
  * http://www.eclipse.org/org/documents/edl-v10.php.
  */
 
+import org.opencv.core.MatOfInt;
+import org.stranger2015.opencv.fic.core.IAddress;
+import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.fic.core.IImageBlock;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.LocateFailureException;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.QuadEdge;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.QuadEdgeSubdivision;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.Collection;
 
@@ -26,20 +32,21 @@ import java.util.Collection;
  * @author Martin Davis
  * @version 1.0
  */
-public class IncrementalDelaunayTriangulator
-    implements IDelaunayTriangulator
-{
-    private final QuadEdgeSubdivision subdiv;
+public
+class IncrementalDelaunayTriangulator<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
+        implements IDelaunayTriangulator {
+    private final DelaunayTriangulation <N, A, G> subdiv;
     private final boolean isUsingTolerance;
 
     /**
      * Creates a new triangulator using the given {@link QuadEdgeSubdivision}.
      * The triangulator uses the tolerance of the supplied subdivision.
      *
+     * @param subdiv1
      * @param subdiv
-     *          a subdivision in which to build the TIN
      */
-    public IncrementalDelaunayTriangulator(QuadEdgeSubdivision subdiv) {
+    public
+    IncrementalDelaunayTriangulator ( DelaunayTriangulation<N, A, G> subdiv ) {
         this.subdiv = subdiv;
         isUsingTolerance = subdiv.getTolerance() > 0.0;
     }
@@ -51,11 +58,11 @@ public class IncrementalDelaunayTriangulator
      * to the tolerance grid, however.
      *
      * @param vertices a Collection of Vertex
-     *
      * @throws LocateFailureException if the location algorithm fails to converge in a reasonable number of iterations
      */
     @Override
-    public void insertSites( Collection <Vertex> vertices) {
+    public
+    void insertSites ( Collection <Vertex> vertices ) {
         for (Vertex v : vertices) {
             insertSite(v);
         }
@@ -70,7 +77,8 @@ public class IncrementalDelaunayTriangulator
      * @return a quadedge containing the inserted vertex
      */
     @Override
-    public QuadEdge insertSite( Vertex v) {
+    public
+    QuadEdge insertSite ( Vertex v ) {
         QuadEdge result;
         /*
          * This code is based on Guibas and Stolfi (1985), with minor modifications
@@ -126,11 +134,25 @@ public class IncrementalDelaunayTriangulator
     }
 
     /**
-     *
      * @return
      */
     public
     boolean isUsingTolerance () {
         return isUsingTolerance;
+    }
+
+    public
+    IImageBlock <?> getImageBlock () {
+        return (IImageBlock <?>) getImage();
+    }
+
+    public
+    MatOfInt getMat () {
+        return null;
+    }
+
+    public
+    IImage <?> getImage () {
+        return null;
     }
 }

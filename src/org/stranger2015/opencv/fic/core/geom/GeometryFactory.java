@@ -1,6 +1,5 @@
 package org.stranger2015.opencv.fic.core.geom;
 
-import org.jetbrains.annotations.NotNull;
 import org.stranger2015.opencv.fic.core.geom.impl.CoordinateArraySequenceFactory;
 import org.stranger2015.opencv.fic.core.geom.util.GeometryEditor;
 import org.stranger2015.opencv.fic.core.geom.util.GeometryEditor.GeometryEditorOperation;
@@ -10,7 +9,6 @@ import org.stranger2015.opencv.fic.utils.Assert;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.IntStream;
 
 /**
@@ -35,7 +33,7 @@ class GeometryFactory implements Serializable {
     private final ICoordinateSequenceFactory coordinateSequenceFactory;
 
     public static
-    Point createPointFromInternalCoord ( Coordinate coord, Geometry exemplar ) {
+    Point<?> createPointFromInternalCoord ( Coordinate coord, Geometry<?> exemplar ) {
         exemplar.getPrecisionModel().makePrecise(coord);
 
         return exemplar.getFactory().createPoint(coord);
@@ -108,8 +106,8 @@ class GeometryFactory implements Serializable {
      * @return the <code>List</code> in array format
      */
     public static
-    Point[] toPointArray ( Collection <Point> points ) {
-        Point[] pointArray = new Point[points.size()];
+    Point<?>[] toPointArray ( Collection <Geometry <?>> points ) {
+        Point<?>[] pointArray = new Point[points.size()];
         return points.toArray(pointArray);
     }
 
@@ -120,11 +118,11 @@ class GeometryFactory implements Serializable {
      * @return the <code>List</code> in array format
      */
     public static
-    Geometry[] toGeometryArray ( List <Coordinate[]> geometries ) {
+    Geometry<?>[] toGeometryArray ( Collection <Geometry <?>> geometries ) {
         if (geometries == null) {
             return null;
         }
-        Geometry[] geometryArray = new Geometry[geometries.size()];
+        Geometry<?>[] geometryArray = new Geometry[geometries.size()];
 
         return geometries.toArray(geometryArray);
     }
@@ -149,8 +147,8 @@ class GeometryFactory implements Serializable {
      * @return the <code>List</code> in array format
      */
     public static
-    LineString[] toLineStringArray ( @NotNull Collection <LineString> lineStrings ) {
-        LineString[] lineStringArray = new LineString[lineStrings.size()];
+    LineString<?>[] toLineStringArray ( Collection <Geometry <?>> lineStrings ) {
+        LineString<?>[] lineStringArray = new LineString[lineStrings.size()];
 
         return lineStrings.toArray(lineStringArray);
     }
@@ -162,8 +160,8 @@ class GeometryFactory implements Serializable {
      * @return the <code>List</code> in array format
      */
     public static
-    Polygon[] toPolygonArray ( Collection <Polygon> polygons ) {
-        Polygon[] polygonArray = new Polygon[polygons.size()];
+/*    <T extends Polygon<T>>*/    Polygon<?>[] toPolygonArray ( Collection <Geometry <?>> polygons ) {
+        Polygon<?>[] polygonArray = new Polygon[polygons.size()];
 
         return polygons.toArray(polygonArray);
     }
@@ -175,8 +173,9 @@ class GeometryFactory implements Serializable {
      * @return the <code>List</code> in array format
      */
     public static
-    MultiPolygon[] toMultiPolygonArray ( Collection <MultiPolygon> multiPolygons ) {
-        MultiPolygon[] multiPolygonArray = new MultiPolygon[multiPolygons.size()];
+//    <T extends MultiPolygon<T>>
+    MultiPolygon<?>[] toMultiPolygonArray ( Collection <MultiPolygon<?>> multiPolygons ) {
+        MultiPolygon<?>[] multiPolygonArray = new MultiPolygon[multiPolygons.size()];
 
         return multiPolygons.toArray(multiPolygonArray);
     }
@@ -226,7 +225,7 @@ class GeometryFactory implements Serializable {
      * <code>Polygon</code> (in all other cases)
      */
     public
-    Geometry toGeometry ( Envelope envelope ) {
+    Geometry<?> toGeometry ( Envelope envelope ) {
         // null envelope - return empty point geometry
         if (envelope.isNull()) {
             return createPoint();
@@ -274,7 +273,7 @@ class GeometryFactory implements Serializable {
      * @return an empty Point
      */
     public
-    Point createPoint () {
+    Point<?> createPoint () {
         return createPoint(getCoordinateSequenceFactory().create(new Coordinate[]{}));
     }
 
@@ -286,7 +285,7 @@ class GeometryFactory implements Serializable {
      * @return the created Point
      */
     public
-    Point createPoint ( Coordinate coordinate ) {
+    Point<?> createPoint ( Coordinate coordinate ) {
         return createPoint(coordinate != null ?
                 getCoordinateSequenceFactory().create(new Coordinate[]{coordinate}) :
                 null
@@ -301,8 +300,8 @@ class GeometryFactory implements Serializable {
      * @return the created Point
      */
     public
-    Point createPoint ( ICoordinateSequence coordinates ) {
-        return new Point(coordinates, this);
+    Point<?> createPoint ( ICoordinateSequence coordinates ) {
+        return new Point<>(coordinates, this);
     }
 
     /**
@@ -370,7 +369,7 @@ class GeometryFactory implements Serializable {
      * @return the created MultiPolygon
      */
     public
-    MultiPolygon createMultiPolygon ( Polygon[] polygons ) {
+    MultiPolygon createMultiPolygon ( Polygon [] polygons ) {
         return new MultiPolygon(polygons, this);
     }
 
@@ -421,8 +420,8 @@ class GeometryFactory implements Serializable {
      * @return an empty MultiPoint
      */
     public
-    MultiPoint createMultiPoint () {
-        return new MultiPoint(this, null);
+    MultiPoint<?> createMultiPoint () {
+        return new MultiPoint<>(this, null);
     }
 
     /**
@@ -433,8 +432,8 @@ class GeometryFactory implements Serializable {
      * @return a MultiPoint object
      */
     public
-    MultiPoint createMultiPoint ( Point[] point ) {
-        return new MultiPoint(this, point);
+    MultiPoint <?> createMultiPoint ( Point<?>[] point ) {
+        return new MultiPoint<>(this, point);
     }
 
     /**
@@ -446,7 +445,7 @@ class GeometryFactory implements Serializable {
      * @deprecated Use {@link GeometryFactory#createMultiPointFromCoords} instead
      */
     public
-    MultiPoint createMultiPoint ( Coordinate[] coordinates ) {
+    MultiPoint<?> createMultiPoint ( Coordinate[] coordinates ) {
         return createMultiPoint(coordinates != null ? getCoordinateSequenceFactory().create(coordinates) : null);
     }
 
@@ -458,7 +457,7 @@ class GeometryFactory implements Serializable {
      * @return a MultiPoint object
      */
     public
-    MultiPoint createMultiPointFromCoords ( Coordinate[] coordinates ) {
+    MultiPoint<?> createMultiPointFromCoords ( Coordinate[] coordinates ) {
         return createMultiPoint(coordinates != null
                 ? getCoordinateSequenceFactory().create(coordinates)
                 : null);
@@ -473,11 +472,11 @@ class GeometryFactory implements Serializable {
      * @return a MultiPoint geometry
      */
     public
-    MultiPoint createMultiPoint ( ICoordinateSequence coordinates ) {
+    MultiPoint<?> createMultiPoint ( ICoordinateSequence coordinates ) {
         if (coordinates == null) {
             return createMultiPoint(new Point[0]);
         }
-        Point[] points = new Point[coordinates.size()];
+        Point<?>[] points = new Point[coordinates.size()];
         IntStream.range(0, coordinates.size())
                 .forEachOrdered(i -> {
                     ICoordinateSequence ptSeq = getCoordinateSequenceFactory()
@@ -502,8 +501,8 @@ class GeometryFactory implements Serializable {
      * @throws IllegalArgumentException if a ring is invalid
      */
     public
-    Polygon createPolygon ( LinearRing shell, LinearRing[] holes ) {
-        return new Polygon(shell, holes, this);
+    Polygon <?> createPolygon ( LinearRing shell, LinearRing[] holes ) {
+        return new Polygon <>(shell, holes, this);
     }
 
     /**
@@ -515,7 +514,7 @@ class GeometryFactory implements Serializable {
      * @throws IllegalArgumentException if the boundary ring is invalid
      */
     public
-    Polygon createPolygon ( ICoordinateSequence shell ) {
+    Polygon <?> createPolygon ( ICoordinateSequence shell ) {
         return createPolygon(createLinearRing(shell));
     }
 
@@ -528,7 +527,7 @@ class GeometryFactory implements Serializable {
      * @throws IllegalArgumentException if the boundary ring is invalid
      */
     public
-    Polygon createPolygon ( Coordinate[] shell ) {
+    Polygon <?> createPolygon ( Coordinate[] shell ) {
         return createPolygon(createLinearRing(shell));
     }
 
@@ -541,7 +540,7 @@ class GeometryFactory implements Serializable {
      * @throws IllegalArgumentException if the boundary ring is invalid
      */
     public
-    Polygon createPolygon ( LinearRing shell ) {
+    Polygon <?> createPolygon ( LinearRing shell ) {
         return createPolygon(shell, null);
     }
 
@@ -551,7 +550,7 @@ class GeometryFactory implements Serializable {
      * @return an empty polygon
      */
     public
-    Polygon createPolygon () {
+    Polygon <?> createPolygon () {
         return createPolygon(null, null);
     }
 
@@ -584,16 +583,16 @@ class GeometryFactory implements Serializable {
      */
 
     public
-    <T extends Geometry> T buildGeometry ( Collection <T> geomList ) {
+   Geometry<?>  buildGeometry ( Collection <Geometry<?>> geomList ) {
 
         /**
          * Determine some facts about the geometries in the list
          */
-        Class <T> geomClass = null;
+        Class <?> geomClass = null;
         boolean isHeterogeneous = false;
         boolean hasGeometryCollection = false;
-        for (Geometry geom : geomList) {
-            Class <T> partClass = (Class <T>) geom.getClass();
+        for (Geometry<?> geom : geomList) {
+            Class <?> partClass = geom.getClass();
             if (geomClass == null) {
                 geomClass = partClass;
             }
@@ -610,30 +609,31 @@ class GeometryFactory implements Serializable {
          */
         // for the empty geometry, return an empty GeometryCollection
         if (geomClass == null) {
-            return (T) createGeometryCollection();
+            return (Geometry<?>) createGeometryCollection();
         }
         if (isHeterogeneous || hasGeometryCollection) {
-            return (T) createGeometryCollection(toGeometryArray((Collection <Geometry>) geomList));
+            return (Geometry<?>) createGeometryCollection(toGeometryArray(geomList));
         }
-        // at this point we know the collection is hetereogenous.
+        // at this point we know the collection is heterogenous.
         // Determine the type of the result from the first Geometry in the list
         // this should always return a geometry, since otherwise an empty collection would have already been returned
-        Geometry geom0 = geomList.iterator().next();
+        Geometry<?> geom0 = geomList.iterator().next();
         boolean isCollection = geomList.size() > 1;
         if (isCollection) {
             if (geom0 instanceof Polygon) {
-                return (T) createMultiPolygon(toPolygonArray((Collection <Polygon>) geomList));
+                return createMultiPolygon(toPolygonArray( geomList));
             }
             else if (geom0 instanceof LineString) {
-                return (T) createMultiLineString(toLineStringArray((Collection <LineString>) geomList));
+                return createMultiLineString(toLineStringArray( geomList));
             }
             else if (geom0 instanceof Point) {
-                return (T) createMultiPoint(toPointArray((Collection <Point>) geomList));
+                return (Geometry<?>)  createMultiPoint(toPointArray(geomList));
             }
+
             Assert.shouldNeverReachHere("Unhandled class: " + geom0.getClass().getName());
         }
 
-        return (T) geom0;
+        return geom0;
     }
 
 //    private
@@ -653,7 +653,7 @@ class GeometryFactory implements Serializable {
      * @return an empty LineString
      */
     public
-    LineString createLineString () {
+    LineString<?> createLineString () {
         return createLineString(getCoordinateSequenceFactory().create(new Coordinate[]{}));
     }
 
@@ -664,7 +664,7 @@ class GeometryFactory implements Serializable {
      * @param coordinates an array without null elements, or an empty array, or null
      */
     public
-    LineString createLineString ( Coordinate[] coordinates ) {
+    LineString<?> createLineString ( Coordinate[] coordinates ) {
         return createLineString(coordinates != null ? getCoordinateSequenceFactory().create(coordinates) : null);
     }
 
@@ -675,8 +675,8 @@ class GeometryFactory implements Serializable {
      * @param coordinates a ICoordinateSequence (possibly empty), or null
      */
     public
-    LineString createLineString ( ICoordinateSequence coordinates ) {
-        return new LineString(coordinates, this);
+    LineString<?> createLineString ( ICoordinateSequence coordinates ) {
+        return new LineString<>(coordinates, this);
     }
 
     /**
@@ -687,7 +687,7 @@ class GeometryFactory implements Serializable {
      * @return an empty atomic geometry of given dimension
      */
     public
-    Geometry createEmpty ( int dimension ) {
+    Geometry<?> createEmpty ( int dimension ) {
         switch (dimension) {
             case -1:
                 return createGeometryCollection();
@@ -719,7 +719,7 @@ class GeometryFactory implements Serializable {
      * @see Geometry#copy()
      */
     public
-    Geometry createGeometry ( Geometry g ) {
+    Geometry<?> createGeometry ( Geometry<?> g ) {
         GeometryEditor editor = new GeometryEditor(this);
 
         return editor.edit(g, (GeometryEditorOperation) new CoordSeqCloneOp(coordinateSequenceFactory));
@@ -757,4 +757,6 @@ class GeometryFactory implements Serializable {
         return coordinateSequenceFactory;
     }
 
+    Triangle createTriangle (CoordinateList coordinates) {
+        return new Triangle(this);    }
 }

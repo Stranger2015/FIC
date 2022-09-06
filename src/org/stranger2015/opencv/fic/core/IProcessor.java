@@ -4,7 +4,6 @@ import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.RegionOfInterest;
-import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayList;
@@ -79,7 +78,7 @@ interface IProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
             newRegions.add((RegionOfInterest <A>) region);
         }
 
-        image = new GrayScaleImage <>(image.getMat(), size);
+        image = new Image <>(image.getMat(), size);
         image.setRegions(newRegions);
 
         return image;

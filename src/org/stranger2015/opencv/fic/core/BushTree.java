@@ -43,13 +43,11 @@ class BushTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
                                       EDirection quadrant,
                                       IIntSize rect ) throws ValueError {
 
-        TreeNode <N, A, G> node = chooseNodeType(getImage());
-
-        return node;
+        return new BushTreeNode <>(parent, quadrant, rect);
     }
 
-    private
-    TreeNode <N, A, G> chooseNodeType ( IImage <A> image ) {
-        return null;
-    }
+//    private
+//    TreeNode <N, A, G> chooseNodeType ( IImage <A> image ) {
+//        return new BushTreeNode <N, A, G>(root, image, action, area, depth);
+//    }
 }

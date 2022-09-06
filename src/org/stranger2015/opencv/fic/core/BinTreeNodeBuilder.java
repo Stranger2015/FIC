@@ -5,11 +5,7 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.util.Deque;
 import java.util.List;
-
-import static org.stranger2015.opencv.fic.core.IAddress.valueOf;
-import static org.stranger2015.opencv.fic.core.Tiler.minRangeSizes;
 
 /**
  * @param <N>
@@ -19,6 +15,9 @@ import static org.stranger2015.opencv.fic.core.Tiler.minRangeSizes;
 public
 class BinTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
         extends TreeNodeBuilder <N, A, G> {
+
+    private IIntSize domainSize;
+    private IIntSize rangeSize;
 
     /**
      * @param image
@@ -33,7 +32,7 @@ class BinTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
                          IIntSize domainSize,
                          IEncoder <N, A, G> encoder,
                          Library <A> library ) {
-///*minRangeSizes[0]*/
+
         super(image, rangeSize, domainSize, encoder, library);
     }
 
@@ -65,7 +64,6 @@ class BinTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
     @Override
     public
     void add ( TreeNodeBase <N, A, G> node ) {
-
     }
 
     /**
@@ -100,7 +98,7 @@ class BinTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
     @Override
     public
     IIntSize getRangeSize () {
-        return null;
+        return rangeSize;
     }
 
     /**
@@ -109,6 +107,6 @@ class BinTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
     @Override
     public
     IIntSize getDomainSize () {
-        return null;
+        return domainSize;
     }
 }

@@ -178,7 +178,7 @@ class WKTWriter {
      * meaningful values for an ordinate bit-pattern
      */
     private static
-    class CheckOrdinatesFilter implements CoordinateSequenceFilter {
+    class CheckOrdinatesFilter implements ICoordinateSequenceFilter {
 
         private final EnumSet <Ordinate> checkOrdinateFlags;
         private final EnumSet <Ordinate> outputOrdinates;
@@ -539,7 +539,7 @@ class WKTWriter {
                     level, writer, formatter);
         }
         else if (geometry instanceof Polygon) {
-            appendPolygonTaggedText((Polygon) geometry, outputOrdinates, useFormatting,
+            appendPolygonTaggedText((Polygon <T>) geometry, outputOrdinates, useFormatting,
                     level, writer, formatter);
         }
         else if (geometry instanceof MultiPoint) {
@@ -660,7 +660,7 @@ class WKTWriter {
      */
     private
     void appendPolygonTaggedText (
-            Polygon polygon,
+            Polygon <T> polygon,
             EnumSet <Ordinate> outputOrdinates,
             boolean useFormatting,
             int level,
@@ -947,7 +947,7 @@ class WKTWriter {
      */
     private
     void appendPolygonText (
-            Polygon polygon,
+            Polygon <T> polygon,
             EnumSet <Ordinate> outputOrdinates,
             boolean useFormatting,
             int level,
@@ -1114,7 +1114,7 @@ class WKTWriter {
                     doIndent = true;
                 }
                 appendPolygonText(
-                        (Polygon) multiPolygon.getGeometryN(i),
+                        (Polygon <T>) multiPolygon.getGeometryN(i),
                         outputOrdinates,
                         useFormatting,
                         level2,

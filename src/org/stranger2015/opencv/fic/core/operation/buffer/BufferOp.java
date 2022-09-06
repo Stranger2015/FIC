@@ -17,7 +17,6 @@ import org.stranger2015.opencv.fic.core.math.MathUtil;
 import org.locationtech.jts.noding.Noder;
 import org.locationtech.jts.noding.ScaledNoder;
 import org.locationtech.jts.noding.snapround.SnapRoundingNoder;
-import org.locationtech.jts.operation.buffer.BufferBuilder;
 import org.locationtech.jts.operation.buffer.BufferParameters;
 
 import java.util.ArrayList;
@@ -287,16 +286,16 @@ public class BufferOp
         if (poly1.isEmpty()) return poly0;
         if (poly0.isEmpty()) return poly1;
 
-        List<Polygon> polys = new ArrayList<Polygon>();
+        List<Polygon <T>> polys = new ArrayList<Polygon <T>>();
         extractPolygons(poly0, polys);
         extractPolygons(poly1, polys);
         if (polys.size() == 1) return polys.get(0);
         return poly0.getFactory().createMultiPolygon(GeometryFactory.toPolygonArray(polys));
     }
 
-    private static void extractPolygons(Geometry poly0, List<Polygon> polys) {
+    private static void extractPolygons(Geometry poly0, List<Polygon <T>> polys) {
         for (int i = 0; i < poly0.getNumGeometries(); i++) {
-            polys.add((Polygon) poly0.getGeometryN(i));
+            polys.add((Polygon <T>) poly0.getGeometryN(i));
         }
     }
 

@@ -1,6 +1,7 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
@@ -16,11 +17,11 @@ import static java.util.List.of;
  * @param <A>
  * @param <G>
  */
-@SuppressWarnings("WriteOnlyObject")
-public
+public abstract
 class ImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer> {
 
-    protected final ITiler <N, A, G> tiler;
+    protected IPartitionProcessor <N, A, G> partitionProcessor;
+
     protected final EPartitionScheme scheme;
     protected final IEncoder <N, A, G> encoder;
     protected final IImage <A> image;
@@ -29,38 +30,113 @@ class ImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
     protected IIntSize domainSize;
     protected IIntSize codebookSize;
 
-//    protected Point[] pointSet;
-
     /**
      * @param tiler
+     * @param topDownTiler
+     * @param bottomUpTiler
      * @param encoder
      * @param rangeSize
      * @param domainSize
      */
     @Contract(pure = true)
-    public
-    ImageBlockGenerator ( ITiler <N, A, G> tiler,
-                          EPartitionScheme scheme,
-                          IEncoder <N, A, G> encoder,
-                          IImage <A> image,
-                          IIntSize rangeSize,
-                          IIntSize domainSize
+    protected
+    ImageBlockGenerator (
+            IPartitionProcessor <N, A, G> partitionProcessor,
+            EPartitionScheme scheme,
+            IEncoder <N, A, G> encoder,
+            IImage <A> image,
+            IIntSize rangeSize,
+            IIntSize domainSize
     ) {
-        this.tiler = tiler;
+        this.partitionProcessor = partitionProcessor;
         this.scheme = scheme;
         this.encoder = encoder;
         this.image = image;
         this.rangeSize = rangeSize;
         this.domainSize = domainSize;
-        this.codebookSize = domainSize;//fixme
+        this.codebookSize = domainSize;
     }
 
+    public abstract
+    HvBlockGenerator <N, A, G> newInstance (
+            IPartitionProcessor <N, A, G> partitionProcessor,
+            EPartitionScheme scheme,
+            IEncoder <N, A, G> encoder,
+            IImage <A> image,
+            IIntSize rangeSize,
+            IIntSize domainSize );
+
     /**
+     * @param roi
      * @return
      */
     public
-    ImageBlockGenerator <N, A, G> newInstance () {
-        return this;//todo
+    List <Vertex> generateVerticesSet ( RegionOfInterest <A> roi, int blockWidth, int blockHeight ) {
+
+        return partitionProcessor.generateVerticesSet(roi, blockWidth, blockHeight);
+    }
+
+    /**
+     * @param roi
+     * @param rangeSize
+     * @param domainSize
+     * @return
+     */
+    public
+    List <IImageBlock <A>> generateRangeBlocks ( RegionOfInterest <A> roi, int rangeSize, int domainSize )
+            throws ValueError {
+
+        return partitionProcessor.generateRangeBlocks(roi, rangeSize, domainSize);
+    }
+
+
+//        int numOfBlocksPerWidth = roi.getWidth() / blockWidth;
+//        int numOfBlocksPerHeight = roi.getHeight() / blockHeight;
+//        for (int i = 0; i < numOfBlocksPerWidth; i++) {
+//            for (int j = 0; j < numOfBlocksPerHeight; j++) {
+//                IImageBlock <A> block = new ImageBlock <>(roi.getMat());//fixme check-me
+//                int sumOfPixelValues = 0;
+//                for (int x = 0; x < blockWidth; x++) {
+//                    for (int y = 0; y < blockHeight; y++) {
+//                        block.put(x, y = roi.pixelValues(i, (blockWidth + x) * (blockHeight + y)));
+//                        sumOfPixelValues += block.pixelValues(x, y);
+//                    }
+//                }
+//
+//                block.setMeanPixelValue((int) (sumOfPixelValues / (double) (blockWidth * blockHeight)));
+//                blocks.add(block);
+//            }
+//        }
+//
+
+    protected
+    List <IImageBlock <A>> generateInitialRangeBlocks ( RegionOfInterest <A> roi,
+                                                        int blockWidth,
+                                                        int blockHeight )
+            throws ValueError {
+//        Vertex[] vertices = generateVerticesSet(roi, blockWidth, blockHeight);
+//        List <IImageBlock <A>> rangeBlocks = new ArrayList <>(vertices.length);
+//        int sumOfPixelValues = 0;
+//        int[] pixels = roi.getPixels();
+//
+//
+//        for (int i = 0, verticesLength = vertices.length; i < verticesLength; i++) {
+//            Vertex vertex = vertices[i];
+//            int x = (int) vertex.getX();
+//            int y = (int) vertex.getY();
+//            IImageBlock <A> rangeBlock = roi.getSubImage(x, y, blockWidth, blockHeight);
+//
+//            int[] data = new int[4];
+//
+//            rangeBlock.put(x, y, data);//pixelValues(i, (blockWidth + x) * (blockHeight + y)));
+//            sumOfPixelValues += rangeBlock.pixelValues(x, y);
+//
+//            rangeBlock.setMeanPixelValue((int) (sumOfPixelValues / (double) (blockWidth * blockHeight)));
+////            IImageBlock <A> rangeBlock = new ImageBlock <>(roi.getSubImage(x, y, blockWidth, blockHeight).getMat());
+//            rangeBlocks.add(rangeBlock);
+//        }
+
+        return partitionProcessor.generateInitialRangeBlocks(roi, blockWidth, blockHeight);
     }
 
     /**
@@ -68,92 +144,41 @@ class ImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
      * @return
      */
     public
-    Vertex[] generatePointSet ( RegionOfInterest <A> roi, int blockWidth, int blockHeight ) {
-        int numOfPointsPerWidth = roi.getWidth() / blockWidth + 1;
-        int numOfPointsPerHeight = roi.getHeight() / blockHeight + 1;
+    List <IImageBlock <A>> generateDomainBlocks ( RegionOfInterest <A> roi, List <IImageBlock <A>> rangeBlocks )
+            throws ValueError {
+        List <IImageBlock <A>> domainBlocks = new ArrayList <>();
 
-        int pointAmount = numOfPointsPerHeight * numOfPointsPerWidth;
-
-        List <Vertex> points = new ArrayList <>(pointAmount);
-        Vertex currPoint;
-
-        for (int i = 0; i < numOfPointsPerWidth; i++) {
-            for (int j = 0; j < numOfPointsPerHeight; j++) {
-                currPoint = new Vertex(i * blockWidth, j * blockHeight);
-                points.add(currPoint);
-            }
-        }
-
-        return points.toArray(new Vertex[pointAmount]);
-    }
-
-    /**
-     * @param roi
-     * @return
-     */
-    public
-    List <IImageBlock <A>> generateRangeBlocks ( RegionOfInterest <A> roi ) {
-        int blockWidth = rangeSize.getWidth();
-        int blockHeight = rangeSize.getHeight();
-        int numOfBlocksPerWidth = roi.getWidth() / blockWidth;//fixme
-        int numOfBlocksPerHeight = roi.getHeight() / blockHeight;
-        List <IImageBlock <A>> blocks = roi.getRangeBlocks();
-        for (int i = 0; i < numOfBlocksPerWidth; i++) {
-            for (int j = 0; j < numOfBlocksPerHeight; j++) {
-                IImageBlock <A> block = new ImageBlock <>(roi.getMat()/*, i, blockWidth*/);//fixme check-me
-                int sumOfPixelValues = 0;
-                for (int x = 0; x < blockWidth; x++) {
-                    for (int y = 0; y < blockHeight; y++) {
-                        block.put(x, y = roi.pixelValues(i, (blockWidth + x) * (blockHeight + y)));
-                        sumOfPixelValues += block.pixelValues(x, y);
-                    }
-                }
-
-                block.setMeanPixelValue((int) (sumOfPixelValues / (double) (blockWidth * blockHeight)));
-                blocks.add(block);
-            }
-        }
-
-        return blocks;
-    }
-
-    /**
-     * @param roi
-     * @return
-     */
-    public
-    List <IImageBlock <A>> generateDomainBlocks ( RegionOfInterest <A> roi ) {
         int blockWidth = domainSize.getWidth();
         int blockHeight = domainSize.getHeight();
         int numOfBlocksPerRow = roi.getWidth() - blockWidth + 1;
         int numOfBlocksPerCol = roi.getHeight() - blockHeight + 1;
-        List <IImageBlock <A>> blocks = roi.getDomainBlocks();
 
-        for (int i = 0; i < numOfBlocksPerRow; i++) {
-            for (int j = 0; j < numOfBlocksPerCol; j++) {
-                IImageBlock <A> block = new ImageBlock <A>(roi, i, j, blockWidth, blockHeight);
-                double sumOfPixelValues = 0;
-                for (int x = 0; x < blockWidth; x++) {
-                    for (int y = 0; y < blockHeight; y++) {
-                        block.pixelValues(x, y);//roi.pixelValues(i + x, j + y); todo apply
-                        sumOfPixelValues += block.pixelValues(x, y);
+        for (IImageBlock <A> rangeBlock : rangeBlocks) {
+            for (int i = 0; i < numOfBlocksPerRow; i++) {
+                for (int j = 0; j < numOfBlocksPerCol; j++) {
+                    IImageBlock <A> block = new ImageBlock <>(roi, i, j, blockWidth, blockHeight);
+                    double sumOfPixelValues = 0;
+                    for (int x = 0; x < blockWidth; x++) {
+                        for (int y = 0; y < blockHeight; y++) {
+                            block.pixelValues(x, y);//roi.pixelValues(i + x, j + y); todo apply
+                            sumOfPixelValues += block.pixelValues(x, y);
+                        }
                     }
-                }
-
-                block.setMeanPixelValue((int) (sumOfPixelValues / (blockWidth * blockWidth)));
-                for (int x = 0; x < blockWidth; x++) {
-                    for (int y = 0; y < blockHeight; y++) {
-                        block.setBeta((block.pixelValues(x, y) - block.getMeanPixelValue()));
+                    block.setMeanPixelValue((int) (sumOfPixelValues / (blockWidth * blockWidth)));
+                    for (int x = 0; x < blockWidth; x++) {
+                        for (int y = 0; y < blockHeight; y++) {
+                            block.setBeta((block.pixelValues(x, y) - block.getMeanPixelValue()));
 //                        final int i1 = block.pixelValues(x, y) - block.getMeanPixelValue();
+                        }
                     }
-                }
 
-                block.contract(2);
-                blocks.add(block);
+                    block.contract(2);
+                    domainBlocks.add(block);
+                }
             }
         }
 
-        return blocks;
+        return domainBlocks;
     }
 
     /**
@@ -161,12 +186,12 @@ class ImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
      * @return
      */
     public
-    List <IImageBlock <A>> createCodebookBlocks ( RegionOfInterest <A> roi )
+    List <IImageBlock <A>> createCodebookBlocks ( RegionOfInterest <A> roi, List <IImageBlock <A>> domainBlocks )
             throws ValueError {
 
         List <IImageBlock <A>> blocks = new ArrayList <>();
-        if (blocks.isEmpty()) {
-            throw new ValueError("");
+        for (int i = 0; i < domainBlocks.size(); i++) {
+
         }
 
         return blocks;
@@ -189,5 +214,35 @@ class ImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
         inputImage.setRegions(blocks);
 
         return blocks;
+    }
+
+    protected
+    ImageBlockGenerator <N, A, G> create ( IPartitionProcessor <N, A, G> partitionProcessor,
+                                           EPartitionScheme scheme,
+                                           IEncoder <N, A, G> encoder,
+                                           IImage <A> image,
+                                           IIntSize rangeSize,
+                                           IIntSize domainSize ) {
+
+        return newInstance(
+                partitionProcessor,
+                scheme,
+                encoder,
+                image,
+                rangeSize,
+                domainSize);
+    }
+
+    /**
+     * @param blocks
+     * @param indices
+     * @return
+     */
+    public
+    IImageBlock <A> mergeBlocks ( @NotNull RegionOfInterest <A> roi,
+                                  List <IImageBlock <A>> blocks,
+                                  List <IImageBlock <A>> blocksToMerge ) {
+
+        return roi.merge(blocks, blocksToMerge);
     }
 }

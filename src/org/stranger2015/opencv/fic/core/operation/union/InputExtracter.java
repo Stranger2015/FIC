@@ -61,7 +61,7 @@ class InputExtracter implements IGeometryFilter
     }
 
     private GeometryFactory geomFactory = null;
-    private List<Polygon> polygons = new ArrayList<Polygon>();
+    private List<Polygon <T>> polygons = new ArrayList<Polygon <T>>();
     private List<LineString> lines = new ArrayList<LineString>();
     private List<Point> points = new ArrayList<Point>();
 
@@ -149,7 +149,7 @@ class InputExtracter implements IGeometryFilter
             return;
         }
         if (geom instanceof Polygon) {
-            polygons.add((Polygon) geom);
+            polygons.add((Polygon <T>) geom);
             return;
         }
         else if (geom instanceof LineString) {

@@ -11,11 +11,11 @@ package org.stranger2015.opencv.fic.core.operation.relate;
  * http://www.eclipse.org/org/documents/edl-v10.php.
  */
 
-import org.locationtech.jts.algorithm.BoundaryNodeRule;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.IntersectionMatrix;
-import org.locationtech.jts.operation.GeometryGraphOperation;
 import org.locationtech.jts.operation.relate.RelateComputer;
+import org.stranger2015.opencv.fic.core.algorithm.BoundaryNodeRule;
+import org.stranger2015.opencv.fic.core.geom.Geometry;
+import org.stranger2015.opencv.fic.core.geom.IntersectionMatrix;
+import org.stranger2015.opencv.fic.core.operation.GeometryGraphOperation;
 
 /**
  * Implements the SFS <tt>relate()</tt> generalized spatial predicate on two {@link Geometry}s.
@@ -49,7 +49,7 @@ public class RelateOp
      * @param b a Geometry to test
      * @return the IntersectionMatrix for the spatial relationship between the geometries
      */
-    public static IntersectionMatrix relate(Geometry a, Geometry b)
+    public static <T extends Geometry<T>>IntersectionMatrix  relate(Geometry<T> a, Geometry<T> b)
     {
         RelateOp relOp = new RelateOp(a, b);
 
@@ -65,9 +65,9 @@ public class RelateOp
      * @param boundaryNodeRule the Boundary Node Rule to use
      * @return the IntersectionMatrix for the spatial relationship between the input geometries
      */
-    public static IntersectionMatrix relate(Geometry a, Geometry b, BoundaryNodeRule boundaryNodeRule)
-    {
+    public static  <T extends Geometry<T>>Geometry<T>IntersectionMatrix relate(Geometry<T> a, Geometry<T> b, BoundaryNodeRule boundaryNodeRule)
         RelateOp relOp = new RelateOp(a, b, boundaryNodeRule);
+
         return relOp.getIntersectionMatrix();
     }
 

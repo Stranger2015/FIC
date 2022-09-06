@@ -1,19 +1,16 @@
 package org.stranger2015.opencv.fic.core.search;
 
+import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.transform.ITransform;
-import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  *
  */
 public
-interface ISearchProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */,
-        G extends BitBuffer>
-
+interface ISearchProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
         extends Runnable {
 
     /**
@@ -24,7 +21,7 @@ interface ISearchProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>,
     /**
      * @return
      */
-    GrayScaleImage<A> search ();
+    IImage<A> search ();
 
     /**
      * @return

@@ -1,12 +1,14 @@
 package org.stranger2015.opencv.fic.core.io;
 
 
-import org.locationtech.jts.geom.CoordinateSequenceComparator;
-import org.stranger2015.opencv.fic.core.algorithm.GeometryComponentFilter;
+import org.stranger2015.opencv.fic.core.geom.CoordinateSequenceComparator;
+import org.stranger2015.opencv.fic.core.geom.IGeometryComponentFilter;
 import org.stranger2015.opencv.fic.core.geom.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  * Models a collection of {@link Polygon}s.
@@ -17,65 +19,64 @@ import java.util.List;
  * This allows the topological point-set semantics
  * to be well-defined.
  *
- *
- *@version 1.7
+ * @version 1.7
  */
-public class MultiPolygon
+public
+class MultiPolygon<T extends MultiPolygon<T>>//fixme
         extends GeometryCollection
-        implements IPolygonal
-{
+        implements IPolygonal {
+
     private static final long serialVersionUID = -551033529766975875L;
+
     /**
-     *  Constructs a <code>MultiPolygon</code>.
+     * Constructs a <code>MultiPolygon</code>.
      *
-     *@param  polygons        the <code>Polygon</code>s for this <code>MultiPolygon</code>
-     *      , or <code>null</code> or an empty array to create the empty geometry.
-     *      Elements may be empty <code>Polygon</code>s, but not <code>null</code>
-     *      s. The polygons must conform to the assertions specified in the <A
-     *      HREF="http://www.opengis.org/techno/specs.htm">OpenGIS Simple Features
-     *      Specification for SQL</A> .
-     *@param  precisionModel  the specification of the grid of allowable points
-     *      for this <code>MultiPolygon</code>
-     *@param  SRID            the ID of the Spatial Reference System used by this
-     *      <code>MultiPolygon</code>
+     * @param polygons       the <code>Polygon</code>s for this <code>MultiPolygon</code>
+     *                       , or <code>null</code> or an empty array to create the empty geometry.
+     *                       Elements may be empty <code>Polygon</code>s, but not <code>null</code>
+     *                       s. The polygons must conform to the assertions specified in the <A
+     *                       HREF="http://www.opengis.org/techno/specs.htm">OpenGIS Simple Features
+     *                       Specification for SQL</A> .
+     * @param precisionModel the specification of the grid of allowable points
+     *                       for this <code>MultiPolygon</code>
+     * @param SRID           the ID of the Spatial Reference System used by this
+     *                       <code>MultiPolygon</code>
      * @deprecated Use GeometryFactory instead
      */
-    public MultiPolygon( Polygon[] polygons, PrecisionModel precisionModel, int SRID) {
+    public
+    MultiPolygon ( Polygon <T>[] polygons, PrecisionModel precisionModel, int SRID ) {
         this(polygons, new GeometryFactory(precisionModel, SRID));
     }
 
 
     /**
-     * @param polygons
-     *            the <code>Polygon</code>s for this <code>MultiPolygon</code>,
-     *            or <code>null</code> or an empty array to create the empty
-     *            geometry. Elements may be empty <code>Polygon</code>s, but
-     *            not <code>null</code>s. The polygons must conform to the
-     *            assertions specified in the <A
-     *            HREF="http://www.opengis.org/techno/specs.htm">OpenGIS Simple
-     *            Features Specification for SQL</A>.
+     * @param polygons the <code>Polygon</code>s for this <code>MultiPolygon</code>,
+     *                 or <code>null</code> or an empty array to create the empty
+     *                 geometry. Elements may be empty <code>Polygon</code>s, but
+     *                 not <code>null</code>s. The polygons must conform to the
+     *                 assertions specified in the <A
+     *                 HREF="http://www.opengis.org/techno/specs.htm">OpenGIS Simple
+     *                 Features Specification for SQL</A>.
      */
-    public MultiPolygon(Polygon[] polygons, GeometryFactory factory) {
+    public
+    MultiPolygon ( Polygon <T>[] polygons, GeometryFactory factory ) {
         super(polygons, factory);
     }
 
-    public int getDimension() {
+    public
+    int getDimension () {
         return 2;
     }
 
-    public int getBoundaryDimension() {
+    public
+    int getBoundaryDimension () {
         return 1;
     }
 
-    public String getGeometryType() {
+    public
+    String getGeometryType () {
         return Geometry.TYPENAME_MULTIPOLYGON;
     }
-
-  /*
-  public boolean isSimple() {
-    return true;
-  }
-*/
 
     /**
      * Computes the boundary of this geometry
@@ -83,23 +84,25 @@ public class MultiPolygon
      * @return a lineal geometry (which may be empty)
      * @see Geometry#getBoundary
      */
-    public Geometry getBoundary() {
+    public
+    Geometry getBoundary () {
         if (isEmpty()) {
             return getFactory().createMultiLineString();
         }
-        List<LineString> allRings = new ArrayList<>();
+        List <LineString> allRings = new ArrayList <>();
         for (Geometry geometry : geometries) {
-            Polygon polygon = (Polygon) geometry;
+            Polygon <T> polygon = (Polygon <T>) geometry;
             Geometry rings = polygon.getBoundary();
-            for (int j = 0; j < rings.getNumGeometries(); j++) {
-                allRings.add(rings.getGeometryN(j));
-            }
+            IntStream.range(0, rings.getNumGeometries()).
+                    <LineString>mapToObj(rings::getGeometryN)
+                    .forEachOrdered(allRings::add);
         }
         LineString[] allRingsArray = new LineString[allRings.size()];
-        return getFactory().createMultiLineString((LineString[]) allRings.toArray(allRingsArray));
+        return getFactory().createMultiLineString(allRings.toArray(allRingsArray));
     }
 
-    public boolean equalsExact(Geometry other, double tolerance) {
+    public
+    boolean equalsExact ( Geometry other, double tolerance ) {
         if (!isEquivalentClass(other)) {
             return false;
         }
@@ -108,7 +111,7 @@ public class MultiPolygon
 
     @Override
     public
-    void apply ( GeometryComponentFilter filter ) {
+    void apply ( IGeometryComponentFilter filter ) {
 
     }
 
@@ -120,24 +123,22 @@ public class MultiPolygon
      * @return a MultiPolygon in the reverse order
      */
     public
-    MultiPolygon reverse() {
+    MultiPolygon reverse () {
         return (MultiPolygon) super.reverse();
     }
 
     protected
-    MultiPolygon reverseInternal() {
-        Polygon[] polygons = new Polygon[this.geometries.length];
-        for (int i = 0; i < polygons.length; i++) {
-            polygons[i] = (Polygon) this.geometries[i].reverse();
-        }
-        return new MultiPolygon(polygons, factory);
+    MultiPolygon<T> reverseInternal () {
+        Polygon <T>[] polygons = new Polygon <T>[this.geometries.length];
+        Arrays.setAll(polygons, this::apply);
+        return new MultiPolygon<>(polygons, factory);
     }
 
     protected
-    MultiPolygon copyInternal() {
-        Polygon[] polygons = new Polygon[this.geometries.length];
+    MultiPolygon copyInternal () {
+        Polygon <T>[] polygons = new Polygon <T>[this.geometries.length];
         for (int i = 0; i < polygons.length; i++) {
-            polygons[i] = (Polygon) this.geometries[i].copy();
+            polygons[i] = (Polygon <T>) this.geometries[i].copy();
         }
         return new MultiPolygon(polygons, factory);
     }
@@ -154,8 +155,14 @@ public class MultiPolygon
         return 0;
     }
 
-    protected int getTypeCode() {
+    protected
+    int getTypeCode () {
         return Geometry.TYPECODE_MULTIPOLYGON;
+    }
+
+    private
+    Polygon <T> apply ( int i ) {
+        return (Polygon <T>) this.geometries[i].reverse();
     }
 }
 

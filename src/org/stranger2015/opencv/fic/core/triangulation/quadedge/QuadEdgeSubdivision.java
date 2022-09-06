@@ -1,5 +1,6 @@
 package org.stranger2015.opencv.fic.core.triangulation.quadedge;
 
+import org.jetbrains.annotations.NotNull;
 import org.stranger2015.opencv.fic.core.geom.*;
 import org.stranger2015.opencv.fic.core.io.WKTWriter;
 
@@ -99,7 +100,10 @@ class QuadEdgeSubdivision {
         frameEnv.expandToInclude(frameVertex[2].getCoordinate());
     }
 
-    private
+    /**
+     * @return
+     */
+    private @NotNull
     QuadEdge initSubdiv () {
         // build initial subdivision from frame
         QuadEdge ea = makeEdge(frameVertex[0], frameVertex[1]);
@@ -597,7 +601,7 @@ class QuadEdgeSubdivision {
 //     * @return
 //     */
 //    public
-//    Iterator <Triangle> getTriangleIterator () {
+//    Iterator <TriangleImageBlock> getTriangleIterator () {
 //        return new TriangleIterator(this, null );
 //    }
 
@@ -605,7 +609,7 @@ class QuadEdgeSubdivision {
 //     * @param triangleCursor
 //     */
 //    public
-//    void setTriangleCursor ( Triangle triangleCursor ) {
+//    void setTriangleCursor ( TriangleImageBlock triangleCursor ) {
 //        this.triangleCursor = triangleCursor;
 //    }
 
@@ -629,7 +633,7 @@ class QuadEdgeSubdivision {
             Coordinate c = triEdges[2].orig().getCoordinate();
 
             // TODO: choose the most accurate circumcentre based on the edges
-            Coordinate cc = Triangle.circumcentreDD(a, b, c);
+            Coordinate cc = TriangleImageBlock.circumcentreDD(a, b, c);
             Vertex ccVertex = new Vertex(cc);
             // save the circumcentre as the origin for the dual edges originating in this triangle
             for (int i = 0; i < 3; i++) {
@@ -871,16 +875,23 @@ class QuadEdgeSubdivision {
      * @param geomFact the GeometryFactory to use
      * @return a GeometryCollection of triangular Polygons
      */
-    public
-    Geometry getTriangles ( GeometryFactory geomFact ) {
+    public Geometry getTriangles ( GeometryFactory geomFact ) {
         List <Coordinate[]> triPtsList = getTriangleCoordinates(false);
-        Polygon[] tris = new Polygon[triPtsList.size()];
+        var tris = new Polygon <>[triPtsList.size()];
         int i = 0;
         for (Coordinate[] triPt : triPtsList) {
             tris[i++] = geomFact.createPolygon(geomFact.createLinearRing(triPt));
         }
 
         return geomFact.createGeometryCollection(tris);
+    }
+    public List<Triangle<T>> getTriangles(List<CoordinateList> coordinates){
+ new Triangle<>();
+        coordinates.get(0);
+        coordinates.get(1);
+        coordinates.get(2);
+
+        return null;
     }
 
     /**
@@ -966,7 +977,7 @@ class QuadEdgeSubdivision {
         }
 
         Coordinate[] pts = coordList.toCoordinateArray();
-        Polygon cellPoly = geomFact.createPolygon(geomFact.createLinearRing(pts));
+        Polygon <T> cellPoly = geomFact.createPolygon(geomFact.createLinearRing(pts));
 
         Vertex v = startQE.orig();
         cellPoly.setUserData(v.getCoordinate());

@@ -914,7 +914,7 @@ public class WKTReader
      *      token was encountered.
      *@throws  IOException     if an I/O error occurs
      */
-    private Polygon readPolygonText(StreamTokenizer tokenizer, EnumSet<Ordinate> ordinateFlags) throws IOException, ParseException {
+    private Polygon <T> readPolygonText( StreamTokenizer tokenizer, EnumSet<Ordinate> ordinateFlags) throws IOException, ParseException {
         String nextToken = getNextEmptyOrOpener(tokenizer);
         if (nextToken.equals(WKTConstants.EMPTY)) {
             return geometryFactory.createPolygon();
@@ -978,12 +978,12 @@ public class WKTReader
         }
         ArrayList polygons = new ArrayList();
         do {
-            Polygon polygon = readPolygonText(tokenizer, ordinateFlags);
+            Polygon <T> polygon = readPolygonText(tokenizer, ordinateFlags);
             polygons.add(polygon);
             nextToken = getNextCloserOrComma(tokenizer);
         } while (nextToken.equals(COMMA));
-        Polygon[] array = new Polygon[polygons.size()];
-        return geometryFactory.createMultiPolygon((Polygon[]) polygons.toArray(array));
+        Polygon <T>[] array = new Polygon <T>[polygons.size()];
+        return geometryFactory.createMultiPolygon((Polygon <T>[]) polygons.toArray(array));
     }
 
     /**

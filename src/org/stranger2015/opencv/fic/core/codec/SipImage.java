@@ -3,16 +3,15 @@ package org.stranger2015.opencv.fic.core.codec;
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
+import org.opencv.core.Point;
 import org.stranger2015.opencv.fic.core.*;
-
-import static org.stranger2015.opencv.fic.core.IAddress.valueOf;
+import org.stranger2015.opencv.fic.core.geom.Coordinate;
 
 /**
  *
  */
 public
 class SipImage<A extends IAddress <A>> extends Image <A> {
-
     protected int[] pixels;
 
     /**
@@ -57,6 +56,36 @@ class SipImage<A extends IAddress <A>> extends Image <A> {
         return 0;
     }
 
+    @Override
+    public
+    void put ( int x, int i ) {
+
+    }
+
+    @Override
+    public
+    int getMeanPixelValue () {
+        return 0;
+    }
+
+    @Override
+    public
+    IImageBlock <A> getSubImage ( Rectangle rectangle ) throws ValueError {
+        return null;
+    }
+
+    @Override
+    public
+    IImageBlock <A> getSubImage () {
+        return null;
+    }
+
+    @Override
+    public
+    void setMeanPixelValue ( int meanPixelValue ) {
+
+    }
+
     /**
      * @param image
      * @return
@@ -86,7 +115,7 @@ class SipImage<A extends IAddress <A>> extends Image <A> {
     int put ( int addr, int... data ) throws ValueError {
 //        int address = row + width() * col;//??? fixme
 
-        return super.putPixels((int)valueOf(addr), data);
+        return super.putPixels((int) IAddress.valueOf((long) addr), data);
     }
 
     /**
@@ -109,6 +138,18 @@ class SipImage<A extends IAddress <A>> extends Image <A> {
     public
     int[] getPixelValue ( int address ) {
         return pixels;
+    }
+
+    @Override
+    public
+    double getBeta () {
+        return 0;
+    }
+
+    @Override
+    public
+    void setBeta ( double beta ) {
+
     }
 
     /**
@@ -186,6 +227,18 @@ class SipImage<A extends IAddress <A>> extends Image <A> {
         return getWidth() * getHeight();
     }
 
+    @Override
+    public
+    void setAddress ( IAddress <A> address ) {
+
+    }
+
+    @Override
+    public
+    int plus ( int... n ) {
+        return 0;
+    }
+
     /**
      * @return
      */
@@ -216,6 +269,12 @@ class SipImage<A extends IAddress <A>> extends Image <A> {
     public
     int[] getPixels () {
         return pixels;
+    }
+
+    @Override
+    public
+    IImage <A> getComponents () {
+        return null;
     }
 
     /**
@@ -260,6 +319,42 @@ class SipImage<A extends IAddress <A>> extends Image <A> {
     @Override
     public
     int compareTo ( @NotNull IImage <A> o ) {
+        return 0;
+    }
+
+    @Override
+    public
+    boolean isHomogeneous () throws ValueError {
+        return false;
+    }
+
+    @Override
+    public
+    Coordinate getCentroid () {
+        return null;
+    }
+
+    @Override
+    public
+    Point[] tVertices () {
+        return new Point[0];
+    }
+
+    @Override
+    public
+    double perimeter () {
+        return 0;
+    }
+
+    @Override
+    public
+    EShape getShapeKind () {
+        return null;
+    }
+
+    @Override
+    public
+    double area () {
         return 0;
     }
 }

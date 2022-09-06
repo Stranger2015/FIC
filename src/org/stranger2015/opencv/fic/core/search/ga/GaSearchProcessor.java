@@ -1,7 +1,7 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
 import org.jetbrains.annotations.Contract;
-import org.stranger2015.opencv.fic.core.Address;
+import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.search.SearchProcessor;
 import org.stranger2015.opencv.fic.transform.ITransform;
@@ -87,9 +87,9 @@ import java.util.stream.IntStream;
  */
 
 public abstract
-class GaSearchProcessor</*T extends Individual <T, A, G, C>,*/M  extends IImage <A>, A extends IAddress <A>, G extends BitBuffer
+class GaSearchProcessor<M  extends IImage <A>, A extends IAddress <A>, G extends BitBuffer
         /*C extends Chromosome <A, G, C>*/>
-        extends SearchProcessor <A, G> {
+        extends SearchProcessor <M,A, G> {
 
     protected final int popSize;
     protected final double mutationRate;
@@ -118,7 +118,7 @@ class GaSearchProcessor</*T extends Individual <T, A, G, C>,*/M  extends IImage 
                   double mutationRate,
                   double crossoverRate,
                   int elitismCount,
-                  ISelector <T, A, G, C> selector,
+                  ISelector < A, G> selector,
                   FitnessFunction <T, A, G, C> fitnessFunction,
                   IMutationOperator <T> mutationOperator,
                   ICrossoverOperator <T, A, G, C> crossoverOperator ) {

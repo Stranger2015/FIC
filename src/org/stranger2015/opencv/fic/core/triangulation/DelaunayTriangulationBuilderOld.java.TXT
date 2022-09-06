@@ -14,7 +14,7 @@ import org.stranger2015.opencv.fic.core.codec.RegionOfInterest;
 import org.stranger2015.opencv.fic.core.geom.Coordinate;
 import org.stranger2015.opencv.fic.core.geom.Geometry;
 import org.stranger2015.opencv.fic.core.geom.GeometryFactory;
-import org.stranger2015.opencv.fic.core.geom.Triangle;
+import org.stranger2015.opencv.fic.core.geom.TriangleImageBlock;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.QuadEdge;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.QuadEdgeSubdivision;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;

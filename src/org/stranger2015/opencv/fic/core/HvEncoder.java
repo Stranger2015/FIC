@@ -2,6 +2,8 @@ package org.stranger2015.opencv.fic.core;
 
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.*;
+import org.stranger2015.opencv.fic.core.codec.tilers.HvTiler;
+import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
 import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
@@ -19,31 +21,34 @@ import java.util.Set;
  
  */
 public
-class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
         extends Encoder <N, A, G> {
 
     protected
     HvEncoder (
             EPartitionScheme scheme,
             ITreeNodeBuilder <N, A, G> nodeBuilder,
+            IPartitionProcessor<N, A, G> partitionProcessor,
             ISearchProcessor <N, A, G> searchProcessor,
             ScaleTransform <A, G> scaleTransform,
             ImageBlockGenerator <N, A, G> imageBlockGenerator,
             IDistanceator <A> comparator,
             Set <ImageTransform <A, G>> transforms,
-            Set <IImageFilter <M, A>> filters,
+            Set <IImageFilter < A>> filters,
             FractalModel <N, A, G> fractalModel
     ) {
         super(
                 scheme,
-                nodeBuilder ,
+                nodeBuilder,
+                partitionProcessor,
                 searchProcessor,
                 scaleTransform,
                 imageBlockGenerator,
                 comparator,
                 transforms,
                 filters,
-                fractalModel);
+                fractalModel
+        );
     }
 
     /**
@@ -57,7 +62,7 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M exten
     @Override
     public
     ImageBlockGenerator <N, A, G> createBlockGenerator (
-            ITiler <N, A, G> tiler,
+            IPartitionProcessor <N, A, G> partitionProcessor,
             EPartitionScheme scheme,
             IEncoder <N, A, G> encoder,
             IImage <A> image,
@@ -65,12 +70,24 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M exten
             IIntSize domainSize ) {
 
         return new HvBlockGenerator <>(
-                tiler,
+                partitionProcessor,
                 scheme,
                 encoder,
                 image,
                 rangeSize,
                 domainSize);
+    }
+
+    @Override
+    public
+    IPartitionProcessor <N, A, G> doCreatePartitionProcessor ( ITiler <N, A, G> tiler ) {
+        return null;
+    }
+
+    @Override
+    public
+    IPartitionProcessor <N, A, G> createPartitionProcessor0 ( ITiler <N, A, G> tiler ) {
+        return null;
     }
 
     /**
@@ -81,7 +98,19 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M exten
     @Override
     public
     IImage <A> flipAxis ( IImage <A> image, int axis ) {
-        return null;
+        return image;
+    }
+
+    @Override
+    public
+    void initialize () {
+
+    }
+
+    @Override
+    public
+    IImage <A> doEncode ( IImage <A> image ) {
+        return image;
     }
 
     /**
@@ -93,13 +122,13 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M exten
     @Override
     public
     List <RegionOfInterest <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds ) throws ValueError {
-        return null;
+        return List.of(new RegionOfInterest<>(image));
     }
 
     @Override
     public
-    ITiler <N, A, G> getTiler () {
-        return new HvTiler <N, A, G>(image, image.getWidth(), image.getHeight());
+    IPartitionProcessor <N, A, G> getPartitionProcessor () {
+        return new HvPartitionProcessor <>(image, image.getWidth(), image.getHeight());
     }
 
     /**
@@ -136,6 +165,12 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M exten
     @Override
     public
     void addLeafNode ( TreeNode.LeafNode <N, A, G> node ) {
+
+    }
+
+    @Override
+    public
+    void addLeafNode ( TreeNodeBase <N, A, G> node ) {
 
     }
 

@@ -3,6 +3,7 @@ package org.stranger2015.opencv.fic.core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.Point;
+import org.stranger2015.opencv.fic.core.geom.Polygon;
 
 import java.util.List;
 
@@ -152,5 +153,11 @@ class TriangularImageBlockPair<A extends IAddress<A>>
     public
     IImageBlock <A> getBlock2 () {
         return null;
+    }
+
+    @Override
+    public
+    boolean isBlockHomogenous ( IImageBlock <A> block ) {
+        return false;
     }
 }

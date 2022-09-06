@@ -1,6 +1,5 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.*;
 import org.stranger2015.opencv.utils.BitBuffer;
@@ -11,7 +10,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
  
  */
 public
-class HvCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+class HvCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
         extends Codec <N, A, G> {
 
     /**
@@ -34,7 +33,10 @@ class HvCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends
      * @return
      */
     public
-    ICodec <N, A, G> create ( EPartitionScheme scheme, EncodeTask <N, A, G> encodeTask, DecodeTask <N, A, G> decodeTask ) {
+    ICodec <N, A, G> create ( EPartitionScheme scheme,
+                              EncodeTask <N, A, G> encodeTask,
+                              DecodeTask <N, A, G> decodeTask ) {
+
         return new HvCodec <>(scheme, encodeTask, decodeTask);
     }
 

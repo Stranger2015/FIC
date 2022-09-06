@@ -1,11 +1,14 @@
 package org.stranger2015.opencv.fic.core.io;
 
-import org.locationtech.jts.geom.CoordinateSequenceComparator;
-import org.stranger2015.opencv.fic.core.algorithm.GeometryComponentFilter;
 import org.stranger2015.opencv.fic.core.geom.*;
 
+/**
+ * @param <T>
+ */
 public
-class MultiPoint extends Geometry {
+class MultiPoint<T extends MultiPoint<T>>
+        extends Geometry<T> {
+
     /**
      * Creates a new <code>Geometry</code> via the specified GeometryFactory.
      *
@@ -54,7 +57,7 @@ class MultiPoint extends Geometry {
 
     @Override
     public
-    Geometry getBoundary () {
+    Geometry<T> getBoundary () {
         return null;
     }
 
@@ -66,37 +69,49 @@ class MultiPoint extends Geometry {
 
     @Override
     protected
-    Geometry reverseInternal () {
+    Geometry<T> reverseInternal () {
         return null;
     }
 
     @Override
     public
-    boolean equalsExact ( Geometry other, double tolerance ) {
+    void apply ( ICoordinateFilter filter ) {
+
+    }
+
+    @Override
+    public
+    void apply ( ICoordinateSequenceFilter filter ) {
+
+    }
+
+    @Override
+    public
+    void apply ( IGeometryFilter filter ) {
+
+    }
+
+    @Override
+    public
+    void apply ( IGeometryComponentFilter filter ) {
+
+    }
+
+    @Override
+    public
+    boolean equalsExact ( Geometry<T> other, double tolerance ) {
         return false;
     }
 
-    @Override
+  @Override
     public
-    void apply ( CoordinateFilter filter ) {
+    void apply ( IGeometryFilter filter ) {
 
     }
 
     @Override
     public
-    void apply ( CoordinateSequenceFilter filter ) {
-
-    }
-
-    @Override
-    public
-    void apply ( GeometryFilter filter ) {
-
-    }
-
-    @Override
-    public
-    void apply ( GeometryComponentFilter filter ) {
+    void apply ( IGeometryComponentFilter filter ) {
 
     }
 
@@ -119,13 +134,31 @@ class MultiPoint extends Geometry {
 
     @Override
     protected
-    <T extends Geometry> int compareToSameClass ( T o ) {
+    int compareToSameClass ( T o ) {
         return 0;
     }
 
     @Override
     protected
-    <T extends Geometry> int compareToSameClass ( T o, CoordinateSequenceComparator comp ) {
+    int compareToSameClass ( T o, org.stranger2015.opencv.fic.core.geom.CoordinateSequenceComparator comp ) {
+        return 0;
+    }
+
+    @Override
+    protected
+    int compareToSameClass ( T o, CoordinateSequenceComparator comp ) {
+        return 0;
+    }
+
+    @Override
+    protected
+     int compareToSameClass ( T o ) {
+        return 0;
+    }
+
+    @Override
+    protected
+    int compareToSameClass ( T o, CoordinateSequenceComparator comp ) {
         return 0;
     }
 

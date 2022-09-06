@@ -8,12 +8,11 @@ import org.stranger2015.opencv.utils.BitBuffer;
 /**
  * @param <N>
  * @param <A>
- 
  * @param <G>
  */
 public
-class SaCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
-        extends Codec<N, A, G> {
+class SaCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
+        extends Codec <N, A, G> {
 
     /**
      * @param scheme
@@ -22,7 +21,7 @@ class SaCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends
      */
     protected
     SaCodec ( EPartitionScheme scheme, EncodeTask <N, A, G> encodeTask, DecodeTask <N, A, G> decodeTask ) {
-        super(scheme, encodeTask, decodeTask);
+        super(scheme, encodeTask.getEncoder(), decodeTask.getDecoder());
     }
 
     /**
@@ -33,8 +32,8 @@ class SaCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends
      */
 //    @Override
     public
-    IEncoder <N, A, G> getEncoder ( M image, Size rangeSize, Size domainSize ) {
-        return null;
+    IEncoder <N, A, G> getEncoder ( IImage <A> image, Size rangeSize, Size domainSize ) {
+        return getEncoder();
     }
 
     /**
@@ -51,7 +50,7 @@ class SaCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends
      */
     @Override
     public
-    IDecoder <M,A> getDecoder () {
+    IDecoder <N, A, G> getDecoder () {
         return null;
     }
 

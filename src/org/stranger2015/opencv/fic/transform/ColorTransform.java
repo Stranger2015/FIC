@@ -2,6 +2,7 @@ package org.stranger2015.opencv.fic.transform;
 
 import org.opencv.core.Mat;
 import org.stranger2015.opencv.fic.core.IAddress;
+import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
@@ -10,18 +11,13 @@ import org.stranger2015.opencv.utils.BitBuffer;
  * @param <G>
  */
 public
-class ColorTransform</* M extends IImage <A> */, A extends IAddress <A>, G extends BitBuffer>
+class ColorTransform<A extends IAddress <A>, G extends BitBuffer>
         implements ITransform <A, G> {
-    /**
-     * @param inputImage
-     * @param transformMatrix
-     * @param interpolationType
-     * @return
-     */
+
     @Override
     public
-    Mat warpAffine ( Mat inputImage, Mat transformMatrix, EInterpolationType interpolationType ) {
-        throw new UnsupportedOperationException();
+    IImage <A> warpAffine ( IImage <A> inputImage, Mat transformMatrix, EInterpolationType interpolationType ) {
+        return null;
     }
 
     /**

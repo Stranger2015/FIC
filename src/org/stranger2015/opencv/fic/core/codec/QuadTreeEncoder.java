@@ -7,7 +7,6 @@ import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.fic.transform.ScaleTransform;
-import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.io.File;
@@ -16,7 +15,6 @@ import java.util.Set;
 
 /**
  * @param <N>
- 
  * @param <A>
  */
 public
@@ -27,18 +25,26 @@ class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      * @param inputImage
      */
     public
-    QuadTreeEncoder (
-            IImage<A> inputImage,
-            Set <ImageTransform <A, G>> transforms,
-            ScaleTransform <A, G> scaleTransform,
-            IDistanceator <A> comparator,
-            Set <IImageFilter <A>> filters,
-            FractalModel <N, A, G> fractalModel
+    QuadTreeEncoder ( EPartitionScheme scheme,
+                      TreeNodeBuilder <N, A, G> nodeBuilder,
+                      IPartitionProcessor <N, A, G> partitionProcessor,
+                      ISearchProcessor <N, A, G> searchProcessor,
+                      ScaleTransform <A, G> scaleTransform,
+                      ImageBlockGenerator <N, A, G> imageBlockGenerator,
+                      IDistanceator <A> comparator,
+                      Set <ImageTransform <A, G>> transforms,
+                      Set <IImageFilter <A>> filters,
+                      FractalModel <N, A, G> fractalModel
     ) {
-        super(inputImage,
-                transforms,
+        super(
+                scheme,
+                nodeBuilder,
+                partitionProcessor,
+                searchProcessor,
                 scaleTransform,
+                imageBlockGenerator,
                 comparator,
+                transforms,
                 filters,
                 fractalModel
         );
@@ -49,9 +55,9 @@ class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      * @param transform
      * @return
      */
-//    @Override
+    @Override
     public
-    IImage<A> randomTransform ( IImage<A> image, ImageTransform <A, G> transform ) {
+    IImage <A> randomTransform ( IImage <A> image, ImageTransform <A, G> transform ) {
         return image;//todo
     }
 
@@ -60,9 +66,9 @@ class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      * @param transform
      * @return
      */
-//    @Override
+    @Override
     public
-    IImage<A> applyTransform ( IImage<A> image, ImageTransform <A, G> transform ) {
+    IImage <A> applyTransform ( IImage <A> image, ImageTransform <A, G> transform ) {
         return image;//todo
     }
 
@@ -71,9 +77,9 @@ class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      * @param transform
      * @return
      */
-//    @Override
+    @Override
     public
-    IImage<A> applyAffineTransform ( IImage<A> image, AffineTransform <A, G> transform ) {
+    IImage <A> applyAffineTransform ( IImage <A> image, AffineTransform <A, G> transform ) {
         return image;//todo
     }
 
@@ -84,18 +90,19 @@ class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      * @param step
      * @return
      */
-//    @Override
+    @Override
     public
-    List <IImageBlock <A>> generateAllTransformedBlocks ( IImage<A> image,
-                                                        int sourceSize,
-                                                        int destinationSize,
-                                                        int step ) {
+    List <IImageBlock <A>> generateAllTransformedBlocks ( IImage <A> image,
+                                                          int sourceSize,
+                                                          int destinationSize,
+                                                          int step ) {
         return null;//todo
     }
 //
-    /**
 
     /**
+     * /**
+     *
      * @param tiler
      * @param encoder
      * @param image
@@ -103,16 +110,16 @@ class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      * @param domainSize
      * @return
      */
-//    @Override
+    @Override
     public
-    ImageBlockGenerator <N, A, G> createBlockGenerator ( ITiler <N, A, G> tiler,
-                                                            EPartitionScheme scheme,
-                                                            IEncoder <N, A, G> encoder,
-                                                            IImage <A> image,
-                                                            IIntSize rangeSize,
-                                                            IIntSize domainSize ) {
-        return new QuadTreeImageBlockGenerator<N,A,G>(
-                tiler,
+    ImageBlockGenerator <N, A, G> createBlockGenerator ( IPartitionProcessor <N, A, G> partitionProcessor,
+                                                         EPartitionScheme scheme,
+                                                         IEncoder <N, A, G> encoder,
+                                                         IImage <A> image,
+                                                         IIntSize rangeSize,
+                                                         IIntSize domainSize ) {
+        return new QuadTreeImageBlockGenerator <>(
+                partitionProcessor,
                 scheme,
                 encoder,
                 image,
@@ -126,7 +133,7 @@ class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      */
     @Override
     public
-    ITiler <N, A, G> getTiler () {
+    IPartitionProcessor <N, A, G> getPartitionProcessor () {
         return null;
     }
 
@@ -139,13 +146,13 @@ class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
         return null;
     }
 
-       /**
+    /**
      * @param image
      * @return
      */
     @Override
     public
-    IImage<A> encode ( IImage<A> image ) {
+    IImage <A> encode ( IImage <A> image ) {
         return image;
     }
 
@@ -169,7 +176,6 @@ class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
         return null;
     }
 
-
     /**
      * @param filename
      * @return
@@ -178,6 +184,7 @@ class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
     public
     FractalModel <N, A, G> loadModel ( String filename ) {
         FractalReader <N, A, G> reader = new FractalReader <>(new File(filename));
+
         return new FractalModel <>(null);
     }
 }

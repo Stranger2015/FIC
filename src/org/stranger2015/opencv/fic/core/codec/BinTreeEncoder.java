@@ -4,6 +4,8 @@ import org.jetbrains.annotations.Contract;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
+import org.stranger2015.opencv.fic.core.codec.tilers.BinTreeTiler;
+import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
 import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
@@ -39,6 +41,7 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
     public
     BinTreeEncoder ( EPartitionScheme scheme,
                      TreeNodeBuilder <N, A, G> nodeBuilder,
+                     IPartitionProcessor <N, A, G> partitionProcessor,
                      ISearchProcessor <N, A, G> searchProcessor,
                      ScaleTransform <A, G> scaleTransform,
                      ImageBlockGenerator <N, A, G> imageBlockGenerator,
@@ -47,8 +50,10 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
                      Set <IImageFilter <A>> filters,
                      FractalModel <N, A, G> fractalModel
     ) {
-        super(scheme,
+        super(
+                scheme,
                 nodeBuilder,
+                partitionProcessor,
                 searchProcessor,
                 scaleTransform,
                 imageBlockGenerator,
@@ -57,11 +62,6 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
                 filters,
                 fractalModel
         );
-    }
-
-    public
-    BinTreeEncoder ( EPartitionScheme scheme, Class <?>[] paramTypes, Object[] params ) {
-        super(scheme, paramTypes, params);
     }
 
     /**
@@ -84,18 +84,16 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Override
     public
-    ImageBlockGenerator <N, A, G> createBlockGenerator ( ITiler <N, A, G> tiler,
+    ImageBlockGenerator <N, A, G> createBlockGenerator ( IPartitionProcessor <N, A, G> partitionProcessor,
                                                          EPartitionScheme scheme,
                                                          IEncoder <N, A, G> encoder,
                                                          IImage <A> image,
                                                          IIntSize rangeSize,
                                                          IIntSize domainSize
     ) {
-
         return new BinTreeImageBlockGenerator <>(
-                tiler,
+                partitionProcessor,
                 scheme,
-
                 encoder,
                 image,
                 rangeSize,
@@ -104,13 +102,42 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
     }
 
     /**
+     * @param tiler
      * @return
      */
     @Override
     public
-    ITiler <N, A, G> createTiler0 () {
+    IPartitionProcessor <N, A, G> doCreatePartitionProcessor ( ITiler <N, A, G> tiler ) {
+        return new BinTreePartitionProcessor <>(tiler);
+    }
+
+    @Override
+    public
+    IPartitionProcessor <N, A, G> createPartitionProcessor0 ( ITiler <N, A, G> tiler ) {
         return null;
     }
+
+    //    @Override
+    public
+    IPartitionProcessor <N, A, G> createPartitionProcessor0 () {
+        return null;
+    }
+
+    //    @Override
+    public
+    IPartitionProcessor <N, A, G> createPartitionProcessor0 ( BinTreeTiler <N, A, G> tiler) {
+
+        return new BinTreePartitionProcessor <>(tiler);
+    }
+
+    /**
+     * @return
+     */
+//    @Override
+//    public
+//    ITiler <N, A, G> createPartition0 () {
+//        return null;
+//    }
 
     /**
      * @param node
@@ -159,17 +186,13 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
     }
 
     private
-    IImageBlock <A> generateBlocks ( IImage <A> inputImage ) {
-//        int ss = inputImage;
-
-        return generateBlocks0(new BinTreeNode <>(null, new ImageBlock<>(inputImage, -1,
-                new IIntSize(-1), -1, 0)))
-        ;
+    IImageBlock <A> generateBlocks ( IImage <A> inputImage, LeafNode <N, A, G> leaf ) throws ValueError {
+        return generateBlocks0(leaf);
     }
 
     private
-    IImageBlock <A> generateBlocks0 ( BinTreeNode <N, A, G> node ) {
-        return null;
+    IImageBlock <A> generateBlocks0 ( LeafNode <N, A, G> node ) {
+        return node.getImageBlock();
     }
 
     @Contract(pure = true)
@@ -181,8 +204,7 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
     @Override
     public
     void initialize () {
-
-    }
+logger.info("Initializing encoder... ");    }
 
     /**
      * @param image
@@ -204,11 +226,13 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
 
     /**
      * @param roi
+     * @param blockWidth
+     * @param blockHeight
      */
     @Override
     public
-    void segmentRegion ( RegionOfInterest <A> roi ) {
-        List <IImageBlock <A>> list = imageBlockGenerator.generateRangeBlocks(roi);
+    void segmentRegion ( RegionOfInterest <A> roi, int blockWidth, int blockHeight ) throws ValueError {
+        List <IImageBlock <A>> list = imageBlockGenerator.generateRangeBlocks(roi, blockWidth, blockHeight);
         roi.rangeBlocks.addAll(list);
     }
 
@@ -676,38 +700,13 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
         super.finalize();
     }
 
-    /**
-     * @return
-     */
-    @Override
-    public
-    IPipeline <IImage <A>, IImage <A>> getLinkedObject () {
-        return null;
-    }
-
-    /**
-     * @param link
-     */
-    @Override
-    public
-    void setNext ( ISingleLinked <IPipeline <IImage <A>, IImage <A>>> link ) {
-
-    }
-
-    @Override
-    public
-    ISingleLinked <IPipeline <IImage <A>, IImage <A>>> getNext () {
-        return null;
-    }
-
-    @Override
+    //    @Override
     public
     IImage <A> getInput () {
         return null;
     }
 
-    @Override
-    public
+    //    public
     IImage <A> getOutput () {
         return null;
     }

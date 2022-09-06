@@ -3,16 +3,18 @@ package org.stranger2015.opencv.fic.utils;
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
+import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.IAddress;
+import org.stranger2015.opencv.fic.core.geom.Coordinate;
 
 import java.util.List;
 
 /**
  * @param <A>
  */
-public
+@Deprecated public
 class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
 
     /**
@@ -28,7 +30,7 @@ class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
      */
     public
     GrayScaleImage ( Mat inputImage ) {
-        super(inputImage);
+        super(inputImage, size);
     }
 
     /**
@@ -36,7 +38,7 @@ class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
      */
     public
     GrayScaleImage ( Mat inputImage, IIntSize size ) throws ValueError {//FIXME
-        super(inputImage);
+        super(inputImage, size);
 
         IImage <A> dest = new GrayScaleImage <>(inputImage);
         Imgproc.resize(inputImage,dest.getMat(),size.toSize());
@@ -63,6 +65,18 @@ class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
 
     }
 
+    @Override
+    public
+    double getBeta () {
+        return 0;
+    }
+
+    @Override
+    public
+    void setBeta ( double beta ) {
+
+    }
+
     /**
      * @param address
      * @param pixels
@@ -78,7 +92,7 @@ class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
      */
     @Override
     public
-    List <GrayScaleImage <A>> getComponents () {
+    IImage <A> getComponents () {
         return List.of(this);
     }
 
@@ -119,6 +133,24 @@ class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
         return 0;
     }
 
+    @Override
+    public
+    void put ( int x, int i ) {
+
+    }
+
+    @Override
+    public
+    int getMeanPixelValue () {
+        return 0;
+    }
+
+    @Override
+    public
+    IImageBlock <A> getSubImage ( Rectangle rectangle ) throws ValueError {
+        return null;
+    }
+
     /**
      * @return
      */
@@ -126,6 +158,12 @@ class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
     public
     IImageBlock <A> getSubImage () {
         return null;
+    }
+
+    @Override
+    public
+    void setMeanPixelValue ( int meanPixelValue ) {
+
     }
 
     /**
@@ -249,6 +287,18 @@ class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
         return 0;
     }
 
+    @Override
+    public
+    void setAddress ( IAddress <A> address ) {
+
+    }
+
+    @Override
+    public
+    int plus ( int... n ) {
+        return 0;
+    }
+
     /**
      * @return
      */
@@ -324,5 +374,47 @@ class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
     public
     int compareTo ( @NotNull IImage <A> o ) {
         return 0;
+    }
+
+    @Override
+    public
+    boolean isHomogeneous () throws ValueError {
+        return false;
+    }
+
+    @Override
+    public
+    Coordinate getCentroid () {
+        return null;
+    }
+
+    @Override
+    public
+    Point[] tVertices () {
+        return new Point[0];
+    }
+
+    @Override
+    public
+    double perimeter () {
+        return 0;
+    }
+
+    @Override
+    public
+    EShape getShapeKind () {
+        return null;
+    }
+
+    @Override
+    public
+    double area () {
+        return 0;
+    }
+
+    @Override
+    public
+    GrayScaleImage <A> clone () {
+        return (GrayScaleImage) super.clone();
     }
 }

@@ -1,21 +1,17 @@
 package org.stranger2015.opencv.fic.core.geom;
 
-import org.locationtech.jts.geom.CoordinateSequenceComparator;
-import org.locationtech.jts.geom.CoordinateSequenceFilter;
-import org.stranger2015.opencv.fic.core.algorithm.Area;
+import org.jetbrains.annotations.NotNull;
 import org.stranger2015.opencv.fic.core.algorithm.Orientation;
 
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
-import static org.stranger2015.opencv.fic.core.algorithm.Area.*;
+import static org.stranger2015.opencv.fic.core.algorithm.Area.ofRing;
 
 /**
  * Represents a polygon with linear edges, which may include holes.
- * The outer boundary (shell)
- * and inner boundaries (holes) of the polygon are represented by {@link LinearRing}s.
- * The boundary rings of the polygon may have any orientation.
- * Polygons are closed, simple geometries by definition.
+ * The outer boundary (shell)  and inner boundaries (holes) of the polygon are represented by {@link LinearRing}s.
+ * The boundary rings of the polygon may have any orientation. Polygons are closed, simple geometries by definition.
  * <p>
  * The polygon model conforms to the assertions specified in the
  * <A HREF="http://www.opengis.org/techno/specs.htm">OpenGIS Simple Features
@@ -37,8 +33,8 @@ import static org.stranger2015.opencv.fic.core.algorithm.Area.*;
  * @version 1.7
  */
 public
-class Polygon
-        extends Geometry
+class Polygon<T extends Polygon<T>>
+        extends Geometry<T>
         implements IPolygonal {
 
     private static final long serialVersionUID = -3494792200821764533L;
@@ -161,6 +157,7 @@ class Polygon
             }
             result = coordinates;
         }
+
         return result;
     }
 
@@ -174,6 +171,7 @@ class Polygon
         for (LinearRing hole : holes) {
             numPoints += hole.getNumPoints();
         }
+
         return numPoints;
     }
 
@@ -308,7 +306,7 @@ class Polygon
      * @see Geometry#getBoundary
      */
     public
-    Geometry getBoundary () {
+    Geometry<T> getBoundary () {
         if (isEmpty()) {
             return getFactory().createMultiLineString();
         }
@@ -332,31 +330,16 @@ class Polygon
         return shell.getEnvelopeInternal();
     }
 
-    /**
-     * @param o   a <code>Geometry</code> having the same class as this <code>Geometry</code>
-     * @param <T>
-     * @return
-     */
+
     @Override
-    protected
-    <T extends Geometry> int compareToSameClass ( T o ) {
-        return 0;
-    }
-
-//    @Override
-    protected
-    <T extends Geometry> int compareToSameClass ( T o, CoordinateSequenceComparator comp ) {
-        return 0;
-    }
-
     public
-    boolean equalsExact ( Geometry other, double tolerance ) {
+    boolean equalsExact ( Geometry<T> other, double tolerance ) {
         if (isEquivalentClass(other)) {
             return false;
         }
-        Polygon otherPolygon = (Polygon) other;
-        Geometry thisShell = shell;
-        Geometry otherPolygonShell = otherPolygon.shell;
+        Polygon <T> otherPolygon = (Polygon <T>) other;
+        Geometry<T> thisShell = shell;
+        Geometry<T> otherPolygonShell = otherPolygon.shell;
         if (!thisShell.equalsExact(otherPolygonShell, tolerance)) {
             return false;
         }
@@ -365,7 +348,7 @@ class Polygon
         }
 
         return IntStream.range(0, holes.length)
-                .allMatch(i -> ((Geometry) holes[i])
+                .allMatch(i -> ((Geometry<T>) holes[i])
                         .equalsExact(otherPolygon.holes[i], tolerance));
     }
 
@@ -391,7 +374,6 @@ class Polygon
                 }
             }
         }
-
     }
 
     public
@@ -426,80 +408,105 @@ class Polygon
     }
 
     protected
-    Polygon copyInternal () {
+    Polygon <T> copyInternal () {
         LinearRing shellCopy = (LinearRing) shell.copy();
-        LinearRing[] holeCopies = new LinearRing[this.holes.length];
-        for (int i = 0; i < holes.length; i++) {
-            holeCopies[i] = (LinearRing) holes[i].copy();
-        }
-        return new Polygon(shellCopy, holeCopies, factory);
+        LinearRing[] holeCopies = IntStream.range(0, this.holes.length).mapToObj(i -> (LinearRing) holes[i].copy())
+                .toArray(LinearRing[]::new);
+
+        return new Polygon <>(shellCopy, holeCopies, factory);
     }
 
     public
-    Geometry convexHull () {
+    Geometry<T> convexHull () {
         return getExteriorRing().convexHull();
     }
 
     public
     void normalize () {
         shell = normalized(shell, true);
-        for (int i = 0; i < holes.length; i++) {
-            holes[i] = normalized(holes[i], false);
-        }
+        Arrays.setAll(holes, i -> normalized(holes[i], false));
         Arrays.sort(holes);
     }
 
     protected
-    int compareToSameClass ( Object o ) {
-        Polygon poly = (Polygon) o;
+    int compareToSameClass ( T poly ) {
+        int result = 0;
 
         LinearRing thisShell = shell;
         LinearRing otherShell = poly.shell;
         int shellComp = thisShell.compareToSameClass(otherShell);
-        if (shellComp != 0) return shellComp;
-
-        int nHole1 = getNumInteriorRing();
-        int nHole2 = ((Polygon) o).getNumInteriorRing();
-        int i = 0;
-        while (i < nHole1 && i < nHole2) {
-            LinearRing thisHole = getInteriorRingN(i);
-            LinearRing otherHole = poly.getInteriorRingN(i);
-            int holeComp = thisHole.compareToSameClass(otherHole);
-            if (holeComp != 0) return holeComp;
-            i++;
+        if (shellComp != 0) {
+            result = shellComp;
         }
-        if (i < nHole1) return 1;
-        if (i < nHole2) return -1;
-        return 0;
+        else {
+            int nHole1 = getNumInteriorRing();
+            int nHole2 = poly.getNumInteriorRing();
+            int i = 0;
+            if (i < nHole1 && i < nHole2) {
+                LinearRing thisHole = getInteriorRingN(i);
+                LinearRing otherHole = poly.getInteriorRingN(i);
+                int holeComp = thisHole.compareToSameClass(otherHole);
+                if (holeComp != 0) {
+                    result = holeComp;
+                }
+                else {
+                    i++;
+                    while (i < nHole1 && i < nHole2) {
+                        thisHole = getInteriorRingN(i);
+                        otherHole = poly.getInteriorRingN(i);
+                        holeComp = thisHole.compareToSameClass(otherHole);
+                        if (holeComp != 0) {
+                            result = holeComp;
+                            break;
+                        }
+                        i++;
+                    }
+                }
+            }
+            if (result == 0) {
+                if (i < nHole1) {
+                    result = 1;
+                }
+                else if (i < nHole2) {
+                    result = -1;
+                }
+            }
+        }
+
+        return result;
     }
 
+    @Override
     protected
-    <T extends Polygon>
-    int compareToSameClass ( T poly, CoordinateSequenceComparator comp ) {
-//        Polygon poly = (Polygon) o;
+    int compareToSameClass ( @NotNull T poly, CoordinateSequenceComparator comp ) {
+        int result = 0;
 
         LinearRing thisShell = shell;
         LinearRing otherShell = poly.shell;
         int shellComp = thisShell.compareToSameClass(otherShell, comp);
         if (shellComp != 0) {
-            return shellComp;
+            result = shellComp;
         }
-
-        int nHole1 = getNumInteriorRing();
-        int nHole2 = poly.getNumInteriorRing();
-        int i = 0;
-        while (i < nHole1 && i < nHole2) {
-            LinearRing thisHole = getInteriorRingN(i);
-            LinearRing otherHole = poly.getInteriorRingN(i);
-            int holeComp = thisHole.compareToSameClass(otherHole, comp);
-            if (holeComp != 0) {
-                return holeComp;
+        else {
+            int nHole1 = getNumInteriorRing();
+            int nHole2 = poly.getNumInteriorRing();
+            int i = 0;
+            while (i < nHole1 && i < nHole2) {
+                LinearRing thisHole = getInteriorRingN(i);
+                LinearRing otherHole = poly.getInteriorRingN(i);
+                int holeComp = thisHole.compareToSameClass(otherHole, comp);
+                if (holeComp != 0) {
+                    result = holeComp;
+                    break;
+                }
+                i++;
             }
-            i++;
+            if (result == 0) {
+                result = i < nHole1 ? 1 : i < nHole2 ? -1 : 0;
+            }
         }
 
-        return i < nHole1 ? 1 : i < nHole2 ? -1 : 0;
-
+        return result;
     }
 
     protected
@@ -511,6 +518,7 @@ class Polygon
     LinearRing normalized ( LinearRing ring, boolean clockwise ) {
         LinearRing res = (LinearRing) ring.copy();
         normalize(res, clockwise);
+
         return res;
     }
 
@@ -523,22 +531,21 @@ class Polygon
         ICoordinateSequence seq = ring.getCoordinateSequence();
         int minCoordinateIndex = CoordinateSequences.minCoordinateIndex(seq, 0, seq.size() - 2);
         CoordinateSequences.scroll(seq, minCoordinateIndex, true);
-        if (Orientation.isCCW(seq) == clockwise)
+        if (Orientation.isCCW(seq) == clockwise) {
             CoordinateSequences.reverse(seq);
+        }
     }
 
     public
-    Polygon reverse () {
-        return (Polygon) super.reverse();
+    Polygon <T> reverse () {
+        return (Polygon <T>) super.reverse();
     }
 
     protected
-    Polygon reverseInternal () {
+    Geometry<T> reverseInternal () {
         LinearRing shell = getExteriorRing().reverse();
         LinearRing[] holes = new LinearRing[getNumInteriorRing()];
-        for (int i = 0; i < holes.length; i++) {
-            holes[i] = getInteriorRingN(i).reverse();
-        }
+        Arrays.setAll(holes, i -> getInteriorRingN(i).reverse());
 
         return getFactory().createPolygon(shell, holes);
     }

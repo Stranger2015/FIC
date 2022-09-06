@@ -1,8 +1,7 @@
 package org.stranger2015.opencv.fic.core.search.ann;
 
-import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.fic.core.TreeNodeBase;
+import org.stranger2015.opencv.fic.core.IAddress;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.search.SearchProcessor;
 import org.stranger2015.opencv.utils.BitBuffer;
 
@@ -12,8 +11,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
  * @param <G>
  */
 public abstract
-class AnnSearchProcessor<N extends TreeNodeBase.TreeNode <N, A, G>, /* M extends IImage <A> */, A extends IAddress <A>,
-        G extends BitBuffer>
+class AnnSearchProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
 
         extends SearchProcessor <N, A, G> {
 //    /**

@@ -2,7 +2,6 @@ package org.stranger2015.opencv.fic.core.algorithm;
 
 
 import org.locationtech.jts.algorithm.construct.LargestEmptyCircle;
-import org.stranger2015.opencv.fic.core.algorithm.InteriorPoint;
 import org.stranger2015.opencv.fic.core.algorithm.construct.MaximumInscribedCircle;
 import org.stranger2015.opencv.fic.core.geom.*;
 
@@ -88,7 +87,7 @@ class Centroid {
             addLineSegments(geom.getCoordinates());
         }
         else if (geom instanceof Polygon) {
-            Polygon poly = (Polygon) geom;
+            Polygon <T> poly = (Polygon <T>) geom;
             add(poly);
         }
         else if (geom instanceof GeometryCollection) {
@@ -147,7 +146,7 @@ class Centroid {
     }
 
     private
-    void add ( Polygon poly ) {
+    void add ( Polygon <T> poly ) {
         addShell(poly.getExteriorRing().getCoordinates());
         for (int i = 0; i < poly.getNumInteriorRing(); i++) {
             addHole(poly.getInteriorRingN(i).getCoordinates());

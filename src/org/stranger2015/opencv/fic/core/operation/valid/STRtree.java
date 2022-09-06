@@ -20,6 +20,10 @@ import org.locationtech.jts.util.Assert;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.lang.Double.*;
+import static java.util.Arrays.*;
 
 /**
  * A query-only R-tree created using the Sort-Tile-Recursive (STR) algorithm.
@@ -77,24 +81,14 @@ class STRtree
      */
     private static final long serialVersionUID = 259274702368956900L;
 
-    private static final Comparator xComparator =
-            new Comparator() {
-                public
-                int compare ( Object o1, Object o2 ) {
-                    return compareDoubles(
-                            centreX((Envelope) ((Boundable) o1).getBounds()),
-                            centreX((Envelope) ((Boundable) o2).getBounds()));
-                }
-            };
-    private static final Comparator yComparator =
-            new Comparator() {
-                public
-                int compare ( Object o1, Object o2 ) {
-                    return compareDoubles(
-                            centreY((Envelope) ((Boundable) o1).getBounds()),
-                            centreY((Envelope) ((Boundable) o2).getBounds()));
-                }
-            };
+    private static final Comparator<Boundable> xComparator =
+            ( o1, o2 ) -> compareDoubles(
+                    centreX((Envelope) o1.getBounds()),
+                    centreX((Envelope) o2.getBounds()));
+    private static final Comparator<Boundable> yComparator =
+            ( o1, o2 ) -> compareDoubles(
+                    centreY((Envelope) o1.getBounds()),
+                    centreY((Envelope) o2.getBounds()));
 
     private static
     double centreX ( Envelope e ) {
@@ -126,29 +120,30 @@ class STRtree
      * a new (parent) node.
      */
     protected
-    List createParentBoundables ( List childBoundables, int newLevel ) {
+    List<Boundable> createParentBoundables ( List<Boundable> childBoundables, int newLevel ) {
         Assert.isTrue(!childBoundables.isEmpty());
         int minLeafCount = (int) Math.ceil((childBoundables.size() / (double) getNodeCapacity()));
-        ArrayList sortedChildBoundables = new ArrayList(childBoundables);
-        Collections.sort(sortedChildBoundables, xComparator);
-        List[] verticalSlices = verticalSlices(sortedChildBoundables,
+        List<Boundable> sortedChildBoundables = new ArrayList<>(childBoundables);
+        sortedChildBoundables.sort(xComparator);
+        var verticalSlices = verticalSlices(sortedChildBoundables,
                 (int) Math.ceil(Math.sqrt(minLeafCount)));
+
         return createParentBoundablesFromVerticalSlices(verticalSlices, newLevel);
     }
 
     private
-    List createParentBoundablesFromVerticalSlices ( List[] verticalSlices, int newLevel ) {
+    List<Boundable> createParentBoundablesFromVerticalSlices ( List[] verticalSlices, int newLevel ) {
         Assert.isTrue(verticalSlices.length > 0);
-        List parentBoundables = new ArrayList();
-        for (int i = 0; i < verticalSlices.length; i++) {
-            parentBoundables.addAll(
-                    createParentBoundablesFromVerticalSlice(verticalSlices[i], newLevel));
-        }
+        List<Boundable> parentBoundables = (List <Boundable>) stream(verticalSlices)
+                .map(verticalSlice -> createParentBoundablesFromVerticalSlice(verticalSlice, newLevel))
+                .flatMap(Collection::stream).collect(Collectors
+                        .toList());
+
         return parentBoundables;
     }
 
     protected
-    List createParentBoundablesFromVerticalSlice ( List childBoundables, int newLevel ) {
+    List <?> createParentBoundablesFromVerticalSlice ( List <?> childBoundables, int newLevel ) {
         return super.createParentBoundables(childBoundables, newLevel);
     }
 
@@ -156,19 +151,20 @@ class STRtree
      * @param childBoundables Must be sorted by the x-value of the envelope midpoints
      */
     protected
-    List[] verticalSlices ( List childBoundables, int sliceCount ) {
+    List[] verticalSlices ( List <Boundable> childBoundables, int sliceCount ) {
         int sliceCapacity = (int) Math.ceil(childBoundables.size() / (double) sliceCount);
         List[] slices = new List[sliceCount];
-        Iterator i = childBoundables.iterator();
+        Iterator <Boundable> i = childBoundables.iterator();
         for (int j = 0; j < sliceCount; j++) {
-            slices[j] = new ArrayList();
+            slices[j] = new ArrayList<>();
             int boundablesAddedToSlice = 0;
             while (i.hasNext() && boundablesAddedToSlice < sliceCapacity) {
-                Boundable childBoundable = (Boundable) i.next();
+                Boundable childBoundable = i.next();
                 slices[j].add(childBoundable);
                 boundablesAddedToSlice++;
             }
         }
+
         return slices;
     }
 
@@ -200,7 +196,7 @@ class STRtree
      * The minimum recommended capacity setting is 4.
      */
     public
-    STRtree ( int nodeCapacity, org.locationtech.jts.index.strtree.STRtree.STRtreeNode root ) {
+    STRtree ( int nodeCapacity, STRtree.STRtreeNode root ) {
         super(nodeCapacity, root);
     }
 
@@ -217,7 +213,7 @@ class STRtree
 
     protected
     AbstractNode createNode ( int level ) {
-        return new org.locationtech.jts.index.strtree.STRtree.STRtreeNode(level);
+        return new STRtree.STRtreeNode(level);
     }
 
     protected
@@ -288,8 +284,12 @@ class STRtree
         return super.depth();
     }
 
+    /**
+     * @return
+     */
+    @Override
     protected
-    Comparator<> getComparator () {
+    Comparator<Boundable> getComparator () {
         return yComparator;
     }
 
@@ -315,7 +315,7 @@ class STRtree
         if (isEmpty()) return null;
 
         // if tree has only one item this will return null
-        BoundablePair bp = new BoundablePair(this.getRoot(), this.getRoot(), itemDist);
+        var bp = new BoundablePair(this.getRoot(), this.getRoot(), itemDist);
         return nearestNeighbour(bp);
     }
 
@@ -339,7 +339,8 @@ class STRtree
     public
     Object nearestNeighbour ( Envelope env, Object item, ItemDistance itemDist ) {
         Boundable bnd = new ItemBoundable(env, item);
-        BoundablePair bp = new BoundablePair(this.getRoot(), bnd, itemDist);
+        var bp = new BoundablePair(this.getRoot(), bnd, itemDist);
+
         return nearestNeighbour(bp)[0];
     }
 
@@ -359,24 +360,27 @@ class STRtree
      * or <code>null</code> if no pair of distinct items can be found
      */
     public
-    Object[] nearestNeighbour ( org.locationtech.jts.index.strtree.STRtree tree, ItemDistance itemDist ) {
-        if (isEmpty() || tree.isEmpty()) return null;
-        BoundablePair bp = new BoundablePair(this.getRoot(), tree.getRoot(), itemDist);
+    Object[] nearestNeighbour ( STRtree tree, ItemDistance itemDist ) {
+        if (isEmpty() || tree.isEmpty()) {
+            return null;
+        }
+        var bp = new BoundablePair(this.getRoot(), tree.getRoot(), itemDist);
+
         return nearestNeighbour(bp);
     }
 
     private
     Object[] nearestNeighbour ( BoundablePair initBndPair ) {
-        double distanceLowerBound = Double.POSITIVE_INFINITY;
+        double distanceLowerBound = POSITIVE_INFINITY;
         BoundablePair minPair = null;
 
         // initialize search queue
-        PriorityQueue priQ = new PriorityQueue();
+        var priQ = new PriorityQueue<>();
         priQ.add(initBndPair);
 
         while (!priQ.isEmpty() && distanceLowerBound > 0.0) {
             // pop head of queue and expand one side of pair
-            BoundablePair bndPair = (BoundablePair) priQ.poll();
+            var bndPair = (BoundablePair) priQ.poll();
             double pairDistance = bndPair.getDistance();
 
             /**
@@ -386,8 +390,9 @@ class STRtree
              * So the current minDistance must be the true minimum,
              * and we are done.
              */
-            if (pairDistance >= distanceLowerBound)
+            if (pairDistance >= distanceLowerBound) {
                 break;
+            }
 
             /**
              * If the pair members are leaves
@@ -432,8 +437,8 @@ class STRtree
      * @return true if there are items within the distance
      */
     public
-    boolean isWithinDistance ( org.locationtech.jts.index.strtree.STRtree tree, ItemDistance itemDist, double maxDistance ) {
-        BoundablePair bp = new BoundablePair(this.getRoot(), tree.getRoot(), itemDist);
+    boolean isWithinDistance ( STRtree tree, ItemDistance itemDist, double maxDistance ) {
+        var bp = new BoundablePair(this.getRoot(), tree.getRoot(), itemDist);
         return isWithinDistance(bp, maxDistance);
     }
 
@@ -451,10 +456,10 @@ class STRtree
      */
     private
     boolean isWithinDistance ( BoundablePair initBndPair, double maxDistance ) {
-        double distanceUpperBound = Double.POSITIVE_INFINITY;
+        double distanceUpperBound = POSITIVE_INFINITY;
 
         // initialize search queue
-        PriorityQueue priQ = new PriorityQueue();
+        PriorityQueue<STRtree> priQ = new PriorityQueue<>();
         priQ.add(initBndPair);
 
         while (!priQ.isEmpty()) {
@@ -543,7 +548,7 @@ class STRtree
 
     private
     Object[] nearestNeighbourK ( BoundablePair initBndPair, int k ) {
-        return nearestNeighbourK(initBndPair, Double.POSITIVE_INFINITY, k);
+        return nearestNeighbourK(initBndPair, POSITIVE_INFINITY, k);
     }
 
     private
@@ -560,7 +565,7 @@ class STRtree
 
         while (!priQ.isEmpty() && distanceLowerBound >= 0.0) {
             // pop head of queue and expand one side of pair
-            BoundablePair bndPair = (BoundablePair) priQ.poll();
+            var bndPair = (BoundablePair) priQ.poll();
             double pairDistance = bndPair.getDistance();
 
 
@@ -588,8 +593,7 @@ class STRtree
                     kNearestNeighbors.add(bndPair);
                 }
                 else {
-
-                    BoundablePair bp1 = (BoundablePair) kNearestNeighbors.peek();
+                    var bp1 = (BoundablePair) kNearestNeighbors.peek();
                     if (bp1.getDistance() > pairDistance) {
                         kNearestNeighbors.poll();
                         kNearestNeighbors.add(bndPair);

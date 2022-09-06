@@ -1,9 +1,12 @@
 package org.stranger2015.opencv.fic.core.geom;
 
-import org.stranger2015.opencv.fic.core.geom.GeometryComponentFilter;
+import org.locationtech.jts.geom.CoordinateFilter;
+import org.locationtech.jts.geom.CoordinateSequenceFilter;
+import org.locationtech.jts.geom.GeometryComponentFilter;
+import org.locationtech.jts.geom.GeometryFilter;
 
 public
-class Quadrilateral extends Geometry implements IPolygonal{
+class Quadrilateral<T extends Quadrilateral<T>> extends Geometry<T> implements IPolygonal{
     @Override
     public
     String getGeometryType () {

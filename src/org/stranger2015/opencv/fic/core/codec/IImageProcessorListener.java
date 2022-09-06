@@ -10,16 +10,14 @@ import org.stranger2015.opencv.utils.BitBuffer;
  *
  */
 public
-interface IImageProcessorListener<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */,
-        G extends BitBuffer> {
-
+interface IImageProcessorListener<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer> {
     Logger logger = LoggerFactory.getLogger(IImageProcessorListener.class);
 
     /**
      *
      */
     default
-    void onPreprocess ( IImageProcessor <N, A, G> imageProcessor, String filename, IImage<A> image )
+    void onPreprocess ( IImageProcessor <N, A, G> imageProcessor, String filename, IImage <A> image )
             throws ValueError {
 
         logger.info("On preprocessing \n");
@@ -29,7 +27,7 @@ interface IImageProcessorListener<N extends TreeNode <N, A, G>, A extends IAddre
      *
      */
     default
-    void onProcess ( IImageProcessor <N, A, G> imageProcessor, IImage<A> inputImage ) {
+    void onProcess ( IImageProcessor <N, A, G> imageProcessor, IImage <A> inputImage ) {
         logger.info("On processing \n");
     }
 
@@ -38,6 +36,6 @@ interface IImageProcessorListener<N extends TreeNode <N, A, G>, A extends IAddre
      */
     default
     void onPostprocess ( IImageProcessor <N, A, G> imageProcessor, CompressedImage <A> outputImage ) {
-        logger.info("On preprocessing \n");
+        logger.info("On postprocessing \n");
     }
 }

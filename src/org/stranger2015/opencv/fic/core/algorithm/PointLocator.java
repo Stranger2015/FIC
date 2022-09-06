@@ -1,7 +1,6 @@
 package org.stranger2015.opencv.fic.core.algorithm;
 
 import org.stranger2015.opencv.fic.core.algorithm.BoundaryNodeRule;
-import org.stranger2015.opencv.fic.core.algorithm.PointLocation;
 import org.stranger2015.opencv.fic.core.geom.*;
 
 /**
@@ -72,7 +71,7 @@ class PointLocator {
             return locateOnLineString(p, (LineString) geom);
         }
         else if (geom instanceof Polygon) {
-            return locateInPolygon(p, (Polygon) geom);
+            return locateInPolygon(p, (Polygon <T>) geom);
         }
 
         isIn = false;
@@ -94,7 +93,7 @@ class PointLocator {
             updateLocationInfo(locateOnLineString(p, (LineString) geom));
         }
         else if (geom instanceof Polygon) {
-            updateLocationInfo(locateInPolygon(p, (Polygon) geom));
+            updateLocationInfo(locateInPolygon(p, (Polygon <T>) geom));
         }
         else if (geom instanceof MultiLineString) {
             MultiLineString ml = (MultiLineString) geom;
@@ -106,7 +105,7 @@ class PointLocator {
         else if (geom instanceof MultiPolygon) {
             MultiPolygon mpoly = (MultiPolygon) geom;
             for (int i = 0; i < mpoly.getNumGeometries(); i++) {
-                Polygon poly = (Polygon) mpoly.getGeometryN(i);
+                Polygon <T> poly = (Polygon <T>) mpoly.getGeometryN(i);
                 updateLocationInfo(locateInPolygon(p, poly));
             }
         }
@@ -167,7 +166,7 @@ class PointLocator {
     }
 
     private
-    int locateInPolygon ( Coordinate p, Polygon poly ) {
+    int locateInPolygon ( Coordinate p, Polygon <T> poly ) {
         if (poly.isEmpty()) {
             return EXTERIOR;
         }

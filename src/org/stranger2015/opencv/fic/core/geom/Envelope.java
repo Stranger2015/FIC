@@ -4,6 +4,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 
+import static java.lang.String.format;
+
 /**
  * Defines a rectangular region of the 2D coordinate plane.
  * It is often used to represent the bounding box of a {@link Geometry},
@@ -588,24 +590,24 @@ class Envelope
             return false;
         }
 
-        double envminx = Math.min(a.x, b.x);
-        if (envminx > maxx) {
+        double envMinx = Math.min(a.x, b.x);
+        if (envMinx > maxx) {
             return false;
         }
 
-        double envmaxx = Math.max(a.x, b.x);
-        if (envmaxx < minx) {
+        double envMaxx = Math.max(a.x, b.x);
+        if (envMaxx < minx) {
             return false;
         }
 
-        double envminy = Math.min(a.y, b.y);
-        if (envminy > maxy) {
+        double envMiny = Math.min(a.y, b.y);
+        if (envMiny > maxy) {
             return false;
         }
 
-        double envmaxy = Math.max(a.y, b.y);
+        double envMaxy = Math.max(a.y, b.y);
 
-        return !(envmaxy < miny);
+        return !(envMaxy < miny);
     }
 
     /**
@@ -667,7 +669,9 @@ class Envelope
      */
     public
     boolean intersects ( double x, double y ) {
-        if (isNull()) return false;
+        if (isNull()) {
+            return false;
+        }
         return !(x > maxx ||
                 x < minx ||
                 y > maxy ||
@@ -746,7 +750,9 @@ class Envelope
      */
     public
     boolean covers ( double x, double y ) {
-        if (isNull()) return false;
+        if (isNull()) {
+            return false;
+        }
         return x >= minx &&
                 x <= maxx &&
                 y >= miny &&
@@ -792,22 +798,34 @@ class Envelope
      */
     public
     double distance ( Envelope env ) {
-        if (intersects(env)) return 0;
+        if (intersects(env)) {
+            return 0;
+        }
 
         double dx = 0.0;
-        if (maxx < env.minx)
+        if (maxx < env.minx) {
             dx = env.minx - maxx;
-        else if (minx > env.maxx)
+        }
+        else if (minx > env.maxx) {
             dx = minx - env.maxx;
+        }
 
         double dy = 0.0;
-        if (maxy < env.miny)
+        if (maxy < env.miny) {
             dy = env.miny - maxy;
-        else if (miny > env.maxy) dy = miny - env.maxy;
+        }
+        else if (miny > env.maxy) {
+            dy = miny - env.maxy;
+        }
 
         // if either is zero, the envelopes overlap either vertically or horizontally
-        if (dx == 0.0) return dy;
-        if (dy == 0.0) return dx;
+        if (dx == 0.0) {
+            return dy;
+        }
+        if (dy == 0.0) {
+            return dx;
+        }
+
         return Math.sqrt(dx * dx + dy * dy);
     }
 
@@ -828,7 +846,7 @@ class Envelope
 
     public
     String toString () {
-        return "Env[" + minx + " : " + maxx + ", " + miny + " : " + maxy + "]";
+        return format("Env[%s : %s, %s : %s]", minx, maxx, miny, maxy);
     }
 
     /**
@@ -844,23 +862,34 @@ class Envelope
 //        Envelope env = o;
         // compare nulls if present
         if (isNull()) {
-            if (env.isNull()) return 0;
+            if (env.isNull()) {
+                return 0;
+            }
             return -1;
         }
         else {
             if (env.isNull()) return 1;
         }
         // compare based on numerical ordering of ordinates
-        if (minx < env.minx) return -1;
-        if (minx > env.minx) return 1;
-        if (miny < env.miny) return -1;
-        if (miny > env.miny) return 1;
-        if (maxx < env.maxx) return -1;
-        if (maxx > env.maxx) return 1;
+        if (minx < env.minx) {
+            return -1;
+        }
+        if (minx > env.minx) {
+            return 1;
+        }
+        if (miny < env.miny) {
+            return -1;
+        }
+        if (miny > env.miny) {
+            return 1;
+        }
+        if (maxx < env.maxx) {
+            return -1;
+        }
+        if (maxx > env.maxx) {
+            return 1;
+        }
 
         return Double.compare(maxy, env.maxy);
-
-
     }
-
 }

@@ -156,7 +156,7 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
     ) {
         return new ImageBlockGenerator <>(
                 tiler,
-                scheme,
+                topDownTiler, bottomUpTiler, scheme,
                 encoder,
                 image,
                 rangeSize,

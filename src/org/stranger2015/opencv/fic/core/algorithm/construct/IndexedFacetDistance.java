@@ -1,13 +1,11 @@
 package org.stranger2015.opencv.fic.core.algorithm.construct;
 
-import org.stranger2015.opencv.fic.core.geom.Coordinate;
-import org.stranger2015.opencv.fic.core.geom.Geometry;
 import org.locationtech.jts.index.strtree.ItemBoundable;
 import org.locationtech.jts.index.strtree.ItemDistance;
 import org.locationtech.jts.index.strtree.STRtree;
-import org.stranger2015.opencv.fic.core.geom.FacetSequence;
-import FacetSequenceTreeBuilder;
-import GeometryLocation;
+import org.locationtech.jts.operation.distance.FacetSequenceTreeBuilder;
+import org.stranger2015.opencv.fic.core.geom.Coordinate;
+import org.stranger2015.opencv.fic.core.geom.Geometry;
 
 /**
  * Computes the distance between the facets (segments and vertices) 

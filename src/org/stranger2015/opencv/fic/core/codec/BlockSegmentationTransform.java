@@ -1,6 +1,6 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.jetbrains.annotations.NotNull;
+import org.opencv.core.Mat;
 import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.ValueError;
@@ -64,7 +64,7 @@ class BlockSegmentationTransform<A extends IAddress <A>, G extends BitBuffer>
      */
     @Override
     public
-    IImage <A> transform ( @NotNull IImage <A> inputImage, IImage <A> transformMatrix, EInterpolationType type ) {
+    IImage <A> transform ( M inputImage, Mat transformMatrix, EInterpolationType type ) {
         return super.transform(inputImage, transformMatrix, type);
     }
 }

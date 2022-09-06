@@ -1,90 +1,32 @@
-package org.stranger2015.opencv.fic.core.geom;
 
-import org.stranger2015.opencv.fic.core.IAddress;
-import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.fic.core.Shape;
-import org.stranger2015.opencv.fic.core.ValueError;
+package org.stranger2015.opencv.fic.core.geom;
+/*
+ * Copyright (c) 2016 Vivid Solutions.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * and Eclipse Distribution License v. 1.0 which accompanies this distribution.
+ * The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v20.html
+ * and the Eclipse Distribution License is available at
+ *
+ * http://www.eclipse.org/org/documents/edl-v10.php.
+ */
+
 import org.stranger2015.opencv.fic.core.algorithm.Angle;
 import org.stranger2015.opencv.fic.core.algorithm.HCoordinate;
 import org.stranger2015.opencv.fic.core.algorithm.Orientation;
 import org.stranger2015.opencv.fic.core.math.DD;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.sqrt;
-
 /**
  * Represents a planar triangle, and provides methods for calculating various
  * properties of triangles.
  *
- * @version 1.8
+ * @version 1.7
  */
 public
-class Triangle extends Shape implements IPolygonal {
+class Triangle<T extends Triangle <T>>
 
-    /**
-     * @param stdDev
-     */
-    public
-    void setStdDev ( double stdDev ) {
-        this.stdDev = stdDev;
-    }
-
-    /**
-     * @param grayLevelMean
-     */
-    public
-    void setGrayLevelMean ( double grayLevelMean ) {
-        this.grayLevelMean = grayLevelMean;
-    }
-
-    /**
-     * @param size
-     */
-    public
-    void setSize ( double size ) {
-        this.size = size;
-    }
-
-    /**
-     *
-     */
-    protected double stdDev;
-    protected double grayLevelMean;
-    protected double size;
-
-    /**
-     * @return
-     */
-    public
-    double getGrayLevelMean () {
-        return grayLevelMean;
-    }
-
-    /**
-     * @return
-     */
-    public
-    double getStdDev () {
-        return stdDev;
-    }
-
-    /**
-     * @return
-     */
-    public
-    double getSize () {
-        return size;
-    }
-
-    /**
-     * Creates a new <code>Geometry</code> via the specified GeometryFactory.
-     *
-     * @param factory
-     */
-    public
-    Triangle ( GeometryFactory factory ) {
-        super(factory);
-    }
+        extends Polygon <T> {
 
     /**
      * Tests whether a triangle is acute. A triangle is acute if all interior
@@ -124,6 +66,7 @@ class Triangle extends Shape implements IPolygonal {
         // returns the perpendicular bisector of the line segment ab
         double dx = b.x - a.x;
         double dy = b.y - a.y;
+
         HCoordinate l1 = new HCoordinate(a.x + dx / 2.0, a.y + dy / 2.0, 1.0);
         HCoordinate l2 = new HCoordinate(a.x - dy + dx / 2.0, a.y + dx + dy / 2.0, 1.0);
 
@@ -338,7 +281,7 @@ class Triangle extends Shape implements IPolygonal {
      */
     public static
     Coordinate angleBisector ( Coordinate a, Coordinate b, Coordinate c ) {
-        /*
+        /**
          * Uses the fact that the lengths of the parts of the split segment are
          * proportional to the lengths of the adjacent triangle sides
          */
@@ -362,7 +305,7 @@ class Triangle extends Shape implements IPolygonal {
      */
     public static
     double area ( Coordinate a, Coordinate b, Coordinate c ) {
-        return abs(((c.x - a.x) * (b.y - a.y) - (b.x - a.x) * (c.y - a.y)) / 2);
+        return Math.abs(((c.x - a.x) * (b.y - a.y) - (b.x - a.x) * (c.y - a.y)) / 2);
     }
 
     /**
@@ -422,7 +365,7 @@ class Triangle extends Shape implements IPolygonal {
         // tri area = 1/2 * | u x v |
         double absSq = crossx * crossx + crossy * crossy + crossz * crossz;
 
-        return sqrt(absSq) / 2;
+        return Math.sqrt(absSq) / 2;
     }
 
     /**
@@ -465,32 +408,17 @@ class Triangle extends Shape implements IPolygonal {
     public Coordinate p2;
 
     /**
-     *
-     */
-
-    /**
      * Creates a new triangle with the given vertices.
      *
-     * @param p0 a vertex
-     * @param p1 a vertex
-     * @param p2 a vertex
+     * @param geometryFactory
      */
     public
-    Triangle ( GeometryFactory factory, Coordinate p0, Coordinate p1, Coordinate p2 ) {
-        this(factory);
-
-        this.p0 = p0;
-        this.p1 = p1;
-        this.p2 = p2;
-
-        ///getI
-
-//        QuadEdge[] triEdges=new QuadEdge[]{qe0, qe1, qe2};
+    Triangle ( GeometryFactory geometryFactory ) {
+        super(null, new LinearRing[]{}, geometryFactory);
 //
-//        QuadEdgeTriangle qet = new QuadEdgeTriangle(triEdges);
-
-//        double l = longestSideLength();
-//    stddev
+//        this.p0 = p0;
+//        this.p1 = p1;
+//        this.p2 = p2;
     }
 
     /**
@@ -560,17 +488,11 @@ class Triangle extends Shape implements IPolygonal {
     /**
      * Computes the length of the longest side of this triangle
      *
-     * @return
+     * @return the length of the longest side of this triangle
      */
     public
     double longestSideLength () {
         return longestSideLength(this.p0, this.p1, this.p2);
-    }
-
-    @Override
-    public
-    EShape getShapeKind () {
-        return EShape.TRIANGLE;
     }
 
     /**
@@ -583,24 +505,6 @@ class Triangle extends Shape implements IPolygonal {
     public
     double area () {
         return area(this.p0, this.p1, this.p2);
-    }
-
-    @Override
-    public
-    IAddress <?> getAddress () {
-        return null;
-    }
-
-    @Override
-    public
-    Coordinate getCentroid () {
-        return centroid();
-    }
-
-    @Override
-    public
-    double perimeter () {
-        return size;
     }
 
     /**
@@ -621,7 +525,7 @@ class Triangle extends Shape implements IPolygonal {
     }
 
     /**
-     * Computes the 3D area of this tri2angle. The value computed is always
+     * Computes the 3D area of this triangle. The value computed is always
      * non-negative.
      *
      * @return the 3D area of this triangle
@@ -652,141 +556,66 @@ class Triangle extends Shape implements IPolygonal {
         return interpolateZ(p, this.p0, this.p1, this.p2);
     }
 
-    /**
-     * @return
-     */
-    @Override
+    /// <summary>Tests if a point lies in the circumcircle of the triangle.</summary>
+    /// <param name="point">A <see cref="Point"/>.</param>
+    /// <returns>For a counterclockwise order of the vertices of the triangle, this test is
+    /// <list type ="bullet">
+    /// <item>positive if <paramref name="point"/> lies inside the circumcircle.</item>
+    /// <item>zero if <paramref name="point"/> lies on the circumference of the circumcircle.</item>
+    /// <item>negative if <paramref name="point"/> lies outside the circumcircle.</item></list></returns>
+    /// <remarks>The vertices of the triangle must be arranged in counterclockwise order or the result
+    /// of this test will be reversed. This test ignores the z-coordinate of the vertices.</remarks>
     public
-    boolean isHomogeneous () throws ValueError {
-        //stddev
-// return longestSideLength() < threshold;//fixme
-        return false;
+    double containsInCircumcircle ( Point point ) {
+        double ax = this.p0.x - point.getX();
+        double ay = this.p0.y - point.getY();
+        double bx = this.p1.x - point.getX();
+        double by = this.p1.y - point.getY();
+        double cx = this.p2.x - point.getX();
+        double cy = this.p2.y - point.getY();
+
+        double det_ab = ax * by - bx * ay;
+        double det_bc = bx * cy - cx * by;
+        double det_ca = cx * ay - ax * cy;
+
+        double a_squared = ax * ax + ay * ay;
+        double b_squared = bx * bx + by * by;
+        double c_squared = cx * cx + cy * cy;
+
+        return a_squared * det_bc + b_squared * det_ca + c_squared * det_ab;
     }
 
-    /**
-     * @return
-     */
-    public IImage <?> getImage () {
-        return image;
+    /// <summary>Tests if two triangles share at least one vertex.</summary>
+    /// <param name="triangle">A <see cref="Triangle"/>.</param>
+    /// <returns>Returns true if two triangles share at least one vertex, false otherwise.</returns>
+    public
+    boolean sharesVertexWith ( Triangle triangle ) {
+        if (this.p0.x == triangle.p0.x && this.p0.y == triangle.p0.y) {
+            return true;
+        }
+        if (this.p0.x == triangle.p1.x && this.p0.y == triangle.p1.y) {
+            return true;
+        }
+        if (this.p0.x == triangle.p2.x && this.p0.y == triangle.p2.y) {
+            return true;
+        }
+        if (this.p1.x == triangle.p0.x && this.p1.y == triangle.p0.y) {
+            return true;
+        }
+        if (this.p1.x == triangle.p1.x && this.p1.y == triangle.p1.y) {
+            return true;
+        }
+        if (this.p1.x == triangle.p2.x && this.p1.y == triangle.p2.y) {
+            return true;
+        }
+        if (this.p2.x == triangle.p0.x && this.p2.y == triangle.p0.y) {
+            return true;
+        }
+        if (this.p2.x == triangle.p1.x && this.p2.y == triangle.p1.y) {
+            return true;
+        }
+
+        return this.p2.x == triangle.p2.x && this.p2.y == triangle.p2.y;
     }
 
-//    @Override
-//    public
-//    String getGeometryType () {
-//        return null;
-//    }
-//
-//    @Override
-//    public
-//    Coordinate getCoordinate () {
-//        return null;
-//    }
-//
-//    @Override
-//    public
-//    Coordinate[] getCoordinates () {
-//        return new Coordinate[0];
-//    }
-//
-//    @Override
-//    public
-//    int getNumPoints () {
-//        return 0;
-//    }
-//
-//    @Override
-//    public
-//    boolean isEmpty () {
-//        return false;
-//    }
-//
-//    @Override
-//    public
-//    int getDimension () {
-//        return 0;
-//    }
-//
-//    @Override
-//    public
-//    Geometry getBoundary () {
-//        return null;
-//    }
-//
-//    @Override
-//    public
-//    int getBoundaryDimension () {
-//        return 0;
-//    }
-//
-//    @Override
-//    protected
-//    Geometry reverseInternal () {
-//        return null;
-//    }
-//
-//    @Override
-//    public
-//    boolean equalsExact ( Geometry other, double tolerance ) {
-//        return false;
-//    }
-//
-//    @Override
-//    public
-//    void apply ( IGeometryFilter filter ) {
-//
-//    }
-//
-//    @Override
-//    public
-//    void apply ( ICoordinateFilter filter ) {
-//
-//    }
-//
-//    @Override
-//    public
-//    void apply ( ICoordinateSequenceFilter filter ) {
-//
-//    }
-//
-//    @Override
-//    public
-//    void apply ( IGeometryComponentFilter filter ) {
-//
-//    }
-//
-//    @Override
-//    protected
-//    Geometry copyInternal () {
-//        return null;
-//    }
-//
-//    @Override
-//    public
-//    void normalize () {
-//
-//    }
-//
-//    @Override
-//    protected
-//    Envelope computeEnvelopeInternal () {
-//        return null;
-//    }
-//
-//    @Override
-//    protected
-//    <T extends Geometry> int compareToSameClass ( T o ) {
-//        return 0;
-//    }
-//
-//    @Override
-//    protected
-//    <T extends Geometry> int compareToSameClass ( T o, CoordinateSequenceComparator comp ) {
-//        return 0;
-//    }
-//
-//    @Override
-//    protected
-//    int getTypeCode () {
-//        return 0;
-//    }
 }

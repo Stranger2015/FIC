@@ -2,6 +2,8 @@ package org.stranger2015.opencv.fic.core.codec;
 
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
+import org.stranger2015.opencv.fic.core.codec.tilers.SaTiler;
 import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
@@ -18,11 +20,12 @@ public
 class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
         extends Encoder <N, A, G> {
 
-    private List <IImageBlock <A>> rangePool;
+//    private List <IImageBlock <A>> rangePool;
 
     public
     SaEncoder ( EPartitionScheme scheme,
                 ITreeNodeBuilder <N, A, G> nodeBuilder,
+                IPartitionProcessor<N,A,G> partitionProcessor,
                 ISearchProcessor <N, A, G> searchProcessor,
                 ScaleTransform <A, G> scaleTransform,
                 ImageBlockGenerator <N, A, G> imageBlockGenerator,
@@ -34,6 +37,7 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
         super(
                 scheme,
                 nodeBuilder,
+                partitionProcessor,
                 searchProcessor,
                 scaleTransform,
                 imageBlockGenerator,
@@ -44,11 +48,17 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
         );
     }
 
+    @Override
     public
-    SaEncoder ( IImage<A> image, IIntSize rangeSize, IIntSize domainSize ) {
-        super(image,rangeSize,domainSize);
-
+    IPartitionProcessor <N, A, G> createPartitionProcessor0 ( ITiler <N, A, G> tiler ) {
+        return null;
     }
+
+//    public
+//    SaEncoder ( IImage<A> image, IIntSize rangeSize, IIntSize domainSize ) {
+//        super(image,rangeSize,domainSize);
+//
+//    }
 
     /**
      * @param image
@@ -78,7 +88,7 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
 
     public
     ImageBlockGenerator <N, A, G> createBlockGenerator (
-            ITiler <N, A, G>  tiler,
+            IPartitionProcessor <N, A, G> partitionProcessor,
             EPartitionScheme scheme,
             IEncoder <N, A, G> encoder,
             IImage <A> image,
@@ -87,7 +97,7 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
     ) {
 
         return new SaImageBlockGenerator <>(
-                tiler,
+                partitionProcessor,
                 scheme,
                 encoder,
                 image,
@@ -126,10 +136,10 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      * @return
      */
 //    @Override
-    public
-    List <IImageBlock <A>> getRangeBlocks () {
-        return rangePool;
-    }
+//    public
+//    List <IImageBlock <A>> getRangeBlocks () {
+//        imageBlockGenerator.generateRangeBlocks(roi, rangeSize, domainSize);
+//    }
 
     @Override
     public
@@ -158,10 +168,10 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
     /**
      * @return
      */
-    @Override
+//    @Override
     public
-    ITiler <N, A, G> createTiler0 () {
-        return new SaTiler();
+    ITiler <N, A, G> createPartition0 () {
+        return new SaTiler<>();
     }
 
     /**
@@ -169,7 +179,7 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
     @Override
     public
-    ITiler <N, A, G> getTiler () {
+    IPartitionProcessor <N, A, G> getPartitionProcessor () {
         return null;
     }
 
@@ -258,6 +268,12 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
         return null;
     }
 
+    @Override
+    public
+    IPartitionProcessor <N, A, G> doCreatePartitionProcessor ( ITiler <N, A, G> tiler ) {
+        return null;
+    }
+
     /**
      *
      */
@@ -288,36 +304,36 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
     /**
      * @return
      */
-    @Override
-    public
-    IPipeline <IImage <A>, IImage <A>> getLinkedObject () {
-        return null;
-    }
+//    @Override
+//    public
+//    IPipeline <IImage <A>, IImage <A>> getLinkedObject () {
+//        return null;
+//    }
+//
+//    /**
+//     * @param link
+//     */
+//    @Override
+//    public
+//    void setNext ( ISingleLinked <IPipeline <IImage <A>, IImage <A>>> link ) {
+//
+//    }
 
-    /**
-     * @param link
-     */
-    @Override
-    public
-    void setNext ( ISingleLinked <IPipeline <IImage <A>, IImage <A>>> link ) {
-
-    }
-
-    @Override
-    public
-    ISingleLinked <IPipeline <IImage <A>, IImage <A>>> getNext () {
-        return null;
-    }
-
-    @Override
-    public
-    IImage <A> getInput () {
-        return null;
-    }
-
-    @Override
-    public
-    IImage <A> getOutput () {
-        return null;
-    }
+//    @Override
+//    public
+//    ISingleLinked <IPipeline <IImage <A>, IImage <A>>> getNext () {
+//        return null;
+//    }
+//
+//    @Override
+//    public
+//    IImage <A> getInput () {
+//        return null;
+//    }
+//
+//    @Override
+//    public
+//    IImage <A> getOutput () {
+//        return null;
+//    }
 }

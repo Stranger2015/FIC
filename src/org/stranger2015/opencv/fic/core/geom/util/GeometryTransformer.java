@@ -120,7 +120,7 @@ public class GeometryTransformer
             return transformMultiLineString((MultiLineString) inputGeom, null);
         }
         if (inputGeom instanceof Polygon) {
-            return transformPolygon((Polygon) inputGeom, null);
+            return transformPolygon((Polygon <T>) inputGeom, null);
         }
         if (inputGeom instanceof MultiPolygon) {
             return transformMultiPolygon((MultiPolygon) inputGeom, null);
@@ -244,7 +244,7 @@ public class GeometryTransformer
         return factory.buildGeometry(transGeomList);
     }
 
-    protected Geometry transformPolygon(Polygon geom, Geometry parent) {
+    protected Geometry transformPolygon( Polygon <T> geom, Geometry parent) {
         boolean isAllValidLinearRings = true;
         Geometry shell = transformLinearRing(geom.getExteriorRing(), geom);
 
@@ -283,7 +283,7 @@ public class GeometryTransformer
     protected Geometry transformMultiPolygon(MultiPolygon geom, Geometry parent) {
         List transGeomList = new ArrayList();
         for (int i = 0; i < geom.getNumGeometries(); i++) {
-            Geometry transformGeom = transformPolygon((Polygon) geom.getGeometryN(i), geom);
+            Geometry transformGeom = transformPolygon((Polygon <T>) geom.getGeometryN(i), geom);
             if (transformGeom == null) continue;
             if (transformGeom.isEmpty()) continue;
             transGeomList.add(transformGeom);

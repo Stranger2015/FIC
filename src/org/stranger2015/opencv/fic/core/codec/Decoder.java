@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.io.FractalWriter;
+import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.fic.utils.Point;
 import org.stranger2015.opencv.utils.BitBuffer;
@@ -57,7 +58,7 @@ class Decoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
      */
     public
     IImage<A> decode ( FractalModel <N, A, G> fractalModel ) {
-        final Map <Point, IImage<A>> simpleModel = new HashMap <>();
+        final Map <Vertex, IImage<A>> simpleModel = new HashMap <>();
 
         int blockWidth = fractalModel.getModel().keySet().iterator().next().getWidth();
         int blockHeight = fractalModel.getModel().keySet().iterator().next().getHeight();
@@ -67,13 +68,13 @@ class Decoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
 
         for (IImage<A> domain : fractalModel.getModel().keySet()) {
             for (ImageTransform <? extends IAddress<A>, G> transform : fractalModel.getModel().get(domain).keySet()) {
-                for (Point point : fractalModel.getModel().get(domain).get(transform)) {
-                    simpleModel.put(point, domain);///fixme
-                    if (maxWidth < point.getX()) {
-                        maxWidth = (int) point.getX();
+                for (Vertex vertex : fractalModel.getModel().get(domain).get(transform)) {
+                    simpleModel.put(vertex, domain);///fixme
+                    if (maxWidth < vertex.getX()) {
+                        maxWidth = (int) vertex.getX();
                     }
-                    if (maxHeight < point.getY()) {
-                        maxHeight = (int) point.getY();
+                    if (maxHeight < vertex.getY()) {
+                        maxHeight = (int) vertex.getY();
                     }
                 }
             }

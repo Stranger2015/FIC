@@ -59,7 +59,7 @@ class SpaceFillingCurveCode {
      * @param numPoints the number of points required
      * @return the level of the curve
      */
-    public
+    public static
     int level ( int numPoints ) {
         int pow = (int) ((Math.log(numPoints) / Math.log(radix)));
         int level = pow / 2;

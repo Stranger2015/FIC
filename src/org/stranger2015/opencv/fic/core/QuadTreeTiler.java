@@ -3,25 +3,29 @@ package org.stranger2015.opencv.fic.core;
 import org.jetbrains.annotations.NotNull;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
+import org.stranger2015.opencv.fic.core.codec.tilers.AlterBinTreeTiler;
+import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
 import org.stranger2015.opencv.utils.BitBuffer;
+
+import java.util.List;
 
 /**
  * @param <N>
  * @param <A>
  * @param <G>
  */
-public
+public abstract
 class QuadTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends BinTreeTiler <N, A, G> {
+        extends AlterBinTreeTiler <N, A, G> {
 
-    /**
+       /**
      * @param image
      * @param rangeSize
      * @param domainSize
      * @param encoder
      * @param builder
      */
-    public
+    protected
     QuadTreeTiler (
             IImage <A> image,
             IIntSize rangeSize,
@@ -31,6 +35,10 @@ class QuadTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exte
 
         super(image, rangeSize, domainSize, encoder, builder);
     }
+
+    @Override
+    public abstract
+    ITiler <N, A, G> instance ();
 
     /**
      * QUADRANTS *********************************************
@@ -47,21 +55,26 @@ class QuadTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exte
      */
     @Override
     public
-    void segmentSquare ( @NotNull IImageBlock <A> imageBlock ) throws ValueError {
-        int sideSize = imageBlock.getWidth() / 2;
+    List <IImageBlock <A>> segmentSquare ( @NotNull IImageBlock <A> imageBlock ) throws ValueError {
+        int x = imageBlock.getX();
+        int y = imageBlock.getY();
+        int w = imageBlock.getWidth() / 2;
 
-        r[0] = new Square(0, 0, sideSize);
-        r[1] = new Square(sideSize, 0, sideSize);
-        r[2] = new Square(sideSize, sideSize, sideSize);
-        r[3] = new Square(0, sideSize, sideSize);
+        IImageBlock <A> result1 = imageBlock.subImage(x, y, w, w);
+        IImageBlock <A> result2 = imageBlock.subImage(x + w, y, w, w);
+        IImageBlock <A> result3 = imageBlock.subImage(x, y + w, w, w);
+        IImageBlock <A> result4 = imageBlock.subImage(x + w, y + w, w, w);
+
+        return List.of(result1, result2, result3, result4);
     }
 
     /**
      * @param imageBlock
+     * @return
      */
     @Override
     public
-    void segmentRectangle ( IImageBlock <A> imageBlock ) {
+    List <IImageBlock <A>> segmentRectangle ( IImageBlock <A> imageBlock ) {
         throw new UnsupportedOperationException("QuadTreeTiler#segmentRectangle()");
     }
 

@@ -4,7 +4,6 @@ import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,7 +32,6 @@ class DtImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>
                             IIntSize domainSize ) {
 
         super(tiler, scheme, encoder, image, rangeSize, domainSize);
-
     }
 
     /**
@@ -48,17 +46,28 @@ class DtImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>
 
     /**
      * @param roi
+     * @param rangeSize
+     * @param domainSize
      * @return
      */
     @Override
     public
-    List <IImageBlock <A>> generateRangeBlocks ( RegionOfInterest <A> roi) {
-        List <IImageBlock <A>> list = new ArrayList <>();
-        for (int i = 0; i < list.size(); i++) {
-            IImageBlock <A> imageBlock = list.get(i);
-//IImageBlock<A> tImageBlk0= split(imageBlock);
-        }
+    List <IImageBlock <A>> generateRangeBlocks ( RegionOfInterest <A> roi, int rangeSize, int domainSize ) {
+//        List <IImageBlock <A>> list = new ArrayList <>();
+//        int x=0;
+//        int y=0;
+//
+//        int blockWidth=4;
+//        int blockHeight=4;
+//
+//        for (int i = 0; i < roi.getWidth(); i+= blockWidth) {
+//            for (int j = 0; j < roi.getHeight(); j+=blockHeight) {
+//                IImageBlock <A> imageBlock =roi.getSubImage(x,y, blockWidth,blockHeight);
+//                list.add(imageBlock);
+//            }
+//          //IImageBlock<A> tImageBlk0= split(imageBlock);
+//        }
 
-        return;
+        return super.generateRangeBlocks(roi, rangeSize, domainSize);
     }
 }

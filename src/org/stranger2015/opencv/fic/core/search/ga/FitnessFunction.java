@@ -1,6 +1,6 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
-import org.stranger2015.opencv.fic.core.Address;
+import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.search.SearchProcessorEvaluator;
 import org.stranger2015.opencv.utils.BitBuffer;
@@ -9,11 +9,10 @@ import org.stranger2015.opencv.utils.BitBuffer;
  
  */
 public
-class FtnessFunction</*T extends Individual <T, A, G, C>*/ /* M extends IImage <A> */, A extends IAddress <A>,
-        G extends BitBuffer>
+class FitnessFunction< A extends IAddress <A>, G extends BitBuffer>
 //        C extends Chromosome <T, A, G>>
 
-        extends SearchProcessorEvaluator <M, A,G> {
+        extends SearchProcessorEvaluator <A,G> {
 
     /**
      * Applies this function to the given argument.
@@ -22,7 +21,7 @@ class FtnessFunction</*T extends Individual <T, A, G, C>*/ /* M extends IImage <
      */
     @Override
     public
-    Number apply ( M i ) {
+    Number apply ( IImage<A> i ) {
         // Loop over population evaluating individuals and suming population
         // fitness
         double fitness = calcFitness(i);
@@ -36,14 +35,22 @@ class FtnessFunction</*T extends Individual <T, A, G, C>*/ /* M extends IImage <
         return fitness;
     }
 
+    /**
+     * @param individual
+     * @return
+     */
     protected
-    double calcFitness ( M individual ) {
+    double calcFitness ( IImage<A> individual ) {
 
         return 0;
     }
 
+    /**
+     * @param population
+     * @return
+     */
     public
-    Number apply ( Population <A, G> population ) {
+    Number apply ( Population <N,A, G, C> population ) {
         return null;
     }
 }

@@ -2,6 +2,8 @@ package org.stranger2015.opencv.fic.core.codec;
 
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.codec.tilers.DelaunayTriangularTopDownTiler;
+import org.stranger2015.opencv.fic.core.codec.tilers.TriangularTiler;
 import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.fic.transform.ScaleTransform;
@@ -31,52 +33,55 @@ class SplitAndMergeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>,
      * @param fractalModel
      */
     public
-    SplitAndMergeEncoder ( EPartitionScheme scheme,
-                           TreeNodeBuilder <N, A, G> nodeBuilder,
-                           ISearchProcessor <N, A, G> searchProcessor,
-                           ScaleTransform <A, G> scaleTransform,
-                           ImageBlockGenerator <N, A, G> imageBlockGenerator,
-                           IDistanceator <A> comparator,
-                           Set <ImageTransform <A, G>> imageTransforms,
-                           Set <IImageFilter <A>> filters,
-                           FractalModel <N, A, G> fractalModel ) {
+    SplitAndMergeEncoder (  EPartitionScheme scheme,
+                            TreeNodeBuilder <N, A, G> nodeBuilder,
+                            IPartitionProcessor <N, A, G> partitionProcessor,
+                            ISearchProcessor <N, A, G> searchProcessor,
+                            ScaleTransform <A, G> scaleTransform,
+                            ImageBlockGenerator <N, A, G> imageBlockGenerator,
+                            IDistanceator <A> comparator,
+                            Set <ImageTransform <A, G>> transforms,
+                            Set <IImageFilter <A>> filters,
+                            FractalModel <N, A, G> fractalModel
+    ) {
         super(
                 scheme,
                 nodeBuilder,
+                partitionProcessor,
                 searchProcessor,
                 scaleTransform,
                 imageBlockGenerator,
                 comparator,
-                imageTransforms,
+                transforms,
                 filters,
                 fractalModel
         );
     }
 
-    /**
-     * @param scheme
-     * @param paramTypes
-     * @param params
-     */
-    protected
-    SplitAndMergeEncoder ( EPartitionScheme scheme, Class <?>[] paramTypes, Object... params ) {
-        super(scheme, paramTypes, params);
-    }
+//    /**
+//     * @param scheme
+//     * @param paramTypes
+//     * @param params
+//     */
+//    protected
+//    SplitAndMergeEncoder ( EPartitionScheme scheme, Class <?>[] paramTypes, Object... params ) {
+//        super(scheme, paramTypes, params);
+//    }
 
-    /**
-     * @param scheme
-     * @param encoder
-     * @param decoder
-     */
-    public
-    SplitAndMergeEncoder ( EPartitionScheme scheme, IEncoder <N, A, G> encoder, IDecoder <N, A, G> decoder ) {
-        this(
-                scheme,
-                new Class <?>[]{encoder.getClass(), decoder.getClass()},
-                encoder,
-                decoder
-        );
-    }
+//    /**
+//     * @param scheme
+//     * @param encoder
+//     * @param decoder
+//     */
+//    public
+//    SplitAndMergeEncoder ( EPartitionScheme scheme, IEncoder <N, A, G> encoder, IDecoder <N, A, G> decoder ) {
+//        this(
+//                scheme,
+//                new Class <?>[]{encoder.getClass(), decoder.getClass()},
+//                encoder,
+//                decoder
+//        );
+//    }
 
     /**
      * @param image
@@ -93,10 +98,25 @@ class SplitAndMergeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>,
                 domainSize,
                 this,
                 library);
+
         Tree <N, A, G> tree = nodeBuilder.buildTree(image.getSubImage());
         library.setTree(tree);
-        tiler = new DelaunayTriangularTiler <>(image, rangeSize, domainSize, this, nodeBuilder);
-        imageBlockGenerator = createBlockGenerator(tiler, getScheme(), this, image, rangeSize, domainSize);
+        TriangularTiler <N, A, G> tiler = new DelaunayTriangularTopDownTiler <>(
+                image,
+                rangeSize,
+                domainSize,
+                this,
+                nodeBuilder
+        );
+        IPartitionProcessor<N,A,G> partitionProcessor=new DelaunayPartitionProcessor <>(tiler);
+
+        imageBlockGenerator = createBlockGenerator(
+                partitionProcessor,
+                getScheme(),
+                this,
+                image,
+                rangeSize,
+                domainSize);
 
         return super.encode(image);
     }
@@ -119,8 +139,6 @@ class SplitAndMergeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>,
      * @return
      * @throws ValueError
      */
-//    @Override
-    public
     IAddress <A> createAddress ( int addr ) throws ValueError {
         return IAddress.valueOf(addr);
     }

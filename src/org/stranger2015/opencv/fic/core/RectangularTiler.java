@@ -1,28 +1,28 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.Contract;
-import org.opencv.core.Size;
+import org.slf4j.Logger;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.core.IAddress;
-import org.stranger2015.opencv.fic.utils.GrayScaleImage;
+import org.stranger2015.opencv.fic.core.codec.IEncoder;
+import org.stranger2015.opencv.fic.core.codec.RegionOfInterest;
+import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
+import org.stranger2015.opencv.fic.core.codec.tilers.Tiler;
+import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
-import static org.stranger2015.opencv.fic.core.IShape.*;
+import static org.stranger2015.opencv.fic.core.IShape.EShape;
 
 /**
  * @param <N>
  * @param <A>
- 
  * @param <G>
  */
 @Deprecated
 public
 class RectangularTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-
         extends Tiler <N, A, G> {
 
     private int rows;
@@ -39,7 +39,7 @@ class RectangularTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
         this(image, rangeSize, domainSize);
 
         this.rows = rows;
-        this.width = cols;
+        this.cols = cols;
     }
 
     /**
@@ -49,26 +49,37 @@ class RectangularTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
      */
     public
     RectangularTiler ( IImage <A> image, IIntSize rangeSize, IIntSize domainSize ) {
-        this(image,image.getWidth(),image.getHeight(),rangeSize, domainSize);
+        this(image, image.getWidth(), image.getHeight(), rangeSize, domainSize);
     }
 
     public
-    RectangularTiler ( IImage<A> image, int width, int height ) {
-        super(image, width, height);
+    RectangularTiler ( IImage <A> image, int width, int height ) {
+        super(image, rangeSize, domainSize, width, height);
     }
 
     public
-    RectangularTiler ( IImage<A> image, int width, int height, IIntSize rangeSize, IIntSize domainSize ) {
-        this(image,width,height);
-
+    RectangularTiler ( IImage <A> image, int width, int height, IIntSize rangeSize, IIntSize domainSize ) {
+        this(image, width, height);
 
         this.rangeSize = rangeSize;
         this.domainSize = domainSize;
     }
 
+
+    public
+    RectangularTiler ( IImage <A> image, IEncoder <N, A, G> encoder, ITreeNodeBuilder <N, A, G> builder ) {
+        super(image, rangeSize, domainSize, encoder, builder);
+    }
+
     @Override
     public
     ITiler <N, A, G> instance () {
+        return null;
+    }
+
+    @Override
+    public
+    List <IImageBlock <A>> segmentGeometry ( IImageBlock <A> imageBlock, IIntSize minRangeSize, Deque <IImageBlock <A>> queue ) throws ValueError {
         return null;
     }
 
@@ -81,46 +92,59 @@ class RectangularTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
         return 0;
     }
 
+    @Override
+    public
+    List <IImageBlock <A>> generateRangeBlocks ( RegionOfInterest <A> roi, int blockWidth, int blockHeight ) throws ValueError {
+        return null;
+    }
+
     /**
      * @param imageBlock
      */
-    @Override
-    public
-    void segmentRectangle ( IImageBlock <A> imageBlock ) {
-
-    }
-
+//    @Override
+//    public
+//    segmentSquare ( IImageBlock <A> imageBlock ) throws ValueError {
+//
+//    }
+//
+//    @Override
+//    publicBoundary
+//
+//        return d
+//
     /**
      * @param imageBlock
      * @throws ValueError
      */
     @Override
-    public
-    void segmentSquare ( IImageBlock <A> imageBlock ) throws ValueError {
 
-    }
-
-    /**
-     * @param imageBlock
-     * @throws ValueError
-     */
-    @Override
-    public
-    void segmentTriangle ( IImageBlock <A> imageBlock ) throws ValueError {
-
-    }
-
+//    public
+//    void segmentTriangle ( IImageBlock <A> imageBlock ) throws ValueError {
+//
+//    }
+//
     /**
      * @param node
      */
-    @Override
+//    @Override
     public
     void addLeafNode ( TreeNode <N, A, G> node ) {
 
     }
 
+    @Override
+    public
+    List <Vertex> generateVerticesSet ( RegionOfInterest <A> roi, int blockWidth, int blockHeight ) {
+        return List.of();
+    }
+
+    @Override
+    public
+    List <IImageBlock <A>> generateInitialRangeBlocks ( RegionOfInterest <A> roi, int blockWidth, int blockHeight ) throws ValueError {
+        return null;
+    }
+
     /**
-     * @param imageBlockShape
      * @param imageBlock
      * @param minRangeSize
      * @param queue
@@ -128,27 +152,76 @@ class RectangularTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
      */
     @Override
     public
-    void segmentShape ( EShape imageBlockShape,
-                        IImageBlock <A> imageBlock,
-                        IIntSize minRangeSize,
-                        Deque <IImageBlock <A>> queue )
+    List <IImageBlock <A>> segmentGeometry (  IImageBlock <A> imageBlock,
+                                          IIntSize minRangeSize,
+                                          Deque <IImageBlock <A>> queue )
             throws ValueError {
-
+        return List.of();
     }
 
     /**
      *
      */
     @Override
-    protected
+    public
     void onFinish () {
 
     }
 
-//    @Override
+    @Override
+    public
+    Logger getLogger () {
+        return null;
+    }
+
+    //    @Override
     protected
-    void doTile ( IntSize minRangeSize, Deque <IImageBlock <A>> queue ) throws ValueError {
-        super.doTile(minRangeSize, queue);
+    void doTile ( IImageBlock <A> imageBlock, IntSize minRangeSize, Deque <IImageBlock <A>> queue )
+            throws ValueError {
+        super.doTile(imageBlock, minRangeSize, queue);
+    }
+
+    public
+    int getRows () {
+        return rows;
+    }
+
+    public
+    int getCols () {
+        return cols;
+    }
+
+    @Override
+    public
+    IIntSize getRangeSize () {
+        return rangeSize;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    IIntSize getDomainSize () {
+        return domainSize;
+    }
+
+    @Override
+    public
+    List <IImageBlock <A>> segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
+        return null;
+    }
+
+    @Override
+    public
+    List <IImageBlock <A>> segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
+        return null;
+    }
+
+    @Override
+    public
+    List <IImageBlock <A>> segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
+        return null;
     }
 
 //    /**

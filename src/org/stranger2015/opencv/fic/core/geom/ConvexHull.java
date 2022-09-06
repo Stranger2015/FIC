@@ -12,24 +12,16 @@ package org.stranger2015.opencv.fic.core.geom;
  * http://www.eclipse.org/org/documents/edl-v10.php.
  */
 
-import org.locationtech.jts.algorithm.PointLocation;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.CoordinateList;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryCollection;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.LinearRing;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
-import org.locationtech.jts.geom.*;
-import org.locationtech.jts.util.Assert;
-import org.locationtech.jts.util.UniqueCoordinateArrayFilter;
+import org.stranger2015.opencv.fic.core.algorithm.PointLocation;
+import org.stranger2015.opencv.fic.utils.Assert;
+import org.stranger2015.opencv.fic.utils.UniqueCoordinateArrayFilter;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.locationtech.jts.algorithm.Orientation.*;
+import static org.stranger2015.opencv.fic.core.algorithm.Orientation.*;
+import static org.stranger2015.opencv.fic.core.algorithm.Orientation.index;
 
 /**
  * Computes the convex hull of a {@link Geometry}.
@@ -49,7 +41,7 @@ class ConvexHull {
      * Create a new convex hull construction for the input {@link Geometry}.
      */
     public
-    ConvexHull ( Geometry geometry ) {
+    ConvexHull ( Geometry<?> geometry ) {
         this(extractCoordinates(geometry), geometry.getFactory());
     }
 
@@ -121,10 +113,11 @@ class ConvexHull {
     protected
     Coordinate[] toCoordinateArray ( Deque<Coordinate> stack ) {
         Coordinate[] coordinates = new Coordinate[stack.size()];
-        for (int i = 0; i < stack.size(); i++) {
-            Coordinate coordinate = (Coordinate) stack.o(i);
+        IntStream.range(0, stack.size()).forEachOrdered(i -> {
+            Coordinate coordinate = stack.pop();
             coordinates[i] = coordinate;
-        }
+        });
+
         return coordinates;
     }
 
@@ -154,34 +147,29 @@ class ConvexHull {
         //Coordinate[] polyPts = null;
 
         // unable to compute interior polygon for some reason
-        if (polyPts == null)
+        if (polyPts == null) {
+
             return inputPts;
+        }
 
 //    LinearRing ring = geomFactory.createLinearRing(polyPts);
 //    System.out.println(ring);
-
         // add points defining polygon
-        TreeSet reducedSet = new TreeSet();
-        for (int i = 0; i < polyPts.length; i++) {
-            reducedSet.add(polyPts[i]);
-        }
+        TreeSet <Coordinate> reducedSet = Arrays.stream(polyPts)
+                .collect(Collectors.toCollection(TreeSet::new));
         /**
          * Add all unique points not in the interior poly.
          * CGAlgorithms.isPointInRing is not defined for points actually on the ring,
          * but this doesn't matter since the points of the interior polygon
          * are forced to be in the reduced set.
          */
-        for (int i = 0; i < inputPts.length; i++) {
-            if (!PointLocation.isInRing(inputPts[i], polyPts)) {
-                reducedSet.add(inputPts[i]);
-            }
-        }
+        IntStream.range(0, inputPts.length).filter(i -> !PointLocation.isInRing(inputPts[i], polyPts))
+                .mapToObj(i -> inputPts[i]).forEachOrdered(reducedSet::add);
+
         Coordinate[] reducedPts = CoordinateArrays.toCoordinateArray(reducedSet);
 
         // ensure that computed array has at least 3 points (not necessarily unique)
-        if (reducedPts.length < 3)
-            return padArray3(reducedPts);
-        return reducedPts;
+        return reducedPts.length < 3 ? padArray3(reducedPts) : reducedPts;
     }
 
     private
@@ -191,8 +179,9 @@ class ConvexHull {
             if (i < pts.length) {
                 pad[i] = pts[i];
             }
-            else
+            else {
                 pad[i] = pts[0];
+            }
         }
         return pad;
     }
@@ -215,8 +204,8 @@ class ConvexHull {
         // sort the points radially around the focal point.
         Arrays.sort(pts,
                 1,
-                pts.length,
-                new ConvexHull.RadialComparator(pts[0]));
+                pts.length
+        );
 
         //radialSort(pts);
         return pts;
@@ -238,8 +227,7 @@ class ConvexHull {
         for (int i = 3; i < c.length; i++) {
             p = ps.pop();
             // check for empty stack to guard against robustness problems
-            while (
-                    !ps.isEmpty() && index(ps.peek(), p, c[i]) > 0) {
+            while (!ps.isEmpty() && index(ps.peek(), p, c[i]) > 0) {
                 p = ps.pop();
             }
             ps.push(p);
@@ -394,7 +382,7 @@ class ConvexHull {
      * (collinear) vertices removed
      */
     private
-    Geometry lineOrPolygon ( Coordinate[] coordinates ) {
+    Geometry<?> lineOrPolygon ( Coordinate[] coordinates ) {
 
         coordinates = cleanRing(coordinates);
         if (coordinates.length == 3) {
@@ -431,6 +419,7 @@ class ConvexHull {
         }
         cleanedRing.add(original[original.length - 1]);
         Coordinate[] cleanedRingCoordinates = new Coordinate[cleanedRing.size()];
+
         return cleanedRing.toArray(cleanedRingCoordinates);
     }
 
@@ -452,11 +441,14 @@ class ConvexHull {
             this.origin = origin;
         }
 
+        /**
+         * @param o1
+         * @param o2
+         * @return
+         */
         public
-        int compare ( Object o1, Object o2 ) {
-            Coordinate p1 = (Coordinate) o1;
-            Coordinate p2 = (Coordinate) o2;
-            return polarCompare(origin, p1, p2);
+        int compare ( Coordinate o1, Coordinate o2 ) {
+            return polarCompare(origin, o1, o2);
         }
 
         /**

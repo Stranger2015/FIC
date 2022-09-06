@@ -1,16 +1,15 @@
 package org.stranger2015.opencv.fic.core.algorithm;
 
 
-import org.locationtech.jts.algorithm.Centroid;
-import org.locationtech.jts.algorithm.InteriorPointArea;
-import org.locationtech.jts.algorithm.InteriorPointLine;
-import org.locationtech.jts.algorithm.InteriorPointPoint;
-import org.locationtech.jts.algorithm.construct.LargestEmptyCircle;
-import org.locationtech.jts.algorithm.construct.MaximumInscribedCircle;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.GeometryFilter;
+import org.stranger2015.opencv.fic.core.algorithm.InteriorPointArea;
+import org.stranger2015.opencv.fic.core.algorithm.InteriorPointLine;
+import org.stranger2015.opencv.fic.core.algorithm.InteriorPointPoint;
+import org.stranger2015.opencv.fic.core.algorithm.construct.LargestEmptyCircle;
+import org.stranger2015.opencv.fic.core.algorithm.construct.MaximumInscribedCircle;
+import org.stranger2015.opencv.fic.core.geom.Coordinate;
+import org.stranger2015.opencv.fic.core.geom.Geometry;
+import org.stranger2015.opencv.fic.core.geom.GeometryCollection;
 
 /**
  * Computes an interior point of a <code>{@link Geometry}</code>.
@@ -30,7 +29,7 @@ import org.locationtech.jts.geom.GeometryFilter;
  * of a line bisecting the area.
  *
  * <li><b>Dimension 1</b> - the interior point is the interior or boundary vertex closest to the centroid.
-
+ *
  * <li><b>Dimension 0</b> - the point is the point closest to the centroid.
  * </ul>
  *
@@ -38,7 +37,8 @@ import org.locationtech.jts.geom.GeometryFilter;
  * @see MaximumInscribedCircle
  * @see LargestEmptyCircle
  */
-public class InteriorPoint {
+public
+class InteriorPoint {
 
     /**
      * Computes a location of an interior point in a {@link Geometry}.
@@ -46,12 +46,13 @@ public class InteriorPoint {
      *
      * @param geom a geometry in which to find an interior point
      * @return the location of an interior point,
-     *  or <code>null</code> if the input is empty
+     * or <code>null</code> if the input is empty
      */
     public static
-    Coordinate getInteriorPoint( Geometry geom) {
-        if (geom.isEmpty())
+    Coordinate getInteriorPoint ( Geometry geom ) {
+        if (geom.isEmpty()) {
             return null;
+        }
 
         Coordinate interiorPt = null;
         //int dim = geom.getDimension();
@@ -74,25 +75,28 @@ public class InteriorPoint {
         return interiorPt;
     }
 
-    private static int effectiveDimension(Geometry geom) {
+    private static
+    int effectiveDimension ( Geometry geom ) {
         InteriorPoint.EffectiveDimensionFilter dimFilter = new InteriorPoint.EffectiveDimensionFilter();
         geom.apply(dimFilter);
 
         return dimFilter.getDimension();
     }
 
-    private static class EffectiveDimensionFilter implements GeometryFilter
-    {
+    private static
+    class EffectiveDimensionFilter implements GeometryFilter {
         private int dim = -1;
 
-        public int getDimension() {
+        public
+        int getDimension () {
             return dim;
         }
 
-        public void filter(Geometry elem) {
+        public
+        void filter ( Geometry elem ) {
             if (elem instanceof GeometryCollection)
                 return;
-            if (! elem.isEmpty()) {
+            if (!elem.isEmpty()) {
                 int elemDim = elem.getDimension();
                 if (elemDim > dim) dim = elemDim;
             }

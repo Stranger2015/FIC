@@ -1,6 +1,6 @@
 package org.stranger2015.opencv.fic.core.operation.distance;
 
-import org.locationtech.jts.io.WKTWriter;
+import org.stranger2015.opencv.fic.core.io.WKTWriter;
 import org.stranger2015.opencv.fic.core.geom.Coordinate;
 import org.stranger2015.opencv.fic.core.geom.Geometry;
 
@@ -16,8 +16,8 @@ import org.stranger2015.opencv.fic.core.geom.Geometry;
  *
  * @version 1.7
  */
-public class GeometryLocation
-{
+public
+class GeometryLocation {
     /**
      * A special value of segmentIndex used for locations inside area geometries.
      * These locations are not located on a segment,
@@ -26,7 +26,7 @@ public class GeometryLocation
     public static final int INSIDE_AREA = -1;
 
     private Geometry component = null;
-    private int segIndex;
+    private final int segIndex;
     private Coordinate pt = null;
 
     /**
@@ -35,11 +35,11 @@ public class GeometryLocation
      * (or {@link #INSIDE_AREA} if the point is not on a segment).
      *
      * @param component the component of the geometry containing the point
-     * @param segIndex the segment index of the location, or INSIDE_AREA
-     * @param pt the coordinate of the location
+     * @param segIndex  the segment index of the location, or INSIDE_AREA
+     * @param pt        the coordinate of the location
      */
-    public GeometryLocation(Geometry component, int segIndex, Coordinate pt)
-    {
+    public
+    GeometryLocation ( Geometry component, int segIndex, Coordinate pt ) {
         this.component = component;
         this.segIndex = segIndex;
         this.pt = pt;
@@ -49,17 +49,20 @@ public class GeometryLocation
      * Constructs a GeometryLocation specifying a point inside an area geometry.
      *
      * @param component the component of the geometry containing the point
-     * @param pt the coordinate of the location
+     * @param pt        the coordinate of the location
      */
-    public GeometryLocation(Geometry component,Coordinate pt)
-    {
+    public
+    GeometryLocation ( Geometry component, Coordinate pt ) {
         this(component, INSIDE_AREA, pt);
     }
 
     /**
      * Returns the geometry component on (or in) which this location occurs.
      */
-    public Geometry getGeometryComponent() { return component; }
+    public
+    Geometry getGeometryComponent () {
+        return component;
+    }
 
     /**
      * Returns the segment index for this location. If the location is inside an
@@ -67,21 +70,29 @@ public class GeometryLocation
      *
      * @return the segment index for the location, or INSIDE_AREA
      */
-    public int getSegmentIndex() { return segIndex; }
+    public
+    int getSegmentIndex () {
+        return segIndex;
+    }
 
     /**
      * Returns the {@link Coordinate} of this location.
      */
-    public Coordinate getCoordinate() { return pt; }
+    public
+    Coordinate getCoordinate () {
+        return pt;
+    }
 
     /**
      * Tests whether this location represents a point inside an area geometry.
      */
-    public boolean isInsideArea() { return segIndex == INSIDE_AREA; }
+    public
+    boolean isInsideArea () {
+        return segIndex == INSIDE_AREA;
+    }
 
-    public String toString() {
-        return component.getGeometryType()
-                + "[" + segIndex + "]"
-                + "-" + WKTWriter.toPoint(pt);
+    public
+    String toString () {
+        return String.format("%s[%d]-%s", component.getGeometryType(), segIndex, WKTWriter.toPoint(pt));
     }
 }

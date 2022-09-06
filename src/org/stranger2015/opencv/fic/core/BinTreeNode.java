@@ -29,10 +29,28 @@ class BinTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
     }
 
     public
-    BinTreeNode ( TreeNodeBase <N, A, G> parent, IAddress <A> address ) {
-        super(parent, address);
+    BinTreeNode ( TreeNodeBase <N, A, G> parent, EDirection quadrant, IAddress <A> address ) {
+        super(parent, quadrant, address);
     }
 
+    public
+    BinTreeNode ( TreeNodeBase <N, A, G> parent, int width, int height ) throws ValueError {
+        this(parent, null, new IntSize(width, height));
+    }
+
+    /**
+     * @param parent
+     * @param address
+     */
+    public
+    BinTreeNode ( TreeNodeBase <N, A, G> parent, IAddress <A> address ) {
+        this(parent, null, address);
+    }
+
+    public
+    BinTreeNode ( TreeNodeBase <N, A, G> node ) throws ValueError {
+        super(node, 0);
+    }
     /**
      * @param imageBlock
      * @param address
@@ -46,7 +64,7 @@ class BinTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
             throws ValueError {
 
         return imageBlock == null ?
-                new BinTreeNode <>(parent, address) :
+                new BinTreeNode <N, A, G>(parent, address) :
                 new LeafNode <>(parent, imageBlock);
     }
 
@@ -55,12 +73,12 @@ class BinTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
      * @param boundingBox
      * @return
      */
-    @Override
+//    @Override
     public
     TreeNodeBase <N, A, G> createNode ( TreeNodeBase <N, A, G> parent, IIntSize boundingBox )
             throws ValueError {
 
-        return new BinTreeNode<>(parent, boundingBox);
+        return new BinTreeNode <>(parent, boundingBox);
     }
 
     /**
@@ -321,7 +339,7 @@ class BinTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
     /**
      * @return
      */
-        @Override
+    @Override
     public
     int getWidth () {
         return 0;
@@ -330,7 +348,7 @@ class BinTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
     /**
      * @return
      */
-        @Override
+    @Override
     public
     int getHeight () {
         return 0;
@@ -339,7 +357,7 @@ class BinTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
     /**
      * @return
      */
-        @Override
+    @Override
     public
     double getBeta () {
         return 0;
@@ -618,5 +636,22 @@ class BinTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
     public
     IIntSize getBoundingBox () {
         return boundingBox;
+    }
+
+    @Override
+    public
+    TreeNodeBase <N, A, G> createNode ( TreeNodeBase <N, A, G> parent,
+                                        IImageBlock <A> imageBlock,
+                                        IAddress <A> address )
+            throws ValueError {
+
+        return null;
+    }
+
+    @Override
+    public
+    TreeNodeBase <N, A, G> createNode ( TreeNodeBase <N, A, G> parent,
+                                        IAddress <A> address ) throws ValueError {
+        return null;
     }
 }

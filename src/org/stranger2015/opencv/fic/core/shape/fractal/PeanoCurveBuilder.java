@@ -43,7 +43,7 @@ class PeanoCurveBuilder extends GeometricShapeBuilder {
      * @param geomFactory the geometry factory to use
      */
     public
-    PeanoCurveBuilder ( GeometryFactory geomFactory, SpaceFillingCurveCode spaceFillingCurveCode ) {
+    PeanoCurveBuilder ( GeometryFactory geomFactory ) {
         super(geomFactory, spaceFillingCurveCode);
         // use a null extent to indicate no transformation
         // (may be set by client)

@@ -1,13 +1,12 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
-import org.opencv.core.Size;
-import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.fic.core.ITiler;
-import org.stranger2015.opencv.fic.core.SipTiler;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.IAddress;
+import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.fic.core.IIntSize;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.SipEncoder;
+import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
+import org.stranger2015.opencv.fic.core.codec.tilers.SipTiler;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
@@ -17,8 +16,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
  * @param <G>
  */
 public
-class SipbVrEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
-
+class SipbVrEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
         extends SipEncoder<N, A, G> {
 
     /**
@@ -27,7 +25,7 @@ class SipbVrEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M e
      * @param domainSize
      */
     public
-    SipbVrEncoder ( M inputImage, Size rangeSize, Size domainSize ) {
+    SipbVrEncoder ( IImage<A> inputImage, IIntSize rangeSize, IIntSize domainSize ) {
         super(inputImage, rangeSize, domainSize);
     }
 
@@ -36,7 +34,13 @@ class SipbVrEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M e
      */
     @Override
     public
-    ITiler <N, A, G> createTiler0() {
-        return new SipTiler <>()p
+    ITiler <N, A, G> createPartition0 () {
+        return new SipTiler <>(
+                getImage(),
+                rangeSize,
+                domainSize,
+                this,
+                nodeBuilder
+        );
     }
 }

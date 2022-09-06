@@ -100,4 +100,10 @@ class RegionOfInterest<A extends IAddress <A>>
     boolean isSquare () {
         return super.isSquare();
     }
+
+    public
+    IImageBlock<A> merge ( List <IImageBlock <A>> blocks, List <IImageBlock <A>> blocksToMerge ) {
+
+        return null;
+    }
 }

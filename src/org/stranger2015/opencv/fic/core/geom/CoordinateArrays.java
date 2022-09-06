@@ -18,6 +18,7 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.TreeSet;
 import java.util.stream.IntStream;
 
 import static org.stranger2015.opencv.fic.core.geom.CoordinateArrays.BidirectionalComparator.indexOf;
@@ -221,7 +222,12 @@ class CoordinateArrays {
         }
         // handle situation when arrays are of different length
         return i < pts2.length ? -1 : i < pts1.length ? 1 : 0;
+    }
 
+    public static
+    Coordinate[] toCoordinateArray ( TreeSet<Coordinate> reducedSet ) {
+
+        return reducedSet.toArray(new Coordinate[0]);
     }
 
     /**
@@ -286,9 +292,11 @@ class CoordinateArrays {
         for (int i = 0; i < pts1.length; i++) {
             Coordinate p1 = pts1[i];
             Coordinate p2 = pts2[pts1.length - i - 1];
-            if (p1.compareTo(p2) != 0)
+            if (p1.compareTo(p2) != 0) {
                 return false;
+            }
         }
+
         return true;
     }
 

@@ -1,5 +1,6 @@
 package org.stranger2015.opencv.fic.transform;
 
+import org.opencv.core.Mat;
 import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.utils.BitBuffer;
@@ -9,7 +10,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
  * This is useful to traverse the transforms without special casing
  * the comparison with the normal (non-transformed) image.
  */
-public class NoneTransform</*M extends IImage<A>,*/ A extends IAddress <A>, G extends BitBuffer>
+public class NoneTransform<A extends IAddress <A>, G extends BitBuffer>
         extends ImageTransform<A, G> {
 
     /**
@@ -38,10 +39,16 @@ public class NoneTransform</*M extends IImage<A>,*/ A extends IAddress <A>, G ex
      * @param type
      * @return
      */
-    @SuppressWarnings({"unchecked", "rawtype"})
+    @SuppressWarnings({ "rawtype"})
     @Override
     public
-    M transform ( M inputImage, M transformMatrix, EInterpolationType type ) {
-        return (M) warpAffine(inputImage.getMat(), transformMatrix.getMat(),type);
+    IImage<A> transform ( IImage<A> inputImage, Mat transformMatrix, EInterpolationType type ) {
+        return warpAffine(inputImage, transformMatrix,type);
+    }
+
+    @Override
+    public
+    IImage <A> warpAffine ( IImage <A> inputImage, Mat transformMatrix, EInterpolationType interpolationType ) {
+        return null;
     }
 }

@@ -1,24 +1,23 @@
 package org.stranger2015.opencv.fic.core.geom;
 
 import org.jetbrains.annotations.NotNull;
-import org.stranger2015.opencv.fic.core.geom.ICoordinateFilter;
+import org.opencv.core.Mat;
+import org.stranger2015.opencv.fic.core.IIntSize;
+import org.stranger2015.opencv.fic.core.algorithm.Centroid;
+import org.stranger2015.opencv.fic.core.algorithm.InteriorPoint;
+import org.stranger2015.opencv.fic.core.io.WKTWriter;
 import org.stranger2015.opencv.fic.core.operation.buffer.BufferOp;
 import org.stranger2015.opencv.fic.core.operation.distance.DistanceOp;
 import org.stranger2015.opencv.fic.core.operation.predicate.RectangleContains;
 import org.stranger2015.opencv.fic.core.operation.predicate.RectangleIntersects;
-import org.stranger2015.opencv.fic.core.algorithm.Centroid;
-import org.stranger2015.opencv.fic.core.algorithm.InteriorPoint;
-import org.stranger2015.opencv.fic.core.io.WKTWriter;
-import org.stranger2015.opencv.fic.core.operation.buffer.BufferParameters;
-import org.stranger2015.opencv.fic.core.operation.linemerger.LineMerger;
 import org.stranger2015.opencv.fic.core.operation.relate.RelateOp;
-import org.stranger2015.opencv.fic.core.operation.union.UnaryUnionOp;
 import org.stranger2015.opencv.fic.core.operation.valid.IsValidOp;
 import org.stranger2015.opencv.fic.utils.Assert;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.stream.IntStream;
 
 /**
  * A representation of a planar, linear vector geometry.
@@ -137,7 +136,8 @@ import java.util.Iterator;
  * @version 1.8
  */
 public abstract
-class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
+class Geometry<T extends Geometry <T>> implements Cloneable, Comparable <T>, Serializable {
+
     private static final long serialVersionUID = 8763622679187376702L;
 
     protected static final int TYPECODE_POINT = 0;
@@ -191,11 +191,17 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
         this.SRID = factory.getSRID();
     }
 
+    public
+    Geometry ( Mat dest, IIntSize size ) {
+        factory = null;
+    }
+
     /**
      * @param geom
      */
     private static
-    void filter ( Geometry geom ) {
+    <T extends Geometry <T>>
+    void filter ( Geometry <T> geom ) {
         geom.geometryChangedAction();
     }
 
@@ -216,10 +222,10 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * <code>isEmpty</code> methods return <code>false</code>
      */
     protected static
-    boolean hasNonEmptyElements ( Geometry[] geometries ) {
-        for (Geometry geometry : geometries) {
+    <T extends Geometry <T>>
+    boolean hasNonEmptyElements ( Geometry<T>[] geometries ) {
+        for (Geometry <T> geometry : geometries) {
             if (!geometry.isEmpty()) {
-
                 return true;
             }
         }
@@ -318,7 +324,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * @return the n'th geometry contained in this geometry
      */
     public
-    Geometry getGeometryN ( int n ) {
+    Geometry<T> getGeometryN ( int n ) {
         return this;
     }
 
@@ -461,7 +467,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * @throws IllegalArgumentException if g is null
      */
     public
-    double distance ( Geometry g ) {
+    double distance ( Geometry<?> g ) {
         return DistanceOp.distance(this, g);
     }
 
@@ -474,7 +480,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * @return <code>true</code> if the geometries are less than <code>distance</code> apart.
      */
     public
-    boolean isWithinDistance ( Geometry geom, double distance ) {
+    boolean isWithinDistance ( Geometry<?> geom, double distance ) {
         return DistanceOp.isWithinDistance(this, geom, distance);
     }
 
@@ -548,7 +554,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * @return a {@link Point} which is in the interior of this Geometry
      */
     public
-    Point getInteriorPoint () {
+    Point<?> getInteriorPoint () {
         if (isEmpty()) {
             return factory.createPoint();
         }
@@ -586,7 +592,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * @return the closure of the combinatorial boundary of this <code>Geometry</code>
      */
     public abstract
-    Geometry getBoundary ();
+    Geometry<?> getBoundary ();
 
     /**
      * Returns the dimension of this <code>Geometry</code>s inherent boundary.
@@ -616,7 +622,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * @see GeometryFactory#toGeometry(Envelope)
      */
     public
-    Geometry getEnvelope () {
+    Geometry<?> getEnvelope () {
         return getFactory().toGeometry(getEnvelopeInternal());
     }
 
@@ -639,12 +645,13 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
         if (envelope == null) {
             envelope = computeEnvelopeInternal();
         }
+
         return new Envelope(envelope);
     }
 
     /**
      * Notifies this geometry that its coordinates have been changed by an external
-     * party (for example, via a {@link CoordinateFilter}).
+     * party (for example, via a {@link ICoordinateFilter}).
      * When this method is called the geometry will flush
      * and/or update any derived information it has cached (such as its {@link Envelope} ).
      * The operation is applied to all component Geometries.
@@ -713,10 +720,12 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * Returns <code>false</code> if both <code>Geometry</code>s are points
      */
     public
-    boolean touches ( Geometry g ) {
+    boolean touches ( Geometry <T> g ) {
         // short-circuit test
-        if (!getEnvelopeInternal().intersects(g.getEnvelopeInternal()))
+        if (!getEnvelopeInternal().intersects(g.getEnvelopeInternal())) {
             return false;
+        }
+
         return relate(g).isTouches(getDimension(), g.getDimension());
     }
 
@@ -743,11 +752,11 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * @see Geometry#disjoint
      */
     public
-    boolean intersects ( Geometry g ) {
-
+    boolean intersects ( Geometry <T> g ) {
         // short-circuit envelope test
-        if (!getEnvelopeInternal().intersects(g.getEnvelopeInternal()))
+        if (!getEnvelopeInternal().intersects(g.getEnvelopeInternal())) {
             return false;
+        }
 
         /**
          * TODO: (MD) Add optimizations:
@@ -764,23 +773,17 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
          * is much smaller than env B, maybe there's no point in testing
          * pt(B) in env(A)?
          */
-
         // optimization for rectangle arguments
         if (isRectangle()) {
-            return RectangleIntersects.intersects((Polygon) this, g);
+            return RectangleIntersects.intersects((Polygon <?>) this, g);
         }
         if (g.isRectangle()) {
-            return RectangleIntersects.intersects((Polygon) g, this);
+            return RectangleIntersects.intersects((Polygon <?>) g, this);
         }
         if (isGeometryCollection() || g.isGeometryCollection()) {
-            for (int i = 0; i < getNumGeometries(); i++) {
-                for (int j = 0; j < g.getNumGeometries(); j++) {
-                    if (getGeometryN(i).intersects(g.getGeometryN(j))) {
-                        return true;
-                    }
-                }
-            }
-            return false;
+            return IntStream.range(0, getNumGeometries())
+                    .anyMatch(i -> IntStream.range(0, g.getNumGeometries())
+                            .anyMatch(j -> getGeometryN(i).intersects(g.getGeometryN(j))));
         }
         // general case
         return relate(g).isIntersects();
@@ -811,7 +814,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * @return <code>true</code> if the two <code>Geometry</code>s cross.
      */
     public
-    boolean crosses ( Geometry g ) {
+    boolean crosses ( Geometry <T> g ) {
         // short-circuit test
         if (!getEnvelopeInternal().intersects(g.getEnvelopeInternal())) {
             return false;
@@ -847,7 +850,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * @see Geometry#coveredBy
      */
     public
-    boolean within ( Geometry g ) {
+    boolean within ( Geometry <T> g ) {
         return g.contains(this);
     }
 
@@ -878,7 +881,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * @see Geometry#covers
      */
     public
-    boolean contains ( Geometry g ) {
+    boolean contains ( Geometry <T> g ) {
         // optimization - lower dimension cannot contain areas
         if (g.getDimension() == 2 && getDimension() < 2) {
             return false;
@@ -923,7 +926,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * @return <code>true</code> if the two <code>Geometry</code>s overlap.
      */
     public
-    boolean overlaps ( Geometry g ) {
+    boolean overlaps ( Geometry <T> g ) {
         // short-circuit test
         if (!getEnvelopeInternal().intersects(g.getEnvelopeInternal())) {
             return false;
@@ -966,7 +969,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * @see Geometry#coveredBy
      */
     public
-    boolean covers ( Geometry g ) {
+    boolean covers ( Geometry <T> g ) {
         // optimization - lower dimension cannot cover areas
         if (g.getDimension() == 2 && getDimension() < 2) {
             return false;
@@ -1017,7 +1020,8 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * @see Geometry#covers
      */
     public
-    boolean coveredBy ( Geometry g ) {
+    boolean coveredBy ( Geometry <T> g ) {
+
         return g.covers(this);
     }
 
@@ -1045,7 +1049,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * @see IntersectionMatrix
      */
     public
-    boolean relate ( Geometry g, String intersectionPattern ) {
+    boolean relate ( Geometry <T> g, String intersectionPattern ) {
         return relate(g).matches(intersectionPattern);
     }
 
@@ -1057,9 +1061,10 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * boundaries and exteriors of the two <code>Geometry</code>s
      */
     public
-    IntersectionMatrix relate ( Geometry g ) {
+    IntersectionMatrix relate ( Geometry <T> g ) {
         checkNotGeometryCollection(this);
         checkNotGeometryCollection(g);
+
         return RelateOp.relate(this, g);
     }
 
@@ -1080,7 +1085,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * @see #equalsTopo(Geometry)
      */
     public
-    boolean equals ( Geometry g ) {
+    boolean equals ( Geometry <T> g ) {
         if (g == null) {
             return false;
         }
@@ -1206,7 +1211,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * @see #buffer(double, int, int)
      */
     public
-    Geometry buffer ( double distance ) {
+    Geometry <T> buffer ( double distance ) {
         return BufferOp.bufferOp(this, distance);
     }
 
@@ -1235,7 +1240,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * @see #buffer(double, int, int)
      */
     public
-    Geometry buffer ( double distance, int quadrantSegments ) {
+    Geometry <T> buffer ( double distance, int quadrantSegments ) {
         return BufferOp.bufferOp(this, distance, quadrantSegments);
     }
 
@@ -1272,7 +1277,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * @see BufferOp
      */
     public
-    Geometry buffer ( double distance, int quadrantSegments, int endCapStyle ) {
+    Geometry <T> buffer ( double distance, int quadrantSegments, int endCapStyle ) {
         return BufferOp.bufferOp(this, distance, quadrantSegments, endCapStyle);
     }
 
@@ -1307,7 +1312,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * s points
      */
     public
-    Geometry convexHull () {
+    Geometry <T> convexHull () {
         return (new ConvexHull(this)).getConvexHull();
     }
 
@@ -1318,9 +1323,9 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * @return a reversed geometry
      */
     public
-    Geometry reverse () {
+    Geometry <T> reverse () {
 
-        Geometry res = reverseInternal();
+        Geometry <T> res = reverseInternal();
         if (this.envelope != null) {
             res.envelope = this.envelope.copy();
         }
@@ -1330,7 +1335,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
     }
 
     protected abstract
-    Geometry reverseInternal ();
+    Geometry <T> reverseInternal ();
 
     /**
      * Computes a <code>Geometry</code> representing the point-set which is
@@ -1354,7 +1359,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * @throws IllegalArgumentException if the argument is a non-empty heterogeneous <code>GeometryCollection</code>
      */
     public
-    Geometry intersection ( Geometry other ) {
+    Geometry <T> intersection ( Geometry <T> other ) {
         return GeometryOverlay.intersection(this, other);
     }
 
@@ -1390,7 +1395,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * @see LineMerger
      */
     public
-    Geometry union ( Geometry other ) {
+    Geometry <T> union ( Geometry <T> other ) {
         return GeometryOverlay.union(this, other);
     }
 
@@ -1412,7 +1417,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * @throws IllegalArgumentException if either input is a non-empty GeometryCollection
      */
     public
-    Geometry difference ( Geometry other ) {
+    Geometry <T> difference ( Geometry <T> other ) {
         return GeometryOverlay.difference(this, other);
     }
 
@@ -1435,7 +1440,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * @throws IllegalArgumentException if either input is a non-empty GeometryCollection
      */
     public
-    Geometry symDifference ( Geometry other ) {
+    Geometry <T> symDifference ( Geometry <T> other ) {
         return GeometryOverlay.symDifference(this, other);
     }
 
@@ -1460,7 +1465,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * @see UnaryUnionOp
      */
     public
-    Geometry union () {
+    Geometry <T> union () {
         return GeometryOverlay.union(this);
     }
 
@@ -1491,7 +1496,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * @see #norm()
      */
     public abstract
-    boolean equalsExact ( Geometry other, double tolerance );
+    boolean equalsExact ( Geometry <T> other, double tolerance );
 
     /**
      * Returns true if the two <code>Geometry</code>s are exactly equal.
@@ -1521,7 +1526,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * @see #norm()
      */
     public
-    boolean equalsExact ( Geometry other ) {
+    boolean equalsExact ( Geometry <T> other ) {
         return this == other || equalsExact(other, 0);
     }
 
@@ -1541,7 +1546,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * @return true if the input geometries are exactly equal in their normalized form
      */
     public
-    boolean equalsNorm ( Geometry g ) {
+    boolean equalsNorm ( Geometry <T> g ) {
         if (g == null) {
             return false;
         }
@@ -1612,7 +1617,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
     public
     Object clone () {
         try {
-            Geometry clone = (Geometry) super.clone();
+            Geometry <T> clone = (Geometry <T>) super.clone();
             if (clone.envelope != null) {
                 clone.envelope = new Envelope(clone.envelope);
             }
@@ -1638,8 +1643,8 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * @return a deep copy of this geometry
      */
     public
-    Geometry copy () {
-        Geometry copy = copyInternal();
+    Geometry<T> copy () {
+        Geometry<T> copy = copyInternal();
         copy.envelope = envelope == null ? null : envelope.copy();
         copy.SRID = this.SRID;
         copy.userData = this.userData;
@@ -1653,7 +1658,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * @return a copy of the target geometry object.
      */
     protected abstract
-    Geometry copyInternal ();
+    Geometry<T> copyInternal ();
 
     /**
      * Converts this <code>Geometry</code> to <b>normal form</b> (or <b>
@@ -1681,8 +1686,8 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * @see #normalize()
      */
     public
-    Geometry norm () {
-        Geometry copy = copy();
+    Geometry<T> norm () {
+        Geometry<T> copy = copy();
         copy.normalize();
 
         return copy;
@@ -1718,7 +1723,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * Specifications
      */
     public
-    int compareTo ( Geometry other, CoordinateSequenceComparator comp ) {
+    int compareTo ( Geometry<T> other, CoordinateSequenceComparator comp ) {
         if (getTypeCode() != other.getTypeCode()) {
             return getTypeCode() - other.getTypeCode();
         }
@@ -1732,7 +1737,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
             return 1;
         }
 
-        return compareToSameClass(other, comp);
+        return compareToSameClass((T) other, comp);
     }
 
     /**
@@ -1748,7 +1753,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * s are considered to be equal by the <code>equalsExact</code> method.
      */
     protected
-    boolean isEquivalentClass ( Geometry other ) {
+    boolean isEquivalentClass ( Geometry<T> other ) {
         return !this.getClass().getName().equals(other.getClass().getName());
     }
 
@@ -1761,7 +1766,8 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      *                                  but not one of its subclasses
      */
     static
-    void checkNotGeometryCollection ( Geometry g ) {
+    <T extends Geometry<T>>
+    void checkNotGeometryCollection ( Geometry<T> g ) {
         if (g.isGeometryCollection()) {
             throw new IllegalArgumentException("Operation does not support GeometryCollection arguments");
         }
@@ -1802,7 +1808,6 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * Specifications
      */
     protected abstract
-    <T extends Geometry>
     int compareToSameClass ( T o );
 
     /**
@@ -1818,7 +1823,6 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * Specifications
      */
     protected abstract
-    <T extends Geometry>
     int compareToSameClass ( T o, CoordinateSequenceComparator comp );
 
     /**
@@ -1835,13 +1839,13 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      * otherwise, zero
      */
     protected
-    int compare ( Collection <Geometry> a, Collection <Geometry> b ) {
-        Iterator <Geometry> i = a.iterator();
-        Iterator <Geometry> j = b.iterator();
+    int compare ( Collection <Geometry<T>> a, Collection <Geometry<T>> b ) {
+        Iterator <Geometry<T>> i = a.iterator();
+        Iterator <Geometry<T>> j = b.iterator();
         while (i.hasNext() && j.hasNext()) {
-            Geometry aElement = i.next();
-            Geometry bElement = j.next();
-            int comparison = aElement.compareTo(bElement);
+            Geometry<T> aElement = i.next();
+            Geometry<T> bElement = j.next();
+            int comparison = aElement.compareTo((T) bElement);
             if (comparison != 0) {
                 return comparison;
             }
@@ -1865,14 +1869,18 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
     int getTypeCode ();
 
     private
-    Point createPointFromInternalCoord ( Coordinate coord, Geometry exemplar ) {
+    Point<T> createPointFromInternalCoord ( Coordinate coord, Geometry<T> exemplar ) {
+        Point <T> result;
         // create empty point for null input
         if (coord == null) {
-            return exemplar.getFactory().createPoint();
+            result = (Point <T>) exemplar.getFactory().createPoint();
         }
-        exemplar.getPrecisionModel().makePrecise(coord);
+        else {
+            exemplar.getPrecisionModel().makePrecise(coord);
+            result = (Point <T>) exemplar.getFactory().createPoint(coord);
+        }
 
-        return exemplar.getFactory().createPoint(coord);
+        return result;
     }
 
     /**
@@ -1903,7 +1911,7 @@ class Geometry implements Cloneable, Comparable <Geometry>, Serializable {
      */
     @Override
     public
-    int compareTo ( @NotNull Geometry other ) {
+    int compareTo ( @NotNull T other ) {
         if (getTypeCode() != other.getTypeCode()) {
             return getTypeCode() - other.getTypeCode();
         }

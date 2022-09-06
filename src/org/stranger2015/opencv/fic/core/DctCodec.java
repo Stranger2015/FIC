@@ -1,18 +1,18 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.core.codec.*;
+import org.stranger2015.opencv.fic.core.codec.Codec;
+import org.stranger2015.opencv.fic.core.codec.IDecoder;
+import org.stranger2015.opencv.fic.core.codec.IEncoder;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
  * @param <A>
- 
  */
 public
-class DctCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+class DctCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
         extends Codec <N, A, G> {
 
     /**
@@ -36,7 +36,7 @@ class DctCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extend
      */
 //    @Override
     public
-    IEncoder <N, A, G> getEncoder ( IImage<A> image, Size rangeSize, Size domainSize ) {
+    IEncoder <N, A, G> getEncoder ( IImage <A> image, Size rangeSize, Size domainSize ) {
         return null;
     }
 
@@ -54,7 +54,7 @@ class DctCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extend
      */
     @Override
     public
-    IDecoder <M, A> getDecoder () {
+    IDecoder <N, A, G> getDecoder () {
         return null;
     }
 

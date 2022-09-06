@@ -10,10 +10,10 @@ import java.util.List;
  *
  */
 public
-class DecodeTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
-        extends Task<N, A, G> {
+class DecodeTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
+        extends Task <N, A, G> {
 
-        private final IDecoder <N, A, G> decoder;
+    private final IDecoder <N, A, G> decoder;
 
     /**
      * @param filename
@@ -22,10 +22,9 @@ class DecodeTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M exte
     DecodeTask ( String filename,
                  EPartitionScheme scheme,
                  ICodec <N, A, G> codec,
-                 List <Task <N, A, G>> tasks
-               /*  IDecoder <N, A, G> decoder */) {
+                 List <Task <N, A, G>> tasks ) {
 
-        super(filename, scheme, codec, tasks );
+        super(filename, scheme, codec, tasks);
 
         this.decoder = codec.getDecoder();
     }
@@ -44,10 +43,9 @@ class DecodeTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M exte
      */
     @Override
     protected
-    M execute ( String filename ) throws ValueError {
-        M image = super.execute(filename);
-
-        FractalModel <N, A, G> fm =  codec.getEncoder().getModel();
+    IImage <A> execute ( String filename ) throws ValueError {
+        IImage <A> image = super.execute(filename);
+        FractalModel <N, A, G> fm = codec.getEncoder().getModel();
 
         return decoder.decode(fm);
     }

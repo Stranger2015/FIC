@@ -74,14 +74,14 @@ class CoordinateSequenceComparator
      * Compares the same coordinate of two {@link ICoordinateSequence}s
      * along the given number of dimensions.
      *
-     * @param s1 a {@link ICoordinateSequence}
-     * @param s2 a {@link ICoordinateSequence}
-     * @param i the index of the coordinate to test
+     * @param s1        a {@link ICoordinateSequence}
+     * @param s2        a {@link ICoordinateSequence}
+     * @param i         the index of the coordinate to test
      * @param dimension the number of dimensions to test
      * @return -1, 0, or 1 depending on whether s1[i] is less than, equal to, or greater than s2[i]
      */
-    protected int compareCoordinate( ICoordinateSequence s1, ICoordinateSequence s2, int i, int dimension)
-    {
+    protected
+    int compareCoordinate ( ICoordinateSequence s1, ICoordinateSequence s2, int i, int dimension ) {
         for (int d = 0; d < dimension; d++) {
             double ord1 = s1.getOrdinate(i, d);
             double ord2 = s2.getOrdinate(i, d);
@@ -92,7 +92,7 @@ class CoordinateSequenceComparator
         }
 
         return 0;
-        }
+    }
 
     @Override
     public
@@ -105,8 +105,9 @@ class CoordinateSequenceComparator
         int dim2 = s2.getDimension();
 
         int minDim = dim1;
-        if (dim2 < minDim)
+        if (dim2 < minDim) {
             minDim = dim2;
+        }
         boolean dimLimited = false;
         if (dimensionLimit <= minDim) {
             minDim = dimensionLimit;
@@ -114,7 +115,7 @@ class CoordinateSequenceComparator
         }
 
         // lower dimension is less than higher
-        if (! dimLimited) {
+        if (!dimLimited) {
             if (dim1 < dim2) {
                 return -1;
             }

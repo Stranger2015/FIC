@@ -1,6 +1,6 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.jetbrains.annotations.NotNull;
+import org.opencv.core.Mat;
 import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.ValueError;
@@ -21,8 +21,8 @@ interface ITransform< A extends IAddress <A>, G extends BitBuffer> {
      */
     @SuppressWarnings("unchecked")
     default
-    IImage <A> transform ( @NotNull IImage <A> inputImage,
-                           IImage <A> transformMatrix,
+    IImage <A> transform ( IImage<A> inputImage,
+                           Mat transformMatrix,
                            EInterpolationType type ) {
 
         return warpAffine(inputImage, transformMatrix, type);
@@ -33,7 +33,7 @@ interface ITransform< A extends IAddress <A>, G extends BitBuffer> {
      * @return
      */
     IImage <A> warpAffine ( IImage <A> inputImage,
-                            IImage <A> transformMatrix,
+                           Mat transformMatrix,
                             EInterpolationType interpolationType );
 
     /**

@@ -3,6 +3,7 @@ package org.stranger2015.opencv.fic.core;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.BinTreeImageBlockGenerator;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
+import org.stranger2015.opencv.fic.core.codec.IPartitionProcessor;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
@@ -13,6 +14,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
 public
 class QuadTreeImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
         extends BinTreeImageBlockGenerator <N, A, G> {
+
     /**
      * @param tiler
      * @param scheme
@@ -22,7 +24,19 @@ class QuadTreeImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddre
      * @param domainSize
      */
     public
-    QuadTreeImageBlockGenerator ( ITiler <N, A, G> tiler, EPartitionScheme scheme, IEncoder <N, A, G> encoder, IImage <A> image, IIntSize rangeSize, IIntSize domainSize ) {
-        super(tiler, scheme, encoder, image, rangeSize, domainSize);
+    QuadTreeImageBlockGenerator ( IPartitionProcessor <N, A, G> partitionProcessor,
+                                  EPartitionScheme scheme,
+                                  IEncoder <N, A, G> encoder,
+                                  IImage <A> image,
+                                  IIntSize rangeSize,
+                                  IIntSize domainSize ) {
+        super(
+                partitionProcessor,
+                scheme,
+                encoder,
+                image,
+                rangeSize,
+                domainSize
+        );
     }
 }

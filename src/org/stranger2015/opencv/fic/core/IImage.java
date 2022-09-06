@@ -9,7 +9,6 @@ import org.stranger2015.opencv.fic.transform.ImageTransform;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.opencv.core.CvType.CV_8U;
@@ -33,7 +32,7 @@ interface IImage<A extends IAddress <A>>
      * @return
      */
     default
-    Mat createMask ( IIntSize bb, List<Polygon > polygonList ) {
+    Mat createMask ( IIntSize bb, List <Polygon <T>> polygonList ) {
         Mat mMask = Mat.zeros(bb.toSize(), CV_8U);
         fillPoly(mMask, polygonList, new Scalar(0));
         imshow("mMask", mMask);
@@ -42,20 +41,28 @@ interface IImage<A extends IAddress <A>>
     }
 
     private static
-    void fillPoly ( Mat mMask, List <Polygon > polygonList, Scalar scalar ){
+    void fillPoly ( Mat mMask, List <Polygon <T>> polygonList, Scalar scalar ) {
         Imgproc.fillPoly(mMask, polygonListToMatList(polygonList), scalar);
     }
 
-    static
-    List <MatOfPoint> polygonListToMatList ( List <Polygon> polygonList ) {
+    /**
+     * @param polygonList
+     * @return
+     */
+    static @NotNull
+    List <MatOfPoint> polygonListToMatList ( List <Polygon <T>> polygonList ) {
         List <MatOfPoint> matOfPoints = new ArrayList <>(polygonList.size());
-        for (Polygon polygon : polygonList) {
-            Point[] apply = apply(polygon);
+        for (Polygon <T> polygon : polygonList) {
+            Point[] apply = null;//apply(polygon);
             MatOfPoint matOfPoint = new MatOfPoint(apply);
             matOfPoints.add(matOfPoint);
         }
         return matOfPoints;
     }
+
+    int cols ();
+
+    int rows ();
 
     /**
      * @return
@@ -75,7 +82,7 @@ interface IImage<A extends IAddress <A>>
     /**
      * @param beta
      */
-    void setBeta ( double beta);
+    void setBeta ( double beta );
 
     /**
      * @return
@@ -240,7 +247,7 @@ interface IImage<A extends IAddress <A>>
     /**
      * @return
      */
-    IImage <A> merge ( List <IImage <A>> layers, IImage <A> inputImage );
+    IImage <A> merge ( List <IImage <A>> layers, IImage <A> inputImage );//imageblocks to merge
 
     /**
      *
@@ -264,15 +271,7 @@ interface IImage<A extends IAddress <A>>
      * @param height
      * @return
      */
-    IImage <A> getSubImage ( int x, int y, int width, int height ) throws ValueError;
-
-    /**
-     * @return
-     */
-//    default
-//    IImage <A> getSubImage ( Rectangle rectangle ) throws ValueError {
-//        return getSubImage(rectangle.address.x, rectangle.y, rectangle.width, rectangle.height);
-//    }
+    IImageBlock <A> getSubImage ( int x, int y, int width, int height ) throws ValueError;
 
     /**
      * @param i
@@ -297,7 +296,7 @@ interface IImage<A extends IAddress <A>>
     /**
      * @return
      */
-    double[] getPixels () throws ValueError;
+    int[] getPixels () throws ValueError;
 
     /**
      * @return
@@ -333,33 +332,44 @@ interface IImage<A extends IAddress <A>>
     int[] get ( int addr );
 
     /**
+     *
+     * @param x
+     * @param y
+     * @return
+     */
+    int get ( int x, int y, int[] data);
+
+    /**
      * @param addr
      * @return
      */
-    double[] getPixels ( IAddress <A> addr );
+    int[] getPixels ( IAddress <A> addr );
 
     /**
      * @param addr
      * @param i
      * @return
      */
-    int pixelValues ( int addr, int i );//fixme
+    int pixelValues ( int x, int y, int[] data );//fixme
 
     /**
      * @param x
-     * @param i
+     * @param y
+     * @return
      */
-//    @Override
-    void put ( int x, int i );
+    int pixelValues ( int x, int y );
+
+    /**
+     * @param x
+     * @param y
+     * @param data
+     */
+    void put ( int x, int y, int[] data );
 
     /**
      * @return
      */
-//    @Override
     int getMeanPixelValue ();
-
-    //    @Override
-//    int compareTo ( IIntSize minRangeSize );
 
     /**
      * @return
@@ -430,8 +440,4 @@ interface IImage<A extends IAddress <A>>
     @Override
     int compareTo ( @NotNull IImage <A> other );
 
-    private
-    Point[] apply ( Polygon polygon ) {
-        return getVertices();
-    }
 }

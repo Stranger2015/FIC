@@ -2,7 +2,6 @@ package org.stranger2015.opencv.fic.core.codec;
 
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
@@ -11,9 +10,7 @@ import java.util.List;
  *
  */
 public
-class EncodeTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */,
-        G extends BitBuffer>
-
+class EncodeTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
         extends Task <N, A, G> {
 
     protected final IEncoder <N, A, G> encoder;
@@ -41,10 +38,8 @@ class EncodeTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M exte
     @SuppressWarnings("unchecked")
     @Override
     protected
-    M execute ( String filename ) throws ValueError {
-        M image = (M) encoder.encode((GrayScaleImage <A>) super.execute(filename));
-
-        return image;
+    IImage<A> execute ( String filename ) throws ValueError {
+        return encoder.encode(super.execute(filename));
     }
 
     /**

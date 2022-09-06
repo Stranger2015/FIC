@@ -2,7 +2,7 @@ package org.stranger2015.opencv.fic.core.triangulation.quadedge;
 
 import org.jetbrains.annotations.Contract;
 import org.stranger2015.opencv.fic.core.geom.GeometryFactory;
-import org.stranger2015.opencv.fic.core.geom.Triangle;
+import org.stranger2015.opencv.fic.core.geom.TriangleImageBlock;
 
 import java.util.Iterator;
 
@@ -10,7 +10,7 @@ import java.util.Iterator;
  *
  */
 public
-class TriangleIterator implements Iterator <Triangle> {
+class TriangleIterator implements Iterator <TriangleImageBlock> {
     private final QuadEdgeSubdivision subdivision;
     private final GeometryFactory geomFact;
 
@@ -38,7 +38,7 @@ class TriangleIterator implements Iterator <Triangle> {
      */
     @Override
     public
-    Triangle next () {
+    TriangleImageBlock next () {
         return null;
     }
 

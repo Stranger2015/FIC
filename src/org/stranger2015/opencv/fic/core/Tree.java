@@ -1,6 +1,5 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.jetbrains.annotations.NotNull;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.utils.BitBuffer;
@@ -11,18 +10,19 @@ import java.util.List;
 
 import static java.lang.Integer.MAX_VALUE;
 import static java.util.EnumSet.of;
-import static org.stranger2015.opencv.fic.core.Tree.EAffineTransform.*;
 
 /**
  * @param <N>
  */
 abstract public
-class Tree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer> {
+class Tree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
+        implements ITree <N, A, G> {
 
     public static final int DEFAULT_DEPTH = MAX_VALUE;
     public static final IRectangle DEFAULT_BOUNDING_BOX = null;
 
     protected final List <LeafNode <N, A, G>> leaves = new ArrayList <>();
+
     protected final List <TreeNode <N, A, G>> nodes = new ArrayList <>();
 
     protected IImage <A> image;
@@ -80,31 +80,12 @@ class Tree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBu
         );
     }
 
-    @SuppressWarnings("unchecked")
-    public static
-    <N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-    @NotNull Tree <T> create ( Class <?> clazz, TreeNode <N, A, G> node, IImageBlock <A> imageBlock ) {
-        int rc = 0;
-        try {
-            Tree <N, A, G> tree = (Tree <N, A, G>) clazz.getDeclaredConstructor()
-                    .newInstance(node, imageBlock);
-            tree.initialize(node, imageBlock);
-
-            return tree;
-
-        } catch (ReflectiveOperationException e) {
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
-    }
-
     /**
      * @param root
      * @param imageBlock
      */
     protected
     void initialize ( TreeNode <N, A, G> root, IImageBlock <A> imageBlock ) {
-//        this.
     }
 
     /**
@@ -121,9 +102,9 @@ class Tree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBu
     public
     EnumSet <EAffineTransform> getTransforms () {
         return of(
-                FLIP,
-                ROTATE,
-                SCALE
+                EAffineTransform.FLIP,
+                EAffineTransform.ROTATE,
+                EAffineTransform.SCALE
         );
     }
 
@@ -133,17 +114,9 @@ class Tree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBu
      * @return
      */
     abstract public
-    TreeNode <N, A, G> nodeInstance ( TreeNodeBase <N, A, G> parent, EDirection quadrant, IIntSize rect )
+    TreeNode <N, A, G> nodeInstance ( TreeNodeBase <N, A, G> parent, EDirection quadrant,
+                                      IIntSize rect )
             throws ValueError;
-
-    /**
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    public
-    Class <? extends TreeNode <N, A, G>> getNodeClass ( TreeNode <N, A, G> clazz ) {
-        return (Class <? extends TreeNode <N, A, G>>) clazz.getClass();
-    }
 
     /**
      * @return
@@ -181,6 +154,14 @@ class Tree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBu
     public
     IRectangle getArea () {
         return area;
+    }
+
+    /**
+     * @return
+     */
+    public
+    List <LeafNode <N, A, G>> getLeaves () {
+        return leaves;
     }
 
     /**

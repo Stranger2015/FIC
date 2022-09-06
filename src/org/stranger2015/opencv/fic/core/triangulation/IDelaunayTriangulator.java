@@ -36,6 +36,4 @@ interface IDelaunayTriangulator {
      * @return
      */
     boolean isUsingTolerance ();
-
-
 }

@@ -1,8 +1,7 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.IAddress;
-import org.stranger2015.opencv.fic.utils.GrayScaleImage;
+import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
@@ -21,7 +20,7 @@ class ChannelShift</*M extends IImage<A>,*/ A extends IAddress <A>, G extends Bi
      * @param address
      */
     protected
-    ChannelShift ( GrayScaleImage<A> image, float intensity, int channelAxis, IAddress<A> address ) {
+    ChannelShift ( IImage<A> image, float intensity, int channelAxis, IAddress<A> address ) {
         super(image, intensity, channelAxis, address);
     }
 }

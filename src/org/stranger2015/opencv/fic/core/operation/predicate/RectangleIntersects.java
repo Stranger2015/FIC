@@ -1,12 +1,12 @@
 package org.stranger2015.opencv.fic.core.operation.predicate;
 
-import org.locationtech.jts.algorithm.RectangleLineIntersector;
-import org.locationtech.jts.algorithm.locate.SimplePointInAreaLocator;
-import org.locationtech.jts.geom.*;
-import org.locationtech.jts.geom.util.LinearComponentExtracter;
-import org.locationtech.jts.geom.util.ShortCircuitedGeometryVisitor;
+import org.stranger2015.opencv.fic.core.geom.*;
+import org.stranger2015.opencv.fic.core.geom.util.ShortCircuitedGeometryVisitor;
+import org.stranger2015.opencv.fic.core.operation.distance.LinearComponentExtracter;
 
 import java.util.List;
+
+import static org.stranger2015.opencv.fic.core.algorithm.locate.SimplePointInAreaLocator.containsPointInPolygon;
 
 /**
  * Implementation of the <tt>intersects</tt> spatial predicate
@@ -32,9 +32,10 @@ public class RectangleIntersects
      *          a Geometry of any type
      * @return true if the geometries intersect
      */
-    public static boolean intersects( Polygon rectangle, Geometry b)
+    public static <T extends Geometry> boolean intersects( Polygon <T> rectangle, Geometry b)
     {
         RectangleIntersects rp = new RectangleIntersects(rectangle);
+
         return rp.intersects(b);
     }
 
@@ -172,18 +173,19 @@ class EnvelopeIntersectsVisitor extends ShortCircuitedGeometryVisitor
  */
 class GeometryContainsPointVisitor extends ShortCircuitedGeometryVisitor
 {
-    private final CoordinateSequence rectSeq;
+    private final ICoordinateSequence rectSeq;
 
     private final Envelope rectEnv;
 
     private boolean containsPoint = false;
 
-    public GeometryContainsPointVisitor(Polygon rectangle)
+    public <T extends Geometry> GeometryContainsPointVisitor(Polygon<T> rectangle)
     {
         this.rectSeq = rectangle.getExteriorRing().getCoordinateSequence();
         rectEnv = rectangle.getEnvelopeInternal();
     }
 
+    @SuppressWarnings(value = "unchecked")
     /**
      * Reports whether it can be concluded that a corner point of the rectangle is
      * contained in the geometry, or whether further testing is required.
@@ -215,8 +217,7 @@ class GeometryContainsPointVisitor extends ShortCircuitedGeometryVisitor
                 continue;
             // check rect point in poly (rect is known not to touch polygon at this
             // point)
-            if (SimplePointInAreaLocator.containsPointInPolygon(rectPt,
-                    (Polygon) geom)) {
+            if (containsPointInPolygon(rectPt, (Polygon <Geometry>) geom)) {
                 containsPoint = true;
                 return;
             }
@@ -296,9 +297,9 @@ class RectangleIntersectsSegmentVisitor extends ShortCircuitedGeometryVisitor
         }
     }
 
-    private void checkIntersectionWithSegments(LineString testLine)
+    private void checkIntersectionWithSegments( LineString testLine)
     {
-        CoordinateSequence seq1 = testLine.getCoordinateSequence();
+        ICoordinateSequence seq1 = testLine.getCoordinateSequence();
         for (int j = 1; j < seq1.size(); j++) {
             seq1.getCoordinate(j - 1, p0);
             seq1.getCoordinate(j,     p1);

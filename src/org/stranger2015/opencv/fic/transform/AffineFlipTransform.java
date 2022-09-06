@@ -20,7 +20,7 @@ class AffineFlipTransform</*M extends IImage<A>,*/ A extends IAddress <A>, G ext
      * @param interpolationType
      */
     public
-    AffineFlipTransform ( GrayScaleImage<A> image, EInterpolationType interpolationType, IAddress <A> address ) {
+    AffineFlipTransform ( IImage <A> image, EInterpolationType interpolationType, IAddress <A> address ) {
         super(image, interpolationType, address );
     }
 
@@ -38,11 +38,12 @@ class AffineFlipTransform</*M extends IImage<A>,*/ A extends IAddress <A>, G ext
      * @param type
      * @return
      */
-    @Override
+//    @Override
     public
-    GrayScaleImage<A> transform ( @NotNull GrayScaleImage<A> inputImage,
-                                  GrayScaleImage<A> transformMatrix,
+    IImage<A> transform ( @NotNull IImage <A> inputImage,
+                                  IImage<A> transformMatrix,
                                   EInterpolationType type ) {
-        return null;
+
+        return inputImage;
     }
 }

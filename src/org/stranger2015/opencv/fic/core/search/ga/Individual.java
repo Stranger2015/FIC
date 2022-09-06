@@ -1,18 +1,22 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
 import org.opencv.core.MatOfInt;
-import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.fic.core.ValueError;
 import org.stranger2015.opencv.fic.core.IAddress;
-import org.stranger2015.opencv.fic.utils.GrayScaleImage;
+import org.stranger2015.opencv.fic.core.Image;
+import org.stranger2015.opencv.fic.core.ValueError;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import static org.stranger2015.opencv.utils.BitBuffer.allocate;
 
+/**
+ * @param <A>
+ * @param <G>
+ * @param <C>
+ */
 @SuppressWarnings("unchecked")
 public
-class Individual</*M extends IImage<A>,*/ A extends IAddress <A>, G extends BitBuffer, C extends Chromosome <M, A, G>>
-        extends GrayScaleImage <A> {
+class Individual<A extends IAddress <A>, G extends BitBuffer, C extends Chromosome < A, G>>
+        extends Image <A> {
     /**
      *
      */

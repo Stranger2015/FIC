@@ -10,7 +10,7 @@ import java.util.List;
  *
  */
 public
-class CodecTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+class CodecTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
         extends BidiTask <N, A, G> {
 
     private/* final*/ IEncoder <N, A, G> encoder;

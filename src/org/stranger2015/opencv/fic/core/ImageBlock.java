@@ -5,7 +5,9 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.Point;
 import org.stranger2015.opencv.fic.core.codec.RegionOfInterest;
-import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
+import org.stranger2015.opencv.fic.core.geom.Coordinate;
+import org.stranger2015.opencv.fic.core.geom.Geometry;
+import org.stranger2015.opencv.fic.core.geom.Polygon;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 
 import java.util.ArrayList;
@@ -32,7 +34,11 @@ class ImageBlock<A extends IAddress <A>>
      *
      */
     public IIntSize blockSize;
+    private int x;
+    private int y;
     private EShape kind;
+    private int originalImageWidth;
+    private int originalImageHeight;
 
     /**
      * @param image
@@ -43,12 +49,17 @@ class ImageBlock<A extends IAddress <A>>
      * @throws ValueError
      */
     public
-    ImageBlock ( IImage <A> image, int x, int y, int sideSize, Point[] vertices, EShape kind ) throws ValueError {
-        super(image, vertices);
+    ImageBlock ( IImage <A> image, int x, int y, int sideSize, EShape kind )
+            throws ValueError {
+
+        super(image.getMat(), size);
+
+        this.x = x;
+        this.y = y;
+
         this.kind = kind;
         blockSize = new IntSize(sideSize, sideSize);
     }
-
 
     /**
      * @param inputImage
@@ -58,26 +69,16 @@ class ImageBlock<A extends IAddress <A>>
      * @param vertices
      */
     public
-    ImageBlock ( IImage <A> inputImage, int i1, int j, IIntSize blockSize, Point[] vertices ) {
-        super(inputImage, vertices);
+    ImageBlock ( IImage <A> inputImage, int x, int y, IIntSize blockSize) {
+        this(inputImage.getMat(), x ,y);
     }
 
     /**
      * @param submat
      */
     public
-    ImageBlock ( MatOfInt submat, Point[] vertices ) {
-        super(submat, vertices);
-    }
-
-    /**
-     * @param image
-     * @param address
-     * @param blockSize
-     */
-    public
-    ImageBlock ( IImage <A> image, IIntSize blockSize, IAddress <A> address, Point[] vertices ) {
-        super(image, vertices, blockSize, address);
+    ImageBlock ( MatOfInt submat) {
+        super(submat, size);
     }
 
     /**
@@ -87,24 +88,26 @@ class ImageBlock<A extends IAddress <A>>
      * @param pixels
      */
     public
-    ImageBlock ( MatOfInt image, Point[] vertices, int rows, int cols, int[] pixels ) throws ValueError {
-        super(image, vertices, rows, cols, pixels);
+    ImageBlock ( MatOfInt image, int rows, int cols, int[] pixels ) throws ValueError {
+        super(image, rows, cols, pixels);
     }
 
+    /**
+     * @param submat
+     */
     public
     ImageBlock ( Mat submat ) {
-        super(submat);
+        super(submat, size);
     }
 
     /**
      * @param image
-     * @param vertices
      * @param blockSize
      * @param address
      */
     public
-    ImageBlock ( IImage <A> image, Point[] vertices, IIntSize blockSize, IAddress <A> address ) {
-        this(image, blockSize, address, vertices);
+    ImageBlock ( IImage <A> image, IIntSize blockSize, IAddress <A> address ) {
+        this(image, blockSize, address);
     }
 
     /**
@@ -116,18 +119,38 @@ class ImageBlock<A extends IAddress <A>>
      */
     public
     ImageBlock ( MatOfInt image, Point[] p, IAddress <A> address, int cols, int[] pixels ) {
-        super(image, p, address, cols, pixels);
+//        super(image, p, address, cols, pixels);
     }
 
     public
     ImageBlock ( IImage <A> image, IIntSize blockSize, IAddress <A> address ) {
         super(image, blockSize, address);
-
     }
 
     public
-    ImageBlock ( RegionOfInterest <A> roi, int i, int j, int blockWidth, int blockHeight ) {
+    ImageBlock ( RegionOfInterest <A> roi, int i, int j, int blockWidth, int blockHeight ) throws ValueError {
         super(roi, i, j, blockWidth, blockHeight);
+    }
+
+    public
+    ImageBlock ( IImage <A> inputImage, int i, IIntSize size, int i1, int i2 ) throws ValueError {
+        super(inputImage, IAddress.valueOf(i1 + i2), size);
+    }
+
+    /**
+     * @param image
+     * @param address
+     * @param blockSize
+     */
+    public
+    ImageBlock ( IImage<A> image,  IAddress<A> address, IIntSize blockSize ) {
+        super(image, address, blockSize);
+    }
+
+    public
+    <A extends IAddress <A>, E>
+    ImageBlock ( IImage<A> image, int i, int i1, int i2, List<E> es ) {
+        super(image, i, i1, i2, es);
     }
 
     /**
@@ -172,13 +195,9 @@ class ImageBlock<A extends IAddress <A>>
         return beta;
     }
 
-    /**
-     * @return
-     * @param threshold
-     */
     @Override
     public
-    boolean isHomogeneous ( int threshold ) {
+    boolean isHomogeneous () throws ValueError {
         return false;
     }
 
@@ -206,7 +225,7 @@ class ImageBlock<A extends IAddress <A>>
     @Override
     public
     IAddress <A> getAddress () {
-        return address;
+        return (IAddress <A>) address;
     }
 
     /**
@@ -214,17 +233,35 @@ class ImageBlock<A extends IAddress <A>>
      */
     @Override
     public
-    Vertex getCentroid () {
+    Coordinate getCentroid () {
         return null;
     }
 
+    @Override
+    public
+    Point[] tVertices () {
+        return new Point[0];
+    }
+
+    @Override
+    public
+    double perimeter () {
+        return 0;
+    }
+
     /**
      * @return
      */
-    @Override
+//    @Override
     public
     Point[] getVertices () {
         return new Point[0];
+    }
+
+    @Override
+    public
+    Polygon <Geometry <?>> getPolygon () {
+        return null;
     }
 
     /**
@@ -397,6 +434,12 @@ class ImageBlock<A extends IAddress <A>>
         return new int[0];
     }
 
+    @Override
+    public
+    int get ( int x, int y, int[] data ) {
+        return getActualImage().get(x, y, data);
+    }
+
     /**
      * @param address
      * @return
@@ -404,7 +447,7 @@ class ImageBlock<A extends IAddress <A>>
     @Override
     public
     int[] getPixels ( IAddress <A> address ) {
-        return new int[0];
+        return getActualImage().get(address.get());
     }
 
     /**
@@ -414,8 +457,8 @@ class ImageBlock<A extends IAddress <A>>
      */
     @Override
     public
-    int pixelValues ( int addr, int i ) {
-        return 0;
+    int pixelValues ( int x, int y, int[] data ) {
+        return getActualImage().get(x,y,data);
     }
 
     /**
@@ -434,7 +477,7 @@ class ImageBlock<A extends IAddress <A>>
     @Override
     public
     IImageBlock <A> getSubImage () {
-        return new ImageBlock <>(actualImage);
+        return new ImageBlock <>(getActualImage());
     }
 
     /**
@@ -452,8 +495,8 @@ class ImageBlock<A extends IAddress <A>>
      */
     @Override
     public
-    void put ( int x, int i ) {
-
+    void put ( int x, int y, int[] data ) {
+        getActualImage().put(x, y, data);
     }
 
     /**
@@ -469,6 +512,30 @@ class ImageBlock<A extends IAddress <A>>
     public
     int compareTo ( IIntSize minRangeSize ) {
         return 0;
+    }
+
+    @Override
+    public
+    int getX () {
+        return 0;
+    }
+
+    @Override
+    public
+    int getY () {
+        return 0;
+    }
+
+    @Override
+    public
+    IImageBlock <A> getTriangleSubImage ( Coordinate p0, Coordinate p1, Coordinate p2 ) {
+        return null;
+    }
+
+    @Override
+    public
+    IImageBlock <A> getPolygonSubImage ( Coordinate... coords ) {
+        return null;
     }
 
     /**

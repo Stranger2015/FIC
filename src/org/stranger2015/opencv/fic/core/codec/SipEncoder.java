@@ -36,6 +36,7 @@ class SipEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
     SipEncoder (
             EPartitionScheme scheme,
             ITreeNodeBuilder <N, A, G> nodeBuilder,
+            IPartitionProcessor<N,A,G> partitionProcessor,
             ISearchProcessor <N, A, G> searchProcessor,
             ScaleTransform <A, G> scaleTransform,
             ImageBlockGenerator <N, A, G> imageBlockGenerator,
@@ -47,6 +48,7 @@ class SipEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
         super(
                 scheme,
                 nodeBuilder,
+                partitionProcessor,
                 searchProcessor,
                 scaleTransform,
                 imageBlockGenerator,
@@ -185,7 +187,7 @@ class SipEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
 //    @Override
     public
     ImageBlockGenerator <N, A, G> createBlockGenerator (
-            ITiler <N, A, G> tiler,
+            IPartitionProcessor <N, A, G> partitionProcessor,
             EPartitionScheme scheme,
             IEncoder <N, A, G> encoder,
             IImage<A> image,
@@ -193,7 +195,7 @@ class SipEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
             IIntSize domainSize
     ) {
         return new SipImageBlockGenerator <>(
-                tiler,
+                partitionProcessor,
                 scheme,
                 encoder,
                 image,
@@ -210,7 +212,7 @@ class SipEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      * @return
      */
    @SuppressWarnings("unchecked")
-//    @Override
+    @Override
     public
     List <IImageBlock <A>> generateAllTransformedBlocks ( IImageBlock<A> image,
                                                          int sourceSize,

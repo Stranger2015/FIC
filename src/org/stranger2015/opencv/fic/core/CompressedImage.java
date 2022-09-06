@@ -1,10 +1,12 @@
 package org.stranger2015.opencv.fic.core;
 
+import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.stranger2015.opencv.fic.core.codec.ICompressedImage;
+import org.stranger2015.opencv.fic.core.geom.CoordinateSequenceComparator;
+import org.stranger2015.opencv.fic.core.geom.Geometry;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
-import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +16,7 @@ import java.util.List;
  */
 public
 class CompressedImage<A extends IAddress <A>>
-        extends GrayScaleImage <A>
+        extends Image <A>
         implements ICompressedImage <A>,
                    IIntSize {
 
@@ -38,12 +40,12 @@ class CompressedImage<A extends IAddress <A>>
      */
     public
     CompressedImage ( IImage <A> inputImage ) {
-        super(inputImage);
+        super(inputImage, size);
     }
 
     public
     CompressedImage ( Mat dest ) {
-        super(dest);
+        super(dest, size);
     }
 
     /**
@@ -117,11 +119,17 @@ class CompressedImage<A extends IAddress <A>>
         return originalImageHeight;
     }
 
+    @Override
+    public
+    int compareTo ( @NotNull IIntSize o ) {
+        return -1;
+    }
+
     /**
      * @param address
      * @param pixel
      */
-    @Override
+//    @Override
     public
     void putPixel ( IAddress <A> address, int pixel ) {
 
@@ -152,14 +160,26 @@ class CompressedImage<A extends IAddress <A>>
         return getMat().put((int) address.getIndex(), 0, pixels[0]);
     }
 
-    /**
-     * @param layers
-     * @param inputImage
-     * @return
-     */
+    //    @Override
+    int compareTo () {
+        return -1;//compareTo(null);
+    }
+
+//    @Override
+//    public
+//    int compareTo ( @NotNull Object o ) {
+//        return 0;
+//    }
+
     @Override
-    public
-    IImage <A> merge ( List <IImage <A>> layers, IImage <A> inputImage ) {
-        return null;
+    protected
+    int compareToSameClass ( Geometry o ) {
+        return 0;
+    }
+
+    @Override
+    protected
+    int compareToSameClass ( Geometry o, CoordinateSequenceComparator comp ) {
+        return 0;
     }
 }

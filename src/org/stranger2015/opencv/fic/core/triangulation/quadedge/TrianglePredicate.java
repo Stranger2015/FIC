@@ -1,9 +1,9 @@
 package org.stranger2015.opencv.fic.core.triangulation.quadedge;
 
 import org.jetbrains.annotations.Contract;
+import org.stranger2015.opencv.fic.core.geom.TriangleImageBlock;
 import org.stranger2015.opencv.fic.core.io.WKTWriter;
 import org.stranger2015.opencv.fic.core.geom.Coordinate;
-import org.stranger2015.opencv.fic.core.geom.Triangle;
 import org.stranger2015.opencv.fic.core.geom.impl.CoordinateArraySequence;
 import org.stranger2015.opencv.fic.core.math.DD;
 
@@ -249,7 +249,7 @@ class TrianglePredicate {
      */
     public static
     boolean isInCircleCC ( Coordinate a, Coordinate b, Coordinate c,  Coordinate p ) {
-        Coordinate cc = Triangle.circumcentre(a, b, c);
+        Coordinate cc = TriangleImageBlock.circumcentre(a, b, c);
         double ccRadius = a.distance(cc);
         double pRadiusDiff = p.distance(cc) - ccRadius;
         return pRadiusDiff <= 0;
@@ -271,7 +271,7 @@ class TrianglePredicate {
         boolean isInCircleDD = org.stranger2015.opencv.fic.core.triangulate.quadedge.TrianglePredicate.isInCircleDDSlow(a, b, c, p);
         boolean isInCircleCC = org.stranger2015.opencv.fic.core.triangulate.quadedge.TrianglePredicate.isInCircleCC(a, b, c, p);
 
-        Coordinate circumCentre = Triangle.circumcentre(a, b, c);
+        Coordinate circumCentre = TriangleImageBlock.circumcentre(a, b, c);
         System.out.println("p radius diff a = "
                 + Math.abs(p.distance(circumCentre) - a.distance(circumCentre))
                 / a.distance(circumCentre));

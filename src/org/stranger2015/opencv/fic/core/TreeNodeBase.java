@@ -33,7 +33,7 @@ class TreeNodeBase<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
     protected int distance;
 
     protected TreeNodeBase <N, A, G> parent;
-    protected final Class<?> treeClass;
+    protected final Class <?> treeClass;
 
     /**
      * @param rect
@@ -49,7 +49,7 @@ class TreeNodeBase<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
         setType(WHITE);
 
         this.quadrant = quadrant;
-        treeClass = parent.getTreeClass() ;
+        treeClass = parent.getTreeClass();
     }
 
     /**
@@ -64,11 +64,20 @@ class TreeNodeBase<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
         treeClass = parent.getTreeClass();
     }
 
+    /**
+     * @param parent
+     * @param addr
+     * @throws ValueError
+     */
     public
     TreeNodeBase ( TreeNodeBase <N, A, G> parent, int addr ) throws ValueError {
         this(parent, IAddress.valueOf(addr));
     }
 
+    /**
+     * @param parent
+     * @param address
+     */
     public
     TreeNodeBase ( TreeNodeBase <N, A, G> parent, IAddress <A> address ) {
         this.parent = parent;
@@ -115,10 +124,7 @@ class TreeNodeBase<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      * @throws ValueError
      */
     public abstract
-    TreeNodeBase <N, A, G> createChild ( IImageBlock <A> imageBlock,
-//                                        int layerIndex,
-//                                        int clusterIndex,
-                                         IAddress <A> address ) throws ValueError;
+    TreeNodeBase <N, A, G> createChild ( IImageBlock <A> imageBlock, IAddress <A> address ) throws ValueError;
 
     /**
      * @return
@@ -202,7 +208,7 @@ class TreeNodeBase<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
     TreeNodeBase <N, A, G> createNode ( TreeNodeBase <N, A, G> parent, IImageBlock <A> imageBlock, IAddress <A> address ) throws ValueError;
 
     public
-    Class<?> getTreeClass () {
+    Class <?> getTreeClass () {
         return treeClass;
     }
 
@@ -387,6 +393,21 @@ class TreeNodeBase<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
             super(parent, null, boundingBox);
         }
 
+        public
+        TreeNode ( TreeNodeBase <N, A, G> parent, EDirection quadrant, IAddress <A> address ) {
+            super(parent, address);
+       }
+
+        public
+        TreeNode ( TreeNodeBase<N, A, G> parent) throws ValueError {
+            super(parent, 0);
+        }
+
+        public
+        TreeNode ( TreeNodeBase <N, A, G> parent, int addr ) throws ValueError {
+            super(parent, addr);
+        }
+
         /**
          * @return
          */
@@ -401,7 +422,7 @@ class TreeNodeBase<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
          */
         @SuppressWarnings("unchecked")
         public
-        TreeNodeBase <N, A, G> getChild ( int dir ) {
+        TreeNodeBase <N, A, G> getChild ( EDirection dir ) {
             return children.get(dir);
         }
 
@@ -447,7 +468,6 @@ class TreeNodeBase<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
          */
         public static
         class LeafNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-
                 extends TreeNodeBase <N, A, G>
                 implements ILeaf <N, A, G> {
 

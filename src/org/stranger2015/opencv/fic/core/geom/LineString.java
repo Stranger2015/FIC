@@ -2,7 +2,6 @@ package org.stranger2015.opencv.fic.core.geom;
 
 import org.stranger2015.opencv.fic.core.algorithm.Length;
 import org.stranger2015.opencv.fic.core.operation.BoundaryOp;
-import org.stranger2015.opencv.fic.core.algorithm.GeometryComponentFilter;
 import org.stranger2015.opencv.fic.core.operation.ILineal;
 
 /**
@@ -22,8 +21,8 @@ import org.stranger2015.opencv.fic.core.operation.ILineal;
  *
  *@version 1.8
  */
-public class LineString
-        extends Geometry
+public class LineString<T extends LineString<T>>
+        extends Geometry<T>
         implements ILineal {
     
     private static final long serialVersionUID = 3110669828065365560L;
@@ -48,6 +47,7 @@ public class LineString
     public LineString( Coordinate[] points, PrecisionModel precisionModel, int SRID)
     {
         super(new GeometryFactory(precisionModel, SRID));
+
         init(getFactory().getCoordinateSequenceFactory().create(points));
     }
 
@@ -66,6 +66,7 @@ public class LineString
     private void init( ICoordinateSequence points)
     {
         if (points == null) {
+
             points = getFactory().getCoordinateSequenceFactory().create(new Coordinate[]{});
         }
         if (points.size() == 1) {
@@ -103,6 +104,7 @@ public class LineString
         if (isClosed()) {
             return Dimension.FALSE;
         }
+
         return 0;
     }
 
@@ -115,15 +117,16 @@ public class LineString
     }
 
     public
-   Point getPointN( int n) {
-        return getFactory().createPoint(points.getCoordinate(n));
+    Point<T> getPointN( int n) {
+        return (Point <T>) getFactory().createPoint(points.getCoordinate(n));
     }
 
     public
-   Point getStartPoint() {
+   Point<T> getStartPoint() {
         if (isEmpty()) {
             return null;
         }
+
         return getPointN(0);
     }
 
@@ -169,7 +172,7 @@ public class LineString
      * @seeGeometry#getBoundary
      */
     public
-   Geometry getBoundary() {
+   Geometry<T> getBoundary() {
         return (new BoundaryOp(this)).getBoundary();
     }
 
@@ -180,23 +183,48 @@ public class LineString
      * @return a {@link LineString} with coordinates in the reverse order
      */
     public
-    LineString reverse() {
-        return (LineString) super.reverse();
+    Geometry <T> reverse() {
+        return (LineString<T>) super.reverse();
     }
 
     protected
-    LineString reverseInternal()
+    Geometry <T> reverseInternal()
     {
         ICoordinateSequence seq = points.copy();
         CoordinateSequences.reverse(seq);
+
         return getFactory().createLineString(seq);
     }
 
     @Override
     public
-    boolean equalsExact ( Geometry other, double tolerance ) {
-        return false;
+    void apply ( ICoordinateFilter filter ) {
+
     }
+
+    @Override
+    public
+    void apply ( ICoordinateSequenceFilter filter ) {
+
+    }
+
+//    @Override
+//    public
+//    void apply ( IGeometryFilter filter ) {
+//
+//    }
+
+    @Override
+    public
+    void apply ( IGeometryComponentFilter filter ) {
+
+    }
+
+//    @Override
+//    public
+//    boolean equalsExact ( Geometry <T> other, double tolerance ) {
+//        return false;
+//    }
 
     /**
      *  Returns true if the given point is a vertex of this <code>LineString</code>.
@@ -214,6 +242,7 @@ public class LineString
         return false;
     }
 
+    @Override
     protected
     Envelope computeEnvelopeInternal() {
         if (isEmpty()) {
@@ -224,21 +253,20 @@ public class LineString
 
     @Override
     protected
-    <T extends Geometry> int compareToSameClass ( T o ) {
+    int compareToSameClass ( T o ) {
         return 0;
     }
 
-    @Override
-    protected
-    <T extends Geometry> int compareToSameClass ( T o, CoordinateSequenceComparator comp ) {
+
+    @Override public int compareToSameClass ( T o, CoordinateSequenceComparator comp ) {
         return 0;
     }
 
-    public boolean equalsExact( Geometry other, double tolerance) {
+    public boolean equalsExact( Geometry<T> other, double tolerance) {
         if (!isEquivalentClass(other)) {
             return false;
         }
-       LineString otherLineString = (LineString) other;
+       LineString<T> otherLineString = (LineString<T>) other;
         if (points.size() != otherLineString.points.size()) {
             return false;
         }
@@ -249,39 +277,30 @@ public class LineString
         }
         return true;
     }
+//
+//    public void apply( ICoordinateFilter filter) {
+//        for (int i = 0; i < points.size(); i++) {
+//            filter.filter(points.getCoordinate(i));
+//        }
+//    }
 
-    public void apply( CoordinateFilter filter) {
-        for (int i = 0; i < points.size(); i++) {
-            filter.filter(points.getCoordinate(i));
-        }
-    }
+//    public void apply( ICoordinateSequenceFilter filter)
+//    {
+//        if (points.size() == 0)
+//            return;
+//        for (int i = 0; i < points.size(); i++) {
+//            filter.filter(points, i);
+//            if (filter.isDone())
+//                break;
+//        }
+//        if (filter.isGeometryChanged())
+//            geometryChanged();
+//    }
 
-    public void apply( CoordinateSequenceFilter filter)
-    {
-        if (points.size() == 0)
-            return;
-        for (int i = 0; i < points.size(); i++) {
-            filter.filter(points, i);
-            if (filter.isDone())
-                break;
-        }
-        if (filter.isGeometryChanged())
-            geometryChanged();
-    }
-
-    public void apply( GeometryFilter filter) {
+    public void apply( IGeometryFilter filter) {
         filter.filter(this);
     }
 
-    @Override
-    public
-    void apply ( GeometryComponentFilter filter ) {
-
-    }
-
-    public void apply( GeometryComponentFilter filter) {
-        filter.filter(this);
-    }
 
     /**
      * Creates and returns a full copy of this {@linkLineString} object.
@@ -295,8 +314,8 @@ public class LineString
     }
 
     protected
-   LineString copyInternal() {
-        return newLineString(points.copy(), factory);
+   LineString<T> copyInternal() {
+        return new LineString<>(points.copy(), factory);
     }
 
     /**
@@ -320,8 +339,8 @@ public class LineString
         }
     }
 
-    protected boolean isEquivalentClass(Geometry other) {
-        return other instanceofLineString;
+    protected boolean isEquivalentClass( Geometry<T> other) {
+        return other instanceof LineString;
     }
 
     protected int compareToSameClass(Object o)

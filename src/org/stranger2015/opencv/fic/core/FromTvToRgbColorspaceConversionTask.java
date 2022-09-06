@@ -12,12 +12,10 @@ import java.util.List;
 /**
  * @param <N>
  * @param <A>
- 
  * @param <G>
  */
 public
-class FromTvToRgbColorspaceConversionTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */,
-        G extends BitBuffer>
+class FromTvToRgbColorspaceConversionTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
 
         extends ColorspaceConversionTask <N, A, G> {
 
@@ -30,7 +28,7 @@ class FromTvToRgbColorspaceConversionTask<N extends TreeNode <N, A, G>, A extend
     public
     FromTvToRgbColorspaceConversionTask ( String imageFilename,
                                           EPartitionScheme scheme,
-                                          ICodec<N, A, G> codec,
+                                          ICodec <N, A, G> codec,
                                           EtvColorSpace colorSpace,
                                           List <Task <N, A, G>> tasks ) {
 
@@ -43,10 +41,10 @@ class FromTvToRgbColorspaceConversionTask<N extends TreeNode <N, A, G>, A extend
      */
     @Override
     protected
-    M execute ( String filename ) throws ValueError {
-        M imageSrc = super.execute(filename);
+IImage<A> execute ( String filename ) throws ValueError {
+        IImage<A> imageSrc = super.execute(filename);
 
-        M imageDst = (M) new Image <>(imageSrc, address, -1, w, h);
+        IImage<A> imageDst = new Image <>(imageSrc/*, address, -1, w, h*/);
 //        for ( Address<A> address  =   ;  < ; i++) {//todo
 //
 //        }

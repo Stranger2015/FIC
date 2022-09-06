@@ -1,6 +1,5 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.utils.BitBuffer;
@@ -9,8 +8,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
  *
  */
 public
-class SipImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */,
-        G extends BitBuffer>
+class SipImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
         extends SquareImageBlockGenerator <N, A, G> {
 
     /**
@@ -19,21 +17,32 @@ class SipImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A
      * @param domainSize
      */
     public
-    SipImageBlockGenerator ( ITiler <N, A, G> tiler,
+    SipImageBlockGenerator ( IPartitionProcessor <N, A, G> partitionProcessor,
                              EPartitionScheme scheme,
                              IEncoder <N, A, G> encoder,
                              IImage <A> image,
                              IIntSize rangeSize,
                              IIntSize domainSize ) {
-        super(tiler, encoder, image, rangeSize, domainSize);
+        super(partitionProcessor, scheme, encoder, image, rangeSize, domainSize);
     }
 
     /**
+     * @param tiler
+     * @param scheme
+     * @param encoder
+     * @param image
+     * @param rangeSize
+     * @param domainSize
      * @return
      */
     @Override
     public
-    SipImageBlockGenerator <N, A, G> newInstance () {
+    HvBlockGenerator <N, A, G> newInstance ( IPartitionProcessor <N, A, G> partitionProcessor,
+                                                   EPartitionScheme scheme,
+                                                   IEncoder <N, A, G> encoder,
+                                                   IImage <A> image,
+                                                   IIntSize rangeSize,
+                                                   IIntSize domainSize ) {
         return this;
     }
 }

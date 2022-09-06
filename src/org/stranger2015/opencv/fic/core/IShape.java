@@ -7,7 +7,7 @@ import org.stranger2015.opencv.fic.core.geom.Coordinate;
  *
  */
 public
-interface IShape {
+interface IShap {
 
     /**
      * @return

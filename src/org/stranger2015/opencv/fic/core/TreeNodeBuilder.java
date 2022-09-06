@@ -61,8 +61,6 @@ class TreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>,  G e
 
     public
     TreeNodeBuilder ( IImage <A> image, Library <A> library ) {
-
-
     }
 
     public
@@ -98,7 +96,7 @@ class TreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>,  G e
                 null,
                 imageBlock,
                 lastNode.address);//fixme
-        Tree <N, A, G> tree = Tree.create(lastNode.getTreeClass(), root, imageBlock);
+        Tree <N, A, G> tree = ITree.create(lastNode.getTreeClass(), root, imageBlock);
         tree.getNodes().add(root);
 //        tree.getNodes().addAll(buildLayers(root));
 

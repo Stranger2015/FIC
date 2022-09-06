@@ -1,8 +1,7 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.EPartitionScheme;
-import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.ValueError;
 import org.stranger2015.opencv.utils.BitBuffer;
@@ -14,7 +13,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
  * @param <G>
  */
 public
-class FaFeEvCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+class FaFeEvCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
         extends Codec <N, A, G> {
     /**
      * @param scheme

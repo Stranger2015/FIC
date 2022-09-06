@@ -63,6 +63,24 @@ class RLTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, M extends
         return null;
     }
 
+    @Override
+    public
+    TreeNodeBase <N, A, G> createChild ( IImageBlock <A> imageBlock, IAddress <A> address ) throws ValueError {
+        return null;
+    }
+
+    @Override
+    public
+    TreeNodeBase <N, A, G> createNode ( TreeNodeBase <N, A, G> parent, IImageBlock <A> imageBlock, IAddress <A> address ) throws ValueError {
+        return null;
+    }
+
+    @Override
+    public
+    TreeNodeBase <N, A, G> createNode ( TreeNodeBase <N, A, G> parent, IAddress <A> address ) throws ValueError {
+        return null;
+    }
+
     /**
      * @param point
      * @param layerIndex
@@ -71,9 +89,9 @@ class RLTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, M extends
      * @return
      * @throws ValueError
      */
-    @Override
+//    @Override
     public
-    TreeNode <N, A, G> createChild ( GrayScaleImage <A> point, int layerIndex, int clusterIndex, IAddress <A> address ) throws ValueError {
+    TreeNode <N, A, G> createChild ( Image <A> point, int layerIndex, int clusterIndex, IAddress <A> address ) throws ValueError {
         return null;
     }
 
@@ -87,10 +105,11 @@ class RLTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, M extends
      * @return
      * @throws ValueError
      */
-    @Override
+//    @Override
     public
     TreeNode <N, A, G> createChild ( Point point, int layerIndex, int clusteIndex, int x, int y, int address )
             throws ValueError {
+
         return null;
     }
 
@@ -98,6 +117,7 @@ class RLTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, M extends
     public
     TreeNode <N, A, G> createChild ( int layerIndex, int clusterIndex, int address )
             throws ValueError {
+
         return null;
     }
 }

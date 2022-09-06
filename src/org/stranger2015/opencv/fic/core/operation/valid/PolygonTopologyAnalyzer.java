@@ -288,7 +288,7 @@ class PolygonTopologyAnalyzer {
             return segStrings;
         }
         for (int i = 0; i < geom.getNumGeometries(); i++) {
-            Polygon poly = (Polygon) geom.getGeometryN(i);
+            Polygon <T> poly = (Polygon <T>) geom.getGeometryN(i);
             if (poly.isEmpty()) continue;
             boolean hasHoles = poly.getNumInteriorRing() > 0;
 

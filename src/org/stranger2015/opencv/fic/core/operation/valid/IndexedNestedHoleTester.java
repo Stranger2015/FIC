@@ -38,11 +38,11 @@ import java.util.List;
  */
 class IndexedNestedHoleTester
 {
-    private final Polygon polygon;
+    private final Polygon <T> polygon;
     private ISpatialIndex index;
     private Coordinate nestedPt;
 
-    public IndexedNestedHoleTester(Polygon poly)
+    public IndexedNestedHoleTester(Polygon <T> poly)
     {
         this.polygon = poly;
         loadIndex();

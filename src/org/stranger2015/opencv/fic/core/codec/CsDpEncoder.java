@@ -1,12 +1,13 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
+import org.stranger2015.opencv.fic.core.geom.Point;
+import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.fic.transform.ScaleTransform;
-import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
@@ -14,35 +15,38 @@ import java.util.Set;
 
 /**
  * @param <N>
- 
  * @param <A>
  */
 public
-class CsDpEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+class CsDpEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
         extends Encoder <N, A, G> {
+
     /**
      * @param inputImage
      * @param rangeSize
      * @param domainSize
      */
     public
-    CsDpEncoder (M inputImage,
-                  IntSize rangeSize,
-                  IntSize domainSize,
-                  Set <ImageTransform <M, A, G>> transforms,
+    CsDpEncoder ( EPartitionScheme scheme,
+                  ITreeNodeBuilder <N, A, G> nodeBuilder,
+                  IPartitionProcessor <N, A, G> partitionProcessor,
+                  ISearchProcessor <N, A, G> searchProcessor,
                   ScaleTransform <A, G> scaleTransform,
-                  IDistanceator <M, A> comparator,
-                  Set <IImageFilter <M, A>> filters,
-                  FractalModel <N, A, G> fractalModel
-    ) {
+                  ImageBlockGenerator <N, A, G> imageBlockGenerator,
+                  IDistanceator <A> comparator,
+                  Set <ImageTransform <A, G>> imageTransforms,
+                  Set <IImageFilter <A>> imageFilters,
+                  FractalModel <N, A, G> fractalModel ) {
         super(
-                inputImage,
-                rangeSize,
-                rangeSize, domainSize,
-                transforms,
+                scheme,
+                nodeBuilder,
+                partitionProcessor,
+                searchProcessor,
                 scaleTransform,
+                imageBlockGenerator,
                 comparator,
-                filters,
+                imageTransforms,
+                imageFilters,
                 fractalModel
         );
     }
@@ -55,16 +59,40 @@ class CsDpEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M ext
      * @return
      */
 //    @Override
-    protected
+    public
     ImageBlockGenerator <N, A, G> createBlockGenerator (
+            IPartitionProcessor <N, A, G> partitionProcessor,
+            EPartitionScheme scheme,
             IEncoder <N, A, G> encoder,
-            GrayScaleImage<A> image,
-            IntSize rangeSize,
-            IntSize domainSize ) {
-        return new ImageBlockGenerator <>(
-                getTiler(),
+            IImage <A> image,
+            IIntSize rangeSize,
+            IIntSize domainSize ) {
 
-                );
+        return imageBlockGenerator.create(
+                partitionProcessor,
+                scheme,
+                encoder,
+                image,
+                rangeSize,
+                domainSize);
+    }
+
+    @Override
+    public
+    IPartitionProcessor <N, A, G> doCreatePartitionProcessor ( ITiler <N, A, G> tiler ) {
+        return null;
+    }
+
+    @Override
+    public
+    IPartitionProcessor <N, A, G> createPartitionProcessor0 ( ITiler <N, A, G> tiler ) {
+        return null;
+    }
+
+    @Override
+    public
+    void initialize () {
+        logger.info();
     }
 
     /**
@@ -72,8 +100,20 @@ class CsDpEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M ext
      */
     @Override
     public
-    GrayScaleImage<A> encode ( GrayScaleImage<A> image ) {
+    IImage <A> encode ( IImage <A> image ) {
         return image;//todo
+    }
+
+    @Override
+    public
+    IImage <A> doEncode ( IImage <A> image ) {
+        return image;//todo
+    }
+
+    @Override
+    public
+    List <RegionOfInterest <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds ) throws ValueError {
+        return null;
     }
 
     /**
@@ -83,7 +123,7 @@ class CsDpEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M ext
      */
     @Override
     public
-    GrayScaleImage<A> randomTransform ( GrayScaleImage<A> image, ImageTransform <A, G> transform ) {
+    IImage <A> randomTransform ( IImage <A> image, ImageTransform <A, G> transform ) {
         return image;
     }
 
@@ -94,7 +134,7 @@ class CsDpEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M ext
      */
     @Override
     public
-    GrayScaleImage<A> applyTransform ( GrayScaleImage<A> image, ImageTransform <A, G> transform ) {
+    IImage <A> applyTransform ( IImage <A> image, ImageTransform <A, G> transform ) {
         return image;//todo
     }
 
@@ -105,7 +145,7 @@ class CsDpEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M ext
      */
     @Override
     public
-    GrayScaleImage<A> applyAffineTransform ( GrayScaleImage<A> image, AffineTransform <A, G> transform ) {
+    IImage <A> applyAffineTransform ( IImage <A> image, AffineTransform <A, G> transform ) {
         return image;//todo
     }
 
@@ -118,7 +158,7 @@ class CsDpEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M ext
 //     */
 //    @Override
 //    public
-//    List <ImageTransform <M, A, G>> compress ( GrayScaleImage<A> image, int sourceSize, int destinationSize, int step ) {
+//    List <ImageTransform <M, A, G>> compress ( IImage<A> image, int sourceSize, int destinationSize, int step ) {
 //        return image;//todo
 //    }
 
@@ -131,8 +171,11 @@ class CsDpEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M ext
      */
     @Override
     public
-    List <IImageBlock <A>> generateAllTransformedBlocks ( GrayScaleImage<A> image, int sourceSize, int destinationSize, int step ) {
-        return image;//todo
+    List <IImageBlock <A>> generateAllTransformedBlocks ( IImage <A> image,
+                                                          int sourceSize,
+                                                          int destinationSize,
+                                                          int step ) {
+        return new ImageBlock <>(image, 0, 0, 8, List.of(new Point[0]));
     }
 
     /**
@@ -147,12 +190,12 @@ class CsDpEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M ext
     @Override
     public
     ImageBlockGenerator <N, A, G> createBlockGenerator (
-            ITiler <M, A> tiler,
+            ITiler <N, A, G> tiler,
             EPartitionScheme scheme,
             IEncoder <N, A, G> encoder,
-            GrayScaleImage <A> image,
-            Size rangeSize,
-            Size domainSize
+            IImage <A> image,
+            IIntSize rangeSize,
+            IIntSize domainSize
     ) {
 
         return new SquareImageBlockGenerator <>(
@@ -165,7 +208,6 @@ class CsDpEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M ext
         );
     }
 
-
     /**
      * @param image
      * @param axis
@@ -173,7 +215,7 @@ class CsDpEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M ext
      */
     @Override
     public
-    GrayScaleImage <A> flipAxis ( GrayScaleImage <A> image, int axis ) {
+    IImage <A> flipAxis ( IImage <A> image, int axis ) {
         return image;
     }
 
@@ -182,7 +224,7 @@ class CsDpEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M ext
      */
     @Override
     public
-    List <ImageBlock <A>> getRangeBlocks () {
+    List <IImageBlock <A>> getRangeBlocks () {
         return image;
     }
 
@@ -209,8 +251,8 @@ class CsDpEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M ext
      */
     @Override
     public
-    ITiler <M, A> getTiler () {
-        return image;
+    ITiler <N, A, G> getPartitionProcessor () {
+        return tiler;
     }
 
     /**
@@ -230,5 +272,23 @@ class CsDpEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M ext
     public
     FractalModel <N, A, G> loadModel ( String filename ) {
         return image;
+    }
+
+    @Override
+    public
+    void add ( TreeNode <N, A, G> node ) {
+
+    }
+
+    @Override
+    public
+    void addLeafNode ( TreeNode.LeafNode <N, A, G> node ) {
+
+    }
+
+    @Override
+    public
+    void addLeafNode ( TreeNodeBase <N, A, G> node ) {
+
     }
 }

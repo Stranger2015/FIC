@@ -13,8 +13,10 @@ package org.stranger2015.opencv.fic.core.operation.valid;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.operation.valid.PolygonTopologyAnalyzer;
-import org.locationtech.jts.operation.valid.TopologyValidationError;
-import org.stranger2015.opencv.fic.core.operation.valid.IndexedNestedPolygonTester;
+import org.stranger2015.opencv.fic.core.geom.*;
+import org.stranger2015.opencv.fic.core.io.MultiPoint;
+import org.stranger2015.opencv.fic.core.io.MultiPolygon;
+import org.stranger2015.opencv.fic.core.operation.valid.TopologyValidationError;
 
 import java.util.stream.IntStream;
 
@@ -160,10 +162,10 @@ class IsValidOp {
         }
 
         if (g instanceof Point) {
-            return isValid((Point) g);
+            return isValid((Point<?>) g);
         }
         if (g instanceof MultiPoint) {
-            return isValid((MultiPoint) g);
+            return isValid((MultiPoint<?>) g);
         }
         if (g instanceof LinearRing) {
             return isValid((LinearRing) g);
@@ -189,7 +191,7 @@ class IsValidOp {
      * Tests validity of a Point.
      */
     private
-    boolean isValid ( Point g ) {
+    boolean isValid ( Point<?> g ) {
         checkCoordinateInvalid(g.getCoordinates());
         return !hasInvalidError();
     }

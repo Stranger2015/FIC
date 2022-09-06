@@ -3,6 +3,7 @@ package org.stranger2015.opencv.fic.core.codec;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
+import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.utils.BitBuffer;
@@ -143,7 +144,7 @@ import java.util.Set;
  * now, calculate the variance of range and domain blocks by the equation below. The variance of block I is
  * defined as,
  * <p>
- * Var(I)  =  2* 2
+ * Var(I)  =  2 * 2
  * Where n is the size of the block and Xi is the pixel value of the range blocks.
  * <p>
  * Step 11: For all R blocks, repeat Step 6-10;
@@ -154,14 +155,14 @@ import java.util.Set;
  */
 public
 interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends IPipeline <IImage <A>, IImage <A>>,
-                IImageProcessorListener <N, A, G>,
-                ICodecListener <N, A, G>,
-                IConstants {
+        extends// IPipeline <IImage <A>, IImage <A>>,
+        IImageProcessorListener <N, A, G>,
+        ICodecListener <N, A, G>,
+        IConstants {
     /**
      *
      */
-    void initialize();
+    void initialize ();
 
     /**
      * @return
@@ -176,7 +177,7 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      * @param image
      * @return
      */
-    IImage<A> doEncode ( IImage<A> image );
+    IImage <A> doEncode ( IImage <A> image );
 
     /**
      * @return
@@ -204,9 +205,11 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
 
     /**
      * @param image
+     * @param blockWidth
+     * @param blockHeight
      * @throws ValueError
      */
-    void segmentRegion ( RegionOfInterest <A> image ) throws ValueError;
+    void segmentRegion ( RegionOfInterest <A> image, int blockWidth, int blockHeight ) throws ValueError;
 
     /**
      * @return
@@ -276,7 +279,7 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      * @return
      */
     ImageBlockGenerator <N, A, G> createBlockGenerator (
-            ITiler <N, A, G> tiler,
+            IPartitionProcessor <N, A, G> partitionProcessor,
             EPartitionScheme scheme,
             IEncoder <N, A, G> encoder,
             IImage <A> image,
@@ -288,27 +291,24 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      * @return
      */
     default
-    ITiler <N, A, G> createTiler () {
-        ITiler <N, A, G> tiler = getTiler();
-        if (tiler == null) {
-            tiler = createTiler0();//fixme
+    IPartitionProcessor <N, A, G> createPartitionProcessor ( ITiler <N, A, G> tiler ) {
+        IPartitionProcessor <N, A, G> partitionProcessor = getPartitionProcessor();
+        if (partitionProcessor == null) {
+            partitionProcessor = doCreatePartitionProcessor(tiler);//fixme
         }
 
-        return tiler;
+        return partitionProcessor;
     }
 
     /**
      * @return
      */
-    default
-    ITiler <N, A, G> createTiler0 () {
-        return null;
-    }
+    IPartitionProcessor <N, A, G> doCreatePartitionProcessor ( ITiler <N, A, G> tiler );
 
     /**
      * @return
      */
-    ITiler <N, A, G> getTiler ();
+    IPartitionProcessor <N, A, G> getPartitionProcessor ();
 
     /**
      * @return
@@ -334,5 +334,5 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
     /**
      * @param node
      */
-    void addLeafNode ( TreeNodeBase<N, A, G> node );
+    void addLeafNode ( TreeNodeBase <N, A, G> node );
 }
