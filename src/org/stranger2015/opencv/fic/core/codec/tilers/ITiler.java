@@ -5,17 +5,15 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
 import org.stranger2015.opencv.fic.core.codec.IPartitionProcessor;
 import org.stranger2015.opencv.fic.core.codec.RegionOfInterest;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
-
-import static org.stranger2015.opencv.fic.core.ETilerOperation.*;
 
 /**
  * Tiler & ImageBlkGenerator
@@ -44,15 +42,29 @@ interface ITiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      * @return
      */
     default
-    List <IImageBlock <A>> tile ( IImageBlock <A> imageBlock,
-                                  IIntSize minRangeSize,
-                                  @NotNull Deque <IImageBlock <A>> queue )
-            throws ValueError {
-
-        queue.push(imageBlock);
-
-        return doTile(imageBlock, minRangeSize, queue);
+    void tile ( IImageBlock <A> imageBlock ) throws ValueError {
+        getDeque().push(imageBlock);
+        try {
+            doTile(imageBlock);
+        } catch (DepthLimitExceeded e) {
+            getLogger().info("Max depth has been exceeded ...");
+        }
     }
+
+    /**
+     * @return
+     */
+    IIntSize getMinRangeSize ();
+
+    /**
+     * @return
+     */
+    IIntSize getMinDomainSize ();
+
+    /**
+     * @return
+     */
+    Deque <IImageBlock <A>> getDeque ();
 
     /**
      * @param imageBlock
@@ -61,63 +73,25 @@ interface ITiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      * @return
      * @throws ValueError
      */
-    default
-    List <IImageBlock <A>> doTile ( IImageBlock <A> imageBlock,
-                                    IIntSize minRangeSize,
-                                    Deque <IImageBlock <A>> queue )
-            throws ValueError {
+    void doTile ( IImageBlock <A> imageBlock ) throws ValueError, DepthLimitExceeded;
 
-        List <IImageBlock <A>> result = new ArrayList <>();
-        for (ETilerOperation operation = TILE_START; operation != TILE_FINISH; ) {
-            queue.pop();//todo here??
-            switch (operation) {
-                case TILE_START:
-                    if (imageBlock.getSize().compareTo(minRangeSize) <= 0) {
-                        operation = TILE_FINISH;
-                        break;
-                    }
-                    operation = TILE_SEGMENT_SHAPE;
-                    break;
-                case TILE_SEGMENT_SHAPE:
-                    result = segmentGeometry(imageBlock, minRangeSize, queue);
-                    operation = TILE_SUCCESSORS;
-                    break;
-                case TILE_SUCCESSORS:
-                    List <TreeNodeBase <N, A, G>> successors = getBuilder().getSuccessors();
-                    int succIndex = 0;
-                    TreeNodeBase <N, A, G> node = successors.get(succIndex);
-                    getBuilder().add(node);
-                    if (node.isLeaf()) {
-                        getBuilder().addLeafNode((TreeNode.LeafNode <N, A, G>) node);
-//                        imageBlock = ((ILeaf <N, A, G>) node).getImageBlock();//todo push??
-                        operation = TILE_LEAF;
-                    }
-                    else {
-                        EDirection q = node.getQuadrant();
-                        operation = TILE_SUCCESSOR;
-                    }
-                    break;
-                case TILE_SUCCESSOR:
-                    queue.push(imageBlock);
-                    break;
-                case TILE_LEAF:
-                    imageBlock = queue.pop();//fixme
-                    break;
-                case TILE_FINISH:
-                    onFinish();
-                    continue;
-                default:
-                    throw new IllegalStateException("Unexpected value: " + operation);
-            }
-        }
+    /**
+     * @param node
+     * @param imageBlock
+     */
+    void onAddNode ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock );
 
-        return result;
-    }
+    /**
+     * @param leafNode
+     * @param imageBlock
+     */
+    void onAddLeafNode ( LeafNode <N, A, G> leafNode, IImageBlock <A> imageBlock );
 
     /**
      *
      */
-    default void onFinish () {
+    default
+    void onFinish () {
         getLogger().info("On finishing doTile() ...");
     }
 
@@ -144,50 +118,38 @@ interface ITiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
     /**
      * @param imageBlockShape
      * @param imageBlock
-     * @param minRangeSize
-     * @param queue
      */
-    default
-    List <IImageBlock <A>> segmentGeometry (
-            IImageBlock <A> imageBlock,
-            IIntSize minRangeSize,
-
-            Deque <IImageBlock <A>> queue ) throws ValueError {
-
-        return List.of(imageBlock);
-    }
+    void segmentGeometry ( IImageBlock <A> imageBlock ) throws ValueError;
 
     /**
      * @param imageBlock
      * @throws ValueError
      */
-    List <IImageBlock <A>> segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError;
+    void segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError;
 
     /**
      * @param imageBlock
      * @throws ValueError
      */
-    List <IImageBlock <A>> segmentSquare ( IImageBlock <A> imageBlock ) throws ValueError;
+    void segmentSquare ( IImageBlock <A> imageBlock ) throws ValueError;
 
     /**
      * @param imageBlock
      * @throws ValueError
      */
-    List <IImageBlock <A>> segmentTriangle ( IImageBlock <A> imageBlock ) throws ValueError;
+    void segmentTriangle ( IImageBlock <A> imageBlock ) throws ValueError;
 
     /**
      * @param imageBlock
-     * @return
      * @throws ValueError
      */
-    List <IImageBlock <A>> segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError;
+    void segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError;
 
     /**
      * @param imageBlock
-     * @return
      * @throws ValueError
      */
-    List <IImageBlock <A>> segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError;
+    void segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError;
 
     /**
      * @param node
@@ -206,14 +168,12 @@ interface ITiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      * @param blockHeight
      * @return
      */
-    List <IImageBlock <A>> generateInitialRangeBlocks (
-            RegionOfInterest <A> roi,
-            int blockWidth,
-            int blockHeight ) throws ValueError;
+    List <IImageBlock <A>> generateInitialRangeBlocks (RegionOfInterest <A> roi, int blockWidth, int blockHeight )
+            throws ValueError;
 
-    /**
-     * @return
-     */
+    //    /**
+//     * @return
+//     */
 //        Vertex[] vertices = generateVerticesSet(roi, blockWidth, blockHeight);
 //        List <IImageBlock <A>> rangeBlocks = new ArrayList <>(vertices.length);
 //        int sumOfPixelValues = 0;
@@ -241,13 +201,18 @@ interface ITiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
     int successorAmount ();
 
     default
-    List <IImageBlock <A>> generateRangeBlocks (
-            RegionOfInterest <A> roi,
-            int blockWidth,
-            int blockHeight )
+    List <IImageBlock <A>> generateRangeBlocks (RegionOfInterest <A> roi, int blockWidth, int blockHeight )
 
             throws ValueError {
 
         return generateInitialRangeBlocks(roi, blockWidth, blockHeight);
+    }
+
+    /**
+     * @return
+     */
+    default
+    boolean isBottomUpTiler () {
+        return this instanceof IBottomUpTiler;
     }
 }

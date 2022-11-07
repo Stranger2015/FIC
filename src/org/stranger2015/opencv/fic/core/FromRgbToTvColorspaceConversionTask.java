@@ -14,7 +14,7 @@ import java.util.List;
  */
 public
 class FromRgbToTvColorspaceConversionTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends ColorspaceConversionTask <N, A, G> {
+        extends CodecTask.ColorspaceConversionTask <N, A, G> {
 
     /**
      * @param imageFilename
@@ -146,7 +146,7 @@ class FromRgbToTvColorspaceConversionTask<N extends TreeNode <N, A, G>, A extend
     IImage<A> execute ( String filename ) throws ValueError {
         IImage<A>  imageSrc = super.execute(filename);
 
-        IImage<A>  imageDst = new Image <>(imageSrc, -1, -0, 0);
+        IImage<A>  imageDst = new Image <>(imageSrc, roi1, -1, -0, 0, regions);
         int[] pixels = imageSrc.getPixels();
         for (int i=0   ;i< pixels.length; i++) {//todo;
 

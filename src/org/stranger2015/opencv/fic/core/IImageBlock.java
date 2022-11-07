@@ -1,15 +1,19 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.opencv.core.MatOfInt;
-import org.stranger2015.opencv.fic.core.geom.Coordinate;
-import org.stranger2015.opencv.fic.core.geom.Polygon;
+import org.opencv.core.Mat;
+import org.stranger2015.opencv.fic.core.geom.Geometry;
 
 /**
  * @param <A>
  */
 public
-interface IImageBlock<A extends IAddress <A>> extends IImage <A> {
-    Polygon <?> getPolygon();
+interface IImageBlock<A extends IAddress <A>>
+        extends IImage <A> {
+
+    /**
+     * @return
+     */
+    Geometry <?> getGeometry ();
 
     /**
      * @return
@@ -18,11 +22,6 @@ interface IImageBlock<A extends IAddress <A>> extends IImage <A> {
     int pixelAmount () {
         return getWidth() * getHeight();
     }
-
-    /**
-     * @param address
-     */
-    void setAddress ( IAddress <A> address );
 
     /**
      * @param n
@@ -73,7 +72,7 @@ interface IImageBlock<A extends IAddress <A>> extends IImage <A> {
     /**
      * @return
      */
-    MatOfInt getMat ();
+    Mat getMat ();
 
     /**
      * @param i
@@ -85,15 +84,15 @@ interface IImageBlock<A extends IAddress <A>> extends IImage <A> {
      */
     void getRGB ( int i, int i1, int sideSize, int[] img1pixels, int i2, int i3 );
 
-    /**
-     * @param address
-     * @param data
-     * @return
-     */
-    default
-    int get ( IAddress <A> address, int[] data ) {
-        return data[(int) address.get()];
-    }
+//    /**
+//     * @param address
+//     * @param data
+//     * @return
+//     */
+//    default
+//    int get (int row, int col, double[] data ) throws ValueError {
+//        return create(row, getWidth(), col, EAddressKind.ORDINARY);
+//    }
 
     /**
      * @return
@@ -110,16 +109,14 @@ interface IImageBlock<A extends IAddress <A>> extends IImage <A> {
      * @param x
      * @param i
      */
-    @Override
-    void put ( int x, int y, int[] data );
+//    @Override
+    int put ( int x, int y, double[] data );
 
     /**
-     *
-     *
      * @return
      */
-    @Override
-    int getMeanPixelValue ();
+//    @Override
+    double[] getMeanPixelValue ();
 
     /**
      *
@@ -140,17 +137,19 @@ interface IImageBlock<A extends IAddress <A>> extends IImage <A> {
      */
     int getY ();
 
-    /**
-     * @param p0
-     * @param p1
-     * @param p2
-     * @return
-     */
-    IImageBlock<A> getTriangleSubImage ( Coordinate p0, Coordinate p1, Coordinate p2 );
+//    /**
+//     * @param p0
+//     * @param p1
+//     * @param p2
+//     * @return
+//     */
+//    IImageBlock<A> getTriangleSubImage ( Coordinate p0, Coordinate p1, Coordinate p2 );
+//
+//    /**
+//     * @param coords
+//     * @return
+//     */
+//    IImageBlock<A> getPolygonSubImage ( Coordinate ... coords );
+//
 
-    /**
-     * @param coords
-     * @return
-     */
-    IImageBlock<A> getPolygonSubImage ( Coordinate ... coords );
 }

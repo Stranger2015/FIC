@@ -41,7 +41,7 @@ class TreeTraverser<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exte
     protected final Tree <N, A, G> tree;
     protected final TreeNodeTask <N, A, G> action;
 
-    protected final ESearchType searchType = DEPTH_FIRST;
+//    protected final ESearchType searchType = DEPTH_FIRST;
     protected final List <TreeNode<N, A, G>> nodes;
     protected int depth;
     protected EOrder order = IN;
@@ -140,13 +140,13 @@ class TreeTraverser<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exte
         return order;
     }
 
-    /**
-     * @return
-     */
-    public
-    ESearchType getSearchType () {
-        return searchType;
-    }
+//    /**
+//     * @return
+//     */
+//    public
+//    ESearchType getSearchType () {
+//        return searchType;
+//    }
 
     /**
      * @return
@@ -392,24 +392,24 @@ class TreeTraverser<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exte
     @SuppressWarnings("unchecked")
     private static
     <N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-    @NotNull List <TreeNode<N, A, G>> addFourWhiteChildren ( Object node ) {
+    @NotNull List <TreeNode<N, A, G>> addFourWhiteChildren ( TreeNodeBase<N,A,G> node ) {
         final List <TreeNode<N, A, G>> l = new ArrayList <>(4);
         node.setType(GRAY);
-        QUADRANTS.forEach(( EDirection quadrant ) -> {
-            int w = node.boundingBox.width / 2;
-            int h = node.boundingBox.height / 2;
+        for (EDirection quadrant : QUADRANTS) {
+            int w = node.boundingBox.getWidth() / 2;
+            int h = node.boundingBox.getHeight() / 2;
             TreeNode <N, A, G> ch = null;
             ch = node.createChild(
                     quadrant.getOrd(),
-                    new Rectangle(node.boundingBox.x,
-                            node.boundingBox.y,
+                    new Rectangle(node.boundingBox.getX(),
+                            node.boundingBox.getY(),
                             w,
                             h));
             l.add(ch);
             for (EDirection q1 : QUADRANTS) {
                 ch.setChild(q1, null);
             }
-        });
+        }
 
         return l;
     }

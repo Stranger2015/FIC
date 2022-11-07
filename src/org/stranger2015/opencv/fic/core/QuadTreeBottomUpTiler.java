@@ -2,6 +2,7 @@ package org.stranger2015.opencv.fic.core;
 
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
+import org.stranger2015.opencv.fic.core.codec.tilers.IBottomUpTiler;
 import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
 import org.stranger2015.opencv.utils.BitBuffer;
 
@@ -51,23 +52,21 @@ class QuadTreeBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>
 
     /**
      * @param imageBlock
-     * @return
      * @throws ValueError
      */
     @Override
     public
-    List <IImageBlock <A>> segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
         return List.of();
     }
 
     /**
      * @param imageBlock
-     * @return
      * @throws ValueError
      */
     @Override
     public
-    List <IImageBlock <A>> segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
         return List.of();
     }
 }

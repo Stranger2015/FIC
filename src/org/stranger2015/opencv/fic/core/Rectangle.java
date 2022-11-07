@@ -2,13 +2,11 @@ package org.stranger2015.opencv.fic.core;
 
 import org.stranger2015.opencv.fic.core.codec.PointAddress;
 
-import static org.stranger2015.opencv.fic.core.IShape.EShape.RECTANGLE;
-
 /**
  *
  */
 public
-class Rectangle extends IntSize implements IShape , IRectangle{
+class Rectangle extends IntSize implements IRectangle{
     protected final IAddress <?> address;
 
     /**
@@ -19,9 +17,9 @@ class Rectangle extends IntSize implements IShape , IRectangle{
      */
     public
     Rectangle ( int x, int y, int width, int height ) throws ValueError {
-        super(width, height);
 
-        address = new PointAddress<>(x, y);//;;valueOf(x + (long) height * y);
+        super(width, height);
+        address = new PointAddress<>(x, y);
     }
 
     /**
@@ -31,6 +29,11 @@ class Rectangle extends IntSize implements IShape , IRectangle{
     public
     Rectangle ( int width, int height ) throws ValueError {
         this(0, 0, width, height);
+    }
+
+    public
+    Rectangle ( IAddress<?> address, int width, int height ) {
+        super(address.getX(), address.getY(), width, height);
     }
 
     public boolean isSquare(){
@@ -48,16 +51,7 @@ class Rectangle extends IntSize implements IShape , IRectangle{
     /**
      * @return
      */
-    @Override
-    public
-    EShape getShapeKind () {
-        return RECTANGLE;
-    }
-
-    /**
-     * @return
-     */
-    @Override
+//    @Override
     public
     int area () {
         return width * height;
@@ -66,7 +60,7 @@ class Rectangle extends IntSize implements IShape , IRectangle{
     /**
      * @return
      */
-    @Override
+//    @Override
     public
     IAddress <?> getAddress () {
         return address;

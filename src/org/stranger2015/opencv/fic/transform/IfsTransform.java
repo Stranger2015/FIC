@@ -87,7 +87,7 @@ class IfsTransform</*M extends IImage<A>,*/ A extends IAddress <A>, G extends Bi
      */
     public
     M downSample ( M src, int startX, int startY, int targetSize ) {
-        IImage<A> out = new Image<>(src, address, -1, w, h);
+        IImage<A> out = new Image<>(src, roi1, address, -1, w, h);
         //        PixelValue* dest = new PixelValue[targetSize * targetSize];
 //        int srcWidth = src.width();
         int destX = 0;

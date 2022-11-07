@@ -1,15 +1,11 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.Contract;
-import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.IAddress;
-import org.stranger2015.opencv.fic.core.ValueError;
 import org.stranger2015.opencv.fic.utils.Point;
 
 import java.util.List;
-import java.util.stream.IntStream;
 
-import static java.util.stream.IntStream.*;
+import static java.util.stream.IntStream.iterate;
 
 /**
  * @param <A>
@@ -33,7 +29,7 @@ interface IAddressMath<A extends IAddress <A>> {
     IAddress <A> plus ( IAddress <A> address1, IAddress <A> address2 ) throws ValueError {
          address1.getPlusTable();
 
-        return IAddress.valueOf(-1);//fixme
+        return IAddress.valueOf(-1, inputImage.getWidth(), i2);//fixme
     }
 
     /**
@@ -93,7 +89,7 @@ interface IAddressMath<A extends IAddress <A>> {
     @Contract(pure = true)
     static
     int pow ( int base, int pow ) {
-//        int result = 1;
+        int result = 1;
 //        if (pow > 0) {
 //            for (int i = 0; i < pow; i++) {
 //                result *= base;

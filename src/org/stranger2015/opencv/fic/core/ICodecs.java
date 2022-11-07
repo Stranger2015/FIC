@@ -19,8 +19,8 @@ interface ICodecs {
     String DCT_CODEC = "DctCodec";
     String FA_FE_EV_CODEC = "FaFeEvCodec";
 
-    String SAM0_ENCODER = "SplitAndMergeEncoder";
-    String SAM0_DECODER = "SplitAndMergeDecoder";
+    String SAM0_ENCODER = "DtSplitAndMergeEncoder";
+    String SAM0_DECODER = "DtSplitAndMergeDecoder";
     String SIP_ENCODER = "SipEncoder";
     String SIP_DECODER = "SipDecoder";
     String HV_ENCODER = "HvEncoder";

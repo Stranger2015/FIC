@@ -1,5 +1,6 @@
 package org.stranger2015.opencv.fic.core;
 
+import org.opencv.core.Mat;
 import org.stranger2015.opencv.fic.utils.Point;
 
 import static org.stranger2015.opencv.fic.core.EAddressKind.ORDINARY;
@@ -10,23 +11,22 @@ import static org.stranger2015.opencv.fic.core.EAddressKind.ORDINARY;
 public
 class DecAddress<A extends IAddress <A>> extends Address <A> {
 
+    private int addr;
+
     /**
      * @param index
      * @param i
      * @throws ValueError
      */
     public
-    DecAddress ( long index, int i ) throws ValueError {
-        super(index + i);
+    DecAddress ( int row, int stride, int col ) throws ValueError {
+        addr=stride*row + col;
     }
 
-    /**
-     * @param address
-     * @throws ValueError
-     */
+
     public
-    DecAddress ( long address ) throws ValueError {
-        this(address, 0);
+    DecAddress ( int segment, int offset ) {
+        super(segment, offset);
     }
 
     /**
@@ -89,6 +89,12 @@ class DecAddress<A extends IAddress <A>> extends Address <A> {
         return super.mult(point1, number);
     }
 
+    @Override
+    public
+    int getAddr () {
+        return addr;
+    }
+
     /**
      * @return
      */
@@ -96,5 +102,17 @@ class DecAddress<A extends IAddress <A>> extends Address <A> {
     public
     EAddressKind getAddressKind () {
         return ORDINARY;
+    }
+
+    @Override
+    public
+    int getX () {
+        return 0;
+    }
+
+    @Override
+    public
+    int getY () {
+        return 0;
     }
 }

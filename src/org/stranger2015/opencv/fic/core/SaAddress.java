@@ -69,6 +69,11 @@ class SaAddress<A extends IAddress <A>> extends Address <A> {
         this((long) x * y);//x+rowStride
     }
 
+    public
+    SaAddress ( int row, int stride, int col ) {
+        super(row, stride, col);
+    }
+
     /**
      * Returns the value of the specified number as an {@code int}.
      *

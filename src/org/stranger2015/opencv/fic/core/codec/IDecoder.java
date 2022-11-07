@@ -1,6 +1,6 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.stranger2015.opencv.fic.core.FractalModel;
+import org.stranger2015.opencv.fic.core.FicFileModel;
 import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
@@ -16,11 +16,11 @@ interface IDecoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
     /**
      *
      */
-    IImage<A > decode ( FractalModel <N, A, G> fractalModel );
+    IImage<A > decode ( FicFileModel <N, A, G> fractalModel );
 
     /**
      * @param filename
      * @param fractalModel
      */
-    void saveModel(String filename, FractalModel <N, A, G> fractalModel);
+    void saveModel(String filename, FicFileModel <N, A, G> fractalModel);
 }

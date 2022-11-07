@@ -1,6 +1,6 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.opencv.core.MatOfInt;
+import org.opencv.core.Mat;
 import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.Image;
@@ -21,7 +21,7 @@ class CompressedSipImage<A extends IAddress <A>> extends Image <A> {
      */
     public
     CompressedSipImage ( IImage <A> input ) {
-        super(input, pixels);
+        super(actualImage, input, pixels);
     }
 
     /**
@@ -47,7 +47,7 @@ class CompressedSipImage<A extends IAddress <A>> extends Image <A> {
      */
     @Override
     public
-    MatOfInt getMat () {
+    Mat getMat () {
         return super.getMat();
     }
 }

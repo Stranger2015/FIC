@@ -2,7 +2,6 @@ package org.stranger2015.opencv.fic.utils;
 
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfInt;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 import org.stranger2015.opencv.fic.core.*;
@@ -30,7 +29,7 @@ class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
      */
     public
     GrayScaleImage ( Mat inputImage ) {
-        super(inputImage, size);
+        super(actualImage, inputImage, size);
     }
 
     /**
@@ -38,7 +37,7 @@ class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
      */
     public
     GrayScaleImage ( Mat inputImage, IIntSize size ) throws ValueError {//FIXME
-        super(inputImage, size);
+        super(actualImage, inputImage, size);
 
         IImage <A> dest = new GrayScaleImage <>(inputImage);
         Imgproc.resize(inputImage,dest.getMat(),size.toSize());
@@ -129,7 +128,7 @@ class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
      */
     @Override
     public
-    int pixelValues ( int addr, int i ) {
+    double[] pixelValues ( int addr, int i ) {
         return 0;
     }
 
@@ -313,7 +312,7 @@ class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
      */
     @Override
     public
-    MatOfInt getMat () {
+    Mat getMat () {
         return actualImage;
     }
 

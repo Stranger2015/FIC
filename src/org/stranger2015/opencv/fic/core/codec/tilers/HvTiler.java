@@ -1,10 +1,12 @@
 package org.stranger2015.opencv.fic.core.codec.tilers;
 
+import org.slf4j.Logger;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.codec.RegionOfInterest;
+import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.util.Deque;
 import java.util.List;
 
 /**
@@ -16,7 +18,7 @@ import java.util.List;
 public
 class HvTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
 
-        extends RectangularTiler <N, A, G> {
+        extends Tiler <N, A, G> {
 
 //    private final RectangularTiler <N, A, G> rectangularTiler;
 
@@ -27,8 +29,26 @@ class HvTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
 
     @Override
     public
-    List <IImageBlock <A>> segmentGeometry ( IImageBlock <A> imageBlock, IIntSize minRangeSize, Deque <IImageBlock <A>> queue ) throws ValueError {
-        return super.segmentGeometry(imageBlock, minRangeSize, queue);
+    Logger getLogger () {
+        return null;
+    }
+
+    @Override
+    public
+    ITiler <N, A, G> instance () {
+        return null;
+    }
+
+    @Override
+    public
+    void segmentGeometry ( IImageBlock <A> imageBlock ) throws ValueError {
+        return Tiler.super.segmentGeometry(imageBlock, minRangeSize, queue);
+    }
+
+    @Override
+    public
+    void segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
+        return null;
     }
 
 
@@ -65,13 +85,39 @@ class HvTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
 
 //    @Override
     public
-    List <IImageBlock <A>> segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
         return null;
     }
 
 //    @Override
     public
-    List <IImageBlock <A>> segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
         return null;
+    }
+
+    @Override
+    public
+    void addLeafNode ( TreeNode <N, A, G> node ) {
+
+    }
+
+    @Override
+    public
+    List <Vertex> generateVerticesSet ( RegionOfInterest <A> roi, int blockWidth, int blockHeight ) {
+        return null;
+    }
+
+    @Override
+    public
+    List <IImageBlock <A>> generateInitialRangeBlocks ( RegionOfInterest <A> roi, int blockWidth, int blockHeight )
+            throws ValueError {
+
+        return null;
+    }
+
+    @Override
+    public
+    int successorAmount () {
+        return 0;
     }
 }

@@ -24,7 +24,7 @@ class BinTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
      * @param rect
      */
     public
-    BinTreeNode ( TreeNodeBase <N, A, G> parent, EDirection quadrant, IIntSize rect ) throws ValueError {
+    BinTreeNode ( TreeNodeBase <N, A, G> parent, EDirection quadrant, Rectangle rect ) throws ValueError {
         super(parent, quadrant, rect);
     }
 
@@ -33,9 +33,15 @@ class BinTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
         super(parent, quadrant, address);
     }
 
+    /**
+     * @param parent
+     * @param width
+     * @param height
+     * @throws ValueError
+     */
     public
     BinTreeNode ( TreeNodeBase <N, A, G> parent, int width, int height ) throws ValueError {
-        this(parent, null, new IntSize(width, height));
+        this(parent, null, new Rectangle(width, height));
     }
 
     /**
@@ -47,6 +53,10 @@ class BinTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
         this(parent, null, address);
     }
 
+    /**
+     * @param node
+     * @throws ValueError
+     */
     public
     BinTreeNode ( TreeNodeBase <N, A, G> node ) throws ValueError {
         super(node, 0);
@@ -64,8 +74,8 @@ class BinTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
             throws ValueError {
 
         return imageBlock == null ?
-                new BinTreeNode <N, A, G>(parent, address) :
-                new LeafNode <>(parent, imageBlock);
+                new BinTreeNode <>(parent, address) :
+                new LeafNode <>(parent, point, imageBlock);
     }
 
     /**
@@ -75,7 +85,7 @@ class BinTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
      */
 //    @Override
     public
-    TreeNodeBase <N, A, G> createNode ( TreeNodeBase <N, A, G> parent, IIntSize boundingBox )
+    TreeNodeBase <N, A, G> createNode ( TreeNodeBase <N, A, G> parent,  Rectangle boundingBox )
             throws ValueError {
 
         return new BinTreeNode <>(parent, boundingBox);
@@ -86,7 +96,7 @@ class BinTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
      * @param bb
      */
     public
-    BinTreeNode ( TreeNodeBase <N, A, G> node, IIntSize bb ) throws ValueError {
+    BinTreeNode ( TreeNodeBase <N, A, G> node, Rectangle bb ) throws ValueError {
         super(node, bb);
     }
 
@@ -153,7 +163,7 @@ class BinTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
      * @throws ValueError
      */
     public
-    TreeNodeBase <N, A, G> createChild ( EDirection quadrant, IIntSize boundingBox ) throws ValueError {
+    TreeNodeBase <N, A, G> createChild ( EDirection quadrant, Rectangle boundingBox ) throws ValueError {
         return new BinTreeNode <>(this, quadrant, boundingBox);
     }
 
@@ -163,14 +173,14 @@ class BinTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
      * @return
      */
     public
-    TreeNodeBase <N, A, G> createNode ( TreeNode <N, A, G> parent, IIntSize boundingBox ) throws ValueError {
+    TreeNodeBase <N, A, G> createNode ( TreeNode <N, A, G> parent, Rectangle boundingBox ) throws ValueError {
         return new BinTreeNode <>(parent, boundingBox);
     }
 
     public
     BinTreeNode <N, A, G> createNode ( BinTreeNode <N, A, G> parent,
                                        EDirection quadrant,
-                                       IIntSize boundingBox )
+                                       Rectangle boundingBox )
             throws ValueError {
 
         return new BinTreeNode <>(parent, quadrant, boundingBox);
@@ -308,7 +318,7 @@ class BinTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
      * @param i2
      * @param i3
      */
-//    @Override
+    @Override
     public
     void getRGB ( int i, int i1, int sideSize, int[] img1pixels, int i2, int i3 ) {
 
@@ -318,19 +328,28 @@ class BinTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
      * @param address
      * @return
      */
-//    @Override
+    @Override
     public
     int[] get ( int address ) {
         return new int[0];
     }
 
-    //    @Override
+    /**
+     * @param address
+     * @return
+     */
+    @Override
     public
     int[] getPixels ( IAddress <A> address ) {
         return new int[0];
     }
 
-    //    @Override
+    /**
+     * @param addr
+     * @param i
+     * @return
+     */
+    @Override
     public
     int pixelValues ( int addr, int i ) {
         return 0;
@@ -409,7 +428,7 @@ class BinTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
      */
 //        @Override
     public
-    IIntSize getSize () {
+    Rectangle getSize () {
         return size;
     }
 
@@ -634,7 +653,7 @@ class BinTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
 
     @Override
     public
-    IIntSize getBoundingBox () {
+    Rectangle getBoundingBox () {
         return boundingBox;
     }
 
@@ -650,8 +669,7 @@ class BinTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
 
     @Override
     public
-    TreeNodeBase <N, A, G> createNode ( TreeNodeBase <N, A, G> parent,
-                                        IAddress <A> address ) throws ValueError {
+    TreeNodeBase <N, A, G>  createNode ( TreeNodeBase <N, A, G> parent, IAddress <A> address ) throws ValueError {
         return null;
     }
 }

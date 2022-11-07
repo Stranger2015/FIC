@@ -17,7 +17,7 @@ import java.util.List;
 public
 class FromTvToRgbColorspaceConversionTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
 
-        extends ColorspaceConversionTask <N, A, G> {
+        extends CodecTask.ColorspaceConversionTask <N, A, G> {
 
     /**
      * @param imageFilename
@@ -33,56 +33,6 @@ class FromTvToRgbColorspaceConversionTask<N extends TreeNode <N, A, G>, A extend
                                           List <Task <N, A, G>> tasks ) {
 
         super(imageFilename, scheme, codec, colorSpace, tasks);
-    }
-
-    /**
-     * @param filename
-     * @return
-     */
-    @Override
-    protected
-IImage<A> execute ( String filename ) throws ValueError {
-        IImage<A> imageSrc = super.execute(filename);
-
-        IImage<A> imageDst = new Image <>(imageSrc/*, address, -1, w, h*/);
-//        for ( Address<A> address  =   ;  < ; i++) {//todo
-//
-//        }
-        float[] cc = new float[3];
-        int[] tvCS = convertColorToRGB(cc, colorSpace);
-
-
-        return imageDst;
-    }
-
-    /**
-     * @param cc
-     * @param colorSpace
-     * @return
-     */
-    @Contract(pure = true)
-    public
-    int[] convertColorToRGB ( float[] cc, EtvColorSpace colorSpace ) {
-        int[] x;
-
-        switch (colorSpace) {
-            case YIG:
-                x = yigToRGB(cc[0], cc[1], cc[2]);
-                break;
-            case YUV:
-                x = yuvToRGB(cc[0], cc[1], cc[2]);
-                break;
-            case Y_CB_CR:
-                x = yCrCbToRGB(cc[0], cc[1], cc[2]);
-                break;
-            case Y_PB_PR:
-                x = yPrPbToRGB(cc[0], cc[1], cc[2]);
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + colorSpace);
-        }
-
-        return x;
     }
 
     /**
@@ -163,6 +113,56 @@ IImage<A> execute ( String filename ) throws ValueError {
         rgb[2] = (int) ((1.000 * y + 1.856 * pr + 0.000 * pb) * 255);
 
         return rgb;
+    }
+
+    /**
+     * @param filename
+     * @return
+     */
+    @Override
+    protected
+    IImage <A> execute ( String filename ) throws ValueError {
+        IImage <A> imageSrc = super.execute(filename);
+
+        IImage <A> imageDst = new Image <>(actualImage, imageSrc.getMat(), imageSrc.getSize());
+//        for ( Address<A> address  =   ;  < ; i++) {//todo
+//
+//        }
+        float[] cc = new float[3];
+        int[] tvCS = convertColorToRGB(cc, colorSpace);
+
+
+        return imageDst;
+    }
+
+    /**
+     * @param cc
+     * @param colorSpace
+     * @return
+     */
+    @Contract(pure = true)
+    public
+    int[] convertColorToRGB ( float[] cc, EtvColorSpace colorSpace ) {
+        int[] x;
+
+        switch (colorSpace) {
+            case YIG:
+                x = yigToRGB(cc[0], cc[1], cc[2]);
+                break;
+            case YUV:
+                x = yuvToRGB(cc[0], cc[1], cc[2]);
+                break;
+            case Y_CB_CR:
+                x = yCrCbToRGB(cc[0], cc[1], cc[2]);
+                break;
+            case Y_PB_PR:
+                x = yPrPbToRGB(cc[0], cc[1], cc[2]);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + colorSpace);
+        }
+
+        return x;
     }
 
     /**

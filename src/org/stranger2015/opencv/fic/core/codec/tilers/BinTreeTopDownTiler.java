@@ -3,11 +3,11 @@ package org.stranger2015.opencv.fic.core.codec.tilers;
 import org.slf4j.Logger;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.fic.core.codec.ICodec;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.util.Deque;
 import java.util.List;
 
 /**
@@ -51,18 +51,24 @@ class BinTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
 
     /**
      * @param imageBlock
-     * @param minRangeSize
-     * @param queue
-     * @return
      * @throws ValueError
      */
     @Override
     public
-    List <IImageBlock <A>> segmentGeometry ( IImageBlock <A> imageBlock,
-                                             IIntSize minRangeSize,
-                                             Deque <IImageBlock <A>> queue ) throws ValueError {
+    void segmentGeometry ( IImageBlock <A> imageBlock ) throws ValueError {
+        //return segmentRectangle(imageBlock);
+    }
 
-        return List.of(imageBlock);
+    @Override
+    public
+    void onAddNode ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) {
+
+    }
+
+    @Override
+    public
+    void onAddLeafNode ( LeafNode <N, A, G> leafNode, IImageBlock <A> imageBlock ) {
+
     }
 
     @Override
@@ -73,8 +79,8 @@ class BinTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
 
     @Override
     public
-    List <IImageBlock <A>> segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
-        return List.of(imageBlock);
+    void segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
+//        return List.of(imageBlock);
     }
 
     /**

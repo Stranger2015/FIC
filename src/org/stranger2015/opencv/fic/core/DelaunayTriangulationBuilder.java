@@ -14,7 +14,6 @@ package org.stranger2015.opencv.fic.core;
 
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.tilers.DelaunayTriangularTopDownTiler;
-import org.stranger2015.opencv.fic.core.codec.tilers.TriangularTiler;
 import org.stranger2015.opencv.fic.core.geom.*;
 import org.stranger2015.opencv.fic.core.triangulation.DelaunayTriangulation;
 import org.stranger2015.opencv.fic.core.triangulation.IncrementalDelaunayTriangulator;
@@ -39,7 +38,12 @@ import static org.stranger2015.opencv.fic.core.geom.CoordinateArrays.Bidirection
 public
 class DelaunayTriangulationBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer> {
 
-    private final Class <? extends TriangularTiler <N, A, G>> clazz;
+    private final Class <? extends DelaunayTriangularTopDownTiler> clazz;
+
+    public
+    DelaunayTriangulationBuilder ( Class <? extends DelaunayTriangularTopDownTiler> clazz ) {
+        this.clazz = clazz;
+    }
 
     /**
      * Extracts the unique {@link Coordinate}s from the given {@link Geometry}.
@@ -103,13 +107,13 @@ class DelaunayTriangulationBuilder<N extends TreeNode <N, A, G>, A extends IAddr
     private DelaunayTriangulation <N, A, G> subdiv = new DelaunayTriangulation <>(
             new Envelope(), tolerance);
 
-    /**
-     * Creates a new triangulation builder.
-     */
-    public
-    DelaunayTriangulationBuilder ( Class <? extends DelaunayTriangularTopDownTiler> clazz ) {
-        this.clazz = clazz;
-    }
+//    /**
+//     * Creates a new triangulation builder.
+//     */
+//    public
+//    DelaunayTriangulationBuilder ( Class <? extends DelaunayTriangularTopDownTiler> clazz ) {
+//        this.clazz = clazz;
+//    }
 
     /**
      * Sets the sites (vertices) which will be triangulated.
@@ -118,7 +122,7 @@ class DelaunayTriangulationBuilder<N extends TreeNode <N, A, G>, A extends IAddr
      * @param geom the geometry from which the sites will be extracted.
      */
     public
-    void setSites ( Geometry geom ) {
+    void setSites ( Geometry<?> geom ) {
         // remove any duplicate points (they will cause the triangulation to fail)
         siteCoords = extractUniqueCoordinates(geom);
     }
@@ -169,6 +173,7 @@ class DelaunayTriangulationBuilder<N extends TreeNode <N, A, G>, A extends IAddr
     public
     QuadEdgeSubdivision getSubdivision () {
         create();
+
         return subdiv;
     }
 
@@ -179,7 +184,7 @@ class DelaunayTriangulationBuilder<N extends TreeNode <N, A, G>, A extends IAddr
      * @return the edges of the triangulation
      */
     public
-    Geometry getEdges ( GeometryFactory geomFact ) {
+    Geometry<?> getEdges ( GeometryFactory geomFact ) {
         create();
         return subdiv.getEdges(geomFact);
     }
@@ -192,17 +197,17 @@ class DelaunayTriangulationBuilder<N extends TreeNode <N, A, G>, A extends IAddr
      * @return the faces of the triangulation
      */
     public
-    Geometry getTriangles ( GeometryFactory geomFact ) {
+    Geometry<?>getTriangles ( GeometryFactory geomFact ) {
         create();
 
         return subdiv.getTriangles(geomFact);
     }
 
-    List<Triangle> getTriangles(CoordinateList coordinates){
+    List <Triangle <?>> getTriangles( CoordinateList coordinates){
         return subdiv.getTriangles(coordinates);
     }
-    public
-    Class <? extends TriangularTiler <N, A, G>> getClazz () {
-        return clazz;
-    }
+//    public
+//    Class <? extends TriangularTiler <N, A, G>> getClazz () {
+//        return clazz;
+//    }
 }

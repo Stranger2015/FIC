@@ -31,7 +31,8 @@ class BinTreeImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddres
                                  IIntSize rangeSize,
                                  IIntSize domainSize ) {
 
-        super(partitionProcessor,
+        super(
+                partitionProcessor,
                 scheme,
                 encoder,
                 image,
@@ -51,12 +52,13 @@ class BinTreeImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddres
      */
     @Override
     public
-    HvBlockGenerator <N, A, G> newInstance ( IPartitionProcessor <N, A, G> partitionProcessor,
-                                                       EPartitionScheme scheme,
-                                                       IEncoder <N, A, G> encoder,
-                                                       IImage <A> image,
-                                                       IIntSize rangeSize,
-                                                       IIntSize domainSize ) {
+    ImageBlockGenerator <N, A, G> newInstance (
+            IPartitionProcessor <N, A, G> partitionProcessor,
+            EPartitionScheme scheme,
+            IEncoder <N, A, G> encoder,
+            IImage <A> image,
+            IIntSize rangeSize,
+            IIntSize domainSize ) {
 
         return new BinTreeImageBlockGenerator <>(
                 partitionProcessor,
@@ -64,7 +66,8 @@ class BinTreeImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddres
                 encoder,
                 image,
                 rangeSize,
-                domainSize);
+                domainSize
+        );
     }
 
     /**
@@ -85,7 +88,7 @@ class BinTreeImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddres
 
         }
 
-        IImageBlock <A> block = new ImageBlock <>(image.getMat());
+        IImageBlock <A> block = new ImageBlock <>(image.getMat(), blockSize, geometry);
 
         return block;
     }

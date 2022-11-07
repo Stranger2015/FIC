@@ -8,7 +8,7 @@ interface ITriangularImageBlockPair<A extends IAddress <A>> extends IImageBlock 
   * @return
   */
  @Override
- int getMeanPixelValue ();
+ double[] getMeanPixelValue ();
 
  /**
   * @return

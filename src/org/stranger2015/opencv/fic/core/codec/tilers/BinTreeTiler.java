@@ -6,7 +6,6 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.ESplitKind;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
 import org.stranger2015.opencv.fic.core.codec.RegionOfInterest;
-import org.stranger2015.opencv.fic.core.geom.Geometry;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
 import org.stranger2015.opencv.utils.BitBuffer;
 
@@ -41,6 +40,7 @@ class BinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
     /**
      * @return
      */
+    @Override
     public abstract
     ITiler <N, A, G> instance ();
 
@@ -57,8 +57,7 @@ class BinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
     public
     List <IImageBlock <A>> generateRangeBlocks ( RegionOfInterest <A> roi,
                                                  int blockWidth,
-                                                 int blockHeight )
-            throws ValueError {
+                                                 int blockHeight ) throws ValueError {
 
         return List.of(roi.getSubImage());
     }
@@ -66,47 +65,34 @@ class BinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
     /**
      * @param imageBlockGeometry
      * @param imageBlock
-     * @param minRangeSize
-     * @param queue
      */
-    //@Override
+    @Override
     public
-    List <IImageBlock <A>> segmentGeometry ( Geometry <?> imageBlockGeometry,
-                                             IImageBlock <A> imageBlock,
-                                             IIntSize minRangeSize,
-                                             Deque <IImageBlock <A>> queue
-    ) throws ValueError {
-//
-//        List <IImageBlock <A>> result = null;
-////        switch (imageBlockGeometry) {
-//////            case RECTANGLE:
-////                result = segmentRectangle(imageBlock);
-////                break;
-//////            case SQUARE:
-////                result = segmentSquare(imageBlock);
-////                break;
-//////            case QUADRILATERAL:
-////                result = segmentQuadrilateral(imageBlock);
-////                break;
-//////            case TRIANGLE:
-////                result = segmentTriangle(imageBlock);
-////                break;
-//////            case HEXAGON:
-//////            case IRREGULAR:
-//////            case SQUIRAL:
-////            case CIRCLE:
-////                break;
-////            default:
-////                throw new IllegalStateException("Unexpected value: " + imageBlockGeometry);
-////        }
-//
-        return null;//result;
+    void segmentGeometry ( IImageBlock <A> imageBlock ) throws ValueError {
+
     }
 
     @Override
     public
-    List <IImageBlock <A>> segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
-        return List.of(imageBlock);
+    void segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
+    }
+
+    @Override
+    public
+    Deque <IImageBlock <A>> getDeque () {
+        return null;
+    }
+
+    @Override
+    public
+    void onAddNode ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) {
+
+    }
+
+    @Override
+    public
+    void onAddLeafNode ( TreeNode.LeafNode <N, A, G> leafNode, IImageBlock <A> imageBlock ) {
+
     }
 
     /**
@@ -120,14 +106,14 @@ class BinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
 
     /**
      * @param imageBlock
-     * @return
      * @throws ValueError
      */
     @Override
     public
-    List <IImageBlock <A>> segmentSquare ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentSquare ( IImageBlock <A> imageBlock ) throws ValueError {
         int x = imageBlock.getX();
         int y = imageBlock.getY();
+
         int w = imageBlock.getWidth();
         int h = imageBlock.getHeight();
 
@@ -147,19 +133,9 @@ class BinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
         else {
             throw new IllegalStateException("Unexpected value: " + dir);
         }
-        //            case DIAGONAL:
-////                GeometryFactory geomFactory = new GeometryFactory();
-//
-//                Coordinate p0 = new Coordinate(x, y);
-//                Coordinate p1 = new Coordinate(x + w, y);
-//                Coordinate p2 = new Coordinate(x, y + h);
-//                Coordinate p3 = new Coordinate(x + w, y + h);
-//
-//                result1 = imageBlock.getTriangleSubImage(p0, p1, p2);//geomFactory
-//                result2 = imageBlock.getTriangleSubImage(p2, p1, p3);
-//                break;
 
-        return List.of(result1, result2);
+        getDeque().push(result1);
+        getDeque().push(result2);
     }
 
     /**
@@ -169,11 +145,10 @@ class BinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
     @Override
     @Contract(value = "_, _ -> new")
     public
-    List <IImageBlock <A>> segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
         ESplitKind dir = chooseDirection(imageBlock);
 
-        return doSegmentRectangle(imageBlock, dir);
-
+        doSegmentRectangle(imageBlock, dir);
     }
 
     /**
@@ -183,10 +158,10 @@ class BinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      * @throws ValueError
      */
     protected
-    List <IImageBlock <A>> doSegmentRectangle ( IImageBlock <A> imageBlock, ESplitKind dir ) throws ValueError {
+    void doSegmentRectangle ( IImageBlock <A> imageBlock, ESplitKind dir ) throws ValueError {
         int x1 = imageBlock.getX();
         int y1 = imageBlock.getY();
-//        int x2 = imageBlock.getY();
+
         int w = imageBlock.getWidth();
         int h = imageBlock.getHeight();
 
@@ -204,7 +179,8 @@ class BinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
             throw new IllegalStateException("Unexpected value: " + dir);
         }
 
-        return List.of(result1, result2);
+        getDeque().push(result1);
+        getDeque().push(result2);
     }
 
     /**
@@ -212,8 +188,14 @@ class BinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      */
     @Override
     public
-    List <IImageBlock <A>> segmentTriangle ( IImageBlock <A> imageBlock ) {
+    void segmentTriangle ( IImageBlock <A> imageBlock ) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public
+    void segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
+
     }
 
     /**
@@ -222,6 +204,7 @@ class BinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
     @Override
     public
     void addLeafNode ( TreeNode <N, A, G> node ) {
+
     }
 
     /**
@@ -252,6 +235,6 @@ class BinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
                                                         int blockHeight )
             throws ValueError {
 
-        return List.of();
+        return List.of(roi);
     }
 }

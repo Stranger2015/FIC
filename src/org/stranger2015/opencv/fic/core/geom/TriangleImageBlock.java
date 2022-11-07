@@ -1,12 +1,15 @@
 package org.stranger2015.opencv.fic.core.geom;
 
+import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.algorithm.Angle;
 import org.stranger2015.opencv.fic.core.algorithm.HCoordinate;
 import org.stranger2015.opencv.fic.core.algorithm.Orientation;
+import org.stranger2015.opencv.fic.core.codec.RegionOfInterest;
 import org.stranger2015.opencv.fic.core.math.DD;
+import org.stranger2015.opencv.fic.transform.ImageTransform;
 
 import java.util.List;
 
@@ -21,13 +24,18 @@ import static java.lang.Math.sqrt;
  */
 public
 class TriangleImageBlock<A extends IAddress<A>>
-        extends Image <A>
+        extends Triangle <?>
         implements IImageBlock <A>,
                    IPolygonal {
 
     public
     TriangleImageBlock ( IImageBlock <A> roi, int i, int j, IIntSize blockSize ) {
         super(roi.getSubImage(), i, j, blockSize);
+    }
+
+    public
+    TriangleImageBlock ( IImage <A> roi, int x, int y, int blockWidth, int blockHeight ) throws ValueError {
+        super(roi, x, y, blockWidth, blockHeight);
     }
 
     /**
@@ -79,13 +87,67 @@ class TriangleImageBlock<A extends IAddress<A>>
 
     @Override
     public
-    Mat createMask ( IIntSize bb, List <Polygon <T>> polygonList ) {
-        return super.createMask(bb, polygonList);
+    Mat createMask ( IIntSize bb, List <Polygon <?>> polygonList ) {
+        return IImageBlock.super.createMask(bb, polygonList);
     }
 
     @Override
     public
-    Polygon <T> getPolygon () {
+    int cols () {
+        return 0;
+    }
+
+    @Override
+    public
+    int rows () {
+        return 0;
+    }
+
+    @Override
+    public
+    int getWidth () {
+        return cols();
+    }
+
+    @Override
+    public
+    int getHeight () {
+        return rows();
+    }
+
+    @Override
+    public
+    double getBeta () {
+        return 0;
+    }
+
+    @Override
+    public
+    void setBeta ( double beta ) {
+
+    }
+
+    @Override
+    public
+    Polygon <?> getGeometry () {
+        return null;
+    }
+
+    @Override
+    public
+    void setAddress ( IAddress <A> address ) {
+
+    }
+
+    @Override
+    public
+    int plus ( int... n ) {
+        return 0;
+    }
+
+    @Override
+    public
+    IImageBlock <A> subImage ( int rowStart, int rowEnd, int colStart, int colEnd ) {
         return null;
     }
 
@@ -99,14 +161,56 @@ class TriangleImageBlock<A extends IAddress<A>>
 
     @Override
     public
+    void setSample ( IAddress <A> address, int b, int s ) {
+
+    }
+
+    @Override
+    public
+    int getSample ( IAddress <A> address, int b ) {
+        return 0;
+    }
+
+    @Override
+    public
+    Mat getMat () {
+        return null;
+    }
+
+    @Override
+    public
+    void getRGB ( int i, int i1, int sideSize, int[] img1pixels, int i2, int i3 ) {
+
+    }
+
+    @Override
+    public
+    IImage <A> contract ( int contractivity ) {
+        return null;
+    }
+
+    @Override
+    public
+    Mat submat ( int rowStart, int rowEnd, int colStart, int colEnd ) {
+        return null;
+    }
+
+    @Override
+    public
+    int putPixel ( IAddress <A> address, int[] pixel ) throws ValueError {
+        return 0;
+    }
+
+    @Override
+    public
     void setPixel ( IAddress <A> address, int[] iArray ) {
-        super.setPixel(address, iArray);
+//        super.setPixel(address, iArray);
     }
 
     @Override
     public
     int getNumBands () {
-        return super.getNumBands();
+//        return super.getNumBands();
     }
 
     @Override
@@ -119,6 +223,54 @@ class TriangleImageBlock<A extends IAddress<A>>
     public
     boolean isSquare () {
         return false;
+    }
+
+    @Override
+    public
+    void put ( int x, int y, int[] data ) {
+
+    }
+
+    @Override
+    public
+    double[] getMeanPixelValue () {
+        return 0;
+    }
+
+    @Override
+    public
+    IImageBlock <A> getSubImage ( Rectangle rectangle ) throws ValueError {
+        return null;
+    }
+
+    @Override
+    public
+    IImageBlock <A> getSubImage () {
+        return null;
+    }
+
+    @Override
+    public
+    int getOriginalImageHeight () {
+        return 0;
+    }
+
+    @Override
+    public
+    int getOriginalImageWidth () {
+        return 0;
+    }
+
+    @Override
+    public
+    void setMeanPixelValue ( int meanPixelValue ) {
+
+    }
+
+    @Override
+    public
+    int compareTo ( @NotNull IImage <A> other ) {
+        return 0;
     }
 
     @Override
@@ -664,6 +816,114 @@ class TriangleImageBlock<A extends IAddress<A>>
     public
     IAddress <A> getAddress () {
         return null;
+    }
+
+    @Override
+    public
+    void setAddress ( int x, int y ) throws ValueError {
+
+    }
+
+    @Override
+    public
+    List <IImage <A>> split () {
+        return null;
+    }
+
+    @Override
+    public
+    IImage <A> merge ( List <IImage <A>> layers, IImage <A> inputImage ) {
+        return null;
+    }
+
+    @Override
+    public
+    void release () {
+
+    }
+
+    @Override
+    public
+    String dump () {
+        return null;
+    }
+
+    @Override
+    public
+    IImageBlock <A> getSubImage ( int x, int y, int width, int height ) throws ValueError {
+        return null;
+    }
+
+    @Override
+    public
+    List <ImageTransform <A, ?>> getTransforms () throws ValueError {
+        return null;
+    }
+
+    @Override
+    public
+    void setTransforms ( List <ImageTransform <A, ?>> imageTransforms ) throws ValueError {
+
+    }
+
+    @Override
+    public
+    int[] getPixels () throws ValueError {
+        return new int[0];
+    }
+
+    @Override
+    public
+    boolean isGrayScale () {
+        return false;
+    }
+
+    @Override
+    public
+    List <IImage <A>> getComponents () {
+        return null;
+    }
+
+    @Override
+    public
+    List <RegionOfInterest <A>> getRegions () {
+        return null;
+    }
+
+    @Override
+    public
+    void setRegions ( List <RegionOfInterest <A>> regions ) {
+
+    }
+
+    @Override
+    public
+    int[] get ( int addr ) {
+        return new int[0];
+    }
+
+    @Override
+    public
+    int get ( int x, int y, int[] data ) {
+        return 0;
+    }
+
+    @Override
+    public
+    int[] getPixels ( IAddress <A> addr ) {
+        return new int[0];
+    }
+
+    @Override
+    public
+    int pixelValues ( int x, int y, int[] data ) {
+        return 0;
+    }
+
+    @Override
+    public
+    double[] pixelValues ( int x, int y ) {
+        return 0;
     }
 
     @Override

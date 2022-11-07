@@ -3,7 +3,7 @@ package org.stranger2015.opencv.fic.core;
 import org.stranger2015.opencv.fic.utils.Point;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.stream.IntStream.range;
 
@@ -11,7 +11,7 @@ import static java.util.stream.IntStream.range;
  *
  */
 public abstract
-class Address<A extends IAddress <A>> extends AtomicLong implements IAddress <A> {
+class Address<A extends IAddress <A>> extends AtomicInteger implements IAddress <A> {
 
     static {
         range(0, cache.length())
@@ -19,19 +19,22 @@ class Address<A extends IAddress <A>> extends AtomicLong implements IAddress <A>
     }
 
     public final static int radix = 10;
+    private final int stride;
 
     /**
      * @param segment
      * @param offset
      */
     public
-    Address ( int segment, int offset) {
-        super(segment + offset);
+    Address ( int row, int stride, int col ) {
+        super(Math.toIntExact((long) row * stride + col));
+        this.stride = stride;
     }
 
+    @Override
     public
-    Address ( long number ) {
-        super(number);
+    IAddress <A> applyTable ( int[][] table ) {
+        return null;
     }
 
     /**
@@ -44,9 +47,14 @@ class Address<A extends IAddress <A>> extends AtomicLong implements IAddress <A>
     IAddress <A> plus ( IAddress <A> address1, IAddress <A> address2 ) throws ValueError {
         long addr1 = address1.longValue();
         long addr2 = address2.longValue();
-//        long result = address1.getPlusTable()[0];
 
         return null;
+    }
+
+    @Override
+    public
+    Point plus ( Point point1, Point point2 ) {
+        return IAddress.super.plus(point1, point2);
     }
 
     /**
@@ -68,7 +76,13 @@ class Address<A extends IAddress <A>> extends AtomicLong implements IAddress <A>
     @Override
     public
     IAddress <A> mult ( IAddress <A> address1, IAddress <A> address2 ) throws ValueError {
-        return null;//todo
+        return null;//
+    }
+
+//    @Override
+    public
+    Point mult ( Point point1, int number ) {
+        return IAddress.super.mult(point1, number);
     }
 
 
@@ -97,6 +111,24 @@ class Address<A extends IAddress <A>> extends AtomicLong implements IAddress <A>
     public
     int[][] getMultTable () {
         return new int[0][];
+    }
+
+    @Override
+    public
+    int stride () {
+        return stride;
+    }
+
+    @Override
+    public
+    int getAddr () {
+        return 0;
+    }
+
+    @Override
+    public
+    EAddressKind getAddressKind () {
+        return null;
     }
 
     /**
@@ -157,6 +189,21 @@ class Address<A extends IAddress <A>> extends AtomicLong implements IAddress <A>
     public
     int radix () {
         return 10;
+    }
+
+    @Override
+    public
+    int getX() {
+        int addr = get();
+        return addr / stride;
+    }
+
+    @Override
+    public
+    int getY () {
+       int addr= get();
+
+        return addr % stride;
     }
 //
 //    protected EAddressKind addressKind = ORDINARY;

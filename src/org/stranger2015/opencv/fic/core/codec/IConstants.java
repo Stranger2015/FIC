@@ -17,6 +17,7 @@ interface IConstants {
     };
 
     String ENCODER_VERSION = "1";
-    short MAX_PIXEL_VALUE = 255;
+    double MAX_PIXEL_VALUE = 255;
+
     int NUMBER_OF_DECODER_ITERATIONS = 1;
 }

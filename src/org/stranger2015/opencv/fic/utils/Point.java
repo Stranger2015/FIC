@@ -1,10 +1,12 @@
 package org.stranger2015.opencv.fic.utils;
 
+import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
+
 /**
  *
  */
 public
-class Point extends org.opencv.core.Point {
+class Point extends Vertex {
     /**
      * @param x
      * @param y

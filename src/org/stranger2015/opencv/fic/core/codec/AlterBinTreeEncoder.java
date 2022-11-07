@@ -40,7 +40,7 @@ class AlterBinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
                           IDistanceator <A> comparator,
                           Set <ImageTransform <A, G>> transforms,
                           Set <IImageFilter <A>> filters,
-                          FractalModel <N, A, G> fractalModel
+                          FicFileModel <N, A, G> fractalModel
     ) {
         super(
                 scheme,
@@ -58,7 +58,7 @@ class AlterBinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
 
     @Override
     public
-    void initialize () {
+    void initialize () throws ReflectiveOperationException, Exception {
         super.initialize();
     }
 

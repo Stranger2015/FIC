@@ -48,7 +48,7 @@ class ImageTransform<A extends IAddress <A>, G extends BitBuffer>
      */
     protected
     ImageTransform () throws ValueError {
-        address = valueOf(0);
+        address = valueOf(0, inputImage.getWidth(), i2);
         outputImage = null;
         type = BILINEAR;
     }

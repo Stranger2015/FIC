@@ -1,14 +1,14 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.Contract;
-import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.search.EMetrics;
 
 /**
  * an image comparator returns the distance between two images
  */
 public
-class ImageComparator</* M extends IImage <A> */, A extends IAddress <A>> implements IDistanceator <M, A> {
+class ImageComparator<A extends IAddress <A>>
+        implements IDistanceator < A> {
 
     private final double fuzz;
     private final EMetrics metric;

@@ -56,7 +56,7 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
     private final File input;
     private final File output;
 
-    private FractalModel <N, A, G> fractalModel;
+    private FicFileModel <N, A, G> fractalModel;
     private Set <ImageTransform <A, G>> transforms = new HashSet <>();
 
     private IIntSize rangeSize;
@@ -87,7 +87,7 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      * @return
      */
     public
-    FractalModel <N, A, G> compress (IImage <A> image ) throws ValueError, ReflectiveOperationException {
+    FicFileModel <N, A, G> compress ( IImage <A> image ) throws ValueError, ReflectiveOperationException {
         final ImageBlockGenerator <N, A, G> imageBlockGenerator =
                 createBlockGenerator(
                         config.tiler(),
@@ -102,7 +102,7 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
                                         ScaleTransform.class,// <A, G>, //scaleTransform,
                                         IDistanceator.class,// <A> ,//comparator,
                                         Set.class,// <IImageFilter <A>> //filters,
-                                        FractalModel.class// <N, A, G> //fractalModel
+                                        FicFileModel.class// <N, A, G> //fractalModel
                                 },
                                 new Object[]{
                                         image,
@@ -117,7 +117,7 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
                                         new HashSet <IImageFilter <A>>(1).
                                             add(new NoneFilter <A>())
                                         },
-                                        new FractalModel <>(new HashMap <>())));
+                                        new FicFileModel <>(new HashMap <>())));
         return null;
     }
 
@@ -131,7 +131,7 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
     /**
      * @param fractalModel
      */
-    void decompress ( FractalModel <N, A, G> fractalModel ) {
+    void decompress ( FicFileModel <N, A, G> fractalModel ) {
         fractalModel.getModel();
     }
 
@@ -175,7 +175,7 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
 //    final IDistanceator <M, A> comparator=
 //        final Set <ImageTransform <M, A, G>> transforms,
 //        final Set <IImageFilter <M, A>> filters,
-//        FractalModel <N, A, G> fractalModel ) throws NullPointerException {
+//        FicFileModel <N, A, G> fractalModel ) throws NullPointerException {
 
 //            ICompressor <N, A, G> compressor = new Compressor <N, A, G>(
 //                config.domainScale(),
@@ -208,9 +208,9 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      * @return
      */
     public
-    FractalModel <N, A, G> readModel () {
+    FicFileModel <N, A, G> readModel () {
 
-        FractalModel <N, A, G> model = null;
+        FicFileModel <N, A, G> model = null;
 
         FractalReader <N, A, G> fractalReader = new FractalReader <>(config.command().getInput());
         model = fractalReader.readModel();
@@ -224,7 +224,7 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      * @param model
      */
     public
-    void writeModel ( FractalModel <N, A, G> model, boolean allowOverwrite ) {
+    void writeModel ( FicFileModel <N, A, G> model, boolean allowOverwrite ) {
         FractalWriter <N, A, G> writer = new FractalWriter <>(output, model.getImageInfo(), allowOverwrite);
         writer.writeModel(model);
         writer.close();
@@ -385,7 +385,7 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      * @param fractalModel
      */
     public
-    void setFractalModel ( FractalModel <N, A, G> fractalModel ) {
+    void setFractalModel ( FicFileModel <N, A, G> fractalModel ) {
         this.fractalModel = fractalModel;
     }
 
@@ -433,7 +433,7 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      * @return
      */
     public
-    FractalModel <N, A, G> getFractalModel () {
+    FicFileModel <N, A, G> getFractalModel () {
         return fractalModel;
     }
 }

@@ -1,6 +1,9 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.stranger2015.opencv.fic.core.*;
+import org.stranger2015.opencv.fic.core.EPartitionScheme;
+import org.stranger2015.opencv.fic.core.IAddress;
+import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.fic.core.IIntSize;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.utils.BitBuffer;
 
@@ -37,12 +40,14 @@ class SipImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A
      */
     @Override
     public
-    HvBlockGenerator <N, A, G> newInstance ( IPartitionProcessor <N, A, G> partitionProcessor,
-                                                   EPartitionScheme scheme,
-                                                   IEncoder <N, A, G> encoder,
-                                                   IImage <A> image,
-                                                   IIntSize rangeSize,
-                                                   IIntSize domainSize ) {
+    ImageBlockGenerator <N, A, G> newInstance (
+            IPartitionProcessor <N, A, G> partitionProcessor,
+            EPartitionScheme scheme,
+            IEncoder <N, A, G> encoder,
+            IImage <A> image,
+            IIntSize rangeSize,
+            IIntSize domainSize ) {
+
         return this;
     }
 }

@@ -3,10 +3,8 @@ package org.stranger2015.opencv.fic.core;
 import jdk.internal.HotSpotIntrinsicCandidate;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.stranger2015.opencv.fic.core.codec.PointAddress;
-import org.stranger2015.opencv.fic.utils.Point;
 
-import java.util.concurrent.atomic.AtomicLongArray;
+import java.util.concurrent.atomic.AtomicIntegerArray;
 
 import static org.stranger2015.opencv.fic.core.EAddressKind.ORDINARY;
 
@@ -15,8 +13,8 @@ import static org.stranger2015.opencv.fic.core.EAddressKind.ORDINARY;
  */
 public
 interface IAddress<A extends IAddress <A>> extends IAddressMath <A> {
-
-    AtomicLongArray cache = new AtomicLongArray(128 + 127 + 1);
+    int stride();
+    AtomicIntegerArray cache = new AtomicIntegerArray(128 + 127 + 1);
 
     /**
      * Returns a {@code AtomicLong} instance representing the specified
@@ -29,30 +27,41 @@ interface IAddress<A extends IAddress <A>> extends IAddressMath <A> {
      * This method will always cache values in the range -128 to 127,
      * inclusive, and may cache other values outside this range.
      *
-     * @param l a long value.
+     * @param l     a long value.
+     * @param width
+     * @param i2
      * @return a {@code Long} instance representing {@code l}.
      * @since 1.5
      */
     @HotSpotIntrinsicCandidate
     static
     <A extends IAddress <A>>
-    IAddress <A> valueOf ( long l ) throws ValueError {
-        return valueOf(l, defaultAddressKind());
+    @NotNull IAddress <A> valueOf ( int l, int stride, int i2 ) throws ValueError {
+        return valueOf(l * stride + i2, defaultAddressKind());
     }
 
+    int getAddr();
+
+    /**
+     * @param l
+     * @param addressKind
+     * @param <A>
+     * @return
+     * @throws ValueError
+     */
     static
     <A extends IAddress <A>>
-    @NotNull IAddress <A> valueOf ( long l, EAddressKind addressKind ) throws ValueError {
-        long result;
+    @NotNull IAddress <A> valueOf ( int l, EAddressKind addressKind ) throws ValueError {
+        int result;
         final int offset = 128;
         if (l >= -128 && l <= 127) { // will cache
-            result = cache((int) l + offset).get();
+            result = Math.toIntExact(cache( l + offset).get());
         }
         else {
             result = l;
         }
 
-        return create(result, addressKind);
+        return  create(result,1,0,addressKind);//fixme
     }
 
     /**
@@ -73,16 +82,14 @@ interface IAddress<A extends IAddress <A>> extends IAddressMath <A> {
     @Contract("_, _ -> new")
     static
     <A extends IAddress <A>>
-    @NotNull IAddress <A> create ( long result, EAddressKind addressKind ) throws ValueError {
+    @NotNull IAddress <A> create ( int row, int stride, int col, EAddressKind addressKind ) throws ValueError {
         switch (addressKind) {
-            case POINT:
-                return new PointAddress <>((int) result,0);
             case ORDINARY:
-                return new DecAddress <>(result);
+                return new DecAddress <>(row, stride, col);
             case SPIRAL:
-                return new SaAddress <>(result);
+                return new SaAddress <>(row, stride, col);
             case SQUIRAL:
-                return new SipAddress <>(result);
+                return new SipAddress <>(row, stride, col);
             default:
                 throw new IllegalStateException("Unexpected value: " + addressKind);
         }
@@ -96,7 +103,7 @@ interface IAddress<A extends IAddress <A>> extends IAddressMath <A> {
     static
     <A extends IAddress <A>>
     IAddress <A> cache ( int i ) throws ValueError {
-        return  create(cache.get(i), defaultAddressKind());
+        return  create(cache.get(i), 1, 0,defaultAddressKind());//fixme
     }
 
     /**
@@ -146,4 +153,14 @@ interface IAddress<A extends IAddress <A>> extends IAddressMath <A> {
      * @return
      */
     long longValue ();
+
+    /**
+     * @return
+     */
+    int getX();
+
+    /**
+     * @return
+     */
+    int getY();
 }

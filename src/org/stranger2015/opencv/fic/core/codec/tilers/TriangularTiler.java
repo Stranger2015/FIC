@@ -5,9 +5,13 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.util.Deque;
 import java.util.List;
 
+/**
+ * @param <N>
+ * @param <A>
+ * @param <G>
+ */
 public abstract
 class TriangularTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
         extends Tiler <N, A, G> {
@@ -34,7 +38,7 @@ class TriangularTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      */
     @Override
     public abstract
-    TriangularTiler <N, A, G> instance ();
+    ITiler <N, A, G> instance ();
 
     /**
      * @param node
@@ -48,16 +52,12 @@ class TriangularTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
     /**
      * @param imageBlockShape
      * @param imageBlock
-     * @param minRangeSize
-     * @param queue
      * @throws ValueError
      */
     @Override
     public
-    List <IImageBlock <A>> segmentGeometry (
-            IImageBlock <A> imageBlock,
-            IIntSize minRangeSize,
-            Deque <IImageBlock <A>> queue ) throws ValueError {
+    void segmentGeometry (
+            IImageBlock <A> imageBlock ) throws ValueError {
 
         return List.of(imageBlock);
     }
@@ -68,8 +68,14 @@ class TriangularTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      */
     @Override
     public
-    List <IImageBlock <A>> segmentTriangle ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentTriangle ( IImageBlock <A> imageBlock ) throws ValueError {
         return List.of(imageBlock);
+    }
+
+    @Override
+    public
+    void segmentSquare ( IImageBlock <A> imageBlock ) throws ValueError {
+        return super.segmentSquare(imageBlock);
     }
 
     /**
@@ -78,6 +84,6 @@ class TriangularTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
     @Override
     public
     void onFinish () {
-
+        super.onFinish();
     }
 }

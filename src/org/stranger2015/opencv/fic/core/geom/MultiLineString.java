@@ -102,7 +102,7 @@ class MultiLineString
      * @return a {@link MultiLineString} in the reverse order
      */
     public
-    MultiLineString reverse () {
+    Geometry <?> reverse () {
         return (MultiLineString) super.reverse();
     }
 
@@ -111,7 +111,7 @@ class MultiLineString
      */
     @Override
     protected
-    MultiLineString reverseInternal () {
+    Geometry <?> reverseInternal () {
         LineString[] lineStrings = Arrays.stream(this.geometries).map(geometry -> (LineString) geometry.reverse())
                 .toArray(LineString[]::new);
 
@@ -147,7 +147,7 @@ class MultiLineString
     }
 
     protected
-    int getTypeCode () {
+    EType getTypeCode () {
         return TYPECODE_MULTILINESTRING;
     }
 }

@@ -411,7 +411,7 @@ class GeometryFactory implements Serializable {
      */
     public
     LinearRing createLinearRing ( ICoordinateSequence coordinates ) {
-        return new LinearRing(coordinates, this);
+        return new LinearRing(coordinates, new LinearRing[]{}, this);
     }
 
     /**

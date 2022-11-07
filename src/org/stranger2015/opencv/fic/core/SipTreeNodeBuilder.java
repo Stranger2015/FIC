@@ -213,7 +213,7 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
                     new SipTree <N, A, G>(
                             parent,
                             blocks,
-                            new TreeNodeTask <N, A, G>(null, domainPool, leaves)),
+                            new TreeNode Task <N, A, G>(null, domainPool, leaves)),
                     ccs,
                     sipLibrary.pixelCapacity,
                     startAddress,

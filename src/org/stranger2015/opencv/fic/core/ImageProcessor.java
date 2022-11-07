@@ -65,7 +65,7 @@ ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
         this.colorSpace = colorSpace;
 
         BidiTask <N, A, G> task1 = new NormalizeRestoreImageTask <>(filename, scheme, codec);
-        BidiTask <N, A, G> task2 = new ColorspaceConversionTask <>(
+        BidiTask <N, A, G> task2 = new CodecTask.ColorspaceConversionTask <>(
                 filename,
                 scheme,
                 codec,

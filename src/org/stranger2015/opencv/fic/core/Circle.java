@@ -12,7 +12,7 @@ private int radius;
 
     public
     Circle () throws ValueError {
-        super();
+        super(factory);
     }
 
     @Override
@@ -101,7 +101,7 @@ private int radius;
 
     @Override
     protected
-    Geometry <T> reverseInternal () {
+    Geometry <?> reverseInternal () {
         return null;
     }
 
@@ -167,7 +167,7 @@ private int radius;
 
     @Override
     protected
-    int getTypeCode () {
+    Geometry.EType getTypeCode () {
         return 0;
     }
 

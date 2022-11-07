@@ -46,9 +46,9 @@ public class NoneTransform<A extends IAddress <A>, G extends BitBuffer>
         return warpAffine(inputImage, transformMatrix,type);
     }
 
-    @Override
-    public
-    IImage <A> warpAffine ( IImage <A> inputImage, Mat transformMatrix, EInterpolationType interpolationType ) {
-        return null;
-    }
+//    @Override
+//    public
+//    IImage <A> warpAffine ( IImage <A> inputImage, Mat transformMatrix, EInterpolationType interpolationType ) {
+//        return null;
+//    }
 }

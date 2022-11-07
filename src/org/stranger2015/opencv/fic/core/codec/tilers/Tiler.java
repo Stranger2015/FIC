@@ -19,7 +19,6 @@ import static org.stranger2015.opencv.fic.core.codec.ESplitKind.VERTICAL;
  * fractal tiler todo
  */
 
-
 /**
  * @param <A>
  */
@@ -30,23 +29,25 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected final IImage <A> image;
+    protected final Deque<A> deque=new ArrayDeque <>();
 
-    public final static IntSize[] minRangeSizes = {
-            new IntSize(4, 4),
-            new IntSize(8, 8),
+    public final static IIntSize[] minRangeSizes = {
             new IntSize(16, 16),
+            new IntSize(8, 8),
+            new IntSize(4, 4),
             };
 
-    public final static IntSize[] minDomainSizes = {
-            new IntSize(8, 8),
-            new IntSize(16, 16),
+    public final static IIntSize[] minDomainSizes = {
             new IntSize(32, 32),
+            new IntSize(16, 16),
+            new IntSize(8, 8),
             };
 
     public IIntSize rangeSize;
     public IIntSize domainSize;
 
     protected final IEncoder <N, A, G> encoder;
+
     protected final ITreeNodeBuilder <N, A, G> builder;
     protected List <TreeNodeBase <N, A, G>> successors;
 
@@ -56,29 +57,12 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
 
     protected final Deque <IImageBlock <A>> queue = new ArrayDeque <>();
 
-//    /**
-//     *
-//     */
-//    @Contract(pure = true)
-//    protected
-//    Tiler ( IImage <A> image,
-//            IIntSize rangeSize,
-//            IIntSize domainSize,
-//            IEncoder <N, A, G> encoder,
-//            ITreeNodeBuilder <N, A, G> builder) {
-//
-//        this(image, rangeSize, domainSize, encoder, builder);
-//
-//        this.rangeSize = rangeSize;
-//        this.domainSize = domainSize;
-//    }
-
     /**
      * @param image
      * @param rangeSize
      * @param domainSize
      */
-    public
+    protected
     Tiler ( IImage <A> image,
             IIntSize rangeSize,
             IIntSize domainSize,
@@ -92,15 +76,6 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
         this.builder = builder;
     }
 
-//    public
-//    Tiler ( IImage <A> image,
-//            List <IImageBlock <A>> domainPool,
-//            List <Object> objects,
-//            ITreeNodeBuilder <N, A, G> builder ) {
-//
-//        this.builder = builder;
-//    }
-
     /**
      * @return
      */
@@ -109,23 +84,19 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
         return image;
     }
 
+    /**
+     * @return
+     */
     public abstract
     ITiler <N, A, G> instance ();
 
     /**
      * @param imageBlockShape
      * @param imageBlock
-     * @param minRangeSize
-     * @param queue
      * @throws ValueError
      */
     public abstract
-    List <IImageBlock <A>> segmentGeometry (
-            IImageBlock <A> imageBlock,
-            IIntSize minRangeSize,
-            Deque <IImageBlock <A>> queue
-
-    ) throws ValueError;
+    void segmentGeometry ( IImageBlock <A> imageBlock ) throws ValueError;
 
     /**
      * @param image
@@ -142,12 +113,17 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      */
     @Override
     public
-    IIntSize getRangeSize () {
-        return getRangeSize(0);
+    IIntSize getMinRangeSize () {
+        return getMinRangeSize(0);
     }
 
+    /**
+     * @param i
+     * @return
+     */
+    @Contract(pure = true)
     private
-    IIntSize getRangeSize ( int i ) {
+    IIntSize getMinRangeSize ( int i ) {
         return minRangeSizes[i];
     }
 
@@ -156,13 +132,36 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      */
     @Override
     public
-    IIntSize getDomainSize () {
-        return getDomainSize(0);
+    IIntSize getMinDomainSize () {
+        return getMinDomainSize(0);
     }
 
+    /**
+     * @param i
+     * @return
+     */
+    @Contract(pure = true)
     private
-    IIntSize getDomainSize ( int i ) {
+    IIntSize getMinDomainSize ( int i ) {
         return minDomainSizes[i];
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    IIntSize getRangeSize () {
+        return rangeSize;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    IIntSize getDomainSize () {
+        return domainSize;
     }
 
     /**
@@ -188,8 +187,7 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      */
     @Override
     public
-    List <IImageBlock <A>> segmentTriangle ( IImageBlock <A> imageBlock ) throws ValueError {
-        return List.of(imageBlock);
+    void segmentTriangle ( IImageBlock <A> imageBlock ) throws ValueError {
     }
 
     /**
@@ -198,7 +196,15 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      */
     @Override
     public
-    List <IImageBlock <A>> segmentSquare ( IImageBlock <A> imageBlock ) throws ValueError {
-        return List.of(imageBlock);
+    void segmentSquare ( IImageBlock <A> imageBlock ) throws ValueError {
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    Logger getLogger () {
+        return logger;
     }
 }

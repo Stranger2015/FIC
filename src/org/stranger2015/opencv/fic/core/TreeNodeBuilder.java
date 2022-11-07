@@ -45,7 +45,7 @@ class TreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>,  G e
     protected TreeNodeBase <N, A, G> lastNodeBase;
     protected LeafNode <N, A, G> lastLeafNode;
 
-    public
+    protected
     TreeNodeBuilder ( IImage<A> image,
                       IIntSize rangeSize,
                       IIntSize domainSize,
@@ -58,10 +58,11 @@ class TreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>,  G e
         this.encoder = encoder;
         this.library = library;
     }
-
-    public
-    TreeNodeBuilder ( IImage <A> image, Library <A> library ) {
-    }
+//
+//    protected
+//    TreeNodeBuilder ( IImage <A> image, Library <A> library ) {
+//        this(image, library, );
+//    }
 
     public
     Library <A> getLibrary () {
@@ -96,13 +97,18 @@ class TreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>,  G e
                 null,
                 imageBlock,
                 lastNode.address);//fixme
+
         Tree <N, A, G> tree = ITree.create(lastNode.getTreeClass(), root, imageBlock);
         tree.getNodes().add(root);
-//        tree.getNodes().addAll(buildLayers(root));
 
         return tree;
     }
 
+    /**
+     *
+     * @param parent
+     * @return
+     */
     public TreeNodeBase<N, A, G> buildNode(TreeNodeBase<N, A, G> parent){
 
         return parent;

@@ -34,7 +34,7 @@ class Task<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBu
 
     protected final String filename;
     protected IImage<A> inputImage;
-    protected List <GrayScaleImage <A>> layers = new ArrayList <>(4);
+    protected List <IImage <A>> layers = new ArrayList <>(4);
     protected EPartitionScheme scheme;
     protected IImageProcessor <N, A, G> processor;
     protected ICodec <N, A, G> codec;

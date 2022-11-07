@@ -4,7 +4,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.codec.ICodec;
 import org.stranger2015.opencv.fic.core.codec.RegionOfInterest;
 import org.stranger2015.opencv.utils.BitBuffer;
@@ -18,8 +17,7 @@ import java.util.List;
  * @param <G>
  */
 public
-class RestoreImageTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */,
-        G extends BitBuffer>
+class RestoreImageTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
 
         extends BidiTask <N, A, G> {
 

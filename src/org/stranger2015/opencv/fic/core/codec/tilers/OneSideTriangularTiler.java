@@ -7,7 +7,6 @@ import org.stranger2015.opencv.fic.core.codec.RegionOfInterest;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.util.Deque;
 import java.util.List;
 
 /**
@@ -52,46 +51,59 @@ class OneSideTriangularTiler<N extends TreeNode <N, A, G>, A extends IAddress <A
 
     /**
      * @param imageBlock
-     * @param minRangeSize
-     * @param queue
-     * @return
      * @throws ValueError
      */
     @Override
     public
-    List <IImageBlock <A>> segmentGeometry ( IImageBlock <A> imageBlock, IIntSize minRangeSize, Deque <IImageBlock <A>> queue ) throws ValueError {
-//        List <IImageBlock <A>> list = ITiler.super.segmentShape(imageBlock, minRangeSize, queue);
+    void segmentGeometry ( IImageBlock <A> imageBlock ) throws ValueError {
         return List.of(imageBlock);
     }
 
     @Override
     public
-    List <IImageBlock <A>> segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
-        return null;
+    void segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
+        return List.of(imageBlock);
     }
 
     @Override
     public
-    List <IImageBlock <A>> segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
-        return null;
+    void segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
+        return List.of(imageBlock);
     }
 
+    /**
+     * @param imageBlock
+     * @throws ValueError
+     */
     @Override
     public
-    List <IImageBlock <A>> segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
-        return null;
+    void segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
+        return List.of(imageBlock);
     }
 
+    /**
+     * @param roi
+     * @param blockWidth
+     * @param blockHeight
+     * @return
+     */
     @Override
     public
     List <Vertex> generateVerticesSet ( RegionOfInterest <A> roi, int blockWidth, int blockHeight ) {
-        return new Vertex[0];
+        return List.of();
     }
 
+    /**
+     * @param roi
+     * @param blockWidth
+     * @param blockHeight
+     * @return
+     * @throws ValueError
+     */
     @Override
     public
     List <IImageBlock <A>> generateInitialRangeBlocks ( RegionOfInterest <A> roi, int blockWidth, int blockHeight ) throws ValueError {
-        return null;
+        return List.of(roi.getSubImage());
     }
 
     @Override
@@ -103,6 +115,6 @@ class OneSideTriangularTiler<N extends TreeNode <N, A, G>, A extends IAddress <A
     @Override
     public
     List <IImageBlock <A>> generateRangeBlocks ( RegionOfInterest <A> roi, int blockWidth, int blockHeight ) throws ValueError {
-        return null;
+        return generateInitialRangeBlocks(roi, blockWidth, blockHeight);
     }
 }

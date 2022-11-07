@@ -2,27 +2,28 @@ package org.stranger2015.opencv.fic.core.codec;
 
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfInt;
-import org.opencv.core.Point;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.geom.Coordinate;
+
+import java.util.List;
 
 /**
  *
  */
 public
 class SipImage<A extends IAddress <A>> extends Image <A> {
-    protected int[] pixels;
+
+//    protected int[] pixels;
 
     /**
      * @param input
      * @param pixels
      */
     public
-    SipImage ( Image <A> input, int[] pixels ) {
-        super(input, pixels);
+    SipImage ( IImage <A> input/*, int[] pixels*/ ) {
+        super(input.getMat(),/*, pixel*/roi);
 
-        this.pixels = pixels;
+//        this.pixels = pixels;
     }
 
     /**
@@ -52,7 +53,7 @@ class SipImage<A extends IAddress <A>> extends Image <A> {
      */
     @Override
     public
-    int pixelValues ( int addr, int i ) {
+    double[] pixelValues ( int addr, int i ) {
         return 0;
     }
 
@@ -108,22 +109,21 @@ class SipImage<A extends IAddress <A>> extends Image <A> {
 
     /**
      * @param data
-     * @return
      */
     @Override
     public
-    int put ( int addr, int... data ) throws ValueError {
+    void put ( int addr, double[] data ) throws ValueError {
 //        int address = row + width() * col;//??? fixme
 
-        return super.putPixels((int) IAddress.valueOf((long) addr), data);
+        return super.putPixels((int) IAddress.valueOf(addr, inputImage.getWidth(), i2), data);
     }
 
     /**
      * @param imread
      */
     public
-    SipImage ( Mat imread ) throws ValueError {
-        super(new SipImage <>(imread), imread.rows(), imread.cols());
+    SipImage ( Mat imread ) {
+        super(imread, roi);
     }
 
     /**
@@ -132,7 +132,7 @@ class SipImage<A extends IAddress <A>> extends Image <A> {
      */
     public
     SipImage ( Mat imread, IntSize size ) {
-        super((MatOfInt) imread, size);
+        super(actualImage, imread, size);
     }
 
     public
@@ -244,8 +244,8 @@ class SipImage<A extends IAddress <A>> extends Image <A> {
      */
     @Override
     public
-    MatOfInt getMat () {
-        return null;
+    Mat getMat () {
+        return i;
     }
 
     /**
@@ -258,7 +258,7 @@ class SipImage<A extends IAddress <A>> extends Image <A> {
      */
     @Override
     public
-    void getRGB ( int i, int i1, int sideSize, int[] img1pixels, int i2, int i3 ) {
+    void getRGB ( int i, int i1, int sideSize, int[] imgpixels, int i2, int i3 ) {
 
     }
 
@@ -273,8 +273,8 @@ class SipImage<A extends IAddress <A>> extends Image <A> {
 
     @Override
     public
-    IImage <A> getComponents () {
-        return null;
+    List<IImage <A>> getComponents () {
+        return List.of();
     }
 
     /**
@@ -322,39 +322,11 @@ class SipImage<A extends IAddress <A>> extends Image <A> {
         return 0;
     }
 
-    @Override
-    public
-    boolean isHomogeneous () throws ValueError {
-        return false;
-    }
-
+    /**
+     * @return
+     */
     @Override
     public
     Coordinate getCentroid () {
         return null;
-    }
-
-    @Override
-    public
-    Point[] tVertices () {
-        return new Point[0];
-    }
-
-    @Override
-    public
-    double perimeter () {
-        return 0;
-    }
-
-    @Override
-    public
-    EShape getShapeKind () {
-        return null;
-    }
-
-    @Override
-    public
-    double area () {
-        return 0;
-    }
-}
+    }}

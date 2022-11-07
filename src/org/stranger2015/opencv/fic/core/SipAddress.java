@@ -83,18 +83,9 @@ class SipAddress<A extends IAddress <A>> extends SaAddress <A> {
      * @throws ValueError
      */
     public
-    SipAddress () throws ValueError {
+    SipAddress ( int row, int stride, int col ) throws ValueError {
         super();
     }
-
-//    /**
-//     * @param divident
-//     * @throws ValueError
-//     */
-//    public
-//    SipAddress ( A divident ) throws ValueError {
-//        super((int) divident.getIndex());
-//    }
 
     /**
      * @param rows
@@ -104,7 +95,6 @@ class SipAddress<A extends IAddress <A>> extends SaAddress <A> {
     public
     SipAddress ( int rows, int cols ) throws ValueError {
         super((long) rows * cols);
-
     }
 
     /**

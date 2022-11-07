@@ -79,7 +79,7 @@ class RectangularTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
 
     @Override
     public
-    List <IImageBlock <A>> segmentGeometry ( IImageBlock <A> imageBlock, IIntSize minRangeSize, Deque <IImageBlock <A>> queue ) throws ValueError {
+    void segmentGeometry ( IImageBlock <A> imageBlock ) throws ValueError {
         return null;
     }
 
@@ -208,19 +208,19 @@ class RectangularTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
 
     @Override
     public
-    List <IImageBlock <A>> segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
         return null;
     }
 
     @Override
     public
-    List <IImageBlock <A>> segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
         return null;
     }
 
     @Override
     public
-    List <IImageBlock <A>> segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
         return null;
     }
 

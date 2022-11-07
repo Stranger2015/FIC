@@ -12,9 +12,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
  
  */
 public
-interface IImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */,
-        G extends BitBuffer>
-
+interface IImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
         extends IProcessor <N, A, G> {
 
     /**
@@ -77,5 +75,4 @@ interface IImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
      */
     @Override
     IImage<A> preprocess ( String filename );
-
 }

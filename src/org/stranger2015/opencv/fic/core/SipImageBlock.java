@@ -1,7 +1,6 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.opencv.core.Mat;
-import org.stranger2015.opencv.fic.core.IAddress;
 
 /**
  *
@@ -13,12 +12,12 @@ class SipImageBlock<A extends IAddress <A>> extends SaImageBlock <A> {
 
     /**
      * @param address
+     * @param j
      * @return
      */
     @Override
-    public
-    int[] get ( int address ) {
-        return super.get(address);
+    public double[] get ( int address, int j ) {
+        return super.get(address, j);
     }
 
     /**
@@ -30,7 +29,7 @@ class SipImageBlock<A extends IAddress <A>> extends SaImageBlock <A> {
      * @param centerX
      */
     public
-    SipImageBlock ( Image <A> image, int x, int y, int w, int h, int centerX, int centerY ) throws ValueError {
+    SipImageBlock ( IImage <A> image, int x, int y, int w, int h, int centerX, int centerY ) throws ValueError {
         super(image, x, y, w, h);
     }
 
@@ -40,7 +39,7 @@ class SipImageBlock<A extends IAddress <A>> extends SaImageBlock <A> {
      * @param y
      */
     public
-    SipImageBlock ( Image <A> image, int x, int y ) throws ValueError {
+    SipImageBlock ( IImage <A> image, int x, int y ) throws ValueError {
         super(image, x, y, blockSideSize, blockSideSize);
     }
 
@@ -57,9 +56,7 @@ class SipImageBlock<A extends IAddress <A>> extends SaImageBlock <A> {
      */
     public
     int getCenterX () {
-        return actualImage.row(-1)+;
-
-        return 0;
+        return getWidth()/2;
     }
 
     /**
@@ -67,7 +64,7 @@ class SipImageBlock<A extends IAddress <A>> extends SaImageBlock <A> {
      */
     public
     int getCenterY () {
-        return 0;
+        return getHeight()/2;
     }
 
     @SuppressWarnings("unchecked")

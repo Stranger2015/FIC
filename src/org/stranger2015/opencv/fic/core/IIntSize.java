@@ -7,7 +7,7 @@ import org.opencv.core.Size;
  *
  */
 public
-interface IIntSize /*extends Comparable<IIntSize> */ {
+interface IIntSize {
     /**
      *
      */

@@ -1,15 +1,14 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.IAddress;
+import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * functor class to affineFlip an image
  */
 public
-class FlipTransform</*M extends IImage<A>,*/ A extends IAddress <A>, G extends BitBuffer>
+class FlipTransform<A extends IAddress <A>, G extends BitBuffer>
         extends PreserveAlphaTransform <A, G> {
 
     /**

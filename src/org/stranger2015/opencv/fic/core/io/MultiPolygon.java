@@ -123,12 +123,13 @@ class MultiPolygon<T extends MultiPolygon<T>>//fixme
      * @return a MultiPolygon in the reverse order
      */
     public
-    MultiPolygon reverse () {
+    Geometry <?> reverse () {
         return (MultiPolygon) super.reverse();
     }
 
+    @Override
     protected
-    MultiPolygon<T> reverseInternal () {
+    Geometry <?> reverseInternal () {
         Polygon <T>[] polygons = new Polygon <T>[this.geometries.length];
         Arrays.setAll(polygons, this::apply);
         return new MultiPolygon<>(polygons, factory);
@@ -156,7 +157,7 @@ class MultiPolygon<T extends MultiPolygon<T>>//fixme
     }
 
     protected
-    int getTypeCode () {
+    Geometry.EType getTypeCode () {
         return Geometry.TYPECODE_MULTIPOLYGON;
     }
 

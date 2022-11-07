@@ -16,7 +16,7 @@ class MultiPoint<T extends MultiPoint<T>>
      */
     public
     MultiPoint ( GeometryFactory factory, Object o ) {
-        super(factory);
+        super(image, address, blockSize, factory);
     }
 
     @Override
@@ -69,7 +69,7 @@ class MultiPoint<T extends MultiPoint<T>>
 
     @Override
     protected
-    Geometry<T> reverseInternal () {
+    Geometry <?> reverseInternal () {
         return null;
     }
 
@@ -164,7 +164,7 @@ class MultiPoint<T extends MultiPoint<T>>
 
     @Override
     protected
-    int getTypeCode () {
+    Geometry.EType getTypeCode () {
         return 0;
     }
 }

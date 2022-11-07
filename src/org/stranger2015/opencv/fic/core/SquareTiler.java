@@ -1,11 +1,7 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.utils.BitBuffer;
-
-import java.util.Deque;
-import java.util.List;
 
 /**
  * @param <N>
@@ -46,26 +42,26 @@ class SquareTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
 
     @Override
     public
-    List <IImageBlock <A>> segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
 
         return null;
     }
 
     @Override
     public
-    List <IImageBlock <A>> segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
         return null;
     }
 
     @Override
     public
-    List <IImageBlock <A>> segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
         return null;
     }
 
     @Override
     public
-    List <IImageBlock <A>> segmentGeometry ( IImageBlock <A> imageBlock, IIntSize minRangeSize, Deque <IImageBlock <A>> queue ) throws ValueError {
+    void segmentGeometry ( IImageBlock <A> imageBlock ) throws ValueError {
         return null;
     }
 

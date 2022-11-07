@@ -11,12 +11,12 @@ class QuadTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
         extends BinTreeNode <N, A, G> {
 
     /**
-     * @param parent
+     * @param <N, A, G>Iparent
      * @param quadrant
      * @param rect
      */
     public
-    QuadTreeNode ( TreeNodeBase <N, A, G> parent, EDirection quadrant, IIntSize rect ) throws ValueError {
+    QuadTreeNode ( TreeNodeBase <N, A, G> parent, EDirection quadrant, Rectangle rect ) throws ValueError {
         super(parent, quadrant, rect);
     }
 
@@ -26,7 +26,7 @@ class QuadTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      * @throws ValueError
      */
     public
-    QuadTreeNode ( TreeNodeBase <N, A, G> parent, IIntSize boundingBox ) throws ValueError {
+    QuadTreeNode ( TreeNodeBase <N, A, G> parent, Rectangle boundingBox ) throws ValueError {
         this(parent, null, boundingBox);
     }
 
@@ -37,7 +37,7 @@ class QuadTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      */
     @Override
     public
-    TreeNodeBase <N, A, G> createChild ( EDirection quadrant, IIntSize rect ) throws ValueError {
+    TreeNodeBase <N, A, G> createChild ( EDirection quadrant, Rectangle rect ) throws ValueError {
         return new QuadTreeNode <>(this, quadrant, rect);
     }
 }

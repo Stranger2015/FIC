@@ -1,10 +1,7 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.stranger2015.opencv.fic.core.IAddress;
-import org.stranger2015.opencv.fic.core.IImageBlock;
-import org.stranger2015.opencv.fic.core.IIntSize;
+import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.core.ValueError;
 import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
 import org.stranger2015.opencv.utils.BitBuffer;
@@ -28,7 +25,9 @@ interface IPartitionProcessor<N extends TreeNode <N, A, G>, A extends IAddress <
     /**
      * @return
      */
-    IPartitionProcessor <N, A, G> instance ( ITiler <N, A, G> tiler );
+    IPartitionProcessor <N, A, G> instance ( ITiler <N, A, G> tiler,
+                                             ImageBlockGenerator <N, A, G> imageBlockGenerator,
+                                             ITreeNodeBuilder <N, A, G>nodeBuilder );
 
     /**
      * @return
@@ -80,12 +79,12 @@ interface IPartitionProcessor<N extends TreeNode <N, A, G>, A extends IAddress <
      * @return
      */
     default
-    List <IImageBlock <A>> partition ( IImageBlock <A> imageBlock,
+    void partition ( IImageBlock <A> imageBlock,
                                        IIntSize size,
                                        Deque <IImageBlock <A>> queue )
             throws ValueError {
 
-        return doPartition(imageBlock, size, queue);
+        doPartition(imageBlock, size, queue);
     }
 
     /**
@@ -96,17 +95,27 @@ interface IPartitionProcessor<N extends TreeNode <N, A, G>, A extends IAddress <
      * @throws ValueError
      */
     default
-    List <IImageBlock <A>> doPartition ( IImageBlock <A> imageBlock,
+    void doPartition ( IImageBlock <A> imageBlock,
                                          IIntSize size,
                                          Deque <IImageBlock <A>> queue ) throws ValueError {
 
-        return getTiler().tile(imageBlock, size, queue);
+        getTiler().tile(imageBlock);
     }
 
-    /**
-     * @param image
-     * @param searchType
-     * @return
-     */
+    List <IImageBlock <A>> generateDomainBlocks (
+            List <IImageBlock <A>> rangeBlocks,
+            IIntSize rangeSize,
+            IIntSize domainSize );
 
+    List<RegionOfInterest<A>> generateRegions ( IImage <A> image, List<Rectangle> rectangles );
+
+    default
+    IIntSize getRangeSize () {
+        return getTiler().getRangeSize();
+    }
+
+    default
+    IIntSize getDomainSize () {
+        return getTiler().getDomainSize();
+    }
 }

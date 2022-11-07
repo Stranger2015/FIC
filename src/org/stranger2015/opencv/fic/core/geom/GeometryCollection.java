@@ -13,7 +13,7 @@ import java.util.stream.IntStream;
  *
  *@version 1.7
  */
-public class GeometryCollection extends Geometry {
+public class GeometryCollection extends Geometry<?> {
     //  With contributions from Markus Schaber [schabios@logi-track.com] 2004-03-26
     private static final long serialVersionUID = -5694727726395021467L;
     /**
@@ -35,7 +35,7 @@ public class GeometryCollection extends Geometry {
      *            but not <code>null</code>s.
      */
     public GeometryCollection(Geometry[] geometries, GeometryFactory factory) {
-        super(factory);
+        super(image, address, blockSize, factory);
         if (geometries == null) {
             geometries = new Geometry[]{};
         }
@@ -115,7 +115,7 @@ public class GeometryCollection extends Geometry {
     }
 
     public
-    Geometry getBoundary() {
+    Geometry<T> getBoundary() {
         checkNotGeometryCollection(this);
         Assert.shouldNeverReachHere();
 
@@ -226,61 +226,77 @@ public class GeometryCollection extends Geometry {
 
     @Override
     protected
-    <T extends Geometry> int compareToSameClass ( T o ) {
+    int compareToSameClass ( Geometry <?> o, CoordinateSequenceComparator comp ) {
         return 0;
     }
 
     @Override
     protected
-    <T extends Geometry> int compareToSameClass ( T o, CoordinateSequenceComparator comp ) {
+    int compareToSameClass ( Geometry <?> o ) {
+        return 0;
+    }
+
+//    @Override
+    protected
+    <T extends Geometry<T>> int compareToSameClass ( T o ) {
+        return 0;
+    }
+
+//    @Override
+    protected
+    <T extends Geometry<T>> int compareToSameClass ( T o, CoordinateSequenceComparator comp ) {
         return 0;
     }
 
     protected int compareToSameClass(Object o) {
         TreeSet theseElements = new TreeSet(Arrays.asList(geometries));
-        TreeSet otherElements = new TreeSet(Arrays.asList(((org.stranger2015.opencv.fic.core.geom.GeometryCollection) o).geometries));
+        TreeSet otherElements = new TreeSet(Arrays.asList(((GeometryCollection) o).geometries));
+
         return compare(theseElements, otherElements);
     }
 
     protected int compareToSameClass(Object o, CoordinateSequenceComparator comp) {
-        org.stranger2015.opencv.fic.core.geom.GeometryCollection gc = (org.stranger2015.opencv.fic.core.geom.GeometryCollection) o;
+        GeometryCollection gc = (GeometryCollection) o;
 
         int n1 = getNumGeometries();
         int n2 = gc.getNumGeometries();
         int i = 0;
         while (i < n1 && i < n2) {
-            Geometry thisGeom = getGeometryN(i);
-            Geometry otherGeom = gc.getGeometryN(i);
+            Geometry<T> thisGeom = getGeometryN(i);
+            Geometry<T> otherGeom = gc.getGeometryN(i);
             int holeComp = thisGeom.compareToSameClass(otherGeom, comp);
-            if (holeComp != 0) return holeComp;
+            if (holeComp != 0) {
+                return holeComp;
+            }
             i++;
         }
-        if (i < n1) return 1;
-        if (i < n2) return -1;
-        return 0;
+
+        return i < n1 ? 1 : i < n2 ? -1 : 0;
 
     }
 
-    protected int getTypeCode() {
+    protected
+    EType getTypeCode() {
         return Geometry.TYPECODE_GEOMETRYCOLLECTION;
     }
 
     /**
-     * Creates a {@link org.stranger2015.opencv.fic.core.geom.GeometryCollection} with
+     * Creates a {@link GeometryCollection} with
      * every component reversed.
      * The order of the components in the collection are not reversed.
      *
-     * @return a {@link org.stranger2015.opencv.fic.core.geom.GeometryCollection} in the reverse order
+     * @return a {@link GeometryCollection} in the reverse order
      */
     public
-    GeometryCollection reverse() {
+    Geometry <?> reverse() {
         return (GeometryCollection) super.reverse();
     }
 
+    @Override
     protected
-    GeometryCollection reverseInternal()
+    Geometry <?> reverseInternal()
     {
-        Geometry[] geometries = new Geometry[this.geometries.length];
+        Geometry<?>[] geometries = new Geometry[this.geometries.length];
         for (int i = 0; i < geometries.length; i++) {
             geometries[i] = this.geometries[i].reverse();
         }

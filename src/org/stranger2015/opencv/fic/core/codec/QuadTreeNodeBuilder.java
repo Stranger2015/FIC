@@ -27,6 +27,13 @@ class QuadTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
                           IIntSize domainSize,
                           IEncoder <N, A, G> encoder,
                           Library<A> library ) {
+
         super(image, rangeSize, domainSize, encoder, library);
+    }
+
+    @Override
+    public
+    Tree <N, A, G> buildTree ( IImageBlock <A> imageBlock ) throws ValueError {
+        return super.buildTree(imageBlock);
     }
 }

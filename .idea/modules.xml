@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/FIC.iml" filepath="$PROJECT_DIR$/FIC.iml" />
       <module fileurl="file://$PROJECT_DIR$/enumus/enumus.iml" filepath="$PROJECT_DIR$/enumus/enumus.iml" />
       <module fileurl="file://$PROJECT_DIR$/jts/jts.iml" filepath="$PROJECT_DIR$/jts/jts.iml" />
+      <module fileurl="file://$PROJECT_DIR$/protobuf/protobuf.iml" filepath="$PROJECT_DIR$/protobuf/protobuf.iml" />
     </modules>
   </component>
 </project>

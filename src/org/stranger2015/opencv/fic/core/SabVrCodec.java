@@ -13,7 +13,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
  * @param <G>
  */
 public
-class SabVrCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+class SabVrCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
         extends SaCodec <N, A, G> {
 
     /**

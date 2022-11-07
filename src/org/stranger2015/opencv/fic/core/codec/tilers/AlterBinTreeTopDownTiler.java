@@ -1,13 +1,11 @@
 package org.stranger2015.opencv.fic.core.codec.tilers;
 
-import org.slf4j.Logger;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.Deque;
-import java.util.List;
 
 /**
  * @param <N>
@@ -52,52 +50,40 @@ class AlterBinTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress 
         );
     }
 
+    @Override
+    public
+    Deque <IImageBlock <A>> getDeque () {
+        return null;
+    }
+
     /**
-     * @return
+     * @param node
+     * @param imageBlock
      */
     @Override
     public
-    Logger getLogger () {
-        return logger;
+    void onAddNode ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) {
+
+    }
+
+    /**
+     * @param leafNode
+     * @param imageBlock
+     */
+    @Override
+    public
+    void onAddLeafNode ( TreeNode.LeafNode <N, A, G> leafNode, IImageBlock <A> imageBlock ) {
+
     }
 
     /**
      * @param imageBlock
-     * @param minRangeSize
-     * @param queue
-     * @return
      * @throws ValueError
      */
     @Override
     public
-    List <IImageBlock <A>> segmentGeometry ( IImageBlock <A> imageBlock,
-                                             IIntSize minRangeSize,
-                                             Deque <IImageBlock <A>> queue ) throws ValueError {
-
-        return List.of(imageBlock);
-    }
-
-    /**
-     * @param imageBlock
-     * @return
-     * @throws ValueError
-     */
-    @Override
-    public
-    List <IImageBlock <A>> segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
-
-        return List.of(imageBlock);
-    }
-
-    /**
-     * @param imageBlock
-     * @return
-     * @throws ValueError
-     */
-    @Override
-    public
-    List <IImageBlock <A>> segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
-        return super.segmentRectangle(imageBlock);
+    void segmentGeometry ( IImageBlock <A> imageBlock ) throws ValueError {
+        segmentSquareOrRectangle(imageBlock);
     }
 
     /**
@@ -105,9 +91,43 @@ class AlterBinTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress 
      * @return
      * @throws ValueError
      */
+    private
+    void segmentSquareOrRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
+        if (imageBlock.isSquare()) {
+            segmentSquare(imageBlock);
+        }
+        else {
+            segmentRectangle(imageBlock);
+        }
+    }
+
+    /**
+     * @param imageBlock
+     * @throws ValueError
+     */
     @Override
     public
-    List <IImageBlock <A>> segmentSquare ( IImageBlock <A> imageBlock ) throws ValueError {
-        return super.segmentSquare(imageBlock);
+    void segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
+
+    }
+
+    /**
+     * @param imageBlock
+     * @throws ValueError
+     */
+    @Override
+    public
+    void segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
+        super.segmentRectangle(imageBlock);
+    }
+
+    /**
+     * @param imageBlock
+     * @throws ValueError
+     */
+    @Override
+    public
+    void segmentSquare ( IImageBlock <A> imageBlock ) throws ValueError {
+        super.segmentSquare(imageBlock);
     }
 }

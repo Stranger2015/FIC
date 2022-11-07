@@ -19,7 +19,7 @@ class ColorImage<A extends IAddress <A>> extends Image <A> {
      */
     public
     ColorImage ( IImage <A> image ) {
-        super(image, size);
+        super(actualImage, image, size);
 
         List <Mat> list = new ArrayList <>(4);//channels e.g. rgba etc
         Core.split(image.getMat(), list);
@@ -36,7 +36,7 @@ class ColorImage<A extends IAddress <A>> extends Image <A> {
      */
     public
     ColorImage ( Mat mat ) {
-        super(mat, size);
+        super(actualImage, mat, size);
     }
 
     /**

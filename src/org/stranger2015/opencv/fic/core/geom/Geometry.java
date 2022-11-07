@@ -1,7 +1,10 @@
 package org.stranger2015.opencv.fic.core.geom;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
+import org.stranger2015.opencv.fic.core.IAddress;
+import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.IIntSize;
 import org.stranger2015.opencv.fic.core.algorithm.Centroid;
 import org.stranger2015.opencv.fic.core.algorithm.InteriorPoint;
@@ -137,26 +140,37 @@ import java.util.stream.IntStream;
  */
 public abstract
 class Geometry<T extends Geometry <T>> implements Cloneable, Comparable <T>, Serializable {
-
     private static final long serialVersionUID = 8763622679187376702L;
 
-    protected static final int TYPECODE_POINT = 0;
-    protected static final int TYPECODE_MULTIPOINT = 1;
-    protected static final int TYPECODE_LINESTRING = 2;
-    protected static final int TYPECODE_LINEARRING = 3;
-    protected static final int TYPECODE_MULTILINESTRING = 4;
-    protected static final int TYPECODE_POLYGON = 5;
-    protected static final int TYPECODE_MULTIPOLYGON = 6;
-    protected static final int TYPECODE_GEOMETRYCOLLECTION = 7;
+    enum EType {
+        POINT("Point"),
+        MULTIPOINT("MultiPoint"),
+        LINESTRING("LineString"),
+        LINEAR_RING("LinearRing"),
+        MULTILINE_STRING("MultiLineString"),
+        POLYGON("Polygon"),
+        MULTIPOLYGON("MultiPolygon"),
+        GEOMETRY_COLLECTION("GeometryCollection"),
+        ;
+        private final String name;
 
-    public static final String TYPENAME_POINT = "Point";
-    public static final String TYPENAME_MULTIPOINT = "MultiPoint";
-    public static final String TYPENAME_LINESTRING = "LineString";
-    public static final String TYPENAME_LINEARRING = "LinearRing";
-    public static final String TYPENAME_MULTI_LINESTRING = "MultiLineString";
-    public static final String TYPENAME_POLYGON = "Polygon";
-    public static final String TYPENAME_MULTIPOLYGON = "MultiPolygon";
-    public static final String TYPENAME_GEOMETRYCOLLECTION = "GeometryCollection";
+        /**
+         * @param name
+         */
+        @Contract(pure = true)
+        EType ( String name ) {
+            this.name = name;
+        }
+
+        /**
+         * @return
+         */
+        @Contract(pure = true)
+        public
+        String getName () {
+            return name;
+        }
+    }
 
     private final static IGeometryComponentFilter geometryChangedFilter = Geometry::filter;
 
@@ -185,7 +199,7 @@ class Geometry<T extends Geometry <T>> implements Cloneable, Comparable <T>, Ser
      * Creates a new <code>Geometry</code> via the specified GeometryFactory.
      */
     public
-    Geometry ( GeometryFactory factory ) {
+    Geometry ( IImage <?> image, IAddress <?> address, IIntSize blockSize, GeometryFactory factory ) {
         super();
         this.factory = factory;
         this.SRID = factory.getSRID();
@@ -193,7 +207,17 @@ class Geometry<T extends Geometry <T>> implements Cloneable, Comparable <T>, Ser
 
     public
     Geometry ( Mat dest, IIntSize size ) {
-        factory = null;
+        factory = new GeometryFactory();
+    }
+
+    public
+    Geometry ( Mat roi, int i, int j, int[] blockSize, int[] blockSize1, GeometryFactory factory ) {
+        this.factory = factory;
+    }
+
+    protected
+    Geometry ( GeometryFactory factory ) {
+        this.factory = factory;
     }
 
     /**
@@ -223,7 +247,7 @@ class Geometry<T extends Geometry <T>> implements Cloneable, Comparable <T>, Ser
      */
     protected static
     <T extends Geometry <T>>
-    boolean hasNonEmptyElements ( Geometry<T>[] geometries ) {
+    boolean hasNonEmptyElements ( Geometry <T>[] geometries ) {
         for (Geometry <T> geometry : geometries) {
             if (!geometry.isEmpty()) {
                 return true;
@@ -324,7 +348,7 @@ class Geometry<T extends Geometry <T>> implements Cloneable, Comparable <T>, Ser
      * @return the n'th geometry contained in this geometry
      */
     public
-    Geometry<T> getGeometryN ( int n ) {
+    Geometry <T> getGeometryN ( int n ) {
         return this;
     }
 
@@ -467,7 +491,7 @@ class Geometry<T extends Geometry <T>> implements Cloneable, Comparable <T>, Ser
      * @throws IllegalArgumentException if g is null
      */
     public
-    double distance ( Geometry<?> g ) {
+    double distance ( Geometry <?> g ) {
         return DistanceOp.distance(this, g);
     }
 
@@ -480,7 +504,7 @@ class Geometry<T extends Geometry <T>> implements Cloneable, Comparable <T>, Ser
      * @return <code>true</code> if the geometries are less than <code>distance</code> apart.
      */
     public
-    boolean isWithinDistance ( Geometry<?> geom, double distance ) {
+    boolean isWithinDistance ( Geometry <?> geom, double distance ) {
         return DistanceOp.isWithinDistance(this, geom, distance);
     }
 
@@ -538,6 +562,7 @@ class Geometry<T extends Geometry <T>> implements Cloneable, Comparable <T>, Ser
         if (isEmpty()) {
             return factory.createPoint().getCoordinate();
         }
+
         Coordinate centPt = Centroid.getCentroid(this);
 
         return createPointFromInternalCoord(centPt, this).getCentroid();
@@ -554,7 +579,7 @@ class Geometry<T extends Geometry <T>> implements Cloneable, Comparable <T>, Ser
      * @return a {@link Point} which is in the interior of this Geometry
      */
     public
-    Point<?> getInteriorPoint () {
+    Point <?> getInteriorPoint () {
         if (isEmpty()) {
             return factory.createPoint();
         }
@@ -592,7 +617,7 @@ class Geometry<T extends Geometry <T>> implements Cloneable, Comparable <T>, Ser
      * @return the closure of the combinatorial boundary of this <code>Geometry</code>
      */
     public abstract
-    Geometry<?> getBoundary ();
+    Geometry <?> getBoundary ();
 
     /**
      * Returns the dimension of this <code>Geometry</code>s inherent boundary.
@@ -622,7 +647,7 @@ class Geometry<T extends Geometry <T>> implements Cloneable, Comparable <T>, Ser
      * @see GeometryFactory#toGeometry(Envelope)
      */
     public
-    Geometry<?> getEnvelope () {
+    Geometry <?> getEnvelope () {
         return getFactory().toGeometry(getEnvelopeInternal());
     }
 
@@ -691,7 +716,7 @@ class Geometry<T extends Geometry <T>> implements Cloneable, Comparable <T>, Ser
      * @see Geometry#intersects
      */
     public
-    boolean disjoint ( Geometry g ) {
+    boolean disjoint ( Geometry <T> g ) {
         return !intersects(g);
     }
 
@@ -1116,11 +1141,10 @@ class Geometry<T extends Geometry <T>> implements Cloneable, Comparable <T>, Ser
      * @see #equalsExact(Geometry)
      */
     public
-    boolean equalsTopo ( Geometry g ) {
+    boolean equalsTopo ( Geometry <T> g ) {
         // short-circuit test
-        if (!getEnvelopeInternal().equals(g.getEnvelopeInternal()))
-            return false;
-        return relate(g).isEquals(getDimension(), g.getDimension());
+        return getEnvelopeInternal().equals(g.getEnvelopeInternal()) &&
+                relate(g).isEquals(getDimension(), g.getDimension());
     }
 
     /**
@@ -1156,7 +1180,8 @@ class Geometry<T extends Geometry <T>> implements Cloneable, Comparable <T>, Ser
         if (!(o instanceof Geometry)) {
             return false;
         }
-        Geometry g = (Geometry) o;
+        Geometry <T> g = (Geometry <T>) o;
+
         return equalsExact(g);
     }
 
@@ -1334,6 +1359,9 @@ class Geometry<T extends Geometry <T>> implements Cloneable, Comparable <T>, Ser
         return res;
     }
 
+    /**
+     * @return
+     */
     protected abstract
     Geometry <T> reverseInternal ();
 
@@ -1643,8 +1671,8 @@ class Geometry<T extends Geometry <T>> implements Cloneable, Comparable <T>, Ser
      * @return a deep copy of this geometry
      */
     public
-    Geometry<T> copy () {
-        Geometry<T> copy = copyInternal();
+    Geometry <T> copy () {
+        Geometry <T> copy = copyInternal();
         copy.envelope = envelope == null ? null : envelope.copy();
         copy.SRID = this.SRID;
         copy.userData = this.userData;
@@ -1658,7 +1686,7 @@ class Geometry<T extends Geometry <T>> implements Cloneable, Comparable <T>, Ser
      * @return a copy of the target geometry object.
      */
     protected abstract
-    Geometry<T> copyInternal ();
+    Geometry <T> copyInternal ();
 
     /**
      * Converts this <code>Geometry</code> to <b>normal form</b> (or <b>
@@ -1686,8 +1714,8 @@ class Geometry<T extends Geometry <T>> implements Cloneable, Comparable <T>, Ser
      * @see #normalize()
      */
     public
-    Geometry<T> norm () {
-        Geometry<T> copy = copy();
+    Geometry <T> norm () {
+        Geometry <T> copy = copy();
         copy.normalize();
 
         return copy;
@@ -1723,9 +1751,9 @@ class Geometry<T extends Geometry <T>> implements Cloneable, Comparable <T>, Ser
      * Specifications
      */
     public
-    int compareTo ( Geometry<T> other, CoordinateSequenceComparator comp ) {
+    int compareTo ( Geometry <T> other, CoordinateSequenceComparator comp ) {
         if (getTypeCode() != other.getTypeCode()) {
-            return getTypeCode() - other.getTypeCode();
+            return getTypeCode().ordinal() - other.getTypeCode().ordinal();
         }
         if (isEmpty() && other.isEmpty()) {
             return 0;
@@ -1753,7 +1781,7 @@ class Geometry<T extends Geometry <T>> implements Cloneable, Comparable <T>, Ser
      * s are considered to be equal by the <code>equalsExact</code> method.
      */
     protected
-    boolean isEquivalentClass ( Geometry<T> other ) {
+    boolean isEquivalentClass ( Geometry <T> other ) {
         return !this.getClass().getName().equals(other.getClass().getName());
     }
 
@@ -1766,8 +1794,8 @@ class Geometry<T extends Geometry <T>> implements Cloneable, Comparable <T>, Ser
      *                                  but not one of its subclasses
      */
     static
-    <T extends Geometry<T>>
-    void checkNotGeometryCollection ( Geometry<T> g ) {
+    <T extends Geometry <T>>
+    void checkNotGeometryCollection ( Geometry <T> g ) {
         if (g.isGeometryCollection()) {
             throw new IllegalArgumentException("Operation does not support GeometryCollection arguments");
         }
@@ -1781,7 +1809,7 @@ class Geometry<T extends Geometry <T>> implements Cloneable, Comparable <T>, Ser
      */
     protected
     boolean isGeometryCollection () {
-        return getTypeCode() == TYPECODE_GEOMETRYCOLLECTION;
+        return getTypeCode() == EType.GEOMETRY_COLLECTION;
     }
 
     /**
@@ -1839,12 +1867,12 @@ class Geometry<T extends Geometry <T>> implements Cloneable, Comparable <T>, Ser
      * otherwise, zero
      */
     protected
-    int compare ( Collection <Geometry<T>> a, Collection <Geometry<T>> b ) {
-        Iterator <Geometry<T>> i = a.iterator();
-        Iterator <Geometry<T>> j = b.iterator();
+    int compare ( Collection <Geometry <T>> a, Collection <Geometry <T>> b ) {
+        Iterator <Geometry <T>> i = a.iterator();
+        Iterator <Geometry <T>> j = b.iterator();
         while (i.hasNext() && j.hasNext()) {
-            Geometry<T> aElement = i.next();
-            Geometry<T> bElement = j.next();
+            Geometry <T> aElement = i.next();
+            Geometry <T> bElement = j.next();
             int comparison = aElement.compareTo((T) bElement);
             if (comparison != 0) {
                 return comparison;
@@ -1866,10 +1894,10 @@ class Geometry<T extends Geometry <T>> implements Cloneable, Comparable <T>, Ser
     }
 
     abstract protected
-    int getTypeCode ();
+    EType getTypeCode ();
 
     private
-    Point<T> createPointFromInternalCoord ( Coordinate coord, Geometry<T> exemplar ) {
+    Point <T> createPointFromInternalCoord ( Coordinate coord, Geometry <T> exemplar ) {
         Point <T> result;
         // create empty point for null input
         if (coord == null) {
@@ -1912,20 +1940,7 @@ class Geometry<T extends Geometry <T>> implements Cloneable, Comparable <T>, Ser
     @Override
     public
     int compareTo ( @NotNull T other ) {
-        if (getTypeCode() != other.getTypeCode()) {
-            return getTypeCode() - other.getTypeCode();
-        }
-        if (isEmpty() && other.isEmpty()) {
-            return 0;
-        }
-        if (isEmpty()) {
-            return -1;
-        }
-        if (other.isEmpty()) {
-            return 1;
-        }
-
-        return compareToSameClass(other);
+        return getTypeCode().ordinal() - other.getTypeCode().ordinal();
     }
 }
 

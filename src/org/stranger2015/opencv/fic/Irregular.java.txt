@@ -20,15 +20,6 @@ class Irregular<A extends IAddress<A>> extends Geometry<?> {
      */
     @Override
     public
-    EShape getShapeKind () {
-        return EShape.RECTANGLE;
-    }
-
-    /**
-     * @return
-     */
-    @Override
-    public
     double area () {
         return 0;
     }

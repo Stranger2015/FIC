@@ -6,7 +6,6 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.util.Deque;
 import java.util.List;
 
 /**
@@ -18,6 +17,7 @@ public
 class DelaunayTriangularBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
         extends TriangularTiler <N, A, G>
         implements IBottomUpTiler <N, A, G> {
+
     /**
      * @param image
      * @param rangeSize
@@ -25,30 +25,42 @@ class DelaunayTriangularBottomUpTiler<N extends TreeNode <N, A, G>, A extends IA
      * @param encoder
      * @param builder
      */
-    protected
+    public
     DelaunayTriangularBottomUpTiler ( IImage <A> image,
                                       IIntSize rangeSize,
                                       IIntSize domainSize,
                                       IEncoder <N, A, G> encoder,
                                       ITreeNodeBuilder <N, A, G> builder ) {
+
         super(image, rangeSize, domainSize, encoder, builder);
     }
 
     @Override
     public
-    List <IImageBlock <A>> segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
         return null;
     }
 
     /**
      * @param imageBlock
-     * @return
      * @throws ValueError
      */
     @Override
     public
-    List <IImageBlock <A>> segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
         return null;
+    }
+
+    @Override
+    public
+    void segmentSquare ( IImageBlock <A> imageBlock ) throws ValueError {
+        return super.segmentSquare(imageBlock);
+    }
+
+    @Override
+    public
+    void segmentTriangle ( IImageBlock <A> imageBlock ) throws ValueError {
+        return super.segmentTriangle(imageBlock);
     }
 
     /**
@@ -71,20 +83,17 @@ class DelaunayTriangularBottomUpTiler<N extends TreeNode <N, A, G>, A extends IA
 
     @Override
     public
-    List <IImageBlock <A>> segmentGeometry ( IImageBlock <A> imageBlock,
-                                             IIntSize minRangeSize,
-                                             Deque <IImageBlock <A>> queue ) throws ValueError {
-        return null;
+    void segmentGeometry ( IImageBlock <A> imageBlock ) throws ValueError {
+        return List.of(imageBlock);
     }
 
     /**
      * @param imageBlock
-     * @return
      * @throws ValueError
      */
     @Override
     public
-    List <IImageBlock <A>> segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
         return null;
     }
 
@@ -93,7 +102,7 @@ class DelaunayTriangularBottomUpTiler<N extends TreeNode <N, A, G>, A extends IA
      */
     @Override
     public
-    TriangularTiler <N, A, G> instance () {
+    ITiler <N, A, G> instance () {
         return new DelaunayTriangularBottomUpTiler<>(
                 getImage(),
                 getRangeSize(),
@@ -101,4 +110,6 @@ class DelaunayTriangularBottomUpTiler<N extends TreeNode <N, A, G>, A extends IA
                 getEncoder(),
                 getBuilder());
     }
+
+
 }

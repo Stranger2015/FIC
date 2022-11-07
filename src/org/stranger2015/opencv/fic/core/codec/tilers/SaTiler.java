@@ -61,41 +61,39 @@ class SaTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
 
     @Override
     public
-    List <IImageBlock <A>> segmentGeometry ( //EShape imageBlockShape,
-                                             IImageBlock <A> imageBlock,
-                                             IIntSize minRangeSize,
-                                             Deque <IImageBlock <A>> queue ) throws ValueError {
+    void segmentGeometry ( //EShape imageBlockShape,
+                                             IImageBlock <A> imageBlock ) throws ValueError {
 
-        return ITiler.super.segmentGeometry(imageBlock, minRangeSize, queue);
+        return ITiler.super.segmentGeometry(imageBlock);
     }
 
     @Override
     public
-    List <IImageBlock <A>> segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
         return null;
     }
 
     @Override
     public
-    List <IImageBlock <A>> segmentSquare ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentSquare ( IImageBlock <A> imageBlock ) throws ValueError {
         return null;
     }
 
     @Override
     public
-    List <IImageBlock <A>> segmentTriangle ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentTriangle ( IImageBlock <A> imageBlock ) throws ValueError {
         return null;
     }
 
     @Override
     public
-    List <IImageBlock <A>> segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
         return null;
     }
 
     @Override
     public
-    List <IImageBlock <A>> segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
         return null;
     }
 

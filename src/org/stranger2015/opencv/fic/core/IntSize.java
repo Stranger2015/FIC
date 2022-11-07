@@ -2,7 +2,7 @@ package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.opencv.core.MatOfInt;
+import org.opencv.core.Mat;
 
 import static java.lang.String.format;
 
@@ -16,7 +16,7 @@ class IntSize implements IIntSize {
     public final int height;
 
     public
-    IntSize ( MatOfInt mat) {
+    IntSize ( Mat mat) {
         this(mat.width(), mat.height());
     }
 

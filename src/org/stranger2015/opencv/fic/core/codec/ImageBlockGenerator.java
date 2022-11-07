@@ -4,6 +4,11 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.geom.Geometry;
+import org.stranger2015.opencv.fic.core.geom.GeometryFactory;
+import org.stranger2015.opencv.fic.core.geom.LinearRing;
+import org.stranger2015.opencv.fic.core.geom.Polygon;
+import org.stranger2015.opencv.fic.core.geom.impl.CoordinateArraySequence;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
 import org.stranger2015.opencv.utils.BitBuffer;
 
@@ -58,7 +63,7 @@ class ImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
     }
 
     public abstract
-    HvBlockGenerator <N, A, G> newInstance (
+    ImageBlockGenerator <N, A, G> newInstance (
             IPartitionProcessor <N, A, G> partitionProcessor,
             EPartitionScheme scheme,
             IEncoder <N, A, G> encoder,
@@ -72,7 +77,6 @@ class ImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
      */
     public
     List <Vertex> generateVerticesSet ( RegionOfInterest <A> roi, int blockWidth, int blockHeight ) {
-
         return partitionProcessor.generateVerticesSet(roi, blockWidth, blockHeight);
     }
 
@@ -146,6 +150,7 @@ class ImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
     public
     List <IImageBlock <A>> generateDomainBlocks ( RegionOfInterest <A> roi, List <IImageBlock <A>> rangeBlocks )
             throws ValueError {
+
         List <IImageBlock <A>> domainBlocks = new ArrayList <>();
 
         int blockWidth = domainSize.getWidth();
@@ -156,24 +161,26 @@ class ImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
         for (IImageBlock <A> rangeBlock : rangeBlocks) {
             for (int i = 0; i < numOfBlocksPerRow; i++) {
                 for (int j = 0; j < numOfBlocksPerCol; j++) {
-                    IImageBlock <A> block = new ImageBlock <>(roi, i, j, blockWidth, blockHeight);
-                    double sumOfPixelValues = 0;
-                    for (int x = 0; x < blockWidth; x++) {
-                        for (int y = 0; y < blockHeight; y++) {
-                            block.pixelValues(x, y);//roi.pixelValues(i + x, j + y); todo apply
-                            sumOfPixelValues += block.pixelValues(x, y);
+                    GeometryFactory factory = new GeometryFactory();
+                    Geometry <?> geometry = new Polygon <>(
+                            new LinearRing(
+                                    new CoordinateArraySequence(blockHeight),
+                                    new LinearRing[]{},//fixme
+                                    factory));
+                    IImageBlock <A> block = new ImageBlock <>(rangeBlock, i, j, blockWidth, blockHeight, geometry);
+                    double[] sumOfPixelValues = new double[rangeBlock.getChannelsAmount()];
+                    for (int c = 0; c < sumOfPixelValues.length; c++) {
+                        sumOfPixelValues[c] = 0;
+                        for (int k = 0; k < blockWidth; k++) {
+                            for (int l = 0; l < blockHeight; l++) {
+                                sumOfPixelValues[c] += block.getPixelValuesLayer(k, l, c);
+                                block.setBeta((block.pixelValues(k, l) - block.getMeanPixelValue()));
+                            }
                         }
+                        block.setMeanPixelValuesLayer(c, sumOfPixelValues[c] / (blockWidth * blockWidth));
+                        block.contract(2);
+                        domainBlocks.add(block);
                     }
-                    block.setMeanPixelValue((int) (sumOfPixelValues / (blockWidth * blockWidth)));
-                    for (int x = 0; x < blockWidth; x++) {
-                        for (int y = 0; y < blockHeight; y++) {
-                            block.setBeta((block.pixelValues(x, y) - block.getMeanPixelValue()));
-//                        final int i1 = block.pixelValues(x, y) - block.getMeanPixelValue();
-                        }
-                    }
-
-                    block.contract(2);
-                    domainBlocks.add(block);
                 }
             }
         }
@@ -186,7 +193,8 @@ class ImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
      * @return
      */
     public
-    List <IImageBlock <A>> createCodebookBlocks ( RegionOfInterest <A> roi, List <IImageBlock <A>> domainBlocks )
+    List <IImageBlock <A>> createCodebookBlocks ( RegionOfInterest <A> roi,
+                                                  List <IImageBlock <A>> domainBlocks )
             throws ValueError {
 
         List <IImageBlock <A>> blocks = new ArrayList <>();
@@ -244,5 +252,9 @@ class ImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
                                   List <IImageBlock <A>> blocksToMerge ) {
 
         return roi.merge(blocks, blocksToMerge);
+    }
+
+    public
+    void generateDomainBlocks ( List <IImageBlock <A>> rangeBlocks, IIntSize rangeSize, IIntSize domainSize ) {
     }
 }

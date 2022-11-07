@@ -45,7 +45,7 @@ class DecodeTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
     protected
     IImage <A> execute ( String filename ) throws ValueError {
         IImage <A> image = super.execute(filename);
-        FractalModel <N, A, G> fm = codec.getEncoder().getModel();
+        FicFileModel <N, A, G> fm = codec.getEncoder().getModel();
 
         return decoder.decode(fm);
     }

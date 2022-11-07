@@ -29,5 +29,6 @@
     <orderEntry type="library" name="jcommander-1.27" level="project" />
     <orderEntry type="library" exported="" name="commons-collections4-4.4" level="project" />
     <orderEntry type="library" exported="" name="filters" level="project" />
+    <orderEntry type="library" exported="" name="google.protobuf.java.util" level="project" />
   </component>
 </module>

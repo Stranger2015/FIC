@@ -38,7 +38,7 @@ interface ITreeNodeBuilderFactory<N extends TreeNode <N, A, G>, A extends IAddre
                         rangeSize,
                         domainSize,
                         encoder,
-                        library);
+                        library, domainSize1);
                 break;
             case DCT:
                 break;

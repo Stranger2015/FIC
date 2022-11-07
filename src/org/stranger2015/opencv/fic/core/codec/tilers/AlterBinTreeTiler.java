@@ -34,6 +34,9 @@ class AlterBinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G 
         super(image, rangeSize, domainSize, encoder, builder);
     }
 
+    /**
+     * @return
+     */
     @Override
     public abstract
     ITiler <N, A, G> instance ();
@@ -55,6 +58,12 @@ class AlterBinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G 
         return generateInitialRangeBlocks(roi, blockWidth, blockHeight);
     }
 
+    /**
+     * @param roi
+     * @param blockWidth
+     * @param blockHeight
+     * @return
+     */
     public
     List <IImageBlock <A>> generateInitialRangeBlocks ( RegionOfInterest <A> roi,
                                                         int blockWidth,
@@ -64,20 +73,19 @@ class AlterBinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G 
 
     @Override
     public
-    List <IImageBlock <A>> segmentSquare ( IImageBlock <A> imageBlock ) throws ValueError {
-        return super.segmentSquare(imageBlock);
+    void segmentSquare ( IImageBlock <A> imageBlock ) throws ValueError {
+//        return super.segmentSquare(imageBlock);
     }
 
     @Override
     public
-    List <IImageBlock <A>> segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
-        if ((imageBlock.getWidth() / imageBlock.getHeight())==2 ||
-                (imageBlock.getHeight() / imageBlock.getWidth())==2
-        ){
-            throw new ValueError("Image block must have side size proportions 2 / 1");
+    void segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
+        if ((imageBlock.getWidth() / imageBlock.getHeight()) == 2 ||
+                (imageBlock.getHeight() / imageBlock.getWidth()) == 2
+        ) {
+            throw new ValueError("Image block must have the side size ratio of 2:1");
         }
-
-        return super.segmentRectangle(imageBlock);
+        super.segmentRectangle(imageBlock);
     }
 
     //
@@ -126,18 +134,6 @@ class AlterBinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G 
 //                r[0] = new Rectangle(x, y, w / 2, h);
 //                r[1] = new Rectangle(x + w / 2, y, w / 2, h);
 //                break;
-//            case DIAGONAL:
-//                GeometryFactory geomFactory = new GeometryFactory();
-//                Coordinate p0 = new Coordinate(x, y);
-//                Coordinate p1 = new Coordinate(x + w, y);
-//                Coordinate p2 = new Coordinate(x, h + y);
-//                Coordinate p3 = new Coordinate(x + w, h + y);
-//
-//                r[0] = new TriangleImageBlock(geomFactory, p0, p1, p2);
-//                r[1] = new TriangleImageBlock(geomFactory, p2, p1, p3);
-//                break;
-//            default:
-//                throw new IllegalStateException("Unexpected value: " + dir);
 //        }
 //    }
 //

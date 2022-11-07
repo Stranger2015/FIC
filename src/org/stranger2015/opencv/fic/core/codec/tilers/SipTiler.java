@@ -8,7 +8,6 @@ import org.stranger2015.opencv.fic.core.codec.RegionOfInterest;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.util.Deque;
 import java.util.List;
 
 /**
@@ -35,7 +34,7 @@ class SipTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
             IEncoder <N, A, G> encoder,
             ITreeNodeBuilder <N, A, G> builder ) {
 
-        super(image, rangeSize, domainSize, encoder, builder, builder1);
+        super(image, rangeSize, domainSize, encoder, builder);
     }
 
     /**
@@ -43,7 +42,7 @@ class SipTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      */
     @Override
     public
-    List<IImageBlock<A>> segmentRectangle ( IImageBlock <A> imageBlock ) {
+    void segmentRectangle ( IImageBlock <A> imageBlock ) {
         throw new UnsupportedOperationException("SipTiler#segmentRectangle()");
     }
 
@@ -53,7 +52,7 @@ class SipTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      */
     @Override
     public
-    List<IImageBlock<A>> segmentSquare ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentSquare ( IImageBlock <A> imageBlock ) throws ValueError {
         if (imageBlock.getSize().getWidth() <= 1 || imageBlock.getSize().getWidth() != 3) {
             throw new ValueError("SIP Image block size must be equal to 3 x 3");
         }
@@ -78,14 +77,14 @@ class SipTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
 
     @Override
     public
-    List <IImageBlock <A>> segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
 
         return List.of();
     }
 
     @Override
     public
-    List <IImageBlock <A>> segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
         return List.of();
     }
 
@@ -123,6 +122,7 @@ class SipTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      * @return
      */
 //    @Override
+    @Override
     public
     ITiler <N, A, G> instance () {
         return new SipTiler <>(
@@ -153,15 +153,11 @@ class SipTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
     /**
      * @param imageBlockShape
      * @param imageBlock
-     * @param minRangeSize
-     * @param queue
      */
     @Override
     public
-    List <IImageBlock <A>> segmentGeometry ( //
-                                             IImageBlock <A> imageBlock,
-                                             IIntSize minRangeSize,
-                                             Deque <IImageBlock <A>> queue ) {
+    void segmentGeometry ( //
+                                             IImageBlock <A> imageBlock ) {
         return List.of();
     }
 }

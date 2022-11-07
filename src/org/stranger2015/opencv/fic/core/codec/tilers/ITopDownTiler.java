@@ -1,9 +1,7 @@
 package org.stranger2015.opencv.fic.core.codec.tilers;
 
-import org.stranger2015.opencv.fic.core.IAddress;
-import org.stranger2015.opencv.fic.core.IImageBlock;
+import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.core.ValueError;
 import org.stranger2015.opencv.fic.core.codec.RegionOfInterest;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
 import org.stranger2015.opencv.utils.BitBuffer;
@@ -11,14 +9,73 @@ import org.stranger2015.opencv.utils.BitBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.stranger2015.opencv.fic.core.ETopDownTilerOperation.*;
+
 /**
  * @param <N>
  * @param <A>
  * @param <G>
  */
 public
-interface  ITopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
+interface ITopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
         extends ITiler <N, A, G> {
+
+    /**
+     * @param imageBlock
+     * @throws ValueError
+     * @throws DepthLimitExceeded
+     */
+    @Override
+    default
+    void doTile ( IImageBlock <A> imageBlock ) throws ValueError, DepthLimitExceeded {
+        TreeNodeBase <N, A, G> node = null;
+        for (ETopDownTilerOperation operation = TILE_START; operation != TILE_FINISH; ) {
+            imageBlock = getDeque().pop();//todo here??
+            switch (operation) {
+                case TILE_START:
+                    if (imageBlock.getSize().compareTo(getMinRangeSize()) <= 1) {
+                        operation = TILE_FINISH;
+                        break;
+                    }
+                    operation = TILE_SEGMENT_GEOMETRY;
+                    break;
+                case TILE_SEGMENT_GEOMETRY:
+                    segmentGeometry(imageBlock);
+                    operation = TILE_SUCCESSORS;
+                    break;
+                case TILE_SUCCESSORS:
+                    List <TreeNodeBase <N, A, G>> successors = getBuilder().getSuccessors();
+                    int succIndex = 0;
+                    node = successors.get(succIndex);
+                    getBuilder().add(node);
+                    if (node.isLeaf()) {
+                        getBuilder().addLeafNode((TreeNode.LeafNode <N, A, G>) node);
+                        operation = TILE_LEAF;
+                    }
+                    else {
+                        EDirection q = node.getQuadrant();
+                        operation = TILE_SUCCESSOR;
+                    }
+                    break;
+                case TILE_SUCCESSOR:
+                    getDeque().push(imageBlock);
+                    onAddNode(node, imageBlock);
+                    operation = TILE_START;
+                    break;
+                case TILE_LEAF:
+                    //                    imageBlock = getDeque().pop();
+                    onAddLeafNode((TreeNode.LeafNode <N, A, G>) node, imageBlock);
+                    operation = TILE_START;
+                    break;
+                case TILE_FINISH:
+                    onFinish();
+                    operation = INACTIVE;
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + operation);
+            }
+        }
+    }
 
     /**
      * @param roi
@@ -60,13 +117,11 @@ interface  ITopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
     default
     List <IImageBlock <A>> generateInitialRangeBlocks ( RegionOfInterest <A> roi,
                                                         int blockWidth,
-                                                        int blockHeight )
-            throws ValueError {
+                                                        int blockHeight ) throws ValueError {
 
-        List<Vertex> vertices = generateVerticesSet(roi, blockWidth, blockHeight);
+        List <Vertex> vertices = generateVerticesSet(roi, blockWidth, blockHeight);
         List <IImageBlock <A>> rangeBlocks = new ArrayList <>(vertices.size());
-        int sumOfPixelValues = 0;
-        int[] pixels = roi.getPixels();
+        double[] pixels = roi.getPixels();
 
         for (Vertex vertex : vertices) {
             int x = (int) vertex.getX();
@@ -74,10 +129,22 @@ interface  ITopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
             IImageBlock <A> rangeBlock = roi.getSubImage(x, y, blockWidth, blockHeight);
 
             rangeBlock.put(x, y, pixels);
-            sumOfPixelValues += rangeBlock.pixelValues(x, y);
 
-            rangeBlock.setMeanPixelValue((int) (sumOfPixelValues / (double) (blockWidth * blockHeight)));
+//            rangeBlock.setMeanPixelValue((int) (sumOfPixelValues / (double) (blockWidth * blockHeight)));
             rangeBlocks.add(rangeBlock);
+
+            double[] sumOfPixelValues = new double[rangeBlock.getChannelsAmount()];
+            for (int c = 0; c < sumOfPixelValues.length; c++) {
+                sumOfPixelValues[c] = 0;
+                for (int i = 0; i < blockWidth; i++) {
+                    for (int j = 0; j < blockHeight; j++) {
+                        sumOfPixelValues[c] += rangeBlock.getPixelValuesLayer(i, j, c);
+//                        rangeBlock.setBeta(rangeBlock.pixelValues(x, y) - rangeBlock.getMeanPixelValue());
+                    }
+                }
+
+                rangeBlock.setMeanPixelValuesLayer(c, sumOfPixelValues[c] / (blockWidth * blockWidth));
+            }
         }
 
         return rangeBlocks;
@@ -92,28 +159,24 @@ interface  ITopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      */
     default
     @Override
-    List <IImageBlock <A>> generateRangeBlocks ( RegionOfInterest <A> roi,
-                                                 int blockWidth,
-                                                 int blockHeight )
+    List <IImageBlock <A>> generateRangeBlocks ( RegionOfInterest <A> roi, int blockWidth, int blockHeight )
             throws ValueError {
 
         List <IImageBlock <A>> rangeBlocks = generateInitialRangeBlocks(roi, blockWidth, blockHeight);
         if (roi.isSquare()) {
-            List <IImageBlock <A>> segments = segmentSquare(roi);
-
+            segmentSquare(roi);
         }
 
-        return  List.of();
+        return rangeBlocks;
     }
 
     /**
      * @param imageBlock
-     * @return
      * @throws ValueError
      */
     @Override
     default
-    List <IImageBlock <A>> segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
         IImageBlock <A> result1;
         IImageBlock <A> result2;
 
@@ -137,6 +200,29 @@ interface  ITopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
             result2 = imageBlock.getSubImage(x2, y1, w / 2, h);
         }
 
-        return List.of(result1, result2);
+        getDeque().push(result1);
+        getDeque().push(result2);
+    }
+
+    /**
+     * @param imageBlock
+     * @throws ValueError
+     */
+    @Override
+    default
+    void segmentSquare ( IImageBlock <A> imageBlock ) throws ValueError {
+    }
+
+    default
+    void segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    default
+    boolean isBottomUpTiler () {
+        return false;
     }
 }

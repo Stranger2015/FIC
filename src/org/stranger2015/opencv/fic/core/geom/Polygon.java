@@ -105,6 +105,7 @@ class Polygon<T extends Polygon<T>>
     public
     Polygon ( LinearRing shell, LinearRing[] holes, GeometryFactory factory ) {
         super(factory);
+
         if (shell == null) {
             shell = getFactory().createLinearRing();
         }
@@ -114,11 +115,19 @@ class Polygon<T extends Polygon<T>>
         if (hasNullElements(holes)) {
             throw new IllegalArgumentException("holes must not contain null elements");
         }
-        if (shell.isEmpty() && hasNonEmptyElements(holes)) {
+        if (shell.isEmpty() && Geometry.hasNonEmptyElements(holes)) {
             throw new IllegalArgumentException("shell is empty but holes are not");
         }
         this.shell = shell;
         this.holes = holes;
+    }
+
+    /**
+     * @param shell
+     */
+    public
+    Polygon ( LinearRing shell) {
+        this(shell,  new LinearRing[0],new GeometryFactory());
     }
 
     /**
@@ -266,7 +275,7 @@ class Polygon<T extends Polygon<T>>
     @Override
     public
     String getGeometryType () {
-        return Geometry.TYPENAME_POLYGON;
+        return EType.POLYGON.getName();
     }
 
     /**
@@ -308,17 +317,17 @@ class Polygon<T extends Polygon<T>>
     public
     Geometry<T> getBoundary () {
         if (isEmpty()) {
-            return getFactory().createMultiLineString();
+            return getFactory().createMultiLineString().getBoundary();
         }
         LinearRing[] rings = new LinearRing[holes.length + 1];
         rings[0] = shell;
         IntStream.range(0, holes.length).forEachOrdered(i -> rings[i + 1] = holes[i]);
         // create LineString or MultiLineString as appropriate
-        if (rings.length <= 1) {
+        if (rings.length == 1) {
             return getFactory().createLinearRing(rings[0].getCoordinateSequence());
         }
 
-        return getFactory().createMultiLineString(rings);
+        return getFactory().createMultiLineString(rings).getBoundary();
     }
 
     /**
@@ -476,6 +485,11 @@ class Polygon<T extends Polygon<T>>
         return result;
     }
 
+    /**
+     * @param poly a <code>Geometry</code> having the same class as this <code>Geometry</code>
+     * @param comp a <code>CoordinateSequenceComparator</code>
+     * @return
+     */
     @Override
     protected
     int compareToSameClass ( @NotNull T poly, CoordinateSequenceComparator comp ) {
@@ -509,9 +523,13 @@ class Polygon<T extends Polygon<T>>
         return result;
     }
 
+    /**
+     * @return
+     */
+    @Override
     protected
-    int getTypeCode () {
-        return Geometry.TYPECODE_POLYGON;
+    EType getTypeCode () {
+        return EType.POLYGON;
     }
 
     private
@@ -541,13 +559,14 @@ class Polygon<T extends Polygon<T>>
         return (Polygon <T>) super.reverse();
     }
 
+    @Override
     protected
-    Geometry<T> reverseInternal () {
+    Geometry <T> reverseInternal () {
         LinearRing shell = getExteriorRing().reverse();
         LinearRing[] holes = new LinearRing[getNumInteriorRing()];
         Arrays.setAll(holes, i -> getInteriorRingN(i).reverse());
 
-        return getFactory().createPolygon(shell, holes);
+        return getFactory().createPolygon(shell, holes).getExteriorRing();
     }
 }
 

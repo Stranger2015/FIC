@@ -1,7 +1,5 @@
 package org.stranger2015.opencv.fic.core.geom;
 
-import org.stranger2015.opencv.fic.core.geom.Geometry;
-import org.stranger2015.opencv.fic.core.geom.GeometryCollection;
 import org.stranger2015.opencv.fic.core.geom.util.GeometryCollectionMapper;
 import org.stranger2015.opencv.fic.core.geom.util.GeometryMapper;
 import org.stranger2015.opencv.fic.core.operation.overlay.OverlayOp;

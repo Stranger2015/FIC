@@ -885,7 +885,8 @@ class QuadEdgeSubdivision {
 
         return geomFact.createGeometryCollection(tris);
     }
-    public List<Triangle<T>> getTriangles(List<CoordinateList> coordinates){
+    public
+    List <Triangle <?>> getTriangles( CoordinateList coordinates){
  new Triangle<>();
         coordinates.get(0);
         coordinates.get(1);

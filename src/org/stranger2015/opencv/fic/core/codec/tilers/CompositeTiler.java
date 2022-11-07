@@ -38,7 +38,7 @@ class CompositeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
                      IEncoder <N, A, G> encoder,
                      ITreeNodeBuilder <N, A, G> builder ) {
 
-        super(image, rangeSize, domainSize, encoder, builder, builder1);
+        super(image, rangeSize, domainSize, encoder, builder);
     }
 
     /**

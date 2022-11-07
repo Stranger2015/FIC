@@ -12,7 +12,6 @@ import org.stranger2015.opencv.fic.core.shape.fractal.HilbertCurveBuilder;
 import org.stranger2015.opencv.fic.core.triangulation.DelaunayTriangulation;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.util.Deque;
 import java.util.List;
 
 /**
@@ -64,7 +63,7 @@ class DelaunayTriangularTopDownTiler<N extends TreeNode <N, A, G>, A extends IAd
                 builder
         );
 
-        triangulationBuilder = new DelaunayTriangulationBuilder <>(getClass());
+        triangulationBuilder = new DelaunayTriangulationBuilder<N, A, G>(getClass());
     }
 
     /**
@@ -72,7 +71,7 @@ class DelaunayTriangularTopDownTiler<N extends TreeNode <N, A, G>, A extends IAd
      */
     @Override
     public
-    TriangularTiler <N, A, G> instance () {
+    ITiler <N, A, G> instance () {
         return new DelaunayTriangularTopDownTiler <>(
                 getImage(),
                 getRangeSize(),
@@ -103,15 +102,11 @@ class DelaunayTriangularTopDownTiler<N extends TreeNode <N, A, G>, A extends IAd
     /**
      * @param imageBlockShape
      * @param imageBlock
-     * @param minRangeSize
-     * @param queue
      * @throws ValueError
      */
     @Override
     public
-    List <IImageBlock <A>> segmentGeometry ( IImageBlock <A> imageBlock,
-                                             IIntSize minRangeSize,
-                                             Deque <IImageBlock <A>> queue
+    void segmentGeometry ( IImageBlock <A> imageBlock
     ) throws ValueError {
         return List.of(imageBlock);
     }
@@ -122,19 +117,19 @@ class DelaunayTriangularTopDownTiler<N extends TreeNode <N, A, G>, A extends IAd
      */
     @Override
     public
-    List <IImageBlock <A>> segmentTriangle ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentTriangle ( IImageBlock <A> imageBlock ) throws ValueError {
         return super.segmentTriangle(imageBlock);
     }
 
     @Override
     public
-    List <IImageBlock <A>> segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
         return List.of(imageBlock);
     }
 
     @Override
     public
-    List <IImageBlock <A>> segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
         return List.of(imageBlock);
     }
 
@@ -144,7 +139,7 @@ class DelaunayTriangularTopDownTiler<N extends TreeNode <N, A, G>, A extends IAd
      */
     @Override
     public
-    List <IImageBlock <A>> segmentSquare ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentSquare ( IImageBlock <A> imageBlock ) throws ValueError {
         int w;
 
         GeometryFactory geometryFactory = new GeometryFactory();

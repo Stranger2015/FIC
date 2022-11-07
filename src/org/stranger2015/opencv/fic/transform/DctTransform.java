@@ -12,7 +12,7 @@ import static org.stranger2015.opencv.fic.transform.EInterpolationType.*;
  * @param <G>
  */
 public
-class DctTransform</*M extends IImage<A>,*/ A extends IAddress <A>, G extends BitBuffer>
+class DctTransform<A extends IAddress <A>, G extends BitBuffer>
         extends ImageTransform <A, G> {
 
     /**

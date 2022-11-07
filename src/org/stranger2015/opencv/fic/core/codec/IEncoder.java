@@ -8,6 +8,7 @@ import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.utils.BitBuffer;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
@@ -155,21 +156,21 @@ import java.util.Set;
  */
 public
 interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends// IPipeline <IImage <A>, IImage <A>>,
-        IImageProcessorListener <N, A, G>,
-        ICodecListener <N, A, G>,
-        IConstants {
+        extends IImageProcessorListener <N, A, G>,
+                ICodecListener <N, A, G>,
+                IConstants {
     /**
      *
      */
-    void initialize ();
+    void initialize () throws Exception;
 
     /**
      * @return
      */
     default
-    IImage <A> encode ( IImage <A> image ) throws ValueError {
+    IImage <A> encode ( IImage <A> image ) throws Exception {
         initialize();
+
         return doEncode(image);
     }
 
@@ -177,7 +178,7 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      * @param image
      * @return
      */
-    IImage <A> doEncode ( IImage <A> image );
+    IImage <A> doEncode ( IImage <A> image ) throws ValueError;
 
     /**
      * @return
@@ -209,7 +210,7 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      * @param blockHeight
      * @throws ValueError
      */
-    void segmentRegion ( RegionOfInterest <A> image, int blockWidth, int blockHeight ) throws ValueError;
+    void segmentRegion ( RegionOfInterest <A> roi, int blockWidth, int blockHeight ) throws ValueError;
 
     /**
      * @return
@@ -313,13 +314,13 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
     /**
      * @return
      */
-    FractalModel <N, A, G> getModel ();
+    FicFileModel <N, A, G> getModel ();
 
     /**
      * @param filename
      * @return
      */
-    FractalModel <N, A, G> loadModel ( String filename );
+    FicFileModel <N, A, G> loadModel ( String filename );
 
     /**
      * @param node
@@ -335,4 +336,107 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      * @param node
      */
     void addLeafNode ( TreeNodeBase <N, A, G> node );
+
+    /**
+     * @return
+     */
+    Class <?> getTilerClass ();
+
+    EnumSet<ESplitKind> chooseDirection ( IImageBlock <A> imageBlock );
+
+    /**
+     * @param image
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    default
+    IImageBlock <A> iterateRangeBlocks ( IImageBlock <A> image, List <IImageBlock <A>> rangeBlocks ) {
+        rangeBlocks.forEach(rangeBlock -> {
+            int percent = 100 * (rangeBlocks.indexOf(rangeBlock) + 1) / rangeBlocks.size();
+            System.err.printf("%d%%", percent);
+            ImageTransform <A, G> bestTransform = ImageTransform.create(image, rangeBlock.getAddress());
+            int minDistance = Integer.MAX_VALUE;
+            try {
+                iterateDomainBlocks((ImageBlock <A>) rangeBlock, bestTransform, minDistance);
+            } catch (ValueError e) {
+                throw new RuntimeException(e);
+            }
+            getTransforms().add(bestTransform);
+        });
+        outputImage.getTransforms().addAll(transforms);
+//
+        return (IImageBlock <A>) outputImage;
+    }
+
+    /**
+     * @param rangeBlock
+     * @param bestTransform
+     * @param minDistance
+     */
+    default
+    void iterateDomainBlocks ( ImageBlock <A> rangeBlock,
+                               ImageTransform <A, G> bestTransform,
+                               int minDistance ) throws ValueError {
+//        for (ImageBlock <A> domainBlock : domainBlocks) {
+            double alpha = 0;
+            for (int i = 0; i < domainBlock.getWidth(); i++) {
+                for (int j = 0; j < domainBlock.getHeight(); j++) {
+                    double[] data = new double[4];//fixme
+                    alpha += (domainBlock.get(i, j, data) - domainBlock.getMeanPixelValue());
+                }
+//            }
+
+            for (int addr = 0; addr < domainBlock.getWidth(); addr++) {
+                double[] data = new double[4];//fixme
+                alpha += (domainBlock.get(domainBlock.getAddress().newInstance(addr), data) - domainBlock.meanPixelValue);
+            }
+//
+            double contrast = alpha / domainBlock.beta;//byte
+            int brightness = (int) (rangeBlock.meanPixelValue - contrast * domainBlock.meanPixelValue);
+
+            for (int index = 0; index < 8; index++) {
+                IImageBlock <A> transformedDomainBlock =
+                        new ImageBlock <>(
+                                inputImage,
+                                domainBlock.getAddress(),
+                                domainBlock.getSize(),
+                                geometry);
+                int pixelAmount = domainBlock.getWidth() * domainBlock.getWidth();
+                for (int addr = 0; addr < pixelAmount; addr++) {
+                    for (int y = 0; y < domainBlock.height; y++) {
+                        int newAddr = addr * -1; // fixme dihedralAffineTransforms[index][0] + y * dihedralAffineTransforms[index][1];
+                        int newY = x * dihedralAffineTransforms[index][2] + y * dihedralAffineTransforms[index][3];
+                        if (newAddr < 0) {
+                            newAddr += domainBlock.getWidth();
+                        }
+                        if (newY < 0) {
+                            newY += domainBlock.height;
+                        }
+                        double newPixelValue = (short) (contrast * domainBlock.put(addr, new int[1]) + brightness);
+
+                        double[] data = new double[4];
+                        data[0]=
+                                ((newPixelValue < MAX_PIXEL_VALUE) && (newPixelValue >= 0)) ?
+                                        newPixelValue :
+                                        (MAX_PIXEL_VALUE / 2);
+
+                        transformedDomainBlock.put(
+                                newAddr,
+                                data
+                        );
+//                    }
+                    }
+                    int distance = getDistance(rangeBlock, transformedDomainBlock);
+                    if ((distance < minDistance) && (distance != 0)) {
+                        minDistance = distance;
+                        bestTransform.dihedralAffineTransformIndex = index;
+                        bestTransform.setAddress(transformedDomainBlock.getAddress());
+                        bestTransform.brightnessOffset = brightness;
+                        bestTransform.contrastScale = contrast;
+                    }
+                }
+            }
+        }
+    }
+
 }

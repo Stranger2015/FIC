@@ -29,13 +29,11 @@ class Tree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBu
 
     protected TreeNodeBase <N, A, G> root;
     protected TreeNodeTask <N, A, G> action;
-
-    private IRectangle area;
-
     /**
      *
      */
     protected int depth;          // The depth of the tree... sa/sip layer??
+    private IRectangle area;
 
     /**
      *
@@ -72,7 +70,8 @@ class Tree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBu
      */
     protected
     Tree ( TreeNodeBase <N, A, G> root, IImage <A> image, TreeNodeTask <N, A, G> action ) {
-        this(root,
+        this(
+                root,
                 image,
                 action,
                 DEFAULT_BOUNDING_BOX,
@@ -86,6 +85,7 @@ class Tree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBu
      */
     protected
     void initialize ( TreeNode <N, A, G> root, IImageBlock <A> imageBlock ) {
+
     }
 
     /**
@@ -114,7 +114,8 @@ class Tree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBu
      * @return
      */
     abstract public
-    TreeNode <N, A, G> nodeInstance ( TreeNodeBase <N, A, G> parent, EDirection quadrant,
+    TreeNode <N, A, G> nodeInstance ( TreeNodeBase <N, A, G> parent,
+                                      EDirection quadrant,
                                       IIntSize rect )
             throws ValueError;
 

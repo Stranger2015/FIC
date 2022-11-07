@@ -3,9 +3,7 @@ package org.stranger2015.opencv.fic.core.io;
 import ar.com.hjg.pngj.IImageLine;
 import ar.com.hjg.pngj.IImageLineSet;
 import ar.com.hjg.pngj.PngReader;
-import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.FractalModel;
-import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.fic.core.FicFileModel;
 import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.utils.BitBuffer;
 
@@ -70,8 +68,8 @@ class FractalReader<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exte
      * @return
      */
     public
-    FractalModel <N, A, G> readModel () {
-        FractalModel <N, A, G> model = new FractalModel <>(new HashMap <>());
+    FicFileModel <N, A, G> readModel () {
+        FicFileModel <N, A, G> model = new FicFileModel <>(new HashMap <>());
 
         IImageLineSet <? extends IImageLine> rows = readRows();
         for (int i = 0; i < rows.size(); i++) {

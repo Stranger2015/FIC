@@ -1,6 +1,6 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
-import org.opencv.core.MatOfInt;
+import org.opencv.core.Mat;
 import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.Image;
 import org.stranger2015.opencv.fic.core.ValueError;
@@ -90,7 +90,7 @@ class Individual<A extends IAddress <A>, G extends BitBuffer, C extends Chromoso
      */
     @Override
     public
-    MatOfInt getMat () {
+    Mat getMat () {
         return actualImage;
     }
 

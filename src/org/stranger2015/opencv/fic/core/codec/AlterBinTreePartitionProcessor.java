@@ -1,6 +1,7 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.stranger2015.opencv.fic.core.IAddress;
+import org.stranger2015.opencv.fic.core.ITreeNodeBuilder;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
 import org.stranger2015.opencv.utils.BitBuffer;
@@ -18,8 +19,11 @@ class AlterBinTreePartitionProcessor<N extends TreeNode <N, A, G>, A extends IAd
      * @param tiler
      */
     public
-    AlterBinTreePartitionProcessor ( ITiler <N, A, G> tiler ) {
-        super(tiler);
+    AlterBinTreePartitionProcessor ( ITiler <N, A, G> tiler,
+                                     ImageBlockGenerator <N, A, G> imageBlockGenerator,
+                                     ITreeNodeBuilder <N, A, G> nodeBuilder ) {
+
+        super(tiler, imageBlockGenerator, nodeBuilder);
     }
 
     /**
@@ -28,7 +32,10 @@ class AlterBinTreePartitionProcessor<N extends TreeNode <N, A, G>, A extends IAd
      */
     @Override
     public
-    IPartitionProcessor <N, A, G> instance ( ITiler <N, A, G> tiler ) {
-        return new AlterBinTreePartitionProcessor <>(tiler);
+    IPartitionProcessor <N, A, G> instance ( ITiler <N, A, G> tiler,
+                                             ImageBlockGenerator <N, A, G> imageBlockGenerator,
+                                             ITreeNodeBuilder <N, A, G> nodeBuilder ) {
+
+        return new AlterBinTreePartitionProcessor <>(tiler,imageBlockGenerator,nodeBuilder);
     }
 }

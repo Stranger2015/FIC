@@ -4,36 +4,33 @@ import org.jetbrains.annotations.NotNull;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 import org.stranger2015.opencv.fic.core.codec.RegionOfInterest;
-import org.stranger2015.opencv.fic.core.geom.Polygon;
+import org.stranger2015.opencv.fic.core.geom.Geometry;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 
 import static org.opencv.core.CvType.CV_8U;
 import static org.opencv.highgui.HighGui.imshow;
-import static org.stranger2015.opencv.fic.core.IAddress.valueOf;
 
 /**
  *
  */
 public
-interface IImage<A extends IAddress <A>>
-        extends Comparable <IImage <A>>,
-                IShape {
+interface IImage<A extends IAddress <A>> {
+
+    void initialize ();
 
     /**
      * @return
      */
-    IShape getShape ();
 
     /**
      * @return
      */
     default
-    Mat createMask ( IIntSize bb, List <Polygon <T>> polygonList ) {
-        Mat mMask = Mat.zeros(bb.toSize(), CV_8U);
+    Mat createMask ( IIntSize bb, List <Geometry<?>> polygonList ) {
+        Mat mMask = Mat.zeros(bb.toSize(), CV_8U);//cv_8u
         fillPoly(mMask, polygonList, new Scalar(0));
         imshow("mMask", mMask);
 
@@ -41,7 +38,7 @@ interface IImage<A extends IAddress <A>>
     }
 
     private static
-    void fillPoly ( Mat mMask, List <Polygon <T>> polygonList, Scalar scalar ) {
+    void fillPoly ( Mat mMask, List <Geometry<?>> polygonList, Scalar scalar ) {
         Imgproc.fillPoly(mMask, polygonListToMatList(polygonList), scalar);
     }
 
@@ -50,13 +47,14 @@ interface IImage<A extends IAddress <A>>
      * @return
      */
     static @NotNull
-    List <MatOfPoint> polygonListToMatList ( List <Polygon <T>> polygonList ) {
+    List <MatOfPoint> polygonListToMatList ( List <Geometry<?>> polygonList ) {
         List <MatOfPoint> matOfPoints = new ArrayList <>(polygonList.size());
-        for (Polygon <T> polygon : polygonList) {
+        for (Geometry<?> polygon : polygonList) {
             Point[] apply = null;//apply(polygon);
             MatOfPoint matOfPoint = new MatOfPoint(apply);
             matOfPoints.add(matOfPoint);
         }
+
         return matOfPoints;
     }
 
@@ -104,119 +102,6 @@ interface IImage<A extends IAddress <A>>
     Mat submat ( int rowStart, int rowEnd, int colStart, int colEnd );
 
     /**
-     * @param address
-     * @param pixel
-     */
-    int putPixel ( IAddress <A> address, int[] pixel ) throws ValueError;
-
-    /**
-     * @param address
-     * @param pixels
-     */
-    default
-    void putPixels ( IAddress <A> address, int[][] pixels ) throws ValueError {
-        for (int[] pixel : pixels) {
-            putPixel(address, pixel);
-        }
-    }
-
-    /**
-     * Sets a pixel in  the DataBuffer using an int array of samples for input.
-     * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
-     * not in bounds.
-     *
-     * @param iArray The input samples in an int array.
-     * @throws NullPointerException           if iArray or data is null.
-     * @throws ArrayIndexOutOfBoundsException if the coordinates are
-     *                                        not in bounds, or if iArray is too small to hold the input.
-     */
-    default
-    void setPixel ( IAddress <A> address, int[] iArray ) {
-        IntStream.range(0, getNumBands()).forEach(i -> setSample(address, i, iArray[i]));
-    }
-
-    /**
-     * @return
-     */
-    default
-    int getNumBands () {
-        return getMat().channels();
-    }
-
-    /**
-     * Returns the samples for a specified band for the specified rectangle
-     * of pixels in an int array, one sample per array element.
-     * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
-     * not in bounds.
-     *
-     * @param sideSize The width of the pixel square.
-     * @param b        The band to return.
-     * @param iArray   If non-null, returns the samples in this array.
-     * @return the samples for the specified band for the specified region of pixels.
-     * @throws NullPointerException           if data is null.
-     * @throws ArrayIndexOutOfBoundsException if the coordinates or
-     *                                        the band index are not in bounds, or if iArray is too small to
-     *                                        hold the output.
-     */
-    default
-    int[] getSamples ( IAddress <A> address, int sideSize, int dummy, int b, int[] iArray ) throws ValueError {
-        int[] pixels;
-        int offset = 0;
-
-        pixels = iArray != null ? iArray : new int[pixelAmount()];
-
-        for (int addr = 0; addr < pixelAmount(); addr++) {
-            pixels[offset++] = getSample(valueOf(addr), b);
-        }
-
-        return pixels;
-    }
-
-    /**
-     * Sets a sample in the specified band for the pixel located at (x,y)
-     * in the DataBuffer using an int for input.
-     * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
-     * not in bounds.
-     *
-     * @param b The band to set.
-     * @param s The input sample as an int.
-     * @throws NullPointerException           if data is null.
-     * @throws ArrayIndexOutOfBoundsException if the coordinates or
-     *                                        the band index are not in bounds.
-     */
-    void setSample ( IAddress <A> address, int b, int s );
-
-    /**
-     * Returns the sample in a specified band for the pixel located
-     * at (x,y) as an int.
-     * ArrayIndexOutOfBoundsException may be thrown if the coordinates are
-     * not in bounds.
-     *
-     * @param b The band to return.
-     * @return the sample in a specified band for the specified pixel.
-     * @throws NullPointerException           if data is null.
-     * @throws ArrayIndexOutOfBoundsException if the coordinates or
-     *                                        the band index are not in bounds.
-     */
-    int getSample ( IAddress <A> address, int b );
-
-    /**
-     * @return
-     */
-    IAddress <A> getAddress ();
-
-    /**
-     * @return
-     */
-    int pixelAmount ();
-
-    /**
-     * @param address
-     */
-//    @Override
-    void setAddress ( IAddress <A> address );
-
-    /**
      * @param n
      * @return
      */
@@ -232,12 +117,6 @@ interface IImage<A extends IAddress <A>>
      */
 //    @Override
     IImageBlock <A> subImage ( int rowStart, int rowEnd, int colStart, int colEnd );
-
-    /**
-     * @param x
-     * @param y
-     */
-    void setAddress ( int x, int y ) throws ValueError;
 
     /**
      * @return
@@ -262,7 +141,7 @@ interface IImage<A extends IAddress <A>>
     /**
      * @return
      */
-    MatOfInt getMat ();
+    Mat getMat ();
 
     /**
      * @param x
@@ -281,7 +160,7 @@ interface IImage<A extends IAddress <A>>
      * @param i2
      * @param i3
      */
-    void getRGB ( int i, int i1, int sideSize, int[] img1pixels, int i2, int i3 );
+    void getRGB ( int i, int i1, int sideSize, double[] img1pixels, int i2, int i3 );
 
     /**
      * @return
@@ -296,11 +175,6 @@ interface IImage<A extends IAddress <A>>
     /**
      * @return
      */
-    int[] getPixels () throws ValueError;
-
-    /**
-     * @return
-     */
     boolean isGrayScale ();
 
     /**
@@ -309,67 +183,108 @@ interface IImage<A extends IAddress <A>>
     List <IImage <A>> getComponents ();
 
     /**
-     * @param address
-     * @param data
-     * @return
-     */
-    int get ( IAddress <A> address, int[] data );
-
-    /**
-     * @return
-     */
-    List <RegionOfInterest <A>> getRegions ();
-
-    /**
-     * @param regions
-     */
-    void setRegions ( List <RegionOfInterest <A>> regions );
-
-    /**
      * @param addr
-     * @return
-     */
-    int[] get ( int addr );
-
-    /**
-     *
-     * @param x
-     * @param y
-     * @return
-     */
-    int get ( int x, int y, int[] data);
-
-    /**
-     * @param addr
-     * @return
-     */
-    int[] getPixels ( IAddress <A> addr );
-
-    /**
-     * @param addr
-     * @param i
-     * @return
-     */
-    int pixelValues ( int x, int y, int[] data );//fixme
-
-    /**
-     * @param x
-     * @param y
-     * @return
-     */
-    int pixelValues ( int x, int y );
-
-    /**
-     * @param x
      * @param y
      * @param data
+     * @return
      */
-    void put ( int x, int y, int[] data );
+    default
+    double[] getPixel ( int x, int y) {
+//        int channels=getMat().channels();
+//        int stride=getMat().width()*channels;
+//        for (int i=0; i< getMat().height(); i++) {
+//         stride is the number of bytes in a row of smallImg
+//        for (int j=0; j<stride; j+=channels)        {
+//            int b = buff[(i * stride) + j];
+//            int g = buff[(i * stride) + j + 1];
+//            int r = buff[(i * stride) + j + 2];
+//            float[] hsv = new float[3];
+//            Color.RGBtoHSB(r,g,b,hsv);
+        // Do something with the hsv.
+//            System.out.println("hsv: " + hsv[0]);
+//        }
+//    }
+
+        return getMat().get(x,y);
+    }
+
+//    /**
+//     *
+//     * @return
+//     */
+
+//    int[][] getAddressTable ();
+//
+//    default
+//    int[][] createAddressTable () {
+//
+//        int[][] table = new int[rows()][cols()];
+//
+//        System.out.printf("mat %d x %d", rows(), cols());
+//
+//        final int maxAddress = cols() * rows();
+//
+//        for (int i = 0, addressNo = 0; i < rows(); i++) {
+//            System.out.printf("row: %d\n", i);
+//            for (int j = 0; j < cols() && addressNo < maxAddress; j++, addressNo++) {
+//                System.out.printf("\tcol: %d, address: %d\n", j, addressNo);
+//                table[i][j] = addressNo;
+//            }
+//        }
+//        getLogger()printf("Address table: %s", Arrays.toString(table));
+//
+//        return table;
+//    }
+//
+
+    /**
+     * @param addr
+     */
+    void putPixel ( IAddress <A> address, double[] pixelData ) throws ValueError;
+
+    void putPixels ( double[] pixelData );
+
+    // assuming it's of CV_8UC3 == BGR, 3 byte/pixel
+    // Effectively assuming channels = 3
+//        for (int i=0; i< height; i++)
+//    {
+//         stride is the number of bytes in a row of smallImg
+//        int stride = channels * width;
+//        for (int j=0; j<stride; j+=channels)  {
+//            int b = buff[(i * stride) + j];
+//            int g = buff[(i * stride) + j + 1];
+//            int r = buff[(i * stride) + j + 2];
+//            float[] hsv = new float[3];
+//            Color.RGBtoHSV(r,g,b,hsv);
+//             Do something with the hsv .
+//            System.out.println("hsv: " + hsv[0]);
+//        }
+//    }
+//    ========================================================================================
+//Mat A = Highgui.imread(image_addr); \\"image_addr" is the address of the image
+//    Mat C = A.clone();
+//A.convertTo(A, CvType.CV_64FC3); \\New line added.
+//    int size = (int) (A.total() * A.channels());
+//    double[] temp = new double[size]; \\ use double[] instead of byte[]
+//A.get(0, 0, temp);
+//for (int i = 0; i &lt; size; i++)
+//    temp[i] = (temp[i] / 2);  \\ no more casting required.
+//            C.put(0, 0, temp);
+//====================================================================
+//Mat A = Highgui.imread(image_addr); \\"image_addr" is the address of the image
+//    Mat C = A.clone();
+//    int size = (int) (A.total() * A.channels());
+//    byte[] temp = new byte[size];
+//A.get(0, 0, temp);
+//for (int i = 0; i < size; i++)
+//    temp[i] = (byte) (temp[i] / 2);
+//C.put(0, 0, temp);
+    double[] getPixels ();
 
     /**
      * @return
      */
-    int getMeanPixelValue ();
+    double[] getMeanPixelValue ();
 
     /**
      * @return
@@ -387,16 +302,22 @@ interface IImage<A extends IAddress <A>>
     /**
      * @return
      */
-    IImageBlock <A> getSubImage ();
+    IImageBlock <A> getSubImage () throws ValueError;
 
+    /**
+     * @return
+     */
     int getOriginalImageHeight ();
 
+    /**
+     * @return
+     */
     int getOriginalImageWidth ();
 
     /**
      * @param meanPixelValue
      */
-    void setMeanPixelValue ( int meanPixelValue );
+    void setMeanPixelValue ( double[] meanPixelValue );
 
     /**
      * Compares this object with the specified object for order.  Returns a
@@ -437,7 +358,51 @@ interface IImage<A extends IAddress <A>>
      * @throws ClassCastException   if the specified object's type prevents it
      *                              from being compared to this object.
      */
-    @Override
+//    @Override
     int compareTo ( @NotNull IImage <A> other );
 
+    /**
+     * @param blocks
+     */
+    void setRegions ( List <RegionOfInterest <A>> blocks );
+
+    /**
+     * @return
+     */
+    List<RegionOfInterest<A>> getRegions ();
+
+    /**
+     * @param row
+     * @param col
+     * @return
+     * @throws ValueError
+     */
+    IAddress<A>  getAddress (int row, int col) throws ValueError;
+
+    /**
+     * @return
+     */
+    EAddressKind getAddressKind();
+
+    /**
+     * @return
+     */
+    int getChannelsAmount();
+
+    /**
+     * @param x
+     * @param y
+     * @return
+     */
+    double pixelValues ( int x, int y );
+
+    /**
+     * @param x
+     * @param y
+     * @param ch
+     * @return
+     */
+    double getPixelValuesLayer ( int x, int y, int ch );
+
+    void setMeanPixelValuesLayer ( int c, double v );
 }

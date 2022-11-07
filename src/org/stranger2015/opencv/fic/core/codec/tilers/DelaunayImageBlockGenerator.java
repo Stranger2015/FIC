@@ -39,33 +39,75 @@ class DelaunayImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddre
         super(partitionProcessor, scheme, encoder, image, rangeSize, domainSize);
     }
 
+    /**
+     * @param roi
+     * @param rangeSize
+     * @param domainSize
+     * @return
+     * @throws ValueError
+     */
     @Override
     public
-    List <IImageBlock <A>> generateRangeBlocks ( RegionOfInterest <A> roi, int rangeSize, int domainSize ) throws ValueError {
+    List <IImageBlock <A>> generateRangeBlocks ( RegionOfInterest <A> roi, int rangeSize, int domainSize )
+            throws ValueError {
+
         return super.generateRangeBlocks(roi, rangeSize, domainSize);
     }
 
+    /**
+     * @param roi
+     * @param rangeBlocks
+     * @return
+     * @throws ValueError
+     */
     @Override
     public
-    List <IImageBlock <A>> generateDomainBlocks ( RegionOfInterest <A> roi, List <IImageBlock <A>> rangeBlocks ) throws ValueError {
+    List <IImageBlock <A>> generateDomainBlocks ( RegionOfInterest <A> roi, List <IImageBlock <A>> rangeBlocks )
+            throws ValueError {
+
         return super.generateDomainBlocks(roi, rangeBlocks);
     }
 
+    /**
+     * @param roi
+     * @param list
+     * @return
+     * @throws ValueError
+     */
     @Override
     public
-    List <IImageBlock <A>> createCodebookBlocks ( RegionOfInterest <A> roi, List <IImageBlock <A>> list ) throws ValueError {
-        return super.createCodebookBlocks(roi, list);
+    List <IImageBlock <A>> createCodebookBlocks ( RegionOfInterest <A> roi, List <IImageBlock <A>> domainBlock )
+            throws ValueError {
+
+        return super.createCodebookBlocks(roi, domainBlock);
     }
 
+    /**
+     * @param roi
+     * @param blockWidth
+     * @param blockHeight
+     * @return
+     */
     @Override
     public
     List <Vertex> generateVerticesSet ( RegionOfInterest <A> roi, int blockWidth, int blockHeight ) {
         return super.generateVerticesSet(roi, blockWidth, blockHeight);
     }
 
+    /**
+     * @param roi
+     * @param blockWidth
+     * @param blockHeight
+     * @return
+     * @throws ValueError
+     */
     @Override
     protected
-    List <IImageBlock <A>> generateInitialRangeBlocks ( RegionOfInterest <A> roi, int blockWidth, int blockHeight ) throws ValueError {
+    List <IImageBlock <A>> generateInitialRangeBlocks ( RegionOfInterest <A> roi,
+                                                        int blockWidth,
+                                                        int blockHeight )
+            throws ValueError {
+
         return super.generateInitialRangeBlocks(roi, blockWidth, blockHeight);
     }
 }

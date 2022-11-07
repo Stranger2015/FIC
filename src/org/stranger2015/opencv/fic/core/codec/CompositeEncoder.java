@@ -50,7 +50,7 @@ class CompositeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
                        IDistanceator <A> comparator,
                        Set <ImageTransform <A, G>> imageTransforms,
                        Set <IImageFilter <A>> imageFilters,
-                       FractalModel <N, A, G> fractalModel,
+                       FicFileModel <N, A, G> fractalModel,
                        IEncoder <N, A, G>... encoders ) {
 
         super(
@@ -74,7 +74,7 @@ class CompositeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
      */
     @Override
     public
-    void initialize () {
+    void initialize () throws ReflectiveOperationException, Exception {
 
     }
 

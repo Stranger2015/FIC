@@ -35,35 +35,60 @@ class TriangularTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A
         super(image, rangeSize, domainSize, encoder, builder);
     }
 
+    /**
+     * @param imageBlock
+     * @throws ValueError
+     */
     @Override
     public
-    List <IImageBlock <A>> segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
 
-        return List.of();
+        return  List.of(imageBlock);
     }
 
+    /**
+     * @param imageBlock
+     * @throws ValueError
+     */
     @Override
     public
-    List <IImageBlock <A>> segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
-        return null;
+    void segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
+        return List.of(imageBlock);
     }
 
+    /**
+     * @param imageBlock
+     * @throws ValueError
+     */
     @Override
     public
-    List <IImageBlock <A>> segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
-        return null;
+    void segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
+        return List.of(imageBlock);
     }
 
+    /**
+     * @param roi
+     * @param blockWidth
+     * @param blockHeight
+     * @return
+     */
     @Override
     public
     List <Vertex> generateVerticesSet ( RegionOfInterest <A> roi, int blockWidth, int blockHeight ) {
-        return new Vertex[0];
+        return List.of();
     }
 
+    /**
+     * @param roi
+     * @param blockWidth
+     * @param blockHeight
+     * @return
+     * @throws ValueError
+     */
     @Override
     public
     List <IImageBlock <A>> generateInitialRangeBlocks ( RegionOfInterest <A> roi, int blockWidth, int blockHeight ) throws ValueError {
-        return List.of(roi.getSubImage(roi.getX(), roi.getY(), blockWidth, blockHeight));
+        return List. <IImageBlock <A>>of(roi.getSubImage(roi.getX(), roi.getY(), blockWidth, blockHeight));
     }
 
     @Override

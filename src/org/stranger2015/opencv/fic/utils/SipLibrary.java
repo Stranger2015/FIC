@@ -293,9 +293,9 @@ class SipLibrary<A extends IAddress <A>> extends Library <A> implements IAddress
      * @return
      */
     public
-    </* M extends IImage <A> */>
-    @NotNull
-            SipImage <A> convertImageToSipImage ( SipTree <?, ?, ?, ?> tree, @NotNull M input ) throws ValueError {
+    @NotNull          SipImage <A> convertImageToSipImage ( SipTree <?, ?, ?> tree, @NotNull IImage<A> input )
+            throws ValueError {
+
         int addressBase = 0;
         int addressOffset = 0;
         List <Point> pixelShifts = new ArrayList <>();
@@ -320,8 +320,7 @@ class SipLibrary<A extends IAddress <A>> extends Library <A> implements IAddress
      * @return
      */
     public
-    </* M extends IImage <A> */>
-    @NotNull SipImage <A> relocatePixelData ( M input, List <Point> pixelShifts ) throws ValueError {
+    @NotNull SipImage <A> relocatePixelData ( IImage<A> input, List <Point> pixelShifts ) throws ValueError {
         SipImage <A> sipImage = new SipImage <>((Mat) input);
         List <Scalar> scalars = new ArrayList <>();
         for (int i = 0; i < input.getWidth(); i++) {
@@ -331,7 +330,7 @@ class SipLibrary<A extends IAddress <A>> extends Library <A> implements IAddress
         }
         SipImage <A> output = new SipImage <>((Mat) input);
         //            getPixelShiftAddresses().addAll(pixelShifts);
-        for (Pixel scalar : scalars) {
+        for (Scalar scalar : scalars) {
             output.putPixel(output.getPixels());
         }
 

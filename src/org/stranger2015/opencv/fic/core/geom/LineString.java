@@ -46,7 +46,7 @@ public class LineString<T extends LineString<T>>
     /** @deprecated Use GeometryFactory instead */
     public LineString( Coordinate[] points, PrecisionModel precisionModel, int SRID)
     {
-        super(new GeometryFactory(precisionModel, SRID));
+        super(image, address, blockSize, new GeometryFactory(precisionModel, SRID));
 
         init(getFactory().getCoordinateSequenceFactory().create(points));
     }
@@ -59,7 +59,7 @@ public class LineString<T extends LineString<T>>
      * @throws IllegalArgumentException if too few points are provided
      */
     public LineString( ICoordinateSequence points, GeometryFactory factory) {
-        super(factory);
+        super(image, address, blockSize, factory);
         init(points);
     }
 
@@ -187,8 +187,9 @@ public class LineString<T extends LineString<T>>
         return (LineString<T>) super.reverse();
     }
 
+    @Override
     protected
-    Geometry <T> reverseInternal()
+    Geometry <?> reverseInternal()
     {
         ICoordinateSequence seq = points.copy();
         CoordinateSequences.reverse(seq);
@@ -372,7 +373,8 @@ public class LineString<T extends LineString<T>>
         return comp.compare(this.points, line.points);
     }
 
-    protected int getTypeCode() {
+    protected
+    EType getTypeCode() {
         return Geometry.TYPECODE_LINESTRING;
     }
 }

@@ -36,7 +36,7 @@ class CsDpEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
                   IDistanceator <A> comparator,
                   Set <ImageTransform <A, G>> imageTransforms,
                   Set <IImageFilter <A>> imageFilters,
-                  FractalModel <N, A, G> fractalModel ) {
+                  FicFileModel <N, A, G> fractalModel ) {
         super(
                 scheme,
                 nodeBuilder,
@@ -89,30 +89,26 @@ class CsDpEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
         return null;
     }
 
-    @Override
-    public
-    void initialize () {
-        logger.info();
-    }
-
     /**
-     * @return
+     * @throws Exception
      */
     @Override
     public
-    IImage <A> encode ( IImage <A> image ) {
-        return image;//todo
+    void initialize () throws ReflectiveOperationException, Exception {
+        super.initialize();
     }
 
     @Override
     public
     IImage <A> doEncode ( IImage <A> image ) {
-        return image;//todo
+        return image;
     }
 
     @Override
     public
-    List <RegionOfInterest <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds ) throws ValueError {
+    List <RegionOfInterest <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds )
+            throws ValueError {
+
         return null;
     }
 
@@ -175,7 +171,7 @@ class CsDpEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
                                                           int sourceSize,
                                                           int destinationSize,
                                                           int step ) {
-        return new ImageBlock <>(image, 0, 0, 8, List.of(new Point[0]));
+        return List.of( new ImageBlock <>(image, 0, 0, 8, List.of(new Point[0]), geometry));
     }
 
     /**
@@ -187,19 +183,18 @@ class CsDpEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
      * @param domainSize
      * @return
      */
-    @Override
+//    @Override
     public
     ImageBlockGenerator <N, A, G> createBlockGenerator (
-            ITiler <N, A, G> tiler,
+            IPartitionProcessor <N, A, G> partitionProcessor,
             EPartitionScheme scheme,
             IEncoder <N, A, G> encoder,
             IImage <A> image,
             IIntSize rangeSize,
             IIntSize domainSize
     ) {
-
         return new SquareImageBlockGenerator <>(
-                tiler,
+               partitionProcessor,
                 scheme,
                 encoder,
                 image,
@@ -222,10 +217,28 @@ class CsDpEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
     /**
      * @return
      */
-    @Override
+//    @Override
     public
     List <IImageBlock <A>> getRangeBlocks () {
-        return image;
+        return (List <IImageBlock <A>>) image;
+    }
+
+    /**
+     * @return
+     */
+//    @Override
+    public
+    List <IImageBlock <A>> getDomainBlocks () {
+        return (List <IImageBlock <A>>) image;
+    }
+
+    /**
+     * @return
+     */
+//    @Override
+    public
+    List <IImageBlock <A>> getCodebookBlocks () {
+        return List.of(image.getSubImage());
     }
 
     /**
@@ -233,8 +246,8 @@ class CsDpEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
      */
     @Override
     public
-    List <ImageBlock <A>> getDomainBlocks () {
-        return image;
+    IPartitionProcessor <N, A, G> getPartitionProcessor () {
+        return partitionProcessor;
     }
 
     /**
@@ -242,26 +255,8 @@ class CsDpEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
      */
     @Override
     public
-    List <ImageBlock <A>> getCodebookBlocks () {
-        return image;
-    }
-
-    /**
-     * @return
-     */
-    @Override
-    public
-    ITiler <N, A, G> getPartitionProcessor () {
-        return tiler;
-    }
-
-    /**
-     * @return
-     */
-    @Override
-    public
-    FractalModel <N, A, G> getModel () {
-        return image;
+    FicFileModel <N, A, G> getModel () {
+        return fractalModel;
     }
 
     /**
@@ -270,8 +265,8 @@ class CsDpEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
      */
     @Override
     public
-    FractalModel <N, A, G> loadModel ( String filename ) {
-        return image;
+    FicFileModel <N, A, G> loadModel ( String filename ) {
+        return fractalModel;
     }
 
     @Override
@@ -290,5 +285,11 @@ class CsDpEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
     public
     void addLeafNode ( TreeNodeBase <N, A, G> node ) {
 
+    }
+
+    @Override
+    public
+    Class <?> getTilerClass () {
+        return null;
     }
 }

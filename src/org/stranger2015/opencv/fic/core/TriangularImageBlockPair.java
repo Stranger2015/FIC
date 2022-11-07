@@ -59,7 +59,7 @@ class TriangularImageBlockPair<A extends IAddress<A>>
      */
     public
     TriangularImageBlockPair ( MatOfInt submat, Point[] vertices, IImageBlock <A> block1 ) {
-        super(submat, vertices);
+        super(submat, vertices, geometry);
         this.block1 = block1;
     }
 
@@ -76,7 +76,7 @@ class TriangularImageBlockPair<A extends IAddress<A>>
                                Point[] vertices,
                                IImageBlock <A> block1 ) {
 
-        super(image, blockSize, address, vertices);
+        super(image, blockSize, address, vertices, geometry);
 
         this.block1 = block1;
     }

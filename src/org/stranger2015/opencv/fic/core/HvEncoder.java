@@ -1,24 +1,21 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.fic.core.codec.*;
-import org.stranger2015.opencv.fic.core.codec.tilers.HvTiler;
 import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
 import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.fic.transform.ScaleTransform;
-import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
 import java.util.Set;
 
-
 /**
  * @param <N>
  * @param <A>
- 
  */
 public
 class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
@@ -28,14 +25,14 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
     HvEncoder (
             EPartitionScheme scheme,
             ITreeNodeBuilder <N, A, G> nodeBuilder,
-            IPartitionProcessor<N, A, G> partitionProcessor,
+            IPartitionProcessor <N, A, G> partitionProcessor,
             ISearchProcessor <N, A, G> searchProcessor,
             ScaleTransform <A, G> scaleTransform,
             ImageBlockGenerator <N, A, G> imageBlockGenerator,
             IDistanceator <A> comparator,
             Set <ImageTransform <A, G>> transforms,
-            Set <IImageFilter < A>> filters,
-            FractalModel <N, A, G> fractalModel
+            Set <IImageFilter <A>> filters,
+            FicFileModel <N, A, G> fractalModel
     ) {
         super(
                 scheme,
@@ -103,7 +100,7 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
 
     @Override
     public
-    void initialize () {
+    void initialize () throws ReflectiveOperationException, Exception {
 
     }
 
@@ -122,34 +119,16 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
     @Override
     public
     List <RegionOfInterest <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds ) throws ValueError {
-        return List.of(new RegionOfInterest<>(image));
+        return List.of(new RegionOfInterest <>(image));
     }
+//
+//    @Override
+//    public
+//    IPartitionProcessor <N, A, G> getPartitionProcessor () {
+//        return new HvPartitionProcessor <>(image, image.getWidth(), image.getHeight());
+//    }
 
-    @Override
-    public
-    IPartitionProcessor <N, A, G> getPartitionProcessor () {
-        return new HvPartitionProcessor <>(image, image.getWidth(), image.getHeight());
-    }
-
-    /**
-     * @return
-     */
-    @Override
-    public
-    FractalModel <N, A, G> getModel () {
-        return null;
-    }
-
-    /**
-     * @param filename
-     * @return
-     */
-    @Override
-    public
-    FractalModel <N, A, G> loadModel ( String filename ) {
-        return null;
-    }
-
+/
     /**
      * @param node
      */
@@ -164,7 +143,7 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
     @Override
     public
-    void addLeafNode ( TreeNode.LeafNode <N, A, G> node ) {
+    void addLeafNode ( LeafNode <N, A, G> node ) {
 
     }
 
@@ -174,10 +153,16 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
 
     }
 
+    @Override
+    public
+    Class <?> getTilerClass () {
+        return tilerClass;
+    }
+
     /**
      * @param node
      */
-    @Override
+//    @Override
     public
     void addLeafNode ( TreeNode <N, A, G> node ) {
 
@@ -208,7 +193,7 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
 //     */
 //    @Override
 //    public
-//    FractalModel <N, A, G> getModel () {
+//    FicFileModel <N, A, G> getModel () {
 //        return null;
 //    }
 
@@ -218,7 +203,7 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
 //     */
 //    @Override
 //    public
-//    FractalModel <N, A, G> loadModel ( String filename ) {
+//    FicFileModel <N, A, G> loadModel ( String filename ) {
 //        return null;
 //    }
 
@@ -258,7 +243,7 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
     @Override
     public
-    GrayScaleImage <A> randomTransform ( GrayScaleImage <A> image, ImageTransform <A, G> transform ) {
+    IImage <A> randomTransform ( IImage <A> image, ImageTransform <A, G> transform ) {
         return null;//todo
     }
 
@@ -269,7 +254,7 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
     @Override
     public
-    GrayScaleImage <A> applyTransform ( GrayScaleImage <A> image, ImageTransform <A, G> transform ) {
+    IImage <A> applyTransform ( IImage <A> image, ImageTransform <A, G> transform ) {
         return null;//todo
     }
 
@@ -280,8 +265,8 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
     @Override
     public
-    GrayScaleImage <A> applyAffineTransform ( GrayScaleImage<A> image, AffineTransform <A, G> transform ) {
-        return image;//todo
+    IImage <A> applyAffineTransform ( IImage <A> image, AffineTransform <A, G> transform ) {
+        return image;
     }
 
     /**
@@ -293,7 +278,7 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
 //    @Override
     public
-    List <ImageTransform <M, A, G>> compress ( IImage<A> image, int sourceSize, int destinationSize, int step ) {
+    List <ImageTransform <A, G>> compress ( IImage <A> image, int sourceSize, int destinationSize, int step ) {
         return null;//todo
     }
 
@@ -306,26 +291,8 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
     @Override
     public
-    List <IImageBlock <A>> generateAllTransformedBlocks ( GrayScaleImage <A> image, int sourceSize, int destinationSize, int step ) {
+    List <IImageBlock <A>> generateAllTransformedBlocks ( IImage <A> image, int sourceSize, int destinationSize, int step ) {
         return null;//todo
-    }
-
-    /**
-     * @return
-     */
-    @Override
-    public
-    IPipeline <IImage <A>, IImage <A>> getLinkedObject () {
-        return null;
-    }
-
-    /**
-     * @param link
-     */
-    @Override
-    public
-    void setNext ( ISingleLinked <IPipeline <IImage <A>, IImage <A>>> link ) {
-
     }
 
     @Override

@@ -39,8 +39,8 @@ class RegionOfInterest<A extends IAddress <A>>
      * @param address
      */
     public
-    RegionOfInterest ( IImage <A> image, IIntSize blockSize, IAddress <A> address ) {
-        super(image, blockSize, address);
+    RegionOfInterest ( IImage <A> image, IAddress <A> address, IIntSize blockSize) {
+        super(image, address, blockSize, geometry);
     }
 
     /**
@@ -88,8 +88,14 @@ class RegionOfInterest<A extends IAddress <A>>
      */
     @Override
     public
-    void setPixel ( IAddress <A> address, int[] iArray ) {
-        super.setPixel(address, iArray);
+    void put( IAddress <A> address, double[] data ) {
+        put(address.getX(), address.getY(), data);
+    }
+
+    @Override
+    public
+    double[] get ( int x, int y ) {
+        return super.getPixel(x, y, data);
     }
 
     /**
@@ -103,7 +109,6 @@ class RegionOfInterest<A extends IAddress <A>>
 
     public
     IImageBlock<A> merge ( List <IImageBlock <A>> blocks, List <IImageBlock <A>> blocksToMerge ) {
-
         return null;
     }
 }

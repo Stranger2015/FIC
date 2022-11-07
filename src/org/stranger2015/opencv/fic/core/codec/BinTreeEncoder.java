@@ -1,6 +1,5 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.jetbrains.annotations.Contract;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
@@ -39,17 +38,18 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      * @param fractalModel
      */
     public
-    BinTreeEncoder ( EPartitionScheme scheme,
-                     TreeNodeBuilder <N, A, G> nodeBuilder,
-                     IPartitionProcessor <N, A, G> partitionProcessor,
-                     ISearchProcessor <N, A, G> searchProcessor,
-                     ScaleTransform <A, G> scaleTransform,
-                     ImageBlockGenerator <N, A, G> imageBlockGenerator,
-                     IDistanceator <A> comparator,
-                     Set <ImageTransform <A, G>> transforms,
-                     Set <IImageFilter <A>> filters,
-                     FractalModel <N, A, G> fractalModel
-    ) {
+    BinTreeEncoder (
+            EPartitionScheme scheme,
+            TreeNodeBuilder <N, A, G> nodeBuilder,
+            IPartitionProcessor <N, A, G> partitionProcessor,
+            ISearchProcessor <N, A, G> searchProcessor,
+            ScaleTransform <A, G> scaleTransform,
+            ImageBlockGenerator <N, A, G> imageBlockGenerator,
+            IDistanceator <A> comparator,
+            Set <ImageTransform <A, G>> transforms,
+            Set <IImageFilter <A>> filters,
+            FicFileModel <N, A, G> fractalModel ) {
+
         super(
                 scheme,
                 nodeBuilder,
@@ -89,16 +89,14 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
                                                          IEncoder <N, A, G> encoder,
                                                          IImage <A> image,
                                                          IIntSize rangeSize,
-                                                         IIntSize domainSize
-    ) {
+                                                         IIntSize domainSize ) {
         return new BinTreeImageBlockGenerator <>(
                 partitionProcessor,
                 scheme,
                 encoder,
                 image,
                 rangeSize,
-                domainSize
-        );
+                domainSize);
     }
 
     /**
@@ -108,36 +106,13 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
     @Override
     public
     IPartitionProcessor <N, A, G> doCreatePartitionProcessor ( ITiler <N, A, G> tiler ) {
-        return new BinTreePartitionProcessor <>(tiler);
+        return new BinTreePartitionProcessor <>( tiler, imageBlockGenerator, nodeBuilder);
     }
 
-    @Override
     public
     IPartitionProcessor <N, A, G> createPartitionProcessor0 ( ITiler <N, A, G> tiler ) {
-        return null;
+        return new BinTreePartitionProcessor <>(tiler, imageBlockGenerator, nodeBuilder);
     }
-
-    //    @Override
-    public
-    IPartitionProcessor <N, A, G> createPartitionProcessor0 () {
-        return null;
-    }
-
-    //    @Override
-    public
-    IPartitionProcessor <N, A, G> createPartitionProcessor0 ( BinTreeTiler <N, A, G> tiler) {
-
-        return new BinTreePartitionProcessor <>(tiler);
-    }
-
-    /**
-     * @return
-     */
-//    @Override
-//    public
-//    ITiler <N, A, G> createPartition0 () {
-//        return null;
-//    }
 
     /**
      * @param node
@@ -166,6 +141,12 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
 
     }
 
+    @Override
+    public
+    Class <?> getTilerClass () {
+        return BinTreeTiler.class;
+    }
+
     /**
      * @return
      */
@@ -185,43 +166,21 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
         return segmentImage(inputImage, List.of());
     }
 
-    private
-    IImageBlock <A> generateBlocks ( IImage <A> inputImage, LeafNode <N, A, G> leaf ) throws ValueError {
-        return generateBlocks0(leaf);
-    }
-
-    private
-    IImageBlock <A> generateBlocks0 ( LeafNode <N, A, G> node ) {
-        return node.getImageBlock();
-    }
-
-    @Contract(pure = true)
-    private
-    boolean getPartitionType ( int ss ) {
-        return false;
-    }
-
     @Override
     public
-    void initialize () {
-logger.info("Initializing encoder... ");    }
+    void initialize () throws Exception {
+        super.initialize();
+    }
 
     /**
      * @param image
      * @return
      */
-    @Override
-    public
-    IImage <A> encode ( IImage <A> image ) throws ValueError {
-        image = super.encode(image);
-
-        return image;
-    }
 
     @Override
     public
-    IImage <A> doEncode ( IImage <A> image ) {
-        return null;
+    IImage <A> doEncode ( IImage <A> image ) throws ValueError {
+        return super.doEncode(image);
     }
 
     /**
@@ -232,8 +191,8 @@ logger.info("Initializing encoder... ");    }
     @Override
     public
     void segmentRegion ( RegionOfInterest <A> roi, int blockWidth, int blockHeight ) throws ValueError {
-        List <IImageBlock <A>> list = imageBlockGenerator.generateRangeBlocks(roi, blockWidth, blockHeight);
-        roi.rangeBlocks.addAll(list);
+//        List <IImageBlock <A>> list = imageBlockGenerator.generateRangeBlocks(roi, blockWidth, blockHeight);
+//        ?roi.rangeBlocks.addAll(list);
     }
 
     /**
@@ -243,13 +202,21 @@ logger.info("Initializing encoder... ");    }
     @Override
     public
     List <RegionOfInterest <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds ) throws ValueError {
-        List <RegionOfInterest <A>> list = new ArrayList <>();
+        List <RegionOfInterest <A>> result;
+        List <RegionOfInterest <A>> regionOfInterests = new ArrayList <>();
         if (bounds.isEmpty()) {
-            return List.of(new RegionOfInterest <>(image.getSubImage(0, 0, image.getWidth(), image.getHeight())));
+            result = List.of(new RegionOfInterest <>(image.getSubImage(
+                    0,
+                    0,
+                    image.getWidth(),
+                    image.getHeight())));
         }
-        imageBlockGenerator.generateRegions(image, bounds);
+        else {
+            imageBlockGenerator.generateRegions(image, bounds);
+            result = regionOfInterests;
+        }
 
-        return list;
+        return result;
     }
 
     /**
@@ -329,11 +296,13 @@ logger.info("Initializing encoder... ");    }
      */
     @Override
     public
-    List <IImageBlock <A>> generateAllTransformedBlocks ( IImage <A> image,
-                                                          int sourceSize,
-                                                          int destinationSize,
-                                                          int step ) {
-        return null;
+    List <IImageBlock <A>> generateAllTransformedBlocks (
+            IImage <A> image,
+            int sourceSize,
+            int destinationSize,
+            int step ) {
+
+        return List.of(image.getSubImage());
     }
 
     /**
@@ -700,14 +669,19 @@ logger.info("Initializing encoder... ");    }
         super.finalize();
     }
 
-    //    @Override
-    public
-    IImage <A> getInput () {
-        return null;
-    }
-
-    //    public
-    IImage <A> getOutput () {
-        return null;
-    }
+//    /**
+//     * @return
+//     */
+//    public
+//    IImage <A> getInput () {
+//        return null;
+//    }
+//
+//    /**
+//     * @return
+//     */
+//    public
+//    IImage <A> getOutput () {
+//        return null;
+//    }
 }

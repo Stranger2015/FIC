@@ -78,7 +78,7 @@ interface IProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
             newRegions.add((RegionOfInterest <A>) region);
         }
 
-        image = new Image <>(image.getMat(), size);
+        image = new Image <>(actualImage, image.getMat(), size);
         image.setRegions(newRegions);
 
         return image;

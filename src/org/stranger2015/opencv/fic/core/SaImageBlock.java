@@ -1,7 +1,6 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.opencv.core.Mat;
-import org.stranger2015.opencv.fic.core.IAddress;
 
 /**
  * @param <A>
@@ -22,6 +21,6 @@ class SaImageBlock<A extends IAddress <A>> extends ImageBlock {
 
     public
     SaImageBlock ( Mat submat ) {
-        super(submat);
+        super(submat, geometry);
     }
 }

@@ -11,7 +11,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
  * @param <G>
  */
 public
-interface ITransform< A extends IAddress <A>, G extends BitBuffer> {
+interface ITransform<A extends IAddress <A>, G extends BitBuffer> {
 
     /**
      * @param inputImage
@@ -21,7 +21,7 @@ interface ITransform< A extends IAddress <A>, G extends BitBuffer> {
      */
     @SuppressWarnings("unchecked")
     default
-    IImage <A> transform ( IImage<A> inputImage,
+    IImage <A> transform ( IImage <A> inputImage,
                            Mat transformMatrix,
                            EInterpolationType type ) {
 
@@ -33,7 +33,7 @@ interface ITransform< A extends IAddress <A>, G extends BitBuffer> {
      * @return
      */
     IImage <A> warpAffine ( IImage <A> inputImage,
-                           Mat transformMatrix,
+                            Mat transformMatrix,
                             EInterpolationType interpolationType );
 
     /**

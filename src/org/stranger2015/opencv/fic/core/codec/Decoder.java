@@ -6,7 +6,6 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.io.FractalWriter;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
-import org.stranger2015.opencv.fic.utils.Point;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.io.File;
@@ -57,7 +56,7 @@ class Decoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
      * @return
      */
     public
-    IImage<A> decode ( FractalModel <N, A, G> fractalModel ) {
+    IImage<A> decode ( FicFileModel <N, A, G> fractalModel ) {
         final Map <Vertex, IImage<A>> simpleModel = new HashMap <>();
 
         int blockWidth = fractalModel.getModel().keySet().iterator().next().getWidth();
@@ -92,7 +91,7 @@ class Decoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
      */
     @Override
     public
-    void saveModel ( String filename, FractalModel <N, A, G> fractalModel ) {
+    void saveModel ( String filename, FicFileModel <N, A, G> fractalModel ) {
         FractalWriter <N, A, G> writer = new FractalWriter <>(
                 new File(filename),
                 fractalModel.getImageInfo());

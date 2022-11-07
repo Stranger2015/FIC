@@ -15,8 +15,7 @@ import java.util.function.Function;
  * make squared of side size radix equal to nearest greater power of radix
  */
 public
-class NormalizeImageShapeTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */,
-        G extends BitBuffer>
+class NormalizeImageShapeTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
 
         extends Task <N, A, G> {
 
@@ -96,10 +95,9 @@ class NormalizeImageShapeTask<N extends TreeNode <N, A, G>, A extends IAddress <
      * @throws NullPointerException if before is null
      * @see #andThen(Function)
      */
-    @NotNull
     @Override
     public
-    <V> Function <V, M> compose ( @NotNull Function <? super V, ? extends String> before ) {
+    <V> Function <V, IImage <A>> compose ( @NotNull Function <? super V, ? extends String> before ) {
         return super.compose(before);
     }
 
@@ -118,7 +116,7 @@ class NormalizeImageShapeTask<N extends TreeNode <N, A, G>, A extends IAddress <
     @NotNull
     @Override
     public
-    <V> Function <String, V> andThen ( @NotNull Function <? super M, ? extends V> after ) {
+    <V> Function <String, V> andThen ( Function <? super IImage <A>, ? extends V> after ) {
         return super.andThen(after);
     }
 

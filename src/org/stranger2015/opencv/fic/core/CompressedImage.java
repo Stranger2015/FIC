@@ -2,7 +2,9 @@ package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfInt;
 import org.opencv.core.Rect;
+import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.codec.ICompressedImage;
 import org.stranger2015.opencv.fic.core.geom.CoordinateSequenceComparator;
 import org.stranger2015.opencv.fic.core.geom.Geometry;
@@ -14,8 +16,7 @@ import java.util.List;
 /**
  *
  */
-public
-class CompressedImage<A extends IAddress <A>>
+public class CompressedImage<A extends IAddress <A>>
         extends Image <A>
         implements ICompressedImage <A>,
                    IIntSize {
@@ -40,12 +41,27 @@ class CompressedImage<A extends IAddress <A>>
      */
     public
     CompressedImage ( IImage <A> inputImage ) {
-        super(inputImage, size);
+        super((MatOfInt) inputImage.getMat(), inputImage.getSize());
+        inputImage.getOriginalImageWidth();
+                inputImage.getOriginalImageHeight();
+    }
+//
+//    public
+//    CompressedImage ( Mat dest ) {
+//        super(dest, blockSize, originalImageWidth, originalImageHeight);
+//    }
+
+    @Override
+    public
+    Mat createMask ( IIntSize bb, List <Geometry <?>> polygonList ) {
+        return super.createMask(bb, polygonList);
     }
 
+    @Override
     public
-    CompressedImage ( Mat dest ) {
-        super(dest, size);
+    IImage<A> merge ( List <IImage <A>> layers, IImage<A> inputImage ) {
+
+        return null;
     }
 
     /**
@@ -66,14 +82,14 @@ class CompressedImage<A extends IAddress <A>>
         this.transforms = transforms;
     }
 
-    /**
-     * @return
-     */
-    @Override
-    public
-    int[] getPixels () {
-        return new int[0];
-    }
+//    /**
+//     * @return
+//     */
+//    @Override
+//    public
+//    double[] getPixels () {
+//        return new double[0];
+//    }
 
     /**
      * @param rectangle
@@ -85,11 +101,11 @@ class CompressedImage<A extends IAddress <A>>
         return getSubImage(rectangle.getAddress(), rectangle.width, rectangle.height);
     }
 
-    private
+    public
     IImageBlock <A> getSubImage ( IAddress <?> address, int width, int height ) throws ValueError {
         Mat mat = getMat().submat((Rect) address.getCartesianCoordinates(address.radix()));
 
-        return new ImageBlock <>(mat);
+        return new ImageBlock <>(mat, new Rectangle(address, width, height));
     }
 
     /**
@@ -101,10 +117,34 @@ class CompressedImage<A extends IAddress <A>>
         return originalImageWidth;
     }
 
+    @Override
+    public
+    void setMeanPixelValue ( double[] meanPixelValue ) {
+
+    }
+
+    @Override
+    public
+    double pixelValues ( int x, int y ) {
+        return 0;
+    }
+
+    @Override
+    public
+    double getPixelValuesLayer ( int x, int y, int ch ) {
+        return 0;
+    }
+
+    @Override
+    public
+    void setMeanPixelValuesLayer ( int c, double v ) {
+
+    }
+
     /**
      * @param meanPixelValue
      */
-    @Override
+//    @Override
     public
     void setMeanPixelValue ( int meanPixelValue ) {
 
@@ -123,6 +163,12 @@ class CompressedImage<A extends IAddress <A>>
     public
     int compareTo ( @NotNull IIntSize o ) {
         return -1;
+    }
+
+    @Override
+    public
+    Size toSize () {
+        return IIntSize.super.toSize();
     }
 
     /**
@@ -156,8 +202,20 @@ class CompressedImage<A extends IAddress <A>>
      */
     @Override
     public
-    int putPixel ( IAddress <A> address, int[] pixels ) {
-        return getMat().put((int) address.getIndex(), 0, pixels[0]);
+    void putPixel ( IAddress <A> address, double[] pixels ) {
+        getMat().put(address.getX(), address.getY(), pixels[0]);
+    }
+
+    @Override
+    public
+    void putPixels ( double[] pixelData ) {
+
+    }
+
+    @Override
+    public
+    boolean isSquare () {
+        return super.isSquare();
     }
 
     //    @Override
@@ -171,15 +229,16 @@ class CompressedImage<A extends IAddress <A>>
 //        return 0;
 //    }
 
-    @Override
+//    @Override
     protected
-    int compareToSameClass ( Geometry o ) {
+    int compareToSameClass ( Geometry<?> o ) {
         return 0;
     }
 
-    @Override
+//    @Override
     protected
-    int compareToSameClass ( Geometry o, CoordinateSequenceComparator comp ) {
+    int compareToSameClass ( Geometry<?> o, CoordinateSequenceComparator comp ) {
         return 0;
     }
+
 }

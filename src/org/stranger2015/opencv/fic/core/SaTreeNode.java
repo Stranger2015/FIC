@@ -11,7 +11,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
  */
 @SuppressWarnings("unchecked")
 public
-class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */, G extends BitBuffer>
+class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
         extends TreeNode <N, A, G> {
 
     protected int layerIndex;
@@ -72,12 +72,24 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M exte
         return null;
     }
 
+    @Override
+    public
+    TreeNodeBase <N, A, G> createNode ( TreeNodeBase <N, A, G> parent, IImageBlock <A> imageBlock, IAddress <A> address ) throws ValueError {
+        return null;
+    }
+
+    @Override
+    public
+    TreeNodeBase <N, A, G> createNode ( TreeNodeBase <N, A, G> parent, IAddress <A> address ) throws ValueError {
+        return null;
+    }
+
     /**
      * @param parent
      * @param boundingBox
      * @return
      */
-    @Override
+//    @Override
     public
     TreeNode<N, A, G> createNode ( TreeNodeBase <N, A, G> parent, IIntSize boundingBox ) throws ValueError {
         return null;
@@ -208,9 +220,9 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M exte
      * @param <A>
      */
     public static
-    class SaLayerClusterNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */,
-            G extends BitBuffer>
+    class SaLayerClusterNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
             extends LeafNode <N, A, G> {
+
         /**
          * @param parent
          * @param point
@@ -221,7 +233,7 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M exte
         SaLayerClusterNode ( TreeNodeBase <N, A, G> parent,
                              Point point,
                              IImageBlock <A> imageBlock,
-                             IIntSize rect ) {
+                             IIntSize rect ) throws ValueError {
             super(parent, point, imageBlock, rect);
         }
 
@@ -240,12 +252,12 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M exte
                              IImageBlock <A> image,
                              IIntSize rect,
                              int layerIndex,
-                             int address ) {
+                             int address ) throws ValueError {
 
             super(parent, null, image, rect);
 
             this.layerIndex = layerIndex;
-            this.address = address;
+            this.address = IAddress.valueOf( address, inputImage.getWidth(), i2);
         }
 
         /**
@@ -255,8 +267,8 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M exte
          * @param boundingBox
          */
         protected
-        SaLayerClusterNode ( TreeNode <N, A, G> parent, Point point, M image, IntSize boundingBox ) {
-            super(parent, point, (ImageBlock <A>) image, boundingBox);
+        SaLayerClusterNode ( TreeNode <N, A, G> parent, Point point, IImage<A> image, IntSize boundingBox ) throws ValueError {
+            super(parent, point, image.getSubImage(), boundingBox);
         }
 
 //        /**
@@ -339,7 +351,7 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M exte
                     imageBlock,
                     layerIndex,
                     clusterIndex,
-                    addr
+                  IAddress.valueOf(  addr, inputImage.getWidth(), i2)
             );
         }
 

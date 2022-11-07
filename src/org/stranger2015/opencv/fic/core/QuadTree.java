@@ -1,11 +1,8 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -31,21 +28,21 @@ class QuadTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      * @param h
      * @return
      */
-    protected static
-    <N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-    List <IImageBlock<A>> collectDomainBlocks ( List <LeafNode<N, A, G>> leaves, int w, int h ) {
-        List <IImageBlock<A>> l = new ArrayList <> ();
-        if (!leaves.isEmpty()) {
-            for (LeafNode <N, A, G> leaf : leaves) {
-                IImageBlock<A> image = leaf.getImageBlock();
-                if (image.getWidth() == w && image.getHeight() == h) {
-                    l.add(image);
-                }
-            }
-        }
-
-        return l;
-    }
+//    protected static
+//    <N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
+//    List <IImageBlock<A>> collectDomainBlocks ( List <LeafNode<N, A, G>> leaves, int w, int h ) {
+//        List <IImageBlock<A>> l = new ArrayList <> ();
+//        if (!leaves.isEmpty()) {
+//            for (LeafNode <N, A, G> leaf : leaves) {
+//                IImageBlock<A> image = leaf.getImageBlock();
+//                if (image.getWidth() == w && image.getHeight() == h) {
+//                    l.add(image);
+//                }
+//            }
+//        }
+//
+//        return l;
+//    }
 
     /**
      * @param parent
@@ -53,9 +50,9 @@ class QuadTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      * @param rect
      * @return
      */
-    @Override
+//    @Override
     public
-    TreeNode <N, A, G> nodeInstance ( TreeNodeBase <N, A, G> parent, EDirection quadrant, IIntSize rect )
+    TreeNode <N, A, G> nodeInstance ( TreeNodeBase <N, A, G> parent, EDirection quadrant, Rectangle rect )
             throws ValueError {
 
         return new QuadTreeNode <>(parent, quadrant, rect);

@@ -32,7 +32,7 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
                 IDistanceator <A> comparator,
                 Set <ImageTransform < A, G>> transforms,
                 Set <IImageFilter <A>> filters,
-                FractalModel <N, A, G> fractalModel
+                FicFileModel <N, A, G> fractalModel
     ) {
         super(
                 scheme,
@@ -143,7 +143,7 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
 
     @Override
     public
-    void initialize () {
+    void initialize () throws ReflectiveOperationException, Exception {
         
     }
 
@@ -188,7 +188,7 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
     @Override
     public
-    FractalModel <N, A, G> getModel () {
+    FicFileModel <N, A, G> getModel () {
         return null;
     }
 
@@ -198,7 +198,7 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
     @Override
     public
-    FractalModel <N, A, G> loadModel ( String filename ) {
+    FicFileModel <N, A, G> loadModel ( String filename ) {
         return null;
     }
 

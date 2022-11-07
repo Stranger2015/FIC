@@ -22,19 +22,31 @@ class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
         extends BinTreeEncoder <N, A, G> {
 
     /**
+     * @param image
+     * @return
+     * @throws ValueError
+     */
+    @Override
+    public
+    IImage <A> doEncode ( IImage <A> image ) throws ValueError {
+        return super.doEncode(image);
+    }
+
+    /**
      * @param inputImage
      */
     public
-    QuadTreeEncoder ( EPartitionScheme scheme,
-                      TreeNodeBuilder <N, A, G> nodeBuilder,
-                      IPartitionProcessor <N, A, G> partitionProcessor,
-                      ISearchProcessor <N, A, G> searchProcessor,
-                      ScaleTransform <A, G> scaleTransform,
-                      ImageBlockGenerator <N, A, G> imageBlockGenerator,
-                      IDistanceator <A> comparator,
-                      Set <ImageTransform <A, G>> transforms,
-                      Set <IImageFilter <A>> filters,
-                      FractalModel <N, A, G> fractalModel
+    QuadTreeEncoder (
+            EPartitionScheme scheme,
+            TreeNodeBuilder <N, A, G> nodeBuilder,
+            IPartitionProcessor <N, A, G> partitionProcessor,
+            ISearchProcessor <N, A, G> searchProcessor,
+            ScaleTransform <A, G> scaleTransform,
+            ImageBlockGenerator <N, A, G> imageBlockGenerator,
+            IDistanceator <A> comparator,
+            Set <ImageTransform <A, G>> transforms,
+            Set <IImageFilter <A>> filters,
+            FicFileModel <N, A, G> fractalModel
     ) {
         super(
                 scheme,
@@ -96,9 +108,8 @@ class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
                                                           int sourceSize,
                                                           int destinationSize,
                                                           int step ) {
-        return null;//todo
+        return List.of(image.getSubImage());
     }
-//
 
     /**
      * /**
@@ -112,12 +123,14 @@ class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      */
     @Override
     public
-    ImageBlockGenerator <N, A, G> createBlockGenerator ( IPartitionProcessor <N, A, G> partitionProcessor,
-                                                         EPartitionScheme scheme,
-                                                         IEncoder <N, A, G> encoder,
-                                                         IImage <A> image,
-                                                         IIntSize rangeSize,
-                                                         IIntSize domainSize ) {
+    ImageBlockGenerator <N, A, G> createBlockGenerator (
+            IPartitionProcessor <N, A, G> partitionProcessor,
+            EPartitionScheme scheme,
+            IEncoder <N, A, G> encoder,
+            IImage <A> image,
+            IIntSize rangeSize,
+            IIntSize domainSize ) {
+
         return new QuadTreeImageBlockGenerator <>(
                 partitionProcessor,
                 scheme,
@@ -127,34 +140,15 @@ class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
                 domainSize
         );
     }
-
-    /**
-     * @return
-     */
-    @Override
-    public
-    IPartitionProcessor <N, A, G> getPartitionProcessor () {
-        return null;
-    }
-
-    /**
-     * @return
-     */
-    @Override
-    public
-    FractalModel <N, A, G> getModel () {
-        return null;
-    }
-
-    /**
-     * @param image
-     * @return
-     */
-    @Override
-    public
-    IImage <A> encode ( IImage <A> image ) {
-        return image;
-    }
+//
+//    /**
+//     * @return
+//     */
+//    @Override
+//    public
+//    IPartitionProcessor <N, A, G> getPartitionProcessor () {
+//        return null;
+//    }
 
     /**
      * @param image
@@ -182,9 +176,9 @@ class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      */
     @Override
     public
-    FractalModel <N, A, G> loadModel ( String filename ) {
+    FicFileModel <N, A, G> loadModel ( String filename ) {
         FractalReader <N, A, G> reader = new FractalReader <>(new File(filename));
 
-        return new FractalModel <>(null);
+        return new FicFileModel <>(null);
     }
 }

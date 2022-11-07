@@ -30,7 +30,7 @@ class SquareImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress
 //                rangeSize,
 //                domainSize
 //        );
-   // }
+    // }
 
     /**
      * @param inputImage
@@ -59,7 +59,6 @@ class SquareImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress
                                 IIntSize rangeSize,
                                 IIntSize domainSize
     ) {
-
         super(partitionProcessor, scheme, encoder, image, rangeSize, domainSize);
     }
 
@@ -74,12 +73,14 @@ class SquareImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress
      */
     @Override
     public
-    HvBlockGenerator <N, A, G> newInstance ( IPartitionProcessor <N, A, G> partitionProcessor,
-                                                      EPartitionScheme scheme,
-                                                      IEncoder <N, A, G> encoder,
-                                                      IImage <A> image,
-                                                      IIntSize rangeSize,
-                                                      IIntSize domainSize ) {
+    ImageBlockGenerator <N, A, G> newInstance (
+            IPartitionProcessor <N, A, G> partitionProcessor,
+            EPartitionScheme scheme,
+            IEncoder <N, A, G> encoder,
+            IImage <A> image,
+            IIntSize rangeSize,
+            IIntSize domainSize ) {
+
         return this;
     }
 }

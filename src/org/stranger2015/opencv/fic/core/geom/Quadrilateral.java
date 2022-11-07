@@ -1,12 +1,14 @@
 package org.stranger2015.opencv.fic.core.geom;
 
-import org.locationtech.jts.geom.CoordinateFilter;
-import org.locationtech.jts.geom.CoordinateSequenceFilter;
 import org.locationtech.jts.geom.GeometryComponentFilter;
-import org.locationtech.jts.geom.GeometryFilter;
 
 public
 class Quadrilateral<T extends Quadrilateral<T>> extends Geometry<T> implements IPolygonal{
+    public
+    Quadrilateral () {
+        super(factory);
+    }
+
     @Override
     public
     String getGeometryType () {
@@ -57,8 +59,32 @@ class Quadrilateral<T extends Quadrilateral<T>> extends Geometry<T> implements I
 
     @Override
     protected
-    Geometry reverseInternal () {
+    Geometry <?> reverseInternal () {
         return null;
+    }
+
+    @Override
+    public
+    void apply ( ICoordinateFilter filter ) {
+
+    }
+
+    @Override
+    public
+    void apply ( ICoordinateSequenceFilter filter ) {
+
+    }
+
+    @Override
+    public
+    void apply ( IGeometryFilter filter ) {
+
+    }
+
+    @Override
+    public
+    void apply ( IGeometryComponentFilter filter ) {
+
     }
 
     @Override
@@ -69,25 +95,25 @@ class Quadrilateral<T extends Quadrilateral<T>> extends Geometry<T> implements I
 
     @Override
     public
-    void apply ( CoordinateFilter filter ) {
+    void apply ( ICoordinateFilter filter ) {
 
     }
 
     @Override
     public
-    void apply ( CoordinateSequenceFilter filter ) {
+    void apply ( ICoordinateSequenceFilter filter ) {
 
     }
 
     @Override
     public
-    void apply ( GeometryFilter filter ) {
+    void apply ( IGeometryFilter filter ) {
 
     }
 
     @Override
     public
-    void apply ( org.stranger2015.opencv.fic.core.algorithm.GeometryComponentFilter filter ) {
+    void apply (IGeometryComponentFilter filter ) {
 
     }
 
@@ -117,6 +143,18 @@ class Quadrilateral<T extends Quadrilateral<T>> extends Geometry<T> implements I
 
     @Override
     protected
+    int compareToSameClass ( T o ) {
+        return 0;
+    }
+
+    @Override
+    protected
+    int compareToSameClass ( T o, CoordinateSequenceComparator comp ) {
+        return 0;
+    }
+
+    @Override
+    protected
     <T extends Geometry> int compareToSameClass ( T o ) {
         return 0;
     }
@@ -141,7 +179,7 @@ class Quadrilateral<T extends Quadrilateral<T>> extends Geometry<T> implements I
 
     @Override
     protected
-    int getTypeCode () {
+    EType getTypeCode () {
         return 0;
     }
 }

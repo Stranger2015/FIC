@@ -55,20 +55,18 @@ public class LinearRing extends LineString
      * @throws IllegalArgumentException if the ring is not closed, or has too few points
      */
     private LinearRing( Coordinate[] points, GeometryFactory factory) {
-        this(factory.getCoordinateSequenceFactory().create(points), factory);
+        this(factory.getCoordinateSequenceFactory().create(points), new LinearRing[]{}, factory);
     }
     
     /**
      * Constructs a <code>LinearRing</code> with the vertices
      * specified by the given {@link ICoordinateSequence}.
      *
-     *@param  points  a sequence points forming a closed and simple linestring, or
-     *      <code>null</code> to create the empty geometry.
-     *
-     * @throws IllegalArgumentException if the ring is not closed, or has too few points
-     *
+     * @param points      a sequence points forming a closed and simple linestring, or
+     *                    <code>null</code> to create the empty geometry.
+     * @param linearRings @throws IllegalArgumentException if the ring is not closed, or has too few points
      */
-    public LinearRing( ICoordinateSequence points, GeometryFactory factory) {
+    public LinearRing( ICoordinateSequence points, LinearRing[] linearRings, GeometryFactory factory) {
         super(points, factory);
         
         validateConstruction();
@@ -114,13 +112,14 @@ public class LinearRing extends LineString
         return Geometry.TYPENAME_LINEARRING;
     }
 
-    protected int getTypeCode() {
+    protected
+    EType getTypeCode() {
         return Geometry.TYPECODE_LINEARRING;
     }
 
     protected
     LinearRing copyInternal() {
-        return new LinearRing(points.copy(), factory);
+        return new LinearRing(points.copy(), new LinearRing[]{}, factory);
     }
 
     public
@@ -129,7 +128,9 @@ public class LinearRing extends LineString
         return (LinearRing) super.reverse();
     }
 
-    public LinearRing reverseInternal() {
+    @Override
+    public
+    Geometry <?> reverseInternal() {
         ICoordinateSequence seq = points.copy();
     
         CoordinateSequences.reverse(seq);

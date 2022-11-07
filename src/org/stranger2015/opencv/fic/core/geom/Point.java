@@ -48,7 +48,7 @@ class Point<T extends Geometry <T>>
      */
     public
     Point ( Coordinate coordinate, PrecisionModel precisionModel, int SRID ) {
-        super(new GeometryFactory(precisionModel, SRID));
+        super(image, address, blockSize, new GeometryFactory(precisionModel, SRID));
 
         init(getFactory().getCoordinateSequenceFactory().create(
                 coordinate != null ? new Coordinate[]{coordinate} : new Coordinate[]{}));
@@ -60,7 +60,7 @@ class Point<T extends Geometry <T>>
      */
     public
     Point ( ICoordinateSequence coordinates, GeometryFactory factory ) {
-        super(factory);
+        super(image, address, blockSize, factory);
 
         init(coordinates);
     }
@@ -256,7 +256,7 @@ class Point<T extends Geometry <T>>
      */
     @Override
     protected
-    Geometry <T> reverseInternal () {
+    Geometry <?> reverseInternal () {
         return getFactory().createPoint(coordinates.copy());
     }
 
@@ -286,7 +286,7 @@ class Point<T extends Geometry <T>>
      */
     @Override
     protected
-    int getTypeCode () {
+    EType getTypeCode () {
         return Geometry.TYPECODE_POINT;
     }
 

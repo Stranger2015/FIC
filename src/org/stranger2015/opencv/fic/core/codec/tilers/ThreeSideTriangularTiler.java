@@ -51,23 +51,21 @@ class ThreeSideTriangularTiler<N extends TreeNode <N, A, G>, A extends IAddress 
 
     /**
      * @param imageBlock
-     * @return
      * @throws ValueError
      */
     @Override
     public
-    List <IImageBlock <A>> segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
         return List.of();
     }
 
     /**
      * @param imageBlock
-     * @return
      * @throws ValueError
      */
     @Override
     public
-    List <IImageBlock <A>> segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
         return List.of();
     }
 

@@ -14,8 +14,7 @@ import java.util.List;
  * @param <G>
  */
 public
-class MergeImageTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */,
-        G extends BitBuffer>
+class MergeImageTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
 
         extends Task <N, A, G> {
 

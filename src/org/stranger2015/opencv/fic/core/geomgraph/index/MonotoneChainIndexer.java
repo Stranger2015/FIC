@@ -32,8 +32,8 @@ import java.util.*;
 public class EdgeIntersectionList
 {
     // a Map <EdgeIntersection, EdgeIntersection>
-    private Map<org.stranger2015.opencv.fic.core.geomgraph.index.EdgeIntersection> nodeMap = new TreeMap();
-    org.stranger2015.opencv.fic.core.geomgraph.Edge edge;  // the parent edge
+    private final Map<EdgeIntersection, EdgeIntersection> nodeMap = new TreeMap<>();
+    Edge edge;  // the parent edge
 
     public EdgeIntersectionList( org.stranger2015.opencv.fic.core.geomgraph.Edge edge)
     {
@@ -54,7 +54,7 @@ public class EdgeIntersectionList
     EdgeIntersection add( org.stranger2015.opencv.fic.core.geom.Coordinate intPt, int segmentIndex, double dist)
     {
         EdgeIntersection eiNew = new EdgeIntersection(intPt, segmentIndex, dist);
-        EdgeIntersection ei = (EdgeIntersection) nodeMap.get(eiNew);
+        EdgeIntersection ei = nodeMap.get(eiNew);
         if (ei != null) {
             return ei;
         }
@@ -137,11 +137,9 @@ public class EdgeIntersectionList
         boolean useIntPt1 = ei1.dist > 0.0 || ! ei1.coord.equals2D(lastSegStartPt);
         if (! useIntPt1) {
             npts--;
-        }
-
-        org.stranger2015.opencv.fic.core.geom.Coordinate[] pts = new org.stranger2015.opencv.fic.core.geom.Coordinate[npts];
+        Coordinate[] pts = new Coordinate[npts];
         int ipt = 0;
-        pts[ipt++] = new org.stranger2015.opencv.fic.core.geom.Coordinate(ei0.coord);
+        pts[ipt++] = new Coordinate(ei0.coord);
         for (int i = ei0.segmentIndex + 1; i <= ei1.segmentIndex; i++) {
             pts[ipt++] = edge.pts[i];
         }
@@ -158,10 +156,6 @@ public class EdgeIntersectionList
         }
     }
 }
-
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * MonotoneChains are a way of partitioning the segments of an edge to

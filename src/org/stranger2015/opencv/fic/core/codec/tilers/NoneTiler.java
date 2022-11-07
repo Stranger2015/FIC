@@ -1,5 +1,6 @@
 package org.stranger2015.opencv.fic.core.codec.tilers;
 
+import org.jetbrains.annotations.NotNull;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
@@ -17,7 +18,7 @@ import java.util.List;
  */
 public
 class NoneTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends Tiler <N, A, G> {
+        extends Tiler<N, A, G> {
 
     /**
      * @param image
@@ -31,9 +32,9 @@ class NoneTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
                 IIntSize rangeSize,
                 IIntSize domainSize,
                 IEncoder <N, A, G> encoder,
-                ITreeNodeBuilder <N, A, G> builder ) {
+                ITreeNodeBuilder<N, A, G> builder ) {
 
-        super(image, rangeSize, domainSize, encoder, builder, builder1);
+        super(image, rangeSize, domainSize, encoder, builder);
     }
 
     @Override
@@ -48,21 +49,22 @@ class NoneTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
         );
     }
 
-    @Override
-    public
-    List <IImageBlock <A>> segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
-        return List.of();
-    }
-
-    @Override
-    public
-    List <IImageBlock <A>> segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
-        return List.of();
-    }
-
     /**
-     * @param node
+     * @param imageBlock
+     * @throws ValueError
      */
+    @Override
+    public
+    void segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
+        return List.of(imageBlock);
+    }
+
+    @Override
+    public
+    void segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
+        return List.of(imageBlock);
+    }
+
     @Override
     public
     void addLeafNode ( TreeNode <N, A, G> node ) {
@@ -72,16 +74,24 @@ class NoneTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
     @Override
     public
     List <Vertex> generateVerticesSet ( RegionOfInterest <A> roi, int blockWidth, int blockHeight ) {
-        return new Vertex[0];
+        return null;
     }
 
     @Override
     public
-    List <IImageBlock <A>> generateInitialRangeBlocks ( RegionOfInterest <A> roi,
+    List <IImageBlock <A>> generateInitialRangeBlocks ( @NotNull RegionOfInterest <A> roi,
                                                         int blockWidth,
                                                         int blockHeight ) throws ValueError {
-        return List.of();
+        return List.of(roi.getSubImage());
     }
+
+    /**
+     * @param roi
+     * @param blockWidth
+     * @param blockHeight
+     * @return
+     * @throws ValueError
+     */
 
     @Override
     public
@@ -94,36 +104,49 @@ class NoneTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
     List <IImageBlock <A>> generateRangeBlocks ( RegionOfInterest <A> roi,
                                                  int blockWidth,
                                                  int blockHeight ) throws ValueError {
-
-        return generateInitialRangeBlocks(roi, blockWidth, blockHeight);
+        return super.generateRangeBlocks(roi, blockWidth, blockHeight);
     }
+
 
     /**
      * @param imageBlockShape
      * @param imageBlock
-     * @param minRangeSize
-     * @param queue
      * @throws ValueError
      */
     @Override
     public
-    List <IImageBlock <A>> segmentGeometry ( //EShape imageBlockShape,
-                                             IImageBlock <A> imageBlock,
-                                             IIntSize minRangeSize,
-                                             Deque <IImageBlock <A>> queue ) throws ValueError {
+    void segmentGeometry ( IImageBlock <A> imageBlock
+    ) throws ValueError {
+        logger.info("Segmenting geometry ...");
 
-        logger.info("Segmenting shape ...");
-
-
-        return List.of();
+        return List.of(imageBlock);
     }
 
-    /**
-     *
-     */
+    public
+    void segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
+        return List.of(imageBlock);
+    }
+
     @Override
-    protected
-    void onFinish () {
-        logger.info("Finishing doTile() ...");
+    public
+    List <IImageBlock <A>> tile ( IImageBlock <A> imageBlock,
+                                  IIntSize minRangeSize,
+                                  @NotNull Deque <IImageBlock <A>> queue ) throws ValueError {
+        return super.tile(imageBlock, minRangeSize, queue);
     }
+
+    @Override
+    public
+    List <IImageBlock <A>> doTile ( IImageBlock <A> imageBlock,
+                                    IIntSize minRangeSize,
+                                    Deque <IImageBlock <A>> queue ) throws ValueError {
+        return super.doTile(imageBlock, minRangeSize, queue);
+    }
+
+    @Override
+    public
+    void onFinish () {
+        super.onFinish();
+    }
+
 }

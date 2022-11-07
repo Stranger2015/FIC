@@ -3,15 +3,12 @@ package org.stranger2015.opencv.fic.core.io;
 import ar.com.hjg.pngj.ImageInfo;
 import ar.com.hjg.pngj.PngWriter;
 import ar.com.hjg.pngj.PngjOutputException;
-import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.FractalModel;
+import org.stranger2015.opencv.fic.core.FicFileModel;
 import org.stranger2015.opencv.fic.core.IAddress;
-import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.io.File;
-import java.io.OutputStream;
 
 /**
  * @param <N>
@@ -51,6 +48,6 @@ class FractalWriter<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exte
      * @param model
      */
     public
-    void writeModel ( FractalModel <N, A, G> model ) {
+    void writeModel ( FicFileModel <N, A, G> model ) {
     }
 }
