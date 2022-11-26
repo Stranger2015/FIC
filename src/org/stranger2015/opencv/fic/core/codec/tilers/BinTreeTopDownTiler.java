@@ -3,7 +3,6 @@ package org.stranger2015.opencv.fic.core.codec.tilers;
 import org.slf4j.Logger;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.fic.core.codec.ICodec;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
 import org.stranger2015.opencv.utils.BitBuffer;
@@ -11,7 +10,6 @@ import org.stranger2015.opencv.utils.BitBuffer;
 import java.util.List;
 
 /**
- *
  * @param <N>
  * @param <A>
  * @param <G>
@@ -19,8 +17,8 @@ import java.util.List;
 public
 class BinTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
         extends BinTreeTiler <N, A, G>
-        implements ITopDownTiler <N, A, G>
-{
+        implements ITopDownTiler <N, A, G> {
+
     /**
      * @param image
      * @param rangeSize
@@ -38,10 +36,13 @@ class BinTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
         super(image, rangeSize, domainSize, encoder, builder);
     }
 
+    /**
+     * @return
+     */
     @Override
     public
     ITiler <N, A, G> instance () {
-        return new BinTreeTopDownTiler<>(
+        return new BinTreeTopDownTiler <>(
                 getImage(),
                 getRangeSize(),
                 getDomainSize(),
@@ -50,36 +51,51 @@ class BinTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
     }
 
     /**
+     * @param node
+     * @param imageBlock
+     */
+    @Override
+    public
+    void onSuccessors ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) {
+        super.onSuccessors(node, imageBlock);
+    }
+
+    /**
+     * @param node
+     * @param imageBlock
+     */
+    @Override
+    public
+    void onSuccessor ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) {
+        super.onSuccessor(node, imageBlock);
+    }
+
+    /**
+     * @param node
      * @param imageBlock
      * @throws ValueError
      */
     @Override
     public
-    void segmentGeometry ( IImageBlock <A> imageBlock ) throws ValueError {
-        //return segmentRectangle(imageBlock);
+    void segmentGeometry ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
     }
 
-    @Override
-    public
-    void onAddNode ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) {
-
-    }
-
-    @Override
-    public
-    void onAddLeafNode ( LeafNode <N, A, G> leafNode, IImageBlock <A> imageBlock ) {
-
-    }
-
+    /**
+     * @return
+     */
     @Override
     public
     Logger getLogger () {
         return logger;
     }
 
+    /**
+     * @param imageBlock
+     * @throws ValueError
+     */
     @Override
     public
-    void segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentPolygon ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
 //        return List.of(imageBlock);
     }
 
@@ -101,11 +117,10 @@ class BinTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
     }
 
     /**
-         * @param domainPool
-         */
-        public
-        void BuildTask ( List <IImageBlock<A>> domainPool ) {
-//            super(domainPool, new ArrayList <>());
-        }
+     * @param domainPool
+     */
+    public
+    void BuildTask ( List <IImageBlock <A>> domainPool ) {
     }
+}
 

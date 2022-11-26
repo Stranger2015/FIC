@@ -46,7 +46,7 @@ class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
             IDistanceator <A> comparator,
             Set <ImageTransform <A, G>> transforms,
             Set <IImageFilter <A>> filters,
-            FicFileModel <N, A, G> fractalModel
+            FCImageModel <N, A, G> fractalModel
     ) {
         super(
                 scheme,
@@ -107,7 +107,7 @@ class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
     List <IImageBlock <A>> generateAllTransformedBlocks ( IImage <A> image,
                                                           int sourceSize,
                                                           int destinationSize,
-                                                          int step ) {
+                                                          int step ) throws ValueError {
         return List.of(image.getSubImage());
     }
 
@@ -140,15 +140,6 @@ class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
                 domainSize
         );
     }
-//
-//    /**
-//     * @return
-//     */
-//    @Override
-//    public
-//    IPartitionProcessor <N, A, G> getPartitionProcessor () {
-//        return null;
-//    }
 
     /**
      * @param image
@@ -176,9 +167,9 @@ class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      */
     @Override
     public
-    FicFileModel <N, A, G> loadModel ( String filename ) {
+    FCImageModel <N, A, G> loadModel ( String filename ) {
         FractalReader <N, A, G> reader = new FractalReader <>(new File(filename));
 
-        return new FicFileModel <>(null);
+        return new FCImageModel <>(null);
     }
 }

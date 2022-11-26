@@ -19,7 +19,7 @@ public enum EMetrics {
     AE {
 
         @Override
-        public final double distance(final int a, final int b, final double fuzz) {
+        public final double distance( final double a, final double b, final double fuzz) {
             return super.distance(a, b) <= fuzz ? 0 : 1;
         }
 
@@ -135,7 +135,7 @@ public enum EMetrics {
      * @see EMetrics
 //     * @see PixelUtils
      */
-    public double distance(final int a, final int b, final double fuzz) {
+    public double distance( final double a, final double b, final double fuzz) {
         return distance(a, b);
     }
 

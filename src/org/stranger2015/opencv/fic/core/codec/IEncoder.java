@@ -110,7 +110,7 @@ import java.util.Set;
  * 5. To  increase  encoding  speed  classification  of  sub-image
  * into  upper  right,  upper  left,  lower  ri
  * =======================================================================================================
- * A Proposed Hybrid Fractal Image Compression Based on Graph Theory and Isosceles Triangle1 Segmentation
+ * A Proposed Hybrid Fractal Image Compression Based on Graph Theory and Isosceles Triangle Segmentation
  * <p>
  * <b>Proposed algorithms encoding steps as following:</b>
  * <p>
@@ -158,7 +158,8 @@ public
 interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
         extends IImageProcessorListener <N, A, G>,
                 ICodecListener <N, A, G>,
-                IConstants {
+                IConstants,
+                ICompositeEncoder <N, A, G> {
     /**
      *
      */
@@ -174,43 +175,13 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
         return doEncode(image);
     }
 
-    /**
-     * @param image
-     * @return
-     */
-    IImage <A> doEncode ( IImage <A> image ) throws ValueError;
-
-    /**
-     * @return
-     */
-//    List <RegionOfInterest <A>> segmentRegions ( IImage<A> image ) throws ValueError;
-
-    /**
-     * @param image
-     * @param bounds
-     * @return
-     * @throws ValueError
-     */
-    List <RegionOfInterest <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds )
-            throws ValueError;
+    ICompressedImage <A> getOutputImage ();
 
     /**
      * @param image
      * @return
-     * @throws ValueError
      */
-    default
-    List <RegionOfInterest <A>> segmentImage ( IImage <A> image ) throws ValueError {
-        return segmentImage(image, List.of());
-    }
-
-    /**
-     * @param image
-     * @param blockWidth
-     * @param blockHeight
-     * @throws ValueError
-     */
-    void segmentRegion ( RegionOfInterest <A> roi, int blockWidth, int blockHeight ) throws ValueError;
+    IImage <A> doEncode ( IImage <A> image ) throws ValueError, ReflectiveOperationException;
 
     /**
      * @return
@@ -259,7 +230,7 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
                                                           int sourceSize,
                                                           int destinationSize,
                                                           int step
-    );
+    ) throws ValueError;
 
     /**
      * @return
@@ -295,7 +266,7 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
     IPartitionProcessor <N, A, G> createPartitionProcessor ( ITiler <N, A, G> tiler ) {
         IPartitionProcessor <N, A, G> partitionProcessor = getPartitionProcessor();
         if (partitionProcessor == null) {
-            partitionProcessor = doCreatePartitionProcessor(tiler);//fixme
+            partitionProcessor = doCreatePartitionProcessor(tiler);
         }
 
         return partitionProcessor;
@@ -314,13 +285,13 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
     /**
      * @return
      */
-    FicFileModel <N, A, G> getModel ();
+    FCImageModel <N, A, G> getModel ();
 
     /**
      * @param filename
      * @return
      */
-    FicFileModel <N, A, G> loadModel ( String filename );
+    FCImageModel <N, A, G> loadModel ( String filename ) throws ValueError;
 
     /**
      * @param node
@@ -333,16 +304,21 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
     void addLeafNode ( LeafNode <N, A, G> node );
 
     /**
-     * @param node
-     */
-    void addLeafNode ( TreeNodeBase <N, A, G> node );
-
-    /**
      * @return
      */
     Class <?> getTilerClass ();
 
-    EnumSet<ESplitKind> chooseDirection ( IImageBlock <A> imageBlock );
+    /**
+     * @param imageBlock
+     * @return
+     */
+    EnumSet <ESplitKind> chooseDirection ( IImageBlock <A> imageBlock );
+
+    void segmentImage ( IImageBlock <A> roi, int blockWidth, int blockHeight ) throws ValueError;
+
+    // progress report
+    // int percent = 100 * (rangeBlocks.indexOf(rangeBlock) + 1) / rangeBlocks.size();
+    //System.err.printf("%d%%", percent);
 
     /**
      * @param image
@@ -350,87 +326,110 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      */
     @SuppressWarnings("unchecked")
     default
-    IImageBlock <A> iterateRangeBlocks ( IImageBlock <A> image, List <IImageBlock <A>> rangeBlocks ) {
-        rangeBlocks.forEach(rangeBlock -> {
-            int percent = 100 * (rangeBlocks.indexOf(rangeBlock) + 1) / rangeBlocks.size();
-            System.err.printf("%d%%", percent);
-            ImageTransform <A, G> bestTransform = ImageTransform.create(image, rangeBlock.getAddress());
-            int minDistance = Integer.MAX_VALUE;
+    IImageBlock <A> iterateRangeBlocks ( IImageBlock <A> roi, List <IImageBlock <A>> rangeBlocks ) throws ValueError {
+        int channels = roi.getChannelsAmount();
+        int[] minDistance = new int[channels];
+
+        for (IImageBlock <A> rangeBlock : rangeBlocks) {
+            for (int c = 0; c < channels; c++) {
+                minDistance[c] = 0;
+            }
+            ImageTransform <A, G> bestTransform = ImageTransform.create(roi, rangeBlock.getAddress(0, 0));
+
             try {
-                iterateDomainBlocks((ImageBlock <A>) rangeBlock, bestTransform, minDistance);
+                iterateDomainBlocks(
+                        rangeBlock,
+                        getDomainBlocks(),
+                        minDistance,
+                        bestTransform
+                );
             } catch (ValueError e) {
                 throw new RuntimeException(e);
             }
+
             getTransforms().add(bestTransform);
-        });
-        outputImage.getTransforms().addAll(transforms);
-//
-        return (IImageBlock <A>) outputImage;
+        }
+
+        getOutputImage().setTransforms((List <ImageTransform <A, ?>>) getTransforms());
+
+        return (IImageBlock <A>) getOutputImage();
     }
+
+    /**
+     * @return
+     */
+    List <IImageBlock <A>> getRangeBlocks ();
+
+    /**
+     * @return
+     */
+    List <IImageBlock <A>> getDomainBlocks ();
 
     /**
      * @param rangeBlock
      * @param bestTransform
-     * @param minDistance
      */
+    //        ImageBlock <A> domainBlock = (ImageBlock <A>) rangeBlock.resize(2);
     default
-    void iterateDomainBlocks ( ImageBlock <A> rangeBlock,
-                               ImageTransform <A, G> bestTransform,
-                               int minDistance ) throws ValueError {
-//        for (ImageBlock <A> domainBlock : domainBlocks) {
-            double alpha = 0;
-            for (int i = 0; i < domainBlock.getWidth(); i++) {
-                for (int j = 0; j < domainBlock.getHeight(); j++) {
-                    double[] data = new double[4];//fixme
-                    alpha += (domainBlock.get(i, j, data) - domainBlock.getMeanPixelValue());
-                }
-//            }
+    void iterateDomainBlocks ( IImageBlock <A> rangeBlock,
+                               List <IImageBlock <A>> domainBlocks,
+                               int[] minDistance,
+                               ImageTransform <A, G> bestTransform )
+            throws ValueError {
 
-            for (int addr = 0; addr < domainBlock.getWidth(); addr++) {
-                double[] data = new double[4];//fixme
-                alpha += (domainBlock.get(domainBlock.getAddress().newInstance(addr), data) - domainBlock.meanPixelValue);
-            }
-//
-            double contrast = alpha / domainBlock.beta;//byte
-            int brightness = (int) (rangeBlock.meanPixelValue - contrast * domainBlock.meanPixelValue);
-
-            for (int index = 0; index < 8; index++) {
-                IImageBlock <A> transformedDomainBlock =
-                        new ImageBlock <>(
-                                inputImage,
-                                domainBlock.getAddress(),
-                                domainBlock.getSize(),
-                                geometry);
-                int pixelAmount = domainBlock.getWidth() * domainBlock.getWidth();
-                for (int addr = 0; addr < pixelAmount; addr++) {
-                    for (int y = 0; y < domainBlock.height; y++) {
-                        int newAddr = addr * -1; // fixme dihedralAffineTransforms[index][0] + y * dihedralAffineTransforms[index][1];
-                        int newY = x * dihedralAffineTransforms[index][2] + y * dihedralAffineTransforms[index][3];
-                        if (newAddr < 0) {
-                            newAddr += domainBlock.getWidth();
-                        }
-                        if (newY < 0) {
-                            newY += domainBlock.height;
-                        }
-                        double newPixelValue = (short) (contrast * domainBlock.put(addr, new int[1]) + brightness);
-
-                        double[] data = new double[4];
-                        data[0]=
-                                ((newPixelValue < MAX_PIXEL_VALUE) && (newPixelValue >= 0)) ?
-                                        newPixelValue :
-                                        (MAX_PIXEL_VALUE / 2);
-
-                        transformedDomainBlock.put(
-                                newAddr,
-                                data
-                        );
-//                    }
+        for (IImageBlock <A> domainBlock : domainBlocks) {
+            int channels = domainBlock.getChannelsAmount();
+            double[] alpha = new double[channels];
+            double[] newPixelValue = new double[channels];
+            int c = 0;
+            for (; c < channels; c++) {
+                alpha[c] = 0;
+                for (int i = 0; i < domainBlock.getWidth(); i++) {
+                    for (int j = 0; j < domainBlock.getHeight(); j++) {
+                        alpha[c] += (domainBlock.pixelValues(i, j)[c] - domainBlock.getMeanPixelValue()[c])
+                                * (rangeBlock.pixelValues(i, j)[c] - rangeBlock.getMeanPixelValue()[c]);
                     }
-                    int distance = getDistance(rangeBlock, transformedDomainBlock);
-                    if ((distance < minDistance) && (distance != 0)) {
-                        minDistance = distance;
-                        bestTransform.dihedralAffineTransformIndex = index;
-                        bestTransform.setAddress(transformedDomainBlock.getAddress());
+                }
+                double contrast = alpha[c] / domainBlock.getBeta();
+                int brightness = (int) (rangeBlock.getMeanPixelValue()[c] -
+                        contrast * domainBlock.getMeanPixelValue()[c]
+                );
+
+                for (int indx = 0; indx < 8; indx++) {
+                    IImageBlock <A> transformedDomainBlock = new ImageBlock <>(
+                            domainBlock.getX(),
+                            domainBlock.getY(),
+                            domainBlock.getWidth(),
+                            domainBlock.getHeight()
+                    );
+
+                    for (int x = 0; x < domainBlock.getWidth(); x++) {
+                        for (int y = 0; y < domainBlock.getHeight(); y++) {
+                            int newX = x * dihedralAffineTransforms[indx][0] + y * dihedralAffineTransforms[indx][1];
+                            int newY = x * dihedralAffineTransforms[indx][2] + y * dihedralAffineTransforms[indx][3];
+                            if (newX < 0) {
+                                newX += domainBlock.getWidth();
+                            }
+                            if (newY < 0) {
+                                newY += domainBlock.getHeight();
+                            }
+                            newPixelValue[c] = (contrast * domainBlock.pixelValues(x, y)[c] + brightness);
+                            if (newPixelValue[c] < MAX_PIXEL_CHANNEL_VALUE && newPixelValue[c] >= 0) {
+                                transformedDomainBlock.pixelValues(newX, newY)[c] = newPixelValue[c];
+                            }
+                            else {
+                                transformedDomainBlock.pixelValues(newX, newY)[c] = MAX_PIXEL_CHANNEL_VALUE / 2;
+                            }
+                        }
+                    }
+                    int[] distance = getDistance(rangeBlock, transformedDomainBlock);
+
+                    if ((distance[c] < minDistance[c]) && (distance[c] != 0)) {
+                        minDistance[c] = distance[c];
+
+                        bestTransform.dihedralAffineTransformIndex = indx;
+                        bestTransform.setOriginalDomainX(domainBlock.getX());
+                        bestTransform.setOriginalDomainY(domainBlock.getY());
                         bestTransform.brightnessOffset = brightness;
                         bestTransform.contrastScale = contrast;
                     }
@@ -439,4 +438,42 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
         }
     }
 
+    /**
+     * @return
+     */
+    Set <IImageFilter <A>> getFilters ();
+
+    /**
+     * @param range
+     * @param domain
+     * @return
+     */
+    default
+    int[] getDistance ( IImageBlock <A> rangeBlock, IImageBlock <A> domainBlock ) {
+        int channels = rangeBlock.getChannelsAmount();
+        double[] error = new double[channels];
+        int[] dist = new int[channels];
+        for (int c = 0; c < channels; c++) {
+            error[c] = 0;
+            for (int i = 0; i < rangeBlock.getWidth(); i++) {
+                for (int j = 0; j < rangeBlock.getHeight(); j++) {
+                    error[c] += Math.pow(rangeBlock.pixelValues(i, j)[c] - domainBlock.pixelValues(i, j)[c], 2);
+                }
+            }
+            error[c] /= rangeBlock.getWidth() * rangeBlock.getHeight();
+            dist[c] = (int) error[c];
+        }
+
+        return dist;
+    }
+
+    /**
+     * @return
+     */
+    List <Class <ITiler <N, A, G>>> getAllowableSubtilers ();
+
+    /**
+     * @param tiler
+     */
+    void addAllowableSubtiler ( Class <ITiler <N, A, G>> tilerClass );
 }

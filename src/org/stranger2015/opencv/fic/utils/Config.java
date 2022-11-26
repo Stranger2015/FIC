@@ -1,12 +1,17 @@
-package org.stranger2015.opencv.fic.utils;
+package org.stranger2015.opencv.fic;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
-import org.stranger2015.opencv.fic.core.*;
+import org.stranger2015.opencv.fic.core.EError;
+import org.stranger2015.opencv.fic.core.EPartitionScheme;
+import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.EtvColorSpace;
+import org.stranger2015.opencv.fic.core.codec.IPartitionProcessor;
 import org.stranger2015.opencv.fic.core.search.EMetrics;
 import org.stranger2015.opencv.fic.transform.ScaleTransform;
+import org.stranger2015.opencv.fic.utils.Commands;
+import org.stranger2015.opencv.fic.utils.Options;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
@@ -35,11 +40,11 @@ class Config<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bit
      */
     public
     Config ( String[] args ) throws ClassNotFoundException, NoSuchMethodException {
-        parser = new JCommander(this.options = new Options<>());
-
-        parser.setProgramName(FicApplication.class.getCanonicalName());
-        parser.addCommand(Commands.COMPRESS.id(), Commands.COMPRESS);
-        parser.addCommand(Commands.DECOMPRESS.id(), Commands.DECOMPRESS);
+//        parser = new JCommander(this.options = new Options<>());
+//
+//        parser.setProgramName(FicApplication.class.getCanonicalName());
+//        parser.addCommand(Commands.COMPRESS.id(), Commands.COMPRESS);
+//        parser.addCommand(Commands.DECOMPRESS.id(), Commands.DECOMPRESS);
 
         try {
             parser.parse(args);
@@ -128,8 +133,8 @@ class Config<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bit
      * @return
      */
     public
-    ITiler <N, A, G> tiler () {
-        return options.tiler;
+    IPartitionProcessor <N, A, G> tiler () {
+        return options.partitionProcessor;
     }
 
     /**
@@ -202,6 +207,11 @@ class Config<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bit
     public
     void setColorSpace ( EtvColorSpace colorSpace ) {
         this.colorSpace = colorSpace;
+    }
+
+    public
+    G partitionProcessor () {
+        return null;
     }
 
 //    /**

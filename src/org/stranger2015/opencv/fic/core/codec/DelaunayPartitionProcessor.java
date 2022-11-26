@@ -45,7 +45,7 @@ class DelaunayPartitionProcessor<N extends TreeNode <N, A, G>, A extends IAddres
 
     @Override
     public
-    List <IImageBlock <A>> generateRangeBlocks ( RegionOfInterest <A> roi, int blockWidth, int blockHeight )
+    List <IImageBlock <A>> generateRangeBlocks ( IImageBlock <A> roi, int blockWidth, int blockHeight )
             throws ValueError {
 
         return super.generateRangeBlocks(roi, blockWidth, blockHeight);
@@ -59,7 +59,7 @@ class DelaunayPartitionProcessor<N extends TreeNode <N, A, G>, A extends IAddres
 
     @Override
     public
-    List <RegionOfInterest <A>> generateRegions ( IImage <A> image, List <Rectangle> rectangles ) {
+    List <IImageBlock <A>> generateRegions ( IImage <A> image, List <Rectangle> rectangles ) {
         return null;
     }
 }

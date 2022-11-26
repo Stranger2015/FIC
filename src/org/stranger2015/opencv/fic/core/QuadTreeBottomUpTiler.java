@@ -1,12 +1,11 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
 import org.stranger2015.opencv.fic.core.codec.tilers.IBottomUpTiler;
 import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
 import org.stranger2015.opencv.utils.BitBuffer;
-
-import java.util.List;
 
 /**
  * @param <N>
@@ -41,7 +40,7 @@ class QuadTreeBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>
     @Override
     public
     ITiler <N, A, G> instance () {
-        return new QuadTreeBottomUpTiler<> (
+        return new QuadTreeBottomUpTiler <>(
                 getImage(),
                 getRangeSize(),
                 getDomainSize(),
@@ -51,13 +50,31 @@ class QuadTreeBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>
     }
 
     /**
-     * @param imageBlock
-     * @throws ValueError
+     *
      */
     @Override
     public
-    void segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
-        return List.of();
+    void onLeaf ( LeafNode <N, A, G> leafNode, IImageBlock <A> imageBlock) {
+        super.onLeaf(leafNode, imageBlock);
+    }
+
+    /**
+     *
+     */
+    @Override
+    public
+    void onSuccessors ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) {
+        super.onSuccessors(node, imageBlock);
+    }
+
+    /**
+     * @param node
+     * @param imageBlock
+     */
+    @Override
+    public
+    void onSuccessor ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) {
+        super.onSuccessor(node, imageBlock);
     }
 
     /**
@@ -66,7 +83,17 @@ class QuadTreeBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>
      */
     @Override
     public
-    void segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
-        return List.of();
+    void segmentPolygon (TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+
+    }
+
+    /**
+     * @param imageBlock
+     * @throws ValueError
+     */
+    @Override
+    public
+    void segmentQuadrilateral (TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+
     }
 }

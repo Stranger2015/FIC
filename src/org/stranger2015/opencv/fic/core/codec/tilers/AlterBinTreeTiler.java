@@ -3,7 +3,7 @@ package org.stranger2015.opencv.fic.core.codec.tilers;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
-import org.stranger2015.opencv.fic.core.codec.RegionOfInterest;
+import org.stranger2015.opencv.fic.core.codec.IImageBlock;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
@@ -50,9 +50,7 @@ class AlterBinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G 
      */
     @Override
     public
-    List <IImageBlock <A>> generateRangeBlocks ( RegionOfInterest <A> roi,
-                                                 int blockWidth,
-                                                 int blockHeight )
+    List <IImageBlock <A>> generateRangeBlocks ( IImageBlock <A> roi, int blockWidth, int blockHeight )
             throws ValueError {
 
         return generateInitialRangeBlocks(roi, blockWidth, blockHeight);
@@ -64,28 +62,37 @@ class AlterBinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G 
      * @param blockHeight
      * @return
      */
+    @Override
     public
-    List <IImageBlock <A>> generateInitialRangeBlocks ( RegionOfInterest <A> roi,
-                                                        int blockWidth,
-                                                        int blockHeight ) {
+    List <IImageBlock <A>> generateInitialRangeBlocks ( IImageBlock <A> roi, int blockWidth, int blockHeight ) {
         return List.of(roi);
     }
 
+    /**
+     * @param node
+     * @param imageBlock
+     * @throws ValueError
+     */
     @Override
     public
-    void segmentSquare ( IImageBlock <A> imageBlock ) throws ValueError {
-//        return super.segmentSquare(imageBlock);
+    void segmentSquare ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+        super.segmentSquare(node, imageBlock);
     }
 
+    /**
+     * @param node
+     * @param imageBlock
+     * @throws ValueError
+     */
     @Override
     public
-    void segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentRectangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
         if ((imageBlock.getWidth() / imageBlock.getHeight()) == 2 ||
                 (imageBlock.getHeight() / imageBlock.getWidth()) == 2
         ) {
             throw new ValueError("Image block must have the side size ratio of 2:1");
         }
-        super.segmentRectangle(imageBlock);
+        super.segmentRectangle(node, imageBlock);
     }
 
     //
@@ -167,5 +174,4 @@ class AlterBinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G 
 //            r[1] = new Square(0, sideSize, sideSize);
 //        }
 //    }
-
 }

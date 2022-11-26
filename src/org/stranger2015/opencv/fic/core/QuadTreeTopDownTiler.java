@@ -1,14 +1,11 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.jetbrains.annotations.NotNull;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
 import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
 import org.stranger2015.opencv.fic.core.codec.tilers.ITopDownTiler;
 import org.stranger2015.opencv.utils.BitBuffer;
-
-import java.util.Deque;
 
 /**
  * @param <N>
@@ -44,11 +41,21 @@ class QuadTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>,
     public
     ITiler <N, A, G> instance () {
         return new QuadTreeTopDownTiler <>(
-                image,
-                rangeSize,
-                domainSize,
-                encoder,
-                builder);
+                getImage(),
+                getRangeSize(),
+                getDomainSize(),
+                getEncoder(),
+                getBuilder()
+        );
+    }
+
+    /**
+     * @param node
+     */
+    @Override
+    public
+    void addLeaf ( LeafNode <N, A, G> node ) {
+        leaves.add(node);
     }
 
     /**
@@ -57,28 +64,38 @@ class QuadTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>,
      */
     @Override
     public
-    void onAddNode ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) {
-
+    void onSuccessors ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) {
     }
 
     /**
-     * @param leafNode
+     * @param node
      * @param imageBlock
      */
     @Override
     public
-    void onAddLeafNode ( LeafNode <N, A, G> leafNode, IImageBlock <A> imageBlock ) {
-        leafNode.setImageBlock(imageBlock);
+    void onSuccessor ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) {
     }
 
     /**
+     * @param node
      * @param imageBlock
      * @throws ValueError
      */
     @Override
     public
-    void segmentGeometry ( IImageBlock <A> imageBlock ) throws ValueError {
-        segmentSquare(imageBlock);
+    void segmentGeometry ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+        segmentPolygon(node, imageBlock);
+    }
+
+    /**
+     * @param node
+     * @param imageBlock
+     * @throws ValueError
+     */
+    @Override
+    public
+    void segmentRectangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock )
+            throws ValueError {
     }
 
     /**
@@ -95,16 +112,26 @@ class QuadTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>,
      */
     @Override
     public
-    void segmentSquare ( @NotNull IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentSquare ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
         int x = imageBlock.getX();
         int y = imageBlock.getY();
 
         int w = imageBlock.getWidth() / 2;
 
-        getDeque().push(imageBlock.subImage(x, y, w, w));
-        getDeque().push(imageBlock.subImage(x + w, y, w, w));
-        getDeque().push(imageBlock.subImage(x, y + w, w, w));
-        getDeque().push(imageBlock.subImage(x + w, y + w, w, w));
+        IImageBlock <A> r1 = imageBlock.getSubImage(x, y, w, w);
+        IImageBlock <A> r2 = imageBlock.getSubImage(x + w, y, w, w);
+        IImageBlock <A> r3 = imageBlock.getSubImage(x, y + w, w, w);
+        IImageBlock <A> r4 = imageBlock.getSubImage(x + w, y + w, w, w);
+
+        getImageBlockDeque().push(r1);
+        getImageBlockDeque().push(r2);
+        getImageBlockDeque().push(r3);
+        getImageBlockDeque().push(r4);
+
+        getNodeDeque().push(node.createNode(node, r1.getAddress(r1.getX(), r1.getY())));
+        getNodeDeque().push(node.createNode(node, r2.getAddress(r2.getX(), r2.getY())));
+        getNodeDeque().push(node.createNode(node, r3.getAddress(r3.getX(), r3.getY())));
+        getNodeDeque().push(node.createNode(node, r4.getAddress(r4.getX(), r4.getY())));
     }
 
     /**
@@ -113,7 +140,8 @@ class QuadTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>,
      */
     @Override
     public
-    void segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentPolygon ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+        segmentSquare(node, imageBlock);
     }
 
     /**
@@ -122,6 +150,6 @@ class QuadTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>,
      */
     @Override
     public
-    void segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentQuadrilateral ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
     }
 }

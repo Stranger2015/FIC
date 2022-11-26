@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.Point;
-import org.stranger2015.opencv.fic.core.codec.RegionOfInterest;
 import org.stranger2015.opencv.fic.core.geom.*;
 import org.stranger2015.opencv.fic.core.geom.impl.CoordinateArraySequence;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
@@ -50,7 +49,7 @@ class ImageBlock<A extends IAddress <A>>
      */
     public
     ImageBlock ( IImage <A> image, int x, int y, int sideSize, Geometry <?> geometry ) throws ValueError {
-        super(image.getMat(), x, y);
+//        super(image.getMat(), x, y);
 
         blockSize = new IntSize(sideSize, sideSize);
         this.geometry = geometry;
@@ -66,7 +65,7 @@ class ImageBlock<A extends IAddress <A>>
      */
     public
     ImageBlock ( IImage <A> inputImage, int x, int y, IIntSize blockSize, Geometry <?> geometry ) {
-        this(inputImage.getMat(), blockSize, geometry);
+        this((MatOfInt) inputImage.getMat(), blockSize, geometry);
     }
 
     /**
@@ -89,7 +88,7 @@ class ImageBlock<A extends IAddress <A>>
      */
     public
     ImageBlock ( MatOfInt image, int rows, int cols, double[] pixels, Geometry <?> geometry ) throws ValueError {
-        super(image, roi1, rows, cols, pixels, getRegions());
+        super(image, rows, cols, pixels);
         this.geometry = geometry;
     }
 
@@ -130,7 +129,7 @@ class ImageBlock<A extends IAddress <A>>
 //        super(image, address, blockSize);
 //    }
     public
-    ImageBlock ( RegionOfInterest <A> roi, int i, int j, int blockWidth, int blockHeight, Geometry <?> geometry ) throws ValueError {
+    ImageBlock ( IImageBlock <A> roi, int i, int j, int blockWidth, int blockHeight, Geometry <?> geometry ) throws ValueError {
         super(roi, roi1, i, j, blockWidth, blockHeight);
         this.geometry = geometry;
     }
@@ -181,7 +180,7 @@ class ImageBlock<A extends IAddress <A>>
      */
     public
     ImageBlock ( Mat mat, Rectangle rectangle ) {
-        super(mat, rectangle, originalImageWidth, originalImageHeight);
+        super((MatOfInt) mat, rectangle);
         geometry = new Polygon <>(new LinearRing(
                 new CoordinateArraySequence(getCoordinates()),
                 new LinearRing[]{},
@@ -198,9 +197,40 @@ class ImageBlock<A extends IAddress <A>>
      */
     public
     ImageBlock ( IImage <A> image, int x, int y, int width, int height ) throws ValueError {
-        super(image, x, y, width);
+        super(image, x, y, width,height);
     }
 
+    /**
+     * @param key
+     * @throws ValueError
+     */
+    public
+    ImageBlock ( Mat key ) throws ValueError {
+        super(key,0,0, key.getWidth(), key.getHeight());
+    }
+
+    public
+    ImageBlock ( MatOfInt mat, IAddress<A> address, IIntSize size ) {
+        super(mat, address, size);
+    }
+
+    public
+    ImageBlock ( int x, int y, int width, int height ) {
+
+    }
+
+    public
+    <A extends IAddress <A>>
+    ImageBlock ( IImageBlock<A> imageBlock, int rowStart, int rowEnd, int colStart, int colEnd, Geometry<?> geometry ) {
+
+
+    }
+
+    /**
+     * @param bb
+     * @param polygonList
+     * @return
+     */
     @Override
     public
     Mat createMask ( IIntSize bb, List <Geometry <?>> polygonList ) {
@@ -243,7 +273,10 @@ class ImageBlock<A extends IAddress <A>>
         return beta;
     }
 
-    //     @Override
+    /**
+     * @return
+     * @throws ValueError
+     */
     public
     boolean isHomogeneous () throws ValueError {
         return false;
@@ -338,7 +371,7 @@ class ImageBlock<A extends IAddress <A>>
     @Override
     public //fixme
     IIntSize getSize () {
-        return new IntSize(0, 0, originalImageWidth, originalImageHeight);
+        return new IntSize(0, 0, getOriginalImageWidth(), getOriginalImageHeight());
     }
 
     @Override
@@ -372,7 +405,21 @@ class ImageBlock<A extends IAddress <A>>
      */
     @Override
     public
-    void getRGB ( int i, int i1, int sideSize, int[] img1pixels, int i2, int i3 ) {
+    void getRGB ( int i, int i1, int sideSize, double[] img1pixels, int i2, int i3 ) {
+
+    }
+
+    /**
+     * @param i
+     * @param i1
+     * @param sideSize
+     * @param img1pixels
+     * @param i2
+     * @param i3
+     */
+    @Override
+    public
+    void getRGB ( int i, int i1, int sideSize, double[] img1pixels, int i2, int i3 ) {
 
     }
 
@@ -419,8 +466,10 @@ class ImageBlock<A extends IAddress <A>>
     }
 
     public
-    void put ( IAddress <A> address, double[] data ) {
+    double[] put ( IAddress <A> address, double[] data ) {
         put(address.getX(), address.getY(), data);
+
+        return data;
     }
 
     /**
@@ -434,8 +483,10 @@ class ImageBlock<A extends IAddress <A>>
 
     @Override
     public
-    int put ( int x, int y, double[] data ) {
-        return getMat().put(x, y, data);
+    double[] put ( int x, int y, double[] data ) {
+        getMat().put(x, y, data);
+
+        return data;
     }
 
     /**
@@ -471,7 +522,7 @@ class ImageBlock<A extends IAddress <A>>
     @Override
     public
     int getOriginalImageHeight () {
-        return 0;
+        return originalImageHeight;
     }
 
     /**
@@ -487,13 +538,15 @@ class ImageBlock<A extends IAddress <A>>
      * @param x
      * @param i
      */
-//    @Override
+    //@Override
     public
-    void put ( int address, double[] data ) {
+    double[] put ( int address, double[] data ) {
         int x = getX(address);
         int y = getY(address);
 
         getActualImage().put(x, y, data);
+
+        return data;
     }
 
     public
@@ -523,18 +576,17 @@ class ImageBlock<A extends IAddress <A>>
     int getY () {
         return 0;
     }
-//
-//    @Override
-//    public
-//    IImageBlock <A> getTriangleSubImage ( Coordinate p0, Coordinate p1, Coordinate p2 ) {
-//        return null;
-//    }
-//
-//    @Override
-//    public
-//    IImageBlock <A> getPolygonSubImage ( Coordinate... coords ) {
-//        return null;
-//    }
+
+    /**
+     * @param iImageBlocks
+     * @param blocksToMerge
+     * @return
+     */
+    @Override
+    public
+    A merge ( List <IImageBlock <A>> iImageBlocks, List <IImageBlock <A>> blocksToMerge ) {
+        return null;
+    }
 
     /**
      * Compares this object with the specified object for order.  Returns a
@@ -583,47 +635,7 @@ class ImageBlock<A extends IAddress <A>>
 
     @Override
     public
-    void setRegions ( List <RegionOfInterest <A>> blocks ) {
+    void setRegions ( List <IImageBlock <A>> blocks ) {
 
     }
-
-//    @Override
-//    public
-//    List <RegionOfInterest <A>> getRegions () {
-//        return null;
-//    }
-
-//    @Override
-//    public
-//    IAddress <A> getAddress ( int row, int col ) throws ValueError {
-//        return null;
-//    }
-//
-//    @Override
-//    public
-//    EAddressKind getAddressKind () {
-//        return null;
-//    }
-
-//    //    @Override
-//    public
-//    int compareTo ( @NotNull Object o ) {
-//        return 0;
-//    }
-
-//    @Override
-//    public
-//    double[] getPixels () {
-//        double[] pixels = new double[(int) (getMat().total() * getMat().channels())];
-//        return new double[]{
-//                getMat().get(0, 0, pixels)
-//        };
-//    }
-
-//    @Override
-//    public
-//    int getChannelsAmount () {
-//        return getGeometry().isRe
-//        ctangle() ? super.getChannelsAmount() : super.getChannelsAmount() + 1;
-//    }
 }

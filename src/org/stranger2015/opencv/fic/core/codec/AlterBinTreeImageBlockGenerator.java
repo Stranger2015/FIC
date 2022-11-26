@@ -42,7 +42,7 @@ class AlterBinTreeImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IA
      */
     @Override
     public
-    List <IImageBlock <A>> generateRangeBlocks ( RegionOfInterest <A> roi,
+    List <IImageBlock <A>> generateRangeBlocks ( IImageBlock <A> roi,
                                                  int rangeSize,
                                                  int domainSize ) throws ValueError {
 

@@ -1,4 +1,4 @@
-package org.stranger2015.opencv.fic.core.index;
+package org.stranger2015.opencv.fic.core.math.index;
 
 /**
  * A visitor for items in a {@link ISpatialIndex}.

@@ -31,7 +31,7 @@ class SipTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
               Map<Point, SipImageBlock<A>> blocks,
               TreeNodeTask <N, A, G> action ) {
 
-        super(parent, of(), action);
+        super(parent, Map. <Object, Object>of(), action);
     }
 
     public

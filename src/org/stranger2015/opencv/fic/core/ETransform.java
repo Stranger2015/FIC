@@ -12,5 +12,4 @@ enum ETransform {
     ZOOM,
     BRIGHTNESS,
     INTENSITY,
-    ;
 }

@@ -10,8 +10,6 @@ import org.stranger2015.opencv.utils.BitBuffer;
 import java.util.List;
 import java.util.Set;
 
-import static org.stranger2015.opencv.fic.core.codec.ESplitKind.DIAGONAL;
-
 /**
  * @param <N>
  * @param <A>
@@ -43,7 +41,7 @@ class DtSplitAndMergeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A
             IDistanceator <A> comparator,
             Set <ImageTransform <A, G>> transforms,
             Set <IImageFilter <A>> filters,
-            FicFileModel <N, A, G> fractalModel
+            FCImageModel <N, A, G> fractalModel
     ) {
         super(
                 scheme,
@@ -66,8 +64,7 @@ class DtSplitAndMergeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A
      */
     @Override
     public
-    List <RegionOfInterest <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds ) throws ValueError {
-
+    List <IImageBlock <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds ) throws ValueError {
         return super.segmentImage(image, bounds);
     }
 
@@ -77,25 +74,25 @@ class DtSplitAndMergeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A
      * @throws ValueError
      */
     IAddress <A> createAddress ( int addr ) throws ValueError {
-        return IAddress.valueOf(addr, inputImage.getWidth(), i2);
+        return IAddress.valueOf(addr, inputImage.getWidth(), 0);
     }
 
-    /**
-     * @param imageBlock
-     * @return
-     */
-    @Override
-    protected
-    ESplitKind chooseDirection ( IImageBlock <A> imageBlock ) {
-        return DIAGONAL;
-    }
+//    /**
+//     * @param imageBlock
+//     * @return
+//     */
+//    @Override
+//    protected
+//    ESplitKind chooseDirection ( IImageBlock <A> imageBlock ) {
+//        return DIAGONAL;
+//    }
 
     /**
      * @throws ValueError
      */
     @Override
     public
-    void initialize () throws ReflectiveOperationException, Exception {
+    void initialize () throws Exception {
         super.initialize();
     }
 
@@ -107,11 +104,14 @@ class DtSplitAndMergeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A
     @Override
     public
     IImage <A> doEncode ( IImage <A> image ) throws ValueError {
-        List <RegionOfInterest <A>> regions = partitionProcessor.generateRegions(image, List.of(new Rectangle(image.getSize())));
+        List <IImageBlock <A>> regions = partitionProcessor.generateRegions(
+                image,
+                List.of(new Rectangle(image.getSize())));
         List <IImageBlock <A>> rangeBlocks = partitionProcessor.generateRangeBlocks(
-                (RegionOfInterest <A>) regions,
+                (IImageBlock <A>) regions,
                 image.getWidth(),
                 image.getHeight());
+
         List <IImageBlock <A>> domainBlocks = partitionProcessor.generateDomainBlocks(
                 rangeBlocks,
                 partitionProcessor.getRangeSize(),

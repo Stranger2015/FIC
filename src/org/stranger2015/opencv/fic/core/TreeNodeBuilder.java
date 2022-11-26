@@ -58,11 +58,6 @@ class TreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>,  G e
         this.encoder = encoder;
         this.library = library;
     }
-//
-//    protected
-//    TreeNodeBuilder ( IImage <A> image, Library <A> library ) {
-//        this(image, library, );
-//    }
 
     public
     Library <A> getLibrary () {
@@ -74,7 +69,6 @@ class TreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>,  G e
         return rangeSize;
     }
 
-//    @Override
     public
     IIntSize getDomainSize () {
         return domainSize;

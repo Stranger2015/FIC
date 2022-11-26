@@ -3,7 +3,7 @@ package org.stranger2015.opencv.fic.core.codec.tilers;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
-import org.stranger2015.opencv.fic.core.codec.RegionOfInterest;
+import org.stranger2015.opencv.fic.core.codec.IImageBlock;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
 import org.stranger2015.opencv.utils.BitBuffer;
 
@@ -41,9 +41,8 @@ class TriangularTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A
      */
     @Override
     public
-    void segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
-
-        return  List.of(imageBlock);
+    void segmentPolygon (TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+        List.of(imageBlock);
     }
 
     /**
@@ -52,18 +51,8 @@ class TriangularTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A
      */
     @Override
     public
-    void segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
-        return List.of(imageBlock);
-    }
-
-    /**
-     * @param imageBlock
-     * @throws ValueError
-     */
-    @Override
-    public
-    void segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
-        return List.of(imageBlock);
+    void segmentQuadrilateral ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+        List.of(imageBlock);
     }
 
     /**
@@ -74,7 +63,7 @@ class TriangularTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A
      */
     @Override
     public
-    List <Vertex> generateVerticesSet ( RegionOfInterest <A> roi, int blockWidth, int blockHeight ) {
+    List <Vertex> generateVerticesSet ( IImageBlock <A> roi, int blockWidth, int blockHeight ) {
         return List.of();
     }
 
@@ -85,12 +74,14 @@ class TriangularTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A
      * @return
      * @throws ValueError
      */
-    @Override
     public
-    List <IImageBlock <A>> generateInitialRangeBlocks ( RegionOfInterest <A> roi, int blockWidth, int blockHeight ) throws ValueError {
+    List <IImageBlock <A>> generateInitialRangeBlocks ( IImageBlock <A> roi, int blockWidth, int blockHeight ) throws ValueError {
         return List. <IImageBlock <A>>of(roi.getSubImage(roi.getX(), roi.getY(), blockWidth, blockHeight));
     }
 
+    /**
+     * @return
+     */
     @Override
     public
     int successorAmount () {
@@ -106,9 +97,9 @@ class TriangularTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A
      */
     @Override
     public
-    List <IImageBlock <A>> generateRangeBlocks ( RegionOfInterest <A> roi,
-                                                 int blockWidth,
-                                                 int blockHeight ) throws ValueError {
+    List <IImageBlock <A>> generateRangeBlocks ( IImageBlock <A> roi, int blockWidth, int blockHeight )
+            throws ValueError {
+
         return generateInitialRangeBlocks(roi, blockWidth, blockHeight);
     }
 
@@ -125,5 +116,16 @@ class TriangularTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A
                 getEncoder(),
                 getBuilder()
         );
+    }
+
+    /**
+     * @param node
+     * @param imageBlock
+     * @throws ValueError
+     */
+    @Override
+    public
+    void segmentRectangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+
     }
 }

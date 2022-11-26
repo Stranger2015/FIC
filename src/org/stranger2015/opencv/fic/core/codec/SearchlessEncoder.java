@@ -135,7 +135,7 @@ class SearchlessEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, M 
      */
     @Override
     public
-    List <RegionOfInterest <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds ) throws ValueError {
+    List <IImageBlock <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds ) throws ValueError {
         return null;
     }
 

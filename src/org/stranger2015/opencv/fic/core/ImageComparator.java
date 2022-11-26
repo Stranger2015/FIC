@@ -8,10 +8,10 @@ import org.stranger2015.opencv.fic.core.search.EMetrics;
  */
 public
 class ImageComparator<A extends IAddress <A>>
-        implements IDistanceator < A> {
+        implements IDistanceator<A> {
 
     private final double fuzz;
-    private final EMetrics metric;
+    private final EMetrics metrics;
 
     /**
      * Distance between two given objects
@@ -34,7 +34,7 @@ class ImageComparator<A extends IAddress <A>>
     ImageComparator ( final EMetrics distanceMetrics, final double fuzz ) {
         assert (distanceMetrics != null) && (fuzz >= 0);
 
-        this.metric = distanceMetrics;
+        this.metrics = distanceMetrics;
         this.fuzz = fuzz;
     }
 
@@ -57,22 +57,29 @@ class ImageComparator<A extends IAddress <A>>
         int height = img1.getHeight();
         int area = width * height;
 
-        int[] img1pixels = new int[area];
-        int[] img2pixels = new int[area];
-
-//        img1.getRGB(0, 0, width, height, img1pixels, 0, 0);
+        //        img1.getRGB(0, 0, width, height, img1pixels, 0, 0);
 //        img2.getRGB(0, 0, width, height, img2pixels, 0, 0);
 
         double distance = 0;
 
+        double[] img1pixels = new double[area];
+        double[] img2pixels = new double[area];
         for (int pixelRow = 0; pixelRow < height; pixelRow++) {
             for (int pixelCol = 0; pixelCol < width; pixelCol++) {
-                distance += metric.distance(
+                distance += metrics.distance(
                         img1pixels[pixelRow * width + pixelCol],
                         img2pixels[pixelRow * width + pixelCol], fuzz);
             }
         }
 
         return distance;
+    }
+
+    /**
+     * @return
+     */
+    public
+    EMetrics getMetrics () {
+        return metrics;
     }
 }

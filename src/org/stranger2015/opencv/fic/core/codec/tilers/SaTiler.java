@@ -1,122 +1,111 @@
 package org.stranger2015.opencv.fic.core.codec.tilers;
 
-import org.jetbrains.annotations.NotNull;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.core.codec.RegionOfInterest;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
+import org.stranger2015.opencv.fic.core.codec.IEncoder;
+import org.stranger2015.opencv.fic.core.codec.IImageBlock;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.util.Deque;
 import java.util.List;
-
-import static org.stranger2015.opencv.fic.core.IShape.EShape;
-import static org.stranger2015.opencv.fic.core.codec.IPartitionProcessor.ESearchType;
 
 public
 class SaTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        implements ITiler <N, A, G> {
+        extends Tiler <N, A, G> {
 
     /**
      * @param image
-     * @param minRangeSize
-     * @param queue
-     * @return
+     * @param rangeSize
+     * @param domainSize
+     * @param encoder
+     * @param builder
      */
+    protected
+    SaTiler ( IImage <A> image,
+              IIntSize rangeSize,
+              IIntSize domainSize,
+              IEncoder <N, A, G> encoder,
+              ITreeNodeBuilder <N, A, G> builder ) {
 
-    @Override
-    public
-    List <IImageBlock <A>> tile ( IImageBlock <A> imageBlock,
-                                  ESearchType searchType,
-                                  IIntSize minRangeSize,
-                                  @NotNull Deque <IImageBlock <A>> queue ) throws ValueError {
-        return List.of(imageBlock);
+        super(image, rangeSize, domainSize, encoder, builder);
     }
 
     @Override
     public
-    List <IImageBlock <A>> doTile ( IImageBlock <A> imageBlock,
-                                    IIntSize minRangeSize,
-                                    Deque <IImageBlock <A>> queue ) throws ValueError {
+    ITiler <N, A, G> instance () {
+        return new SaTiler <>(
+                getImage(),
+                getRangeSize(),
+                getDomainSize(),
+                getEncoder(),
+                getBuilder());
+    }
+
+    @Override
+    public
+    void segmentGeometry ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+
+    }
+
+    /**
+     * @param node
+     * @param imageBlock
+     * @throws ValueError
+     */
+    @Override
+    public
+    void segmentRectangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+
+    }
+
+    @Override
+    public
+    void segmentSquare (TreeNodeBase <N, A, G> node,  IImageBlock <A> imageBlock ) throws ValueError {
+    }
+
+    @Override
+    public
+    void segmentTriangle (TreeNodeBase <N, A, G> node,  IImageBlock <A> imageBlock ) throws ValueError {
+    }
+
+    @Override
+    public
+    void segmentPolygon (TreeNodeBase <N, A, G> node,  IImageBlock <A> imageBlock ) throws ValueError {
+    }
+
+    @Override
+    public
+    void segmentQuadrilateral (TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    }
+
+    @Override
+    public
+    void addLeafNode ( LeafNode <N, A, G> node ) {
+
+    }
+
+    @Override
+    public
+    List <Vertex> generateVerticesSet ( IImageBlock <A> roi, int blockWidth, int blockHeight ) {
         return List.of();
     }
 
     /**
+     * @param roi
+     * @param blockWidth
+     * @param blockHeight
      * @return
+     * @throws ValueError
      */
-    @Override
-    public
-    IIntSize getRangeSize () {
-        return null;
-    }
-
-    /**
-     * @return +
-     */
-    @Override
-    public
-    IIntSize getDomainSize () {
-        return null;
-    }
-
-    @Override
-    public
-    void segmentGeometry ( //EShape imageBlockShape,
-                                             IImageBlock <A> imageBlock ) throws ValueError {
-
-        return ITiler.super.segmentGeometry(imageBlock);
-    }
-
-    @Override
-    public
-    void segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
-        return null;
-    }
-
-    @Override
-    public
-    void segmentSquare ( IImageBlock <A> imageBlock ) throws ValueError {
-        return null;
-    }
-
-    @Override
-    public
-    void segmentTriangle ( IImageBlock <A> imageBlock ) throws ValueError {
-        return null;
-    }
-
-    @Override
-    public
-    void segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
-        return null;
-    }
-
-    @Override
-    public
-    void segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
-        return null;
-    }
-
-    @Override
-    public
-    void addLeafNode ( TreeNode <N, A, G> node ) {
-
-    }
-
-    @Override
-    public
-    List <Vertex> generateVerticesSet ( RegionOfInterest <A> roi, int blockWidth, int blockHeight ) {
-        return new Vertex[0];
-    }
-
     @Override
     public
     List <IImageBlock <A>> generateInitialRangeBlocks (
-            RegionOfInterest <A> roi,
+            IImageBlock <A> roi,
             int blockWidth,
             int blockHeight ) throws ValueError {
 
-        return null;
+        return List.of();
     }
 
     /**
@@ -130,21 +119,9 @@ class SaTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
 
     @Override
     public
-    List <IImageBlock <A>> generateRangeBlocks ( RegionOfInterest <A> roi, int blockWidth, int blockHeight ) throws ValueError {
-        return null;
-    }
+    List <IImageBlock <A>> generateRangeBlocks ( IImageBlock <A> roi, int blockWidth, int blockHeight )
+            throws ValueError {
 
-    /**
-     * @param imageBlockShape
-     * @param imageBlock
-     * @param minRangeSize
-     * @param queue
-     */
-//    @Override
-    public
-    void segmentShape ( EShape imageBlockShape,
-                        IImageBlock <A> imageBlock,
-                        IntSize minRangeSize,
-                        Deque <IImageBlock <A>> queue ) throws ValueError {
+        return generateInitialRangeBlocks(roi, blockWidth, blockHeight);
     }
 }

@@ -12,12 +12,12 @@ package org.stranger2015.opencv.fic.core.geomgraph.index;
  * http://www.eclipse.org/org/documents/edl-v10.php.
  */
 
+import org.locationtech.jts.util.IntArrayList;
+import org.stranger2015.opencv.fic.core.geom.Coordinate;
 import org.stranger2015.opencv.fic.core.geom.Quadrant;
 import org.stranger2015.opencv.fic.core.geomgraph.Edge;
 import org.stranger2015.opencv.fic.core.geomgraph.EdgeIntersection;
 import org.stranger2015.opencv.fic.core.geomgraph.Label;
-import org.stranger2015.opencv.fic.core.util.IntArrayList;
-import org.stranger2015.opencv.fic.core.geom.Coordinate;
 
 import java.io.PrintStream;
 import java.util.*;
@@ -144,7 +144,7 @@ public class EdgeIntersectionList
             pts[ipt++] = edge.pts[i];
         }
         if (useIntPt1) pts[ipt] = ei1.coord;
-        return new Edge(pts, new Label(edge.label));
+        return new Edge(pts, new Label(edge.getLabel()));
     }
 
     public void print(PrintStream out)

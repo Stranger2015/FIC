@@ -31,6 +31,10 @@ class Address<A extends IAddress <A>> extends AtomicInteger implements IAddress 
         this.stride = stride;
     }
 
+    /**
+     * @param table
+     * @return
+     */
     @Override
     public
     IAddress <A> applyTable ( int[][] table ) {
@@ -51,6 +55,11 @@ class Address<A extends IAddress <A>> extends AtomicInteger implements IAddress 
         return null;
     }
 
+    /**
+     * @param point1
+     * @param point2
+     * @return
+     */
     @Override
     public
     Point plus ( Point point1, Point point2 ) {

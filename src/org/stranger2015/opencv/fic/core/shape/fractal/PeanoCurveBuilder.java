@@ -12,11 +12,11 @@ package org.stranger2015.opencv.fic.core.shape.fractal;
  * http://www.eclipse.org/org/documents/edl-v10.php.
  */
 
+import org.stranger2015.opencv.fic.core.AbstractNode;
 import org.stranger2015.opencv.fic.core.geom.Coordinate;
 import org.stranger2015.opencv.fic.core.geom.Geometry;
 import org.stranger2015.opencv.fic.core.geom.GeometryFactory;
 import org.stranger2015.opencv.fic.core.geom.LineSegment;
-import org.stranger2015.opencv.fic.core.shape.GeometricShapeBuilder;
 
 /**
  * Generates a {@link LineString} representing the Peano Curve
@@ -36,7 +36,7 @@ import org.stranger2015.opencv.fic.core.shape.GeometricShapeBuilder;
  * @see PeanoCode
  */
 public
-class PeanoCurveBuilder extends GeometricShapeBuilder {
+class PeanoCurveBuilder extends AbstractNode.GeometricShapeBuilder {
     /**
      * Creates a new instance using the provided {@link GeometryFactory}.
      *

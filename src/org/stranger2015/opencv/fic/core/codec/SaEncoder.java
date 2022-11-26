@@ -32,7 +32,7 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
                 IDistanceator <A> comparator,
                 Set <ImageTransform < A, G>> transforms,
                 Set <IImageFilter <A>> filters,
-                FicFileModel <N, A, G> fractalModel
+                FCImageModel <N, A, G> fractalModel
     ) {
         super(
                 scheme,
@@ -161,7 +161,7 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
     @Override
     public
-    List <RegionOfInterest <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds ) throws ValueError {
+    List <IImageBlock <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds ) throws ValueError {
         return null;
     }
 
@@ -188,7 +188,7 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
     @Override
     public
-    FicFileModel <N, A, G> getModel () {
+    FCImageModel <N, A, G> getModel () {
         return null;
     }
 
@@ -198,7 +198,7 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
     @Override
     public
-    FicFileModel <N, A, G> loadModel ( String filename ) {
+    FCImageModel <N, A, G> loadModel ( String filename ) {
         return null;
     }
 

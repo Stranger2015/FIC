@@ -1,8 +1,12 @@
 package org.stranger2015.opencv.fic.core.triangulation.quadedge;
 
 import org.jetbrains.annotations.NotNull;
+import org.stranger2015.opencv.fic.core.*;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
 import org.stranger2015.opencv.fic.core.geom.*;
 import org.stranger2015.opencv.fic.core.io.WKTWriter;
+import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.*;
 
@@ -31,7 +35,41 @@ import java.util.*;
  * @author Martin Davis
  */
 public
-class QuadEdgeSubdivision {
+class QuadEdgeSubdivision<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
+        extends TilerLeafNode <N, A, G> {
+
+    /**
+     * @param parent
+     * @param quadrant
+     * @param rect
+     * @param tiler
+     * @param startingEdge
+     */
+    public
+    QuadEdgeSubdivision ( TreeNodeBase <N, A, G> parent,
+                          EDirection quadrant,
+                          Rectangle rect,
+                          ITiler <N, A, G> tiler,
+                          QuadEdge startingEdge )
+            throws ValueError {
+
+        super(parent, quadrant, rect, tiler);
+
+        this.startingEdge = startingEdge;
+    }
+
+    /**
+     * @param parent
+     * @param quadrant
+     * @param rect
+     * @param tiler
+     */
+    public
+    QuadEdgeSubdivision ( TreeNodeBase <N, A, G> parent, EDirection quadrant, Rectangle rect, ITiler <N, A, G> tiler )
+            throws ValueError {
+
+        super(parent, quadrant, rect, tiler);
+    }
 
     /**
      * Gets the edges for the triangle to the left of the given {@link QuadEdge}.
@@ -75,7 +113,7 @@ class QuadEdgeSubdivision {
      * @param tolerance the tolerance value for determining if two sites are equal
      */
     public
-    QuadEdgeSubdivision ( Envelope env, double tolerance ) {
+    QuadEdgeSubdivision ( TreeNodeBase<N,A,G> parent, Envelope env, double tolerance) {
         // currentSubdiv = this;
         this.tolerance = tolerance;
         edgeCoincidenceTolerance = tolerance / EDGE_COINCIDENCE_TOL_FACTOR;
@@ -232,7 +270,7 @@ class QuadEdgeSubdivision {
      * @param startEdge an edge of the subdivision to start searching at
      * @return a QuadEdge which contains v, or is on the edge of a triangle containing v
      * @throws LocateFailureException__ if the location algorithm fails to converge in a reasonable
-     *                                number of iterations
+     *                                  number of iterations
      */
     public
     QuadEdge locateFromEdge ( Vertex v, QuadEdge startEdge ) {
@@ -875,7 +913,8 @@ class QuadEdgeSubdivision {
      * @param geomFact the GeometryFactory to use
      * @return a GeometryCollection of triangular Polygons
      */
-    public Geometry getTriangles ( GeometryFactory geomFact ) {
+    public
+    Geometry getTriangles ( GeometryFactory geomFact ) {
         List <Coordinate[]> triPtsList = getTriangleCoordinates(false);
         var tris = new Polygon <>[triPtsList.size()];
         int i = 0;
@@ -885,9 +924,10 @@ class QuadEdgeSubdivision {
 
         return geomFact.createGeometryCollection(tris);
     }
+
     public
-    List <Triangle <?>> getTriangles( CoordinateList coordinates){
- new Triangle<>();
+    List <Triangle <?>> getTriangles ( CoordinateList coordinates ) {
+        new Triangle <>(coordinates);
         coordinates.get(0);
         coordinates.get(1);
         coordinates.get(2);

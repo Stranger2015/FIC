@@ -1,14 +1,13 @@
 package org.stranger2015.opencv.fic.core.search;
 
 import org.stranger2015.opencv.fic.core.IAddress;
+import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
 import org.stranger2015.opencv.fic.transform.ITransform;
-import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-/**
- 
+    /**
  * @param <A>
  * @param <G>
  */
@@ -40,8 +39,7 @@ class ExhaustiveSearchProcessor<N extends TreeNode <N, A, G>,  A extends IAddres
      */
     @Override
     public
-    GrayScaleImage <A> search () {
-
+    IImage <A> search () {
         return null;
     }
 

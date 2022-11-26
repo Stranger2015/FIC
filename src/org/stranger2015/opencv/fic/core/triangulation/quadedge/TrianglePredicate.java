@@ -1,7 +1,6 @@
 package org.stranger2015.opencv.fic.core.triangulation.quadedge;
 
 import org.jetbrains.annotations.Contract;
-import org.stranger2015.opencv.fic.core.geom.TriangleImageBlock;
 import org.stranger2015.opencv.fic.core.io.WKTWriter;
 import org.stranger2015.opencv.fic.core.geom.Coordinate;
 import org.stranger2015.opencv.fic.core.geom.impl.CoordinateArraySequence;

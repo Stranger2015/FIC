@@ -36,7 +36,7 @@ class CsDpEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
                   IDistanceator <A> comparator,
                   Set <ImageTransform <A, G>> imageTransforms,
                   Set <IImageFilter <A>> imageFilters,
-                  FicFileModel <N, A, G> fractalModel ) {
+                  FCImageModel <N, A, G> fractalModel ) {
         super(
                 scheme,
                 nodeBuilder,
@@ -106,7 +106,7 @@ class CsDpEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
 
     @Override
     public
-    List <RegionOfInterest <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds )
+    List <IImageBlock <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds )
             throws ValueError {
 
         return null;
@@ -227,6 +227,7 @@ class CsDpEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
      * @return
      */
 //    @Override
+    @Override
     public
     List <IImageBlock <A>> getDomainBlocks () {
         return (List <IImageBlock <A>>) image;
@@ -255,7 +256,7 @@ class CsDpEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
      */
     @Override
     public
-    FicFileModel <N, A, G> getModel () {
+    FCImageModel <N, A, G> getModel () {
         return fractalModel;
     }
 
@@ -265,7 +266,7 @@ class CsDpEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
      */
     @Override
     public
-    FicFileModel <N, A, G> loadModel ( String filename ) {
+    FCImageModel <N, A, G> loadModel ( String filename ) {
         return fractalModel;
     }
 

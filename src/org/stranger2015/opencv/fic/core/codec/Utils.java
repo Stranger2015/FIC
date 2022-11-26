@@ -2,6 +2,8 @@ package org.stranger2015.opencv.fic.core.codec;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
+import org.stranger2015.opencv.fic.core.EPartitionScheme;
 import org.stranger2015.opencv.fic.utils.Point;
 
 import java.lang.reflect.Constructor;
@@ -11,7 +13,7 @@ import java.util.List;
  * useful generic utility tools
  */
 public
-class Utils{
+class Utils {
 
     /**
      * @param index
@@ -41,6 +43,7 @@ class Utils{
 
     /**
      * @param className
+     * @param listeners
      * @param parameterTypes
      * @param parameters
      * @return
@@ -48,8 +51,8 @@ class Utils{
      */
     public static @NotNull
     Object create ( String className,
-                    List<IListener<?>> listeners,
-                    Class <?>[] parameterTypes,
+//                    List<IListener<?>> listeners,
+                    @Unmodifiable List <IListener <?>> listeners, Class <?>[] parameterTypes,
                     Object[] parameters )
             throws ReflectiveOperationException {
 
@@ -63,7 +66,14 @@ class Utils{
      * @param runnable
      */
     public static
-    void invoke ( Runnable runnable) {
+    void invoke ( Runnable runnable ) {
         runnable.run();
+    }
+
+    public static @NotNull
+    Object invoke ( EPartitionScheme scheme, Constructor <?> constructor, Object... objects )
+            throws ReflectiveOperationException {
+
+        return constructor.newInstance(scheme, objects);
     }
 }

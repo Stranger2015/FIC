@@ -2,6 +2,7 @@ package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.opencv.core.MatOfInt;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.EtvColorSpace;
 import org.stranger2015.opencv.fic.core.codec.ICodec;
@@ -124,13 +125,10 @@ class FromTvToRgbColorspaceConversionTask<N extends TreeNode <N, A, G>, A extend
     IImage <A> execute ( String filename ) throws ValueError {
         IImage <A> imageSrc = super.execute(filename);
 
-        IImage <A> imageDst = new Image <>(actualImage, imageSrc.getMat(), imageSrc.getSize());
-//        for ( Address<A> address  =   ;  < ; i++) {//todo
-//
-//        }
+        IImage <A> imageDst = new Image <>((MatOfInt) imageSrc.getMat(), imageSrc.getSize());
+
         float[] cc = new float[3];
         int[] tvCS = convertColorToRGB(cc, colorSpace);
-
 
         return imageDst;
     }

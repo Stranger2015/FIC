@@ -38,7 +38,7 @@ class Task<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBu
     protected EPartitionScheme scheme;
     protected IImageProcessor <N, A, G> processor;
     protected ICodec <N, A, G> codec;
-    protected CompressedImage <A> outputImage;
+    protected FCImageModel <?,A,?> outputImage;
 
     /**
      * @param filename
@@ -126,8 +126,7 @@ class Task<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBu
      * @param fn
      * @param image
      */
-    public final
-    CompressedImage <A> saveImage ( String fn, CompressedImage <A> image ) {
+    public final IImage <A> saveImage ( String fn, IImage <A> image ) {
         Imgcodecs.imwrite(fn, image.getMat());
 
         return image;
@@ -161,7 +160,7 @@ class Task<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBu
      * @return
      */
     protected
-    IImage<A> execute ( String filename ) throws ValueError {
+    IImage<A> execute ( String filename ) throws Exception {
         IImage<A> image = null;
         for (Task <N, A, G> task : tasks) {
             image = task.execute(filename);

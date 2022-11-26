@@ -9,6 +9,8 @@ interface ICodecs {
     String HV_CODEC = "HvCodec";
     String CSDP_CODEC = "CsDpCodec";
     String BIN_TREE_CODEC = "BinTreeCodec";//graph
+
+    String ALTER_BIN_TREE_CODEC = "AlterBinTreeCodec";//graph
     String QUAD_TREE_CODEC = "QuadTreeCodec";
     String SEARCHLESS_CODEC = "SearchlessCodec";
     String SA_CODEC = "SaCodec";
@@ -18,7 +20,6 @@ interface ICodecs {
     String SIP_BVR_CODEC = "SipbVrCodec";
     String DCT_CODEC = "DctCodec";
     String FA_FE_EV_CODEC = "FaFeEvCodec";
-
     String SAM0_ENCODER = "DtSplitAndMergeEncoder";
     String SAM0_DECODER = "DtSplitAndMergeDecoder";
     String SIP_ENCODER = "SipEncoder";
@@ -33,6 +34,10 @@ interface ICodecs {
     String DCT_DECODER = "DctDecoder";
     String BIN_TREE_ENCODER = "BinTreeEncoder";
     String BIN_TREE_DECODER = "BinTreeDecoder";
+
+    String ALTER_BIN_TREE_ENCODER = "AlterBinTreeEncoder";
+
+    String ALTER_BIN_TREE_DECODER = "AlterBinTreeDecoder";
     String SEARCHLESS_ENCODER = "SearchlessEncoder";
     String SEARCHLESS_DECODER = "SearchlessDecoder";
     String FA_FE_EV_ENCODER = "FaFeEvEncoder";

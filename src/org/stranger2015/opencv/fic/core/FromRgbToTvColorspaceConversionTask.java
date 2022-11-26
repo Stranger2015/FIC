@@ -146,13 +146,11 @@ class FromRgbToTvColorspaceConversionTask<N extends TreeNode <N, A, G>, A extend
     IImage<A> execute ( String filename ) throws ValueError {
         IImage<A>  imageSrc = super.execute(filename);
 
-        IImage<A>  imageDst = new Image <>(imageSrc, roi1, -1, -0, 0, regions);
-        int[] pixels = imageSrc.getPixels();
+        IImage<A>  imageDst = new Image <>(imageSrc, -1, -0, 0, List.of());
+        double[] pixels = imageSrc.getPixels();
         for (int i=0   ;i< pixels.length; i++) {//todo;
 
         }
-//        int[] cc = new int[3];
-//        float[] tvCS = convertColorFromRGB(cc, colorSpace);
 
         return imageDst;
     }

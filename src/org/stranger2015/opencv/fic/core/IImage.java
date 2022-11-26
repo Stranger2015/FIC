@@ -1,9 +1,11 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.NotNull;
-import org.opencv.core.*;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
-import org.stranger2015.opencv.fic.core.codec.RegionOfInterest;
 import org.stranger2015.opencv.fic.core.geom.Geometry;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 
@@ -18,18 +20,13 @@ import static org.opencv.highgui.HighGui.imshow;
  */
 public
 interface IImage<A extends IAddress <A>> {
-
     void initialize ();
 
     /**
      * @return
      */
-
-    /**
-     * @return
-     */
     default
-    Mat createMask ( IIntSize bb, List <Geometry<?>> polygonList ) {
+    Mat createMask ( IIntSize bb, List <Geometry <?>> polygonList ) {
         Mat mMask = Mat.zeros(bb.toSize(), CV_8U);//cv_8u
         fillPoly(mMask, polygonList, new Scalar(0));
         imshow("mMask", mMask);
@@ -38,7 +35,7 @@ interface IImage<A extends IAddress <A>> {
     }
 
     private static
-    void fillPoly ( Mat mMask, List <Geometry<?>> polygonList, Scalar scalar ) {
+    void fillPoly ( Mat mMask, List <Geometry <?>> polygonList, Scalar scalar ) {
         Imgproc.fillPoly(mMask, polygonListToMatList(polygonList), scalar);
     }
 
@@ -47,9 +44,9 @@ interface IImage<A extends IAddress <A>> {
      * @return
      */
     static @NotNull
-    List <MatOfPoint> polygonListToMatList ( List <Geometry<?>> polygonList ) {
+    List <MatOfPoint> polygonListToMatList ( List <Geometry <?>> polygonList ) {
         List <MatOfPoint> matOfPoints = new ArrayList <>(polygonList.size());
-        for (Geometry<?> polygon : polygonList) {
+        for (Geometry <?> polygon : polygonList) {
             Point[] apply = null;//apply(polygon);
             MatOfPoint matOfPoint = new MatOfPoint(apply);
             matOfPoints.add(matOfPoint);
@@ -91,6 +88,12 @@ interface IImage<A extends IAddress <A>> {
      * @param contractivity
      */
     IImage <A> contract ( int contractivity );
+
+    /**
+     * @param scale
+     * @return
+     */
+    IImage <A> resize ( int scale );
 
     /**
      * @param rowStart
@@ -189,7 +192,7 @@ interface IImage<A extends IAddress <A>> {
      * @return
      */
     default
-    double[] getPixel ( int x, int y) {
+    double[] getPixel ( int x, int y ) {
 //        int channels=getMat().channels();
 //        int stride=getMat().width()*channels;
 //        for (int i=0; i< getMat().height(); i++) {
@@ -205,7 +208,7 @@ interface IImage<A extends IAddress <A>> {
 //        }
 //    }
 
-        return getMat().get(x,y);
+        return getMat().get(x, y);
     }
 
 //    /**
@@ -242,6 +245,9 @@ interface IImage<A extends IAddress <A>> {
      */
     void putPixel ( IAddress <A> address, double[] pixelData ) throws ValueError;
 
+    /**
+     * @param pixelData
+     */
     void putPixels ( double[] pixelData );
 
     // assuming it's of CV_8UC3 == BGR, 3 byte/pixel
@@ -364,12 +370,12 @@ interface IImage<A extends IAddress <A>> {
     /**
      * @param blocks
      */
-    void setRegions ( List <RegionOfInterest <A>> blocks );
+    void setRegions ( List <IImageBlock <A>> blocks );
 
     /**
      * @return
      */
-    List<RegionOfInterest<A>> getRegions ();
+    List <IImageBlock <A>> getRegions ();
 
     /**
      * @param row
@@ -377,24 +383,24 @@ interface IImage<A extends IAddress <A>> {
      * @return
      * @throws ValueError
      */
-    IAddress<A>  getAddress (int row, int col) throws ValueError;
+    IAddress <A> getAddress ( int row, int col ) throws ValueError;
 
     /**
      * @return
      */
-    EAddressKind getAddressKind();
+    EAddressKind getAddressKind ();
 
     /**
      * @return
      */
-    int getChannelsAmount();
+    int getChannelsAmount ();
 
     /**
      * @param x
      * @param y
      * @return
      */
-    double pixelValues ( int x, int y );
+    double[] pixelValues ( int x, int y );
 
     /**
      * @param x
@@ -402,7 +408,12 @@ interface IImage<A extends IAddress <A>> {
      * @param ch
      * @return
      */
-    double getPixelValuesLayer ( int x, int y, int ch );
+    double getPixelValuesLayer ( int x, int y, int c );
 
     void setMeanPixelValuesLayer ( int c, double v );
+
+    void setOriginalImageWidth ( int originalImageWidth );
+
+    IIntSize restoreSize ( int h, int originalImageWidth, int originalImageHeight );
+
 }

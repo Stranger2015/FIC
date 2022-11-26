@@ -3,6 +3,7 @@ package org.stranger2015.opencv.fic.core.codec.tilers;
 import org.slf4j.Logger;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
 import org.stranger2015.opencv.fic.core.geom.Coordinate;
 import org.stranger2015.opencv.fic.core.geom.Geometry;
@@ -12,8 +13,6 @@ import org.stranger2015.opencv.fic.core.shape.fractal.HilbertCurveBuilder;
 import org.stranger2015.opencv.fic.core.triangulation.DelaunayTriangulation;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.util.List;
-
 /**
  * @param <N>
  * @param <A>
@@ -21,7 +20,6 @@ import java.util.List;
  */
 public
 class DelaunayTriangularTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-    
         extends TriangularTiler <N, A, G>
         implements ITopDownTiler <N, A, G> {
 
@@ -53,8 +51,7 @@ class DelaunayTriangularTopDownTiler<N extends TreeNode <N, A, G>, A extends IAd
                                      IIntSize rangeSize,
                                      IIntSize domainSize,
                                      IEncoder <N, A, G> encoder,
-                                     ITreeNodeBuilder <N, A, G> builder
-    ) {
+                                     ITreeNodeBuilder <N, A, G> builder ) {
         super(
                 image,
                 rangeSize,
@@ -63,7 +60,7 @@ class DelaunayTriangularTopDownTiler<N extends TreeNode <N, A, G>, A extends IAd
                 builder
         );
 
-        triangulationBuilder = new DelaunayTriangulationBuilder<N, A, G>(getClass());
+        triangulationBuilder = new DelaunayTriangulationBuilder <N, A, G>(getClass());
     }
 
     /**
@@ -86,8 +83,7 @@ class DelaunayTriangularTopDownTiler<N extends TreeNode <N, A, G>, A extends IAd
      */
     @Override
     public
-    void addLeafNode ( TreeNode <N, A, G> node ) {
-
+    void addLeafNode ( LeafNode <N, A, G> node ) {
     }
 
     /**
@@ -96,19 +92,30 @@ class DelaunayTriangularTopDownTiler<N extends TreeNode <N, A, G>, A extends IAd
     @Override
     public
     int successorAmount () {
-        return 1;//FIXME 2 ??
+        return 0;
     }
 
     /**
      * @param imageBlockShape
+     * @param node
      * @param imageBlock
      * @throws ValueError
      */
     @Override
     public
-    void segmentGeometry ( IImageBlock <A> imageBlock
-    ) throws ValueError {
-        return List.of(imageBlock);
+    void segmentGeometry ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+        segmentSquare(node, imageBlock);
+    }
+
+    /**
+     * @param node
+     * @param imageBlock
+     * @throws ValueError
+     */
+    @Override
+    public
+    void segmentRectangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+
     }
 
     /**
@@ -117,20 +124,29 @@ class DelaunayTriangularTopDownTiler<N extends TreeNode <N, A, G>, A extends IAd
      */
     @Override
     public
-    void segmentTriangle ( IImageBlock <A> imageBlock ) throws ValueError {
-        return super.segmentTriangle(imageBlock);
+    void segmentTriangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+
     }
 
+    /**
+     * @param node
+     * @param imageBlock
+     * @throws ValueError
+     */
     @Override
     public
-    void segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
-        return List.of(imageBlock);
+    void segmentPolygon ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+
     }
 
+    /**
+     * @param node
+     * @param imageBlock
+     * @throws ValueError
+     */
     @Override
     public
-    void segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
-        return List.of(imageBlock);
+    void segmentQuadrilateral ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
     }
 
     /**
@@ -139,27 +155,16 @@ class DelaunayTriangularTopDownTiler<N extends TreeNode <N, A, G>, A extends IAd
      */
     @Override
     public
-    void segmentSquare ( IImageBlock <A> imageBlock ) throws ValueError {
-        int w;
+    void segmentSquare ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+        super.segmentSquare(node, imageBlock);
 
         GeometryFactory geometryFactory = new GeometryFactory();
         subdivTriangulation = (DelaunayTriangulation <N, A, G>) triangulationBuilder.getSubdivision();
-        Geometry<?> triangles = triangulationBuilder.getTriangles(geometryFactory);
+        Geometry <?> triangles = triangulationBuilder.getTriangles(geometryFactory);
         Coordinate[] coords = triangles.getCoordinates();
 
         HilbertCurveBuilder builder = new HilbertCurveBuilder(geometryFactory);
         builder.setLevel(HilbertCode.level(coords.length));
-
-        return List.of(imageBlock);
-    }
-
-    /**
-     *
-     */
-    @Override
-    public
-    void onFinish () {
-
     }
 
     /**
@@ -178,4 +183,23 @@ class DelaunayTriangularTopDownTiler<N extends TreeNode <N, A, G>, A extends IAd
     DelaunayTriangulation <N, A, G> getSubdivTriangulation () {
         return subdivTriangulation;
     }
+
+    /**
+     * @param node
+     * @param imageBlock
+     */
+    @Override
+    public
+    void onSuccessors ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * @param node
+     * @param imageBlock
+     */
+    @Override
+    public
+    void onSuccessor ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) {
+        throw new UnsupportedOperationException();    }
 }

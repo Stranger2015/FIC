@@ -29,7 +29,7 @@ class DtApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exte
     private final File input;
     private final File output;
 
-    private final FicFileModel <N, A, G> fractalModel;
+    private final FCImageModel <N, A, G> fractalModel;
     private final Set <ImageTransform <A, G>> transforms = new HashSet <>();
 
     private final IIntSize rangeSize;
@@ -39,7 +39,7 @@ class DtApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exte
 
 
     public
-    DtApplication ( Config <N, A, G> config, FicFileModel <N, A, G> fractalModel, IIntSize rangeSize, IIntSize domainSize ) {
+    DtApplication ( Config <N, A, G> config, FCImageModel <N, A, G> fractalModel, IIntSize rangeSize, IIntSize domainSize ) {
         this.config = config;
         colorSpace = config.colorSpace();
         scheme = config.partitionScheme();
@@ -159,7 +159,7 @@ class DtApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exte
      * @return
      */
     public
-    FicFileModel <N, A, G> getFractalModel () {
+    FCImageModel <N, A, G> getFractalModel () {
         return fractalModel;
     }
 

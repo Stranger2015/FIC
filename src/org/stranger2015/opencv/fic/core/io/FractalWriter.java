@@ -1,9 +1,8 @@
 package org.stranger2015.opencv.fic.core.io;
 
 import ar.com.hjg.pngj.ImageInfo;
-import ar.com.hjg.pngj.PngWriter;
 import ar.com.hjg.pngj.PngjOutputException;
-import org.stranger2015.opencv.fic.core.FicFileModel;
+import org.stranger2015.opencv.fic.core.FCImageModel;
 import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.utils.BitBuffer;
@@ -16,10 +15,9 @@ import java.io.File;
  
  * @param <G>
  */
-
 public
 class FractalWriter<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends PngWriter {
+      /*  extends PngWriter */{
 
     /**
      * Opens a file for writing.
@@ -32,7 +30,7 @@ class FractalWriter<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exte
      */
     public
     FractalWriter ( File file, ImageInfo imgInfo, boolean allowOverwrite ) {
-        super(file, imgInfo, allowOverwrite);
+//        super/*(file, imgInfo, allowOverwrite)*/;
     }
 
     /**
@@ -41,13 +39,14 @@ class FractalWriter<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exte
      */
     public
     FractalWriter ( File file, ImageInfo imgInfo ) {
-        super(file, imgInfo);
+//        super(file, imgInfo);
     }
 
     /**
      * @param model
      */
     public
-    void writeModel ( FicFileModel <N, A, G> model ) {
+    void writeModel ( FCImageModel <N, A, G> model ) {
+
     }
 }

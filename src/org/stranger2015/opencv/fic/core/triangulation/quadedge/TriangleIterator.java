@@ -2,7 +2,6 @@ package org.stranger2015.opencv.fic.core.triangulation.quadedge;
 
 import org.jetbrains.annotations.Contract;
 import org.stranger2015.opencv.fic.core.geom.GeometryFactory;
-import org.stranger2015.opencv.fic.core.geom.TriangleImageBlock;
 
 import java.util.Iterator;
 

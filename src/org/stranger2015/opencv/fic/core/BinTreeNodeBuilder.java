@@ -43,10 +43,8 @@ class BinTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
     @Override
     public
     Tree <N, A, G> buildTree ( IImageBlock <A> imageBlock ) throws ValueError {
-        TreeNodeTask <N, A, G> task = null;
-        TreeNode <N, A, G> node = null;
 
-        return new BinTree <>(node, imageBlock, task);
+        return super.buildTree(imageBlock);
     }
 
     /**

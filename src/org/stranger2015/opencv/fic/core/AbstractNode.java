@@ -14,6 +14,8 @@ package org.stranger2015.opencv.fic.core;
 
 import  org.locationtech.jts.index.strtree.Boundable;
 import org.locationtech.jts.util.Assert;
+import org.stranger2015.opencv.fic.core.geom.*;
+import org.stranger2015.opencv.fic.core.shape.fractal.SpaceFillingCurveCode;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -133,5 +135,124 @@ public abstract class AbstractNode implements Boundable, Serializable {
     void setChildBoundables(List<Boundable> childBoundables)
     {
         this.childBoundables = childBoundables;
+    }
+
+    /**
+     *
+     */
+    public abstract static
+    class GeometricShapeBuilder {
+
+        protected Envelope extent = new Envelope(0, 1, 0, 1);
+        protected int numPts = 0;
+        protected GeometryFactory geomFactory;
+        protected
+        SpaceFillingCurveCode spaceFillingCurveCode;
+
+        /**
+         * @param geomFactory
+         */
+        public
+        GeometricShapeBuilder ( GeometryFactory geomFactory, SpaceFillingCurveCode spaceFillingCurveCode ) {
+            this.geomFactory = geomFactory;
+            this.spaceFillingCurveCode = spaceFillingCurveCode;
+        }
+
+        /**
+         * @param extent
+         */
+        public
+        void setExtent ( Envelope extent ) {
+            this.extent = extent;
+        }
+
+        /**
+         * @return
+         */
+        public
+        Envelope getExtent () {
+            return extent;
+        }
+
+        /**
+         * @return
+         */
+        public
+        Coordinate getCentre () {
+            return extent.centre();
+        }
+
+        /**
+         * @return
+         */
+        public
+        double getDiameter () {
+            return Math.min(extent.getHeight(), extent.getWidth());
+        }
+
+        /**
+         * @return
+         */
+        public
+        double getRadius () {
+            return getDiameter() / 2;
+        }
+
+        /**
+         *
+         * @return
+         */
+        public
+        LineSegment getSquareBaseLine () {
+            double radius = getRadius();
+
+            Coordinate centre = getCentre();
+            Coordinate p0 = new Coordinate(centre.x - radius, centre.y - radius);
+            Coordinate p1 = new Coordinate(centre.x + radius, centre.y - radius);
+
+            return new LineSegment(p0, p1);
+        }
+
+        /**
+         * @return
+         */
+        public
+        Envelope getSquareExtent () {
+            double radius = getRadius();
+
+            Coordinate centre = getCentre();
+
+            return new Envelope(centre.x - radius, centre.x + radius,
+                    centre.y - radius, centre.y + radius);
+        }
+
+        /**
+         * Sets the total number of points in the created {@link Geometry}.
+         * The created geometry will have no more than this number of points,
+         * unless more are needed to create a valid geometry.
+         */
+        public
+        void setNumPoints ( int numPts ) {
+            this.numPts = numPts;
+        }
+
+        /**
+         * @return
+         */
+        public abstract
+        Geometry getGeometry ();
+
+        /**
+         * @param x
+         * @param y
+         * @return
+         */
+        protected
+        Coordinate createCoord ( double x, double y ) {
+            Coordinate pt = new Coordinate(x, y);
+            geomFactory.getPrecisionModel().makePrecise(pt);
+
+            return pt;
+        }
     }
 }

@@ -1,9 +1,11 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.stranger2015.opencv.fic.core.*;
+import org.stranger2015.opencv.fic.core.EPartitionScheme;
+import org.stranger2015.opencv.fic.core.IAddress;
+import org.stranger2015.opencv.fic.core.Task;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.ValueError;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayList;
@@ -20,8 +22,8 @@ class Codec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
 
     protected final EPartitionScheme scheme;
 
-    protected Class <?>[] paramTypes;
-    protected Object[] params;
+//    protected Class <?>[] paramTypes;
+//    protected Object[] params;
 
     protected IEncoder <N, A, G> encoder;
     protected IDecoder <N, A, G> decoder;
@@ -31,21 +33,21 @@ class Codec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
 
     protected final List <ICodecListener <N, A, G>> listeners = new ArrayList <>();
 
-    /**
-     * @param scheme
-     * @param paramTypes
-     * @param params
-     */
-    @SuppressWarnings("unchecked")
-    @Contract(pure = true)
-    protected
-    Codec ( EPartitionScheme scheme, Class <?>[] paramTypes, Object... params ) {
-        this.scheme = scheme;
-        this.paramTypes = paramTypes;
-        this.params = params;
-        this.encodeTask = (EncodeTask <N, A, G>) params[0];
-        this.decodeTask = (DecodeTask <N, A, G>) params[1];
-    }
+//    /**
+//     * @param scheme
+//     * @param paramTypes
+//     * @param params
+//     */
+//    @SuppressWarnings("unchecked")
+//    @Contract(pure = true)
+//    protected
+//    Codec ( EPartitionScheme scheme, Class <?>[] paramTypes, Object... params ) {
+//        this.scheme = scheme;
+//        this.paramTypes = paramTypes;
+//        this.params = params;
+//        this.encodeTask = (EncodeTask <N, A, G>) params[0];
+//        this.decodeTask = (DecodeTask <N, A, G>) params[1];
+//    }
 
     /**
      * @return
@@ -63,20 +65,20 @@ class Codec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
         return encodeTask;
     }
 
-    @SuppressWarnings("unchecked")
-    public static
-    <N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-    ICodec <N, A, G> create ( @NotNull EPartitionScheme scheme,
-                                 Class <?>[] paramTypes,
-                                 Object... params ) throws ReflectiveOperationException {
-
-        return (ICodec <N, A, G>) Utils.create(
-                scheme.getCodecClassName(),
-                ICodec.getListeners(),
-                paramTypes,
-                params
-        );
-    }
+//    @SuppressWarnings("unchecked")
+//    public static
+//    <N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
+//    ICodec <N, A, G> create ( @NotNull EPartitionScheme scheme,
+//                                 Class <?>[] paramTypes,
+//                                 Object... params ) throws ReflectiveOperationException {
+//
+//        return (ICodec <N, A, G>) Utils.create(
+//                scheme.getCodecClassName(),
+//                ICodec.getListeners(),
+//                paramTypes,
+//                params
+//        );
+//    }
 
     /**
      * @return
@@ -141,23 +143,7 @@ class Codec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
     @Override
     public
     void addTask ( Task <N, A, G> task ) {
-//todo
-    }
 
-    /**
-     * @return
-     */
-    public
-    Class <?>[] getParamTypes () {
-        return paramTypes;
-    }
-
-    /**
-     * @return
-     */
-    public
-    Object[] getParams () {
-        return params;
     }
 
     /**

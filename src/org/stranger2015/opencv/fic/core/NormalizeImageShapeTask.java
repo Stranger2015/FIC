@@ -3,7 +3,7 @@ package org.stranger2015.opencv.fic.core;
 import org.jetbrains.annotations.NotNull;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.ICodec;
-import org.stranger2015.opencv.fic.core.codec.RegionOfInterest;
+import org.stranger2015.opencv.fic.core.codec.IImageBlock;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayList;
@@ -74,11 +74,11 @@ class NormalizeImageShapeTask<N extends TreeNode <N, A, G>, A extends IAddress <
     @Override
     public
     void onPreprocess ( IImageProcessor <N, A, G> processor, String filename, IImage<A> image ) throws ValueError {
-        final List <RegionOfInterest <A>> roiList = new ArrayList <>();
+        final List <IImageBlock <A>> roiList = new ArrayList <>();
         super.onPreprocess(processor, filename, image);
         for (int i = 0; i < image.getRegions().size(); i++) {
-            RegionOfInterest <A> roi = image.getRegions().get(i);
-            roi = (RegionOfInterest <A>) processor.preprocess(roi);
+            IImageBlock <A> roi = image.getRegions().get(i);
+            roi = (IImageBlock <A>) processor.preprocess(roi);
             roiList.add(roi);
         }
     }

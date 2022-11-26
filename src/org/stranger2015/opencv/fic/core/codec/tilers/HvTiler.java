@@ -3,7 +3,8 @@ package org.stranger2015.opencv.fic.core.codec.tilers;
 import org.slf4j.Logger;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.core.codec.RegionOfInterest;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
+import org.stranger2015.opencv.fic.core.codec.IImageBlock;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
 import org.stranger2015.opencv.utils.BitBuffer;
 
@@ -17,7 +18,6 @@ import java.util.List;
  */
 public
 class HvTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-
         extends Tiler <N, A, G> {
 
 //    private final RectangularTiler <N, A, G> rectangularTiler;
@@ -25,6 +25,12 @@ class HvTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
     public
     HvTiler ( IImage <A> image, int width, int height ) {
         super(image, width, height);
+    }
+
+    @Override
+    public
+    void addLeaf ( LeafNode <N, A, G> node ) {
+
     }
 
     @Override
@@ -41,8 +47,19 @@ class HvTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
 
     @Override
     public
-    void segmentGeometry ( IImageBlock <A> imageBlock ) throws ValueError {
-        return Tiler.super.segmentGeometry(imageBlock, minRangeSize, queue);
+    void segmentGeometry ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+        List.of();
+    }
+
+    /**
+     * @param node
+     * @param imageBlock
+     * @throws ValueError
+     */
+    @Override
+    public
+    void segmentRectangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+
     }
 
     @Override
@@ -103,13 +120,12 @@ class HvTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
 
     @Override
     public
-    List <Vertex> generateVerticesSet ( RegionOfInterest <A> roi, int blockWidth, int blockHeight ) {
+    List <Vertex> generateVerticesSet ( IImageBlock <A> roi, int blockWidth, int blockHeight ) {
         return null;
     }
 
-    @Override
-    public
-    List <IImageBlock <A>> generateInitialRangeBlocks ( RegionOfInterest <A> roi, int blockWidth, int blockHeight )
+    private
+    List <IImageBlock <A>> generateInitialRangeBlocks ( IImageBlock <A> roi, int blockWidth, int blockHeight )
             throws ValueError {
 
         return null;

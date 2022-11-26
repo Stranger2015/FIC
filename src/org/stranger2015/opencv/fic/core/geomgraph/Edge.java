@@ -49,7 +49,7 @@ public class Edge
         this.pts = pts;
         this.label = label;
     }
-    public Edge( Coordinate[] pts, org.stranger2015.opencv.fic.core.geomgraph.Label label )
+    public Edge( Coordinate[] pts, Label label )
     {
         this(pts, null);
     }
@@ -61,11 +61,25 @@ public class Edge
     {
         return pts[i];
     }
-    public Coordinate getCoordinate()
-    {
-        if (pts.length > 0) return pts[0];
-        return null;
+    public Coordinate getCoordinate() {
+        Coordinate result = null;
+        if (pts.length > 0) {
+            result = pts[0];
+        }
+        return result;
     }
+
+    /**
+     * Compute the contribution to an IM for this component.
+     *
+     * @param im Intersection matrix
+     */
+    @Override
+    protected
+    void computeIM ( org.locationtech.jts.geom.IntersectionMatrix im ) {
+
+    }
+
     public Envelope getEnvelope()
     {
         // compute envelope lazily

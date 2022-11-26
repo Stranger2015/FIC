@@ -3,8 +3,9 @@ package org.stranger2015.opencv.fic.core.io;
 import ar.com.hjg.pngj.IImageLine;
 import ar.com.hjg.pngj.IImageLineSet;
 import ar.com.hjg.pngj.PngReader;
-import org.stranger2015.opencv.fic.core.FicFileModel;
+import org.stranger2015.opencv.fic.core.FCImageModel;
 import org.stranger2015.opencv.fic.core.IAddress;
+import org.stranger2015.opencv.fic.core.ValueError;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.io.File;
@@ -21,7 +22,7 @@ import static org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
  */
 public
 class FractalReader<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends PngReader {
+       /* extends PngReader*/ {
 
     /**
      * Constructs a PngReader object from a stream, with default options. This reads the signature and the first IHDR
@@ -37,7 +38,7 @@ class FractalReader<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exte
      */
     public
     FractalReader ( InputStream inputStream ) {
-        super(inputStream);
+        /*super(inputStream);*/
     }
 
     /**
@@ -48,7 +49,7 @@ class FractalReader<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exte
      */
     public
     FractalReader ( InputStream inputStream, boolean shouldCloseStream ) {
-        super(inputStream, shouldCloseStream);
+        /*super(inputStream, shouldCloseStream);*/
     }
 
     /**
@@ -59,7 +60,7 @@ class FractalReader<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exte
      */
     public
     FractalReader ( File file ) {
-        super(file);
+       // super(file);
     }
 
     /**
@@ -68,10 +69,10 @@ class FractalReader<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exte
      * @return
      */
     public
-    FicFileModel <N, A, G> readModel () {
-        FicFileModel <N, A, G> model = new FicFileModel <>(new HashMap <>());
+    FCImageModel <N, A, G> readModel () throws ValueError {
+        FCImageModel <N, A, G> model = new FCImageModel <>(/*new HashMap <>()*/);
 
-        IImageLineSet <? extends IImageLine> rows = readRows();
+//        IImageLineSet <? extends IImageLine> rows = readRows();///*/*/*/**/*/*/*/
         for (int i = 0; i < rows.size(); i++) {
             IImageLine line = rows.getImageLine(i);
             byte[] raw = new byte[0];

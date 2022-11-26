@@ -3,6 +3,8 @@ package org.stranger2015.opencv.fic.core;
 import org.opencv.core.Mat;
 import org.stranger2015.opencv.fic.core.geom.Geometry;
 
+import java.util.List;
+
 /**
  * @param <A>
  */
@@ -82,74 +84,49 @@ interface IImageBlock<A extends IAddress <A>>
      * @param i2
      * @param i3
      */
-    void getRGB ( int i, int i1, int sideSize, int[] img1pixels, int i2, int i3 );
-
-//    /**
-//     * @param address
-//     * @param data
-//     * @return
-//     */
-//    default
-//    int get (int row, int col, double[] data ) throws ValueError {
-//        return create(row, getWidth(), col, EAddressKind.ORDINARY);
-//    }
+    void getRGB ( int i, int i1, int sideSize, double[] img1pixels, int i2, int i3 );
 
     /**
      * @return
      */
-  @Override
+    @Override
     default
     boolean isSquare () {
         return getWidth() == getHeight();
     }
 
     /**
-     *
-     *
      * @param x
      * @param i
      */
-//    @Override
-    int put ( int x, int y, double[] data );
+    double[] put ( int x, int y, double[] data );
 
     /**
      * @return
      */
-//    @Override
+    @Override
     double[] getMeanPixelValue ();
 
     /**
-     *
      * @param minRangeSize
      * @return
      */
     int compareTo ( IIntSize minRangeSize );
 
     /**
-     *
      * @return
      */
     int getX ();
 
     /**
-     *
      * @return
      */
     int getY ();
 
-//    /**
-//     * @param p0
-//     * @param p1
-//     * @param p2
-//     * @return
-//     */
-//    IImageBlock<A> getTriangleSubImage ( Coordinate p0, Coordinate p1, Coordinate p2 );
-//
-//    /**
-//     * @param coords
-//     * @return
-//     */
-//    IImageBlock<A> getPolygonSubImage ( Coordinate ... coords );
-//
-
+    /**
+     * @param blocks
+     * @param blocksToMerge
+     * @return
+     */
+    A merge ( List <IImageBlock <A>> blocks, List <IImageBlock <A>> blocksToMerge );
 }

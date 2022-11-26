@@ -43,7 +43,7 @@ class SipEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
             IDistanceator <A> comparator,
             Set <ImageTransform <A, G>> transforms,
             Set <IImageFilter <A>> filters,
-            FicFileModel <N, A, G> fractalModel
+            FCImageModel <N, A, G> fractalModel
     ) {
         super(
                 scheme,

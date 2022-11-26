@@ -130,6 +130,11 @@ class Polygon<T extends Polygon<T>>
         this(shell,  new LinearRing[0],new GeometryFactory());
     }
 
+    public
+    Polygon ( CoordinateList coordinates ) {
+        super(coordinates);
+    }
+
     /**
      * @return
      */

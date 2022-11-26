@@ -1,12 +1,10 @@
 package org.stranger2015.opencv.fic.core.shape.fractal;
 
+import org.stranger2015.opencv.fic.core.AbstractNode;
 import org.stranger2015.opencv.fic.core.geom.Coordinate;
 import org.stranger2015.opencv.fic.core.geom.Geometry;
 import org.stranger2015.opencv.fic.core.geom.GeometryFactory;
 import org.stranger2015.opencv.fic.core.geom.LineSegment;
-import org.stranger2015.opencv.fic.core.shape.GeometricShapeBuilder;
-
-import static org.stranger2015.opencv.fic.core.shape.fractal.MortonCode.*;
 
 /**
  * Generates a {@link LineString} representing the Morton Curve
@@ -16,7 +14,7 @@ import static org.stranger2015.opencv.fic.core.shape.fractal.MortonCode.*;
  * @see MortonCode
  */
 public
-class MortonCurveBuilder extends GeometricShapeBuilder {
+class MortonCurveBuilder extends AbstractNode.GeometricShapeBuilder {
 
     /**
      * Creates a new instance using the provided {@link GeometryFactory}.

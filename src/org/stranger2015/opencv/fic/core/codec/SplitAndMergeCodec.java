@@ -14,15 +14,15 @@ import org.stranger2015.opencv.utils.BitBuffer;
 public
 class SplitAndMergeCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
         extends Codec <N, A, G> {
-    /**
-     * @param scheme
-     * @param paramTypes
-     * @param params
-     */
-    protected
-    SplitAndMergeCodec ( EPartitionScheme scheme, Class <?>[] paramTypes, Object... params ) {
-        super(scheme, paramTypes, params);
-    }
+//    /**
+//     * @param scheme
+//     * @param paramTypes
+//     * @param params
+//     */
+//    protected
+//    SplitAndMergeCodec ( EPartitionScheme scheme, Class <?>[] paramTypes, Object... params ) {
+//        super(scheme, paramTypes, params);
+//    }
 
     /**
      * @param scheme

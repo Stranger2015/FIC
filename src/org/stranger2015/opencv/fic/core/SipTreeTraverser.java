@@ -3,6 +3,8 @@ package org.stranger2015.opencv.fic.core;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.utils.BitBuffer;
 
+import java.util.List;
+
 /**
  * //tracking#19710153023525 {
  *
@@ -36,6 +38,7 @@ class SipTreeTraverser<N extends TreeNode <N, A, G>, A extends IAddress <A>, M e
     public
     void traverse ( TreeNode <N, A, G> node, int depth, List <TreeNode<N, A, G>> neighbors, TreeNodeTask <N, A, G> action )
             throws DepthLimitExceeded {
+
         super.traverse(node, depth, neighbors, action);
     }
 }

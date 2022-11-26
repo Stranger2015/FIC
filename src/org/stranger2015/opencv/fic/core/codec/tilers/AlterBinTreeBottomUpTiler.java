@@ -50,14 +50,14 @@ class AlterBinTreeBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress
     }
 
     /**
+     * @param node
      * @param imageBlock
      * @throws ValueError
      */
     @Override
     public
-    void segmentGeometry ( IImageBlock <A> imageBlock ) throws ValueError {
-
-        return List.of(imageBlock);
+    void segmentGeometry ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+        List.of(imageBlock);
     }
 
     /**
@@ -66,7 +66,7 @@ class AlterBinTreeBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress
      */
     @Override
     public
-    void segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
-        return List.of(imageBlock);
+    void segmentPolygon (TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+        List.of(imageBlock);
     }
 }

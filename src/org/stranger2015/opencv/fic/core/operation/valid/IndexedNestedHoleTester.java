@@ -16,7 +16,7 @@ import org.stranger2015.opencv.fic.core.geom.Coordinate;
 import org.stranger2015.opencv.fic.core.geom.Envelope;
 import org.stranger2015.opencv.fic.core.geom.LinearRing;
 import org.stranger2015.opencv.fic.core.geom.Polygon;
-import org.stranger2015.opencv.fic.core.index.ISpatialIndex;
+import org.stranger2015.opencv.fic.core.math.index.ISpatialIndex;
 
 import java.util.List;
 

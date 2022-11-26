@@ -3,12 +3,12 @@ package org.stranger2015.opencv.fic.core.codec.tilers;
 import org.jetbrains.annotations.NotNull;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
-import org.stranger2015.opencv.fic.core.codec.RegionOfInterest;
+import org.stranger2015.opencv.fic.core.codec.IImageBlock;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.util.Deque;
 import java.util.List;
 
 /**
@@ -55,31 +55,28 @@ class NoneTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
     @Override
     public
-    void segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
-        return List.of(imageBlock);
+    void segmentPolygon (TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
     }
 
     @Override
     public
-    void segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
-        return List.of(imageBlock);
+    void segmentQuadrilateral (TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
     }
 
     @Override
     public
-    void addLeafNode ( TreeNode <N, A, G> node ) {
+    void addLeafNode ( LeafNode <N, A, G> node ) {
 
     }
 
     @Override
     public
-    List <Vertex> generateVerticesSet ( RegionOfInterest <A> roi, int blockWidth, int blockHeight ) {
-        return null;
+    List <Vertex> generateVerticesSet ( IImageBlock <A> roi, int blockWidth, int blockHeight ) {
+        return List.of();
     }
 
-    @Override
     public
-    List <IImageBlock <A>> generateInitialRangeBlocks ( @NotNull RegionOfInterest <A> roi,
+    List <IImageBlock <A>> generateInitialRangeBlocks ( @NotNull IImageBlock <A> roi,
                                                         int blockWidth,
                                                         int blockHeight ) throws ValueError {
         return List.of(roi.getSubImage());
@@ -101,48 +98,59 @@ class NoneTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
 
     @Override
     public
-    List <IImageBlock <A>> generateRangeBlocks ( RegionOfInterest <A> roi,
+    List <IImageBlock <A>> generateRangeBlocks ( IImageBlock <A> roi,
                                                  int blockWidth,
                                                  int blockHeight ) throws ValueError {
         return super.generateRangeBlocks(roi, blockWidth, blockHeight);
     }
 
-
     /**
      * @param imageBlockShape
+     * @param node
      * @param imageBlock
      * @throws ValueError
      */
     @Override
     public
-    void segmentGeometry ( IImageBlock <A> imageBlock
+    void segmentGeometry ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock
     ) throws ValueError {
         logger.info("Segmenting geometry ...");
 
-        return List.of(imageBlock);
     }
 
+    /**
+     * @param node
+     * @param imageBlock
+     * @throws ValueError
+     */
+    @Override
+    public
+    void segmentRectangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+
+    }
+
+    /**
+     * @param imageBlock
+     * @throws ValueError
+     */
     public
     void segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
-        return List.of(imageBlock);
+
     }
 
+
+    /**
+     * @param node
+     */
     @Override
     public
-    List <IImageBlock <A>> tile ( IImageBlock <A> imageBlock,
-                                  IIntSize minRangeSize,
-                                  @NotNull Deque <IImageBlock <A>> queue ) throws ValueError {
-        return super.tile(imageBlock, minRangeSize, queue);
+    void addLeaf ( LeafNode <N, A, G> node ) {
+
     }
 
-    @Override
-    public
-    List <IImageBlock <A>> doTile ( IImageBlock <A> imageBlock,
-                                    IIntSize minRangeSize,
-                                    Deque <IImageBlock <A>> queue ) throws ValueError {
-        return super.doTile(imageBlock, minRangeSize, queue);
-    }
-
+    /**
+     *
+     */
     @Override
     public
     void onFinish () {

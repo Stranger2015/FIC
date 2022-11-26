@@ -50,7 +50,7 @@ class CompositeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
                        IDistanceator <A> comparator,
                        Set <ImageTransform <A, G>> imageTransforms,
                        Set <IImageFilter <A>> imageFilters,
-                       FicFileModel <N, A, G> fractalModel,
+                       FCImageModel <N, A, G> fractalModel,
                        IEncoder <N, A, G>... encoders ) {
 
         super(
@@ -112,7 +112,7 @@ class CompositeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
      */
     @Override
     public
-    List <RegionOfInterest <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds ) throws ValueError {
+    List <IImageBlock <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds ) throws ValueError {
         return null;
     }
 

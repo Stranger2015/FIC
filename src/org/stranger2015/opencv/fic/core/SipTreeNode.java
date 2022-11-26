@@ -280,7 +280,7 @@ class SipTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M ext
          */
         @Override
         public
-        IntSize getBoundingBox () {
+        IIntSize getBoundingBox () {
             return boundingBox;
         }
 

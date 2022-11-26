@@ -1,6 +1,5 @@
 package org.stranger2015.opencv.fic.core.operation;
 
-
 import org.locationtech.jts.geom.CoordinateArrays;
 import org.stranger2015.opencv.fic.core.geom.*;
 import org.stranger2015.opencv.fic.core.io.MultiPoint;

@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.ICodec;
-import org.stranger2015.opencv.fic.core.codec.RegionOfInterest;
+import org.stranger2015.opencv.fic.core.codec.IImageBlock;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
@@ -73,9 +73,9 @@ class RestoreImageTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
      */
     @Contract("_ -> new")
     private @NotNull
-    CompressedImage <A> unionRegions (List <RegionOfInterest <A>> regions ) {
+    CompressedImage <A> unionRegions (List <IImageBlock <A>> regions ) {
         Mat dest=new Mat();
-        for (RegionOfInterest <A> region : regions) {
+        for (IImageBlock <A> region : regions) {
             region.getMat().copyTo(dest);
         }
 

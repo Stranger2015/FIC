@@ -113,7 +113,7 @@ class BidiTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      */
     @Override
     protected
-    IImage<A> execute ( String filename ) throws ValueError {
+    IImage<A> execute ( String filename ) throws Exception {
 
         return super.execute(filename);
     }

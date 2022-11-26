@@ -4,11 +4,13 @@ import org.jetbrains.annotations.NotNull;
 import org.opencv.highgui.HighGui;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.stranger2015.opencv.fic.core.CodecTask.ColorspaceConversionTask;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.*;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 
@@ -17,16 +19,13 @@ import static org.stranger2015.opencv.fic.core.Library.nearestGreaterPowerOf;
 /**
  *
  */
-public
+public abstract
 class
 ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-
         extends BidiTask <N, A, G>
-        implements IImageProcessor<N,A,G> {
+        implements IImageProcessor <N, A, G> {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
-
-    private final ICodec <N, A, G> codec;
     private final EPartitionScheme scheme;
     private final EtvColorSpace colorSpace;
 
@@ -43,21 +42,20 @@ ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
     /**
      *
      */
-    private final List <IImageProcessorListener <N, A, G>> listeners = new ArrayList <>();
+    protected final List <IImageProcessorListener <N, A, G>> listeners = new ArrayList <>();
 
     /**
      * @param filename
      * @param scheme
      * @param codec
      */
-    public
+    protected
     ImageProcessor ( String filename,
                      EPartitionScheme scheme,
                      ICodec <N, A, G> codec,
                      List <Task <N, A, G>> tasks,
                      EtvColorSpace colorSpace
     ) {
-
         super(filename, scheme, codec, tasks);
 
         this.scheme = scheme;
@@ -65,7 +63,7 @@ ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
         this.colorSpace = colorSpace;
 
         BidiTask <N, A, G> task1 = new NormalizeRestoreImageTask <>(filename, scheme, codec);
-        BidiTask <N, A, G> task2 = new CodecTask.ColorspaceConversionTask <>(
+        BidiTask <N, A, G> task2 = new ColorspaceConversionTask <>(
                 filename,
                 scheme,
                 codec,
@@ -86,37 +84,36 @@ ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
 //        codec = new DefaultCodec<>(scheme, new EncodeAction(filename), getFilename());
     }
 
+//    /**
+//     * @param <N>
+//     * @param <A>
+//     * @param filename
+//     * @return
+//     */
+//    public static
+//    <N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
+//
+//    ImageProcessor <N, A, G> create ( String filename,
+//                                      EPartitionScheme scheme,
+//                                      ICodec <N, A, G> codec,
+//                                      List <Task <N, A, G>> tasks,
+//                                      EtvColorSpace colorSpace ) {
+//
+//        return new ImageProcessor <>(
+//                filename,
+//                scheme,
+//                codec,
+//                tasks,
+//                colorSpace
+//        );
+//    }
+
     /**
-     * @param <N>
-     
-     * @param <A>
-     * @param filename
-     * @return
-     */
-    public static
-    <N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-
-    ImageProcessor <N, A, G> create ( String filename,
-                                         EPartitionScheme scheme,
-                                         ICodec <N, A, G> codec,
-                                         List <Task <N, A, G>> tasks,
-                                         EtvColorSpace colorSpace ) {
-
-        return new ImageProcessor <>(
-                filename,
-                scheme,
-                codec,
-                tasks,
-                colorSpace
-        );
-    }
-
-    /**
-     * 1. Divide the image into range block.
+     * 1. Divide the image into range blocks.
      * <p>
      * 2. Divide  the  image  into  non-overlapping  domain  blocks,  Di.
      * <p>
-     * The  union  of  the  domain  blocks IImageust  cover  the  entire
+     * The  union  of  the  domain  blocks IImage must  cover  the  entire
      * image, G, but they can be any size or shape [1].
      * <p>
      * 3. Define  a  finite  set  of  contractive  affine  transformations,  wi
@@ -126,7 +123,7 @@ ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      * <p>
      * For each range block {
      * For each transformation {
-     * Calculate the Hausdorff distance h(wi(R  G), Di  G) (or use anotherIImageetric)
+     * Calculate the Hausdorff distance h(wi(R  G), Di  G) (or use another IImage metrics )
      * }
      * }
      * }
@@ -141,43 +138,41 @@ ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      */
     @SuppressWarnings("unchecked")
     public
-    IImage <A> process ( IImage<A> image ) throws ValueError {
-        CompressedImage <A> cimg = new CompressedImage <>(image);
+    IImage <A> process ( IImage <A> image ) throws Exception {
+        FCImageModel <N, A, G> cimg;
         IEncoder <N, A, G> encoder = codec.getEncoder();
-        List <RegionOfInterest <A>> regions = image.getRegions();
-        for (RegionOfInterest <A> region : regions) {
-            List <IImage <A>> list = region.split();
-            List <IImage <A>> layers = new ArrayList <>();
-            for (IImage <A> image1 : list) {
-                IImage <A> layer = encoder.encode(image1);
-                for (IImageProcessorListener <N, A, G> listener : listeners) {
-                    listener.onProcess(this, layer);
-                }
-                layer = postprocess((CompressedImage <A>) layer);
-                layers.add(layer);
+//        List <IImageBlock <A>> regions = image.getRegions();
+//        for (IImageBlock <A> region : regions) {
+        List <IImage <A>> list = image.split();
+        List <IImage <A>> layers = new ArrayList <>();
+        for (IImage <A> imageBlock : list) {
+            IImage <A> layer = encoder.encode(imageBlock);
+            for (IImageProcessorListener <N, A, G> listener : listeners) {
+                listener.onProcess(this, layer);
             }
-            regions = (List <RegionOfInterest <A>>) region.merge(layers, region);
-            cimg = composeImage(regions, image);
-
+            layer = postprocess((FCImageModel <N, A, G>) layer).toImage();
+            layers.add(layer);
         }
+//            regions = (List <IImageBlock <A>>) region.merge(layers, region);
+        image.merge(layers, image);
+        cimg = composeImage(image);
 
-        return saveImage(filename, cimg);
+        return saveImage(filename, cimg.toImage());
     }
 
     private
-    CompressedImage <A> composeImage ( List <RegionOfInterest <A>> regions, IImage <A> image ) {
-        return new CompressedImage <>(image);
+    FCImageModel <N, A, G> composeImage (/* List <IImageBlock <A>> rois, */IImage <A> image ) throws ValueError {
+        return new FCImageModel <>(image, new HashMap <>());
+
     }
 
     /**
      * @param outputImage
      * @return
      */
-    @Override
+//    @Override
     public
-    CompressedImage <A> postprocess ( CompressedImage <A> outputImage ) {
-//        outputImage=super./postprocess(outputImage);
-
+    FCImageModel <N, A, G> postprocess ( FCImageModel <N, A, G> outputImage ) {
 
         return outputImage;
     }
@@ -194,11 +189,11 @@ ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
     /**
      * @param image
      */
-    @SuppressWarnings("unchecked")
+//    @SuppressWarnings("unchecked")
     protected
-   IImage<A> compressImage (IImage<A> image ) {
+    FCImageModel <?, A, ?> compressImage ( IImage <A> image ) throws ValueError {
 
-       IImage<A> imageOut = new CompressedImage <>(image);
+        FCImageModel <?, A, ?> imageOut = new FCImageModel <>(image, new HashMap <>());
 
         HighGui.namedWindow("OpenCV");
 
@@ -246,7 +241,7 @@ ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      */
     @Override
     public
-    IImage <A> preprocess ( String filename, IImage<A> image ) throws ValueError {
+    IImage <A> preprocess ( String filename, IImage <A> image ) throws ValueError {
         if (filename == null) {
             return preprocess(image);
         }
@@ -254,6 +249,7 @@ ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
             image = this.inputImage == null ?
                     task.loadImage(filename) :
                     image;
+
             for (IImageProcessorListener <N, A, G> listener : listeners) {
                 listener.onPreprocess(this, filename, image);
             }
@@ -336,10 +332,10 @@ ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
     @SuppressWarnings("unchecked")
     @Override
     public
-    IImage<A> execute ( String filename ) throws ValueError {
+    IImage <A> execute ( String filename ) throws Exception {
         super.execute(filename);
 
-        IImage<A> image = preprocess(filename);
+        IImage <A> image = preprocess(filename);
 
         return process(image);
     }
@@ -374,7 +370,7 @@ ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      * @param image
      */
     public
-    void setImage ( IImage<A> image ) {
+    void setImage ( IImage <A> image ) {
         this.inputImage = image;
     }
 

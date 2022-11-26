@@ -7,7 +7,6 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-import org.stranger2015.opencv.fic.core.codec.RegionOfInterest;
 import org.stranger2015.opencv.fic.core.geom.Coordinate;
 import org.stranger2015.opencv.fic.core.geom.Geometry;
 import org.stranger2015.opencv.fic.core.geom.GeometryFactory;
@@ -15,7 +14,6 @@ import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,11 +26,11 @@ public
 class Image<A extends IAddress <A>>
         implements IImage <A> {
 
-    static final protected EAddressKind ADDRESS_KIND = EAddressKind.ORDINARY;
+    public static final EAddressKind ADDRESS_KIND = EAddressKind.ORDINARY;
 
     public final Mat actualImage;
     protected final IIntSize blockSize;
-    //    rotected final int[][] table;
+    //    rotected final int[,] table;
     protected final int originalImageWidth;
     protected final int originalImageHeight;
 
@@ -40,7 +38,7 @@ class Image<A extends IAddress <A>>
     private GeometryFactory factory;
     protected final int x;
     protected final int y;
-    private List <RegionOfInterest <A>> regions;
+    //    protected List <IImageBlock <A>> regions;
     protected double[] meanPixelValue;
 
     /**
@@ -53,14 +51,14 @@ class Image<A extends IAddress <A>>
      * @param regions
      */
     public
-    Image ( Mat actualImage/*, MatOfInt roi*/, IIntSize blockSize1, int i, int j, int[] blockSize, List <RegionOfInterest <A>> regions ) {
+    Image ( Mat actualImage, IIntSize blockSize1, int i, int j, int[] blockSize/*List <IImageBlock <A>> regions */ ) {
 //        this(actualImage, roi, i, j);
         this.actualImage = actualImage;
         this.blockSize = blockSize1;
 //        this.roi = roi;
         x = i;
         y = j;
-        this.regions = regions;
+        //      this.regions = regions;
         originalImageWidth = actualImage.width();
         originalImageHeight = actualImage.height();
         //size=new IntSize(actualImage);
@@ -91,7 +89,7 @@ class Image<A extends IAddress <A>>
      * @throws ValueError
      */
     public
-    Image ( IImage <A> roi, int x, int y, int blockWidth,int blockHeight ) throws ValueError {
+    Image ( IImage <A> roi, int x, int y, int blockWidth, int blockHeight ) throws ValueError {
         actualImage = roi.getMat();
         this.x = x;
         this.y = y;
@@ -107,8 +105,8 @@ class Image<A extends IAddress <A>>
      * @param blockSize
      */
     public
-    Image ( IImage <A> image, IAddress <A> address, IIntSize blockSize ) {
-        actualImage = image.getMat();
+    Image ( MatOfInt image, IAddress <A> address, IIntSize blockSize ) {
+        actualImage = image;
         x = address.getX();
         y = address.getY();
         this.blockSize = blockSize;
@@ -132,6 +130,7 @@ class Image<A extends IAddress <A>>
 //        y = 0;
 //    }
 //
+
     /**
      * @param image
      * @param roi
@@ -169,14 +168,30 @@ class Image<A extends IAddress <A>>
     }
 
     public
-    Image ( IImage <A> image, int x, int y, IIntSize blockSize, int originalImageWidth, int originalImageHeight ) {
+    Image ( IImage <A> image, int x, int y, IIntSize blockSize ) {
         actualImage = image.getMat();
         this.x = x;
         this.y = y;
         this.blockSize = blockSize;
-        this.originalImageWidth = originalImageWidth;
-        this.originalImageHeight = originalImageHeight;
+        this.originalImageWidth = blockSize.getWidth();
+        this.originalImageHeight = blockSize.getHeight();
     }
+
+    public
+    Image ( IImage <A> image, int x, int y, int blockWidth, List <IImageBlock <A>> regions ) {
+        actualImage = image.getMat();
+        this.x = x;
+        this.y = y;
+        this.blockSize = new IntSize(blockWidth, blockWidth);
+        this.originalImageWidth = blockSize.getWidth();
+        this.originalImageHeight = blockSize.getHeight();
+    }
+
+    public
+    Image ( Mat mat ) {
+        super();
+    }
+
 
     /**
      * @return
@@ -185,12 +200,6 @@ class Image<A extends IAddress <A>>
     public
     IImageBlock <A> subImage ( int rowStart, int rowEnd, int colStart, int colEnd ) {
         return (IImageBlock <A>) submat(rowStart, rowEnd, colStart, colEnd);
-    }
-
-    //    @Override
-    public
-    Coordinate getCoordinate () {
-        return null;
     }
 
     //    @Override
@@ -238,25 +247,6 @@ class Image<A extends IAddress <A>>
     void normalize () {
 
     }
-
-
-//    @Override
-//    protected
-//    int getTypeCode () {
-//        return 0;
-//    }
-
-//    @Override
-//    public
-//    Point[] tVertices () {
-//        return new Point[0];
-//    }
-//
-//    @Override
-//    public
-//    double perimeter () {
-//        return 0;
-//    }
 
     public
     int pixelAmount () {
@@ -350,8 +340,10 @@ class Image<A extends IAddress <A>>
     }
 
     public
-    void put ( int addr, double[] data ) throws ValueError {
-        return data[addr] = -1;//fixme
+    double[] put ( IAddress <A> addr, double[] data ) throws ValueError {
+        put(addr.getX(), addr.getY(), data);
+
+        return data;
     }
 
     /**
@@ -360,7 +352,12 @@ class Image<A extends IAddress <A>>
      */
     public
     IImage <A> reduce ( IImage <A> inputImage ) {
-        IImage <A> image = new Image <>(inputImage.getMat(), inputImage.getSize(), originalImageWidth, originalImageHeight);
+        IImage <A> image = new Image <>(
+                inputImage.getMat(),
+                inputImage.getSize(),
+                originalImageWidth,
+                originalImageHeight);
+
         Core.reduce(inputImage.getMat(), image.getMat(), -1, -1, -2);//fixme - dim, rtype, dtype
 
         return image;
@@ -392,8 +389,8 @@ class Image<A extends IAddress <A>>
      * @return
      */
     public
-    double putPixels ( int addr, double[] data ) throws ValueError {
-        return put(addr, data);
+    void putPixels ( IAddress <A> addr, double[] data ) throws ValueError {
+        put(addr.getX(), addr.getY(), data);
     }
 
     /**
@@ -420,7 +417,7 @@ class Image<A extends IAddress <A>>
     @Override
     public
     IImage <A> contract ( int contractivity ) {
-        IImage <A> image = new GrayScaleImage <>(this);
+        IImage <A> image = new Image <>((MatOfInt) this.getMat(), this.getSize());
 
         int newWidth = image.getWidth() / contractivity;
         int newHeight = image.getHeight() / contractivity;
@@ -428,6 +425,47 @@ class Image<A extends IAddress <A>>
         Imgproc.resize(this.getMat(), image.getMat(), new Size(newWidth, newHeight));
 
         return image;
+    }
+
+
+    /**
+     * @param scale
+     * @return
+     */
+    public
+    IImage <A> resize ( double scale ) {
+        IImage <A> image = new Image <>((MatOfInt) this.getMat(), this.getSize());
+
+        int newWidth = (int) (image.getWidth() * scale);
+        int newHeight = (int) (image.getHeight() * scale);
+
+        Imgproc.resize(this.getMat(), image.getMat(), new Size(newWidth, newHeight));
+
+        return image;
+    }
+
+    public
+    Image <A> resize ( int contractivity ) {
+        int newWidth = this.getWidth() / contractivity;
+        int newHeight = this.getHeight() / contractivity;
+        int channels = this.getChannelsAmount();
+        double[] newPixelValues = new double[newWidth * newHeight*channels];
+        for (int c = 0; c < channels; c++) {
+            for (int i = 0; i < newWidth; i++) {
+                for (int j = 0; j < newHeight; j++) {
+                    newPixelValues(i ,j)[c] = (double) ((
+                              pixelValues(i * 2,j * 2)[c]
+                            + pixelValues(i * 2,j * 2 + 1)[c]
+                            + pixelValues(i * 2 + 1,j * 2)[c]
+                            + pixelValues(i * 2 + 1,j * 2)[c]
+                    ) / contractivity * contractivity);
+                }
+            }
+        }
+        IImage <A> image = new Image <>();
+        this.swidth = newWidth;
+        this.height = newHeight;
+        this.pixelValues = newPixelValues;
     }
 
     /**
@@ -458,33 +496,46 @@ class Image<A extends IAddress <A>>
         this.meanPixelValue = meanPixelValue;
     }
 
+    /**
+     * @param other the object to be compared.
+     * @return
+     */
     @Override
     public
     int compareTo ( @NotNull IImage <A> other ) {
         return 0;
     }
 
-//    /**
-//     * @param originalImageWidth
-//     */
-//    @Override
-//    public
-//    void setOriginalImageWidth ( int originalImageWidth ) {
-//        this.originalImageWidth = originalImageWidth;
-//    }
+    /**
+     * @param blocks
+     */
+    @Override
+    public
+    void setRegions ( List <IImageBlock <A>> blocks ) {
+
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    List <IImageBlock <A>> getRegions () {
+        return null;
+    }
 
     /**
      * @param address
      */
     public
     void putPixel ( IAddress <A> address, double[] pixel ) throws ValueError {
-        put((int) address.getIndex(), pixel);
+        put(address.getX(), address.getY(), pixel);
     }
 
     @Override
     public
     void putPixels ( double[] pixelData ) {
-        //todo
+        put(0, 0, pixelData);
     }
 
     /**
@@ -543,12 +594,13 @@ class Image<A extends IAddress <A>>
     @Override
     public
     List <IImage <A>> split () {
-        List <Mat> list = new ArrayList <>();
+//        List <Mat> list = new ArrayList <>();
         List <IImage <A>> layers = new ArrayList <>();
-        Core.split(getMat(), Collections.unmodifiableList(list));
-        for (Mat mat : list) {
-            layers.add(new Image <>((MatOfInt) mat, blockSize));
-        }
+//        fixme
+//        Core . split(getMat(), Collections.unmodifiableList(list));
+//        for (Mat mat : list) {
+//            layers.add(new Image <>((MatOfInt) mat, blockSize));
+//        }
 
         return layers;
     }
@@ -641,10 +693,10 @@ class Image<A extends IAddress <A>>
      * @param i2
      * @param i3
      */
-//    @Override
+                     //   @Override
     public
-    void getRGB ( int i, int i1, int width, int height, int[] img1pixels, int i2, int i3 ) {
-
+    void getRGB ( int i, int i1, int width, int height, double[] img1pixels, int i2, int i3 ) {
+        getRGB(i, i1, width, img1pixels, i2, i3);
     }
 
     /**
@@ -675,24 +727,14 @@ class Image<A extends IAddress <A>>
         return getMat().get(col, row);
     }
 
-    /**
-     * @return
-     */
-    @Override
-    @Contract(pure = true)
-    public final
-    List <RegionOfInterest <A>> getRegions () {
-        return regions;
-    }
-//
 //    /**
 //     * @return
-//     * @throws ValueError
 //     */
-////    @Override
-//    public
-//    IAddress <A> getAddress () throws ValueError {
-//        return null;
+//    @Override
+//    @Contract(pure = true)
+//    public final
+//    List <IImageBlock <A>> getRegions () {
+//        return regions;
 //    }
 
     /**
@@ -716,18 +758,21 @@ class Image<A extends IAddress <A>>
         return EAddressKind.ORDINARY;
     }
 
-    /**
-     * @param regions
-     */
-    @Override
-    public
-    void setRegions ( List <RegionOfInterest <A>> regions ) {
-        this.regions.addAll(regions);
-    }
+//    /**
+//     * @param regions
+//     */
+//    @Override
+//    public
+//    void setRegions ( List <IImageBlock <A>> regions ) {
+//        this.regions.addAll(regions);
+//    }
 
+    /**
+     * @return
+     */
     public
-    int[][] getAddressTable () {
-        return new int[0][];//table;
+    int[][]etAddressTable () {
+        return new int[0][0];//table;
     }
 //
 //    /**
@@ -743,7 +788,7 @@ class Image<A extends IAddress <A>>
 ////Debug.print("\ncreateSplitEdge"); Debug.print(ei0); Debug.print(ei1);
 //        int npts = ei1.segmentIndex - ei0.segmentIndex + 2;
 //
-//        org.locationtech.jts.geom.Coordinate lastSegStartPt = edge.pts[ei1.segmentIndex];
+//        Coordinate lastSegStartPt = edge.pts[ei1.segmentIndex];
 //        // if the last intersection point is not equal to the its segment start pt,
 //        // add it to the points list as well.
 //        // (This check is needed because the distance metric is not totally reliable!)
@@ -753,9 +798,9 @@ class Image<A extends IAddress <A>>
 //            npts--;
 //        }
 //
-//        org.locationtech.jts.geom.Coordinate[] pts = new org.locationtech.jts.geom.Coordinate[npts];
+//        Coordinate[] pts = new Coordinate[npts];
 //        int ipt = 0;
-//        pts[ipt++] = new org.locationtech.jts.geom.Coordinate(ei0.coord);
+//        pts[ipt++] = new Coordinate(ei0.coord);
 //        for (int i = ei0.segmentIndex + 1; i <= ei1.segmentIndex; i++) {
 //            pts[ipt++] = edge.pts[i];
 //        }
@@ -763,18 +808,32 @@ class Image<A extends IAddress <A>>
 //        return new Edge(pts, new Label(edge.label));
 //    }
 
+    /**
+     * @return
+     */
     @Override
     public
     double[] getPixels () {
         return new double[(int) (getMat().total() * getMat().channels())];
     }
 
+    /**
+     * @param x
+     * @param y
+     * @param pixelData
+     * @return
+     */
     protected
-    int put ( int x, int y, double[] pixelData ) {
-        return getMat().put(x, y, pixelData);
+    double[] put ( int x, int y, double[] pixelData ) {
+        getMat().put(x, y, pixelData);
+
+        return pixelData;
     }
 
-    //    @Override
+    /**
+     * @return
+     */
+    @Override
     public
     double[] getMeanPixelValue () {
         return meanPixelValue;
@@ -806,15 +865,20 @@ class Image<A extends IAddress <A>>
         return factory;
     }
 
+    public
+    double[] get ( int c, int r, double[] data ) {
+        data = getMat().get(c, r);
+        return data;
+    }
 
     /**
      *
      */
     enum EColorType {
         GRAYSCALE(0),
-        TRUE_COLOR(2),
-        INDEXED_COLOR(3),
         GRAYSCALE_WITH_ALPHA(4),
+        INDEXED_COLOR(3),
+        TRUE_COLOR(2),
         TRUE_COLOR_WITH_ALPHA(6);
 
         private final int cType;
@@ -835,6 +899,7 @@ class Image<A extends IAddress <A>>
         int getCType () {
             return cType;
         }
+
     }
 
     public
@@ -844,19 +909,40 @@ class Image<A extends IAddress <A>>
 
     @Override
     public
-    double pixelValues ( int x, int y ) {
-        return 0;
+    double[] pixelValues ( int x, int y ) {
+        return getPixel(x, y);
     }
 
     @Override
     public
     double getPixelValuesLayer ( int x, int y, int ch ) {
-        return 0;
+        return 0;//todo
     }
 
     @Override
     public
     void setMeanPixelValuesLayer ( int c, double v ) {
 
+    }
+
+    /**
+     * @param originalImageWidth
+     */
+    @Override
+    public
+    void setOriginalImageWidth ( int originalImageWidth ) {
+
+    }
+
+    /**
+     * @param h
+     * @param originalImageWidth
+     * @param originalImageHeight
+     * @return
+     */
+    @Override
+    public
+    IIntSize restoreSize ( int h, int originalImageWidth, int originalImageHeight ) {
+        return null;
     }
 }

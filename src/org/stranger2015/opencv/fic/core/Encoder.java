@@ -1,12 +1,11 @@
-package org.stranger2015.opencv.fic.core.codec;
+package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.codec.*;
 import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
 import org.stranger2015.opencv.fic.core.io.FractalReader;
 import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
@@ -16,6 +15,7 @@ import org.stranger2015.opencv.fic.transform.ScaleTransform;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -31,18 +31,19 @@ import static org.stranger2015.opencv.fic.core.codec.ESplitKind.VERTICAL;
  */
 public abstract
 class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
+        extends ImageProcessor <N, A, G>
         implements IEncoder <N, A, G> {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
-    // rangeBlocks;
 
-    @Override
-    public
-    Class <?> getTilerClass () {
-        return tilerClass;
-    }
-
+    private final List <Class <ITiler <N, A, G>>> allowableSubtilers = new ArrayList <>();
     protected Class <?> tilerClass;
+
+    protected String fn;
+    protected List <Task <N, A, G>> tasks;
+
+    protected EtvColorSpace colorSpace;
+    protected ICodec <N, A, G> codec;
 
     protected EPartitionScheme scheme;
     protected ScaleTransform <A, G> scaleTransform;
@@ -51,7 +52,7 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
     protected Set <ImageTransform <A, G>> transforms;
     protected Set <IImageFilter <A>> filters;
 
-    protected FicFileModel <N, A, G> fractalModel;
+    protected FCImageModel <N, A, G> fractalModel;
     protected IPartitionProcessor <N, A, G> partitionProcessor;
 
     protected ISearchProcessor <N, A, G> searchProcessor;
@@ -59,39 +60,25 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
 
     protected ITreeNodeBuilderFactory <N, A, G> nodeBuilderFactory;
 
-    protected final List <RegionOfInterest <A>> roiBlocks = new ArrayList <>();
-
     protected IImage <A> inputImage;
     protected CompressedImage <A> outputImage;
 
-    protected IImage <A> image;
+//    protected IImage <A> image;
 
     protected IIntSize rangeSize;
     protected IIntSize domainSize;
 
     /**
-     * @return
-     */
-    public
-    Logger getLogger () {
-        return logger;
-    }
-
-    /**
-     * @return
-     */
-    public
-    EPartitionScheme getScheme () {
-        return scheme;
-    }
-
-    /**
      *
      */
-    @SuppressWarnings("unchecked")
+//    @SuppressWarnings("unchecked")
     protected
     Encoder (
+            String fn,
             EPartitionScheme scheme,
+            ICodec <N, A, G> codec,
+            List <Task <N, A, G>> tasks,
+            EtvColorSpace colorSpace,
             ITreeNodeBuilder <N, A, G> nodeBuilder,
             IPartitionProcessor <N, A, G> partitionProcessor,
             ISearchProcessor <N, A, G> searchProcessor,
@@ -100,9 +87,10 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
             IDistanceator <A> comparator,
             Set <ImageTransform <A, G>> imageTransforms,
             Set <IImageFilter <A>> imageFilters,
-            FicFileModel <N, A, G> fractalModel
+            FCImageModel <N, A, G> fractalModel
     ) {
-        this.scheme = scheme;
+        super(fn, scheme, codec, tasks, colorSpace);
+
         this.nodeBuilder = nodeBuilder;
         this.partitionProcessor = partitionProcessor;
         this.searchProcessor = searchProcessor;
@@ -127,25 +115,110 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
     @SuppressWarnings("unchecked")
     public static
     <N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-    IEncoder <N, A, G> create ( @NotNull EPartitionScheme scheme,
-                                Class <?>[] paramTypes,
-                                Object... params )
+    IEncoder <N, A, G> create (
+            String fn,
+            EPartitionScheme scheme,
+            ICodec <N, A, G> codec,
+            List <Task <N, A, G>> tasks,
+            EtvColorSpace colorSpace,
+            ITreeNodeBuilder <N, A, G> nodeBuilder,
+            IPartitionProcessor <N, A, G> partitionProcessor,
+            ISearchProcessor <N, A, G> searchProcessor,
+            ScaleTransform <A, G> scaleTransform,
+            ImageBlockGenerator <N, A, G> imageBlockGenerator,
+            IDistanceator <A> comparator,
+            Set <ImageTransform <A, G>> imageTransforms,
+            Set <IImageFilter <A>> imageFilters,
+            FCImageModel <N, A, G> fractalModel )
+
             throws ReflectiveOperationException {
 
-        return (IEncoder <N, A, G>) Utils.create(
-                scheme.getEncoderClassName(),
-                List.of(),
-                paramTypes,
-                params
+        Class <?> clazz = Class.forName(scheme.getEncoderClassName());
+        Constructor <?> ctor = clazz.getConstructor(
+                String.class,
+                EPartitionScheme.class,
+                ICodec.class,
+                List.class,
+                EtvColorSpace.class,
+                ITreeNodeBuilder.class,
+                IPartitionProcessor.class,
+                ISearchProcessor.class,
+                ScaleTransform.class,
+                ImageBlockGenerator.class,
+                IDistanceator.class,
+                Set.class,
+                Set.class,
+                FCImageModel.class
+        );
+
+        return (IEncoder <N, A, G>) ctor.newInstance(
+                fn,
+                scheme,
+                codec,
+                tasks,
+                colorSpace,
+                nodeBuilder,
+                partitionProcessor,
+                searchProcessor,
+                scaleTransform,
+                imageBlockGenerator,
+                comparator,
+                imageTransforms,
+                imageFilters,
+                fractalModel
         );
     }
 
     /**
      * @return
      */
-    public final
-    List <RegionOfInterest <A>> getRegionBlocks () {
-        return roiBlocks;
+    @Override
+    public
+    Set <IImageFilter <A>> getFilters () {
+        return filters;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    List <Class <ITiler <N, A, G>>> getAllowableSubtilers () {
+        return allowableSubtilers;
+    }
+
+    /**
+     * @param tiler
+     */
+    @Override
+    public
+    void addAllowableSubtiler ( Class <ITiler <N, A, G>> tilerClass ) {
+        allowableSubtilers.add(tilerClass);
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    Class <?> getTilerClass () {
+        return tilerClass;
+    }
+
+    /**
+     * @return
+     */
+    public
+    Logger getLogger () {
+        return logger;
+    }
+
+    /**
+     * @return
+     */
+    public
+    EPartitionScheme getScheme () {
+        return scheme;
     }
 
     /**
@@ -190,7 +263,7 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
      * @return
      */
     public abstract
-    IPartitionProcessor <N, A, G> createPartitionProcessor0 ( ITiler <N, A, G> tiler );
+    IPartitionProcessor <N, A, G> doCreatePartitionProcessor ( ITiler <N, A, G> tiler );
 
     /**
      * @return
@@ -206,7 +279,7 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
      */
     @Override
     public
-    FicFileModel <N, A, G> getModel () {
+    FCImageModel <N, A, G> getModel () {
         return fractalModel;
     }
 
@@ -217,14 +290,15 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
     @SuppressWarnings("unchecked")
     @Override
     public
-    FicFileModel <N, A, G> loadModel ( String filename ) {
-        return (FicFileModel <N, A, G>) new FractalReader <>(new File(filename)).readModel();
+    FCImageModel <N, A, G> loadModel ( String filename ) throws ValueError {
+        return (FCImageModel <N, A, G>) new FractalReader <>(new File(filename)).readModel();
     }
 
     /**
      * @param imageBlock
      * @return
      */
+    @Override
     @Contract(pure = true)
     public
     EnumSet <ESplitKind> chooseDirection ( IImageBlock <A> imageBlock ) {
@@ -234,22 +308,33 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
     /**
      * @return
      */
+    @Override
     public
-    CompressedImage <A> getOutputImage () {
+    ICompressedImage <A> getOutputImage () {
         return outputImage;
     }
 
+    /**
+     * @return
+     */
+    @Override
+    public
+    EtvColorSpace getColorSpace () {
+        return colorSpace;
+    }
     /**
      *
      */
     @Override
     public
-    void segmentRegion ( RegionOfInterest <A> roi, int blockWidth, int blockHeight )
+    void segmentImage ( IImageBlock <A> roi, int blockWidth, int blockHeight )
             throws ValueError {
+
         List <IImageBlock <A>> rangeBlocks = partitionProcessor.generateRangeBlocks(
                 roi,
                 blockWidth,
-                blockHeight);
+                blockHeight
+        );
 
         List <IImageBlock <A>> domainBlocks = imageBlockGenerator.generateDomainBlocks(
                 roi,
@@ -257,15 +342,22 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
 
         List <IImageBlock <A>> codebookBlocks = imageBlockGenerator.createCodebookBlocks(
                 roi,
-                domainBlocks);
+                domainBlocks
+        );
     }
 
+    /**
+     * @param image
+     * @return
+     * @throws Exception
+     */
+    @Override
+    @Contract("null -> fail")
     public final
     IImage <A> encode ( IImage <A> image ) throws Exception {
         assert image != null : "Cannot compress null image";
 
         initialize();
-
         return doEncode(image);
     }
 
@@ -274,14 +366,22 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
      */
     @Override
     public
-    IImage <A> doEncode ( IImage <A> image ) throws ValueError {
-        List <Rectangle> bounds = List.of(new Rectangle(image.getWidth(), image.getHeight()));
-        final List <RegionOfInterest <A>> regions = segmentImage(image, bounds);
-        List <List <IImageBlock <A>>> list = handleRegionList(regions, rangeSize, domainSize);
+    IImage <A> doEncode ( IImage <A> image ) throws ValueError, ReflectiveOperationException {
+        iterateRangeBlocks(
+                image.getSubImage(),
+                getImageBlockGenerator().generateRangeBlocks(
+                        image.getSubImage(),
+                        4,
+                        4
+                )
+        );
 
         return searchProcessor.search();
     }
 
+    /**
+     * @throws Exception
+     */
     @Override
     public
     void initialize () throws Exception {
@@ -291,183 +391,33 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
         EncoderFactory <N, A, G> encoderFactory = new EncoderFactory <>();
 
         nodeBuilder = nodeBuilderFactory.createBuilder(
-                image.getSubImage(),
+                inputImage.getSubImage(),
                 getScheme(),
                 rangeSize,
                 domainSize,
                 this,
                 library);
 
-        Tree <N, A, G> tree = nodeBuilder.buildTree(image.getSubImage());
+        Tree <N, A, G> tree = nodeBuilder.buildTree(inputImage.getSubImage());
         library.setTree(tree);
         ITiler <N, A, G> tiler = encoderFactory.createTiler(
-                image,
+                inputImage,
                 rangeSize,
                 domainSize,
                 this,
                 nodeBuilder
         );
-        IPartitionProcessor <N, A, G> partitionProcessor = this.createPartitionProcessor0(tiler);
+        IPartitionProcessor <N, A, G> partitionProcessor = this.createPartitionProcessor(tiler);
 
         imageBlockGenerator = createBlockGenerator(
                 partitionProcessor,
                 getScheme(),
                 this,
-                image,
+                inputImage,
                 rangeSize,
                 domainSize
         );
     }
-
-
-    /**
-     * @param regions
-     * @return
-     * @throws ValueError
-     */
-    private
-    List <List <IImageBlock <A>>> handleRegionList ( List <RegionOfInterest <A>> regions,
-                                                     IIntSize rangeSize,
-                                                     IIntSize domainSize ) throws ValueError {
-
-        List <List <IImageBlock <A>>> list = new ArrayList <>();
-        for (RegionOfInterest <A> roi : regions) {
-            IImage <A> roiImage = roi;
-            /*
-             * Normalization. Before tiling the image, pass it throw a set of filters.
-             * This might improve results, if used wisely.
-             */
-            for (IImageFilter <A> filter : filters) {
-                roi = (RegionOfInterest <A>) filter.filter(roiImage);
-            }
-            list.add(imageBlockGenerator.generateRangeBlocks(
-                    roi,
-                    rangeSize.getWidth(),
-                    rangeSize.getHeight()));
-        }
-
-        return list;
-    }
-
-    /**
-     * @param image
-     * @return
-     */
-    @Contract("_ -> param1")
-    private
-    IImage <A> iterateRegions ( IImage <A> image ) {
-        for (int i = 0, size = image.getRegions().size(); i < size; i++) {
-            RegionOfInterest <A> region = image.getRegions().get(i);
-        }
-
-        return image;
-    }
-
-//    /**
-//     * @param image
-//     * @return
-//     */
-//    @SuppressWarnings("unchecked")
-//    protected
-//    IImageBlock <A> iterateRangeBlocks ( IImageBlock <A> image, List <IImageBlock <A>> rangeBlocks ) {
-//        rangeBlocks.forEach(rangeBlock -> {
-//            int percent = 100 * (rangeBlocks.indexOf(rangeBlock) + 1) / rangeBlocks.size();
-//            System.err.printf("%d%%", percent);
-//            ImageTransform <A, G> bestTransform = ImageTransform.create(image, rangeBlock.getAddress());
-//            int minDistance = Integer.MAX_VALUE;
-//            iterateDomainBlocks(rangeBlock, bestTransform, minDistance);
-//            getTransforms().add(bestTransform);
-//        });
-//        outputImage.getTransforms().addAll(transforms);
-
-//        return (IImageBlock <A>) outputImage;
-//    }
-
-//    /**
-//     * @param rangeBlock
-//     * @param bestTransform
-//     * @param minDistance
-//     */
-//    protected
-//    void iterateDomainBlocks ( ImageBlock <A> rangeBlock,
-//                               ImageTransform <A, G> bestTransform,
-//                               int minDistance ) throws ValueError {
-//        for (ImageBlock <A> domainBlock : domainBlocks) {
-//            double alpha = 0;
-//            for (int i = 0; i < domainBlock.width; i++) {
-//                for (int j = 0; j < domainBlock.height; j++) {
-//                    double[] data = new double[4];//fixme
-//                    alpha += (domainBlock.get(i, j, data) - domainBlock.meanPixelValue);
-//                }
-//            }
-//ca
-//            for (int addr = 0; addr < domainBlock.getWidth(); addr++) {
-//                double[] data = new double[4];//fixme
-//                alpha += (domainBlock.get(domainBlock.getAddress().newInstance(addr), data) - domainBlock.meanPixelValue);
-//            }
-
-//            double contrast = alpha / domainBlock.beta;//byte
-//            int brightness = (int) (rangeBlock.meanPixelValue - contrast * domainBlock.meanPixelValue);
-//
-//            for (int index = 0; index < 8; index++) {
-//                IImageBlock <A> transformedDomainBlock =
-//                        new ImageBlock <>(
-//                                inputImage,
-//                                domainBlock.getAddress(),
-//                                domainBlock.getSize(),
-//                                geometry);
-//                int pixelAmount = domainBlock.getWidth() * domainBlock.getWidth();
-//                for (int addr = 0; addr < pixelAmount; addr++) {
-//                    for (int y = 0; y < domainBlock.height; y++) {
-//                        int newAddr = addr * -1; // fixme dihedralAffineTransforms[index][0] + y * dihedralAffineTransforms[index][1];
-//                        int newY = x * dihedralAffineTransforms[index][2] + y * dihedralAffineTransforms[index][3];
-//                        if (newAddr < 0) {
-//                            newAddr += domainBlock.getWidth();
-//                        }
-//                        if (newY < 0) {
-//                            newY += domainBlock.height;
-//                        }
-//                        double newPixelValue = (short) (contrast * domainBlock.put(addr, new int[1]) + brightness);
-//
-//                        double[] data = new double[4];
-//data[0]=
-//                            ((newPixelValue < MAX_PIXEL_VALUE) && (newPixelValue >= 0)) ?
-//                                    newPixelValue :
-//                                    (MAX_PIXEL_VALUE / 2);
-//
-//                        transformedDomainBlock.put(
-//                                newAddr,
-//                                data
-//                        );
-//}
-//                    }
-//                    int distance = getDistance(rangeBlock, transformedDomainBlock);
-//                    if ((distance < minDistance) && (distance != 0)) {
-//                        minDistance = distance;
-//                        bestTransform.dihedralAffineTransformIndex = index;
-//                        bestTransform.setAddress(transformedDomainBlock.getAddress());
-//                        bestTransform.brightnessOffset = brightness;
-//                        bestTransform.contrastScale = contrast;
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    /**
-//     * @param range
-//     * @param domain
-//     * @return
-//        double error;
-//        int boundOuter = range.getWidth();
-//        error = range(0, boundOuter)
-//                .map(i -> range.getHeight())
-///                .flatMap(bound -> range(0, bound)).mapToDouble(j -> Math
-//                        .pow(range.getMeanPixelValue() - domain.getMeanPixelValue(), 2)).sum();
-//        error = error / (double) (range.getWidth() * range.getHeight());
-//
-//        return (int) error;
-//    }
 
     /**
      * @return
@@ -492,7 +442,11 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
         Mat dest = new Mat();
         flip(image.getMat(), dest, axis);
 
-        return new Image <>(dest, image.getSize(), originalImageWidth);
+        return new Image <>(
+                dest,
+                image.getSize(),
+                image.getOriginalImageWidth(),
+                image.getOriginalImageHeight());
     }
 
     /**
@@ -540,7 +494,7 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
     List <IImageBlock <A>> generateAllTransformedBlocks ( IImage <A> image,
                                                           int sourceSize,
                                                           int destinationSize,
-                                                          int step ) {
+                                                          int step ) throws ValueError {
 
         final List <IImageBlock <A>> transformedBlocks = new ArrayList <>();
         //Extract the source block and reduce it to the shape of a destination block
@@ -589,6 +543,6 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
      */
     public
     IImage <A> getImage () {
-        return image;
+        return inputImage;
     }
 }

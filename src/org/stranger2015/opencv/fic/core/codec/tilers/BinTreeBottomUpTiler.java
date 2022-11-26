@@ -48,9 +48,14 @@ class BinTreeBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>,
         );
     }
 
+    /**
+     * @param node
+     * @param imageBlock
+     * @throws ValueError
+     */
     @Override
     public
-    void segmentGeometry ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentGeometry ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
     }
 
     /**
@@ -59,7 +64,7 @@ class BinTreeBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>,
      */
     @Override
     public
-    void segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentPolygon (TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
     }
 
     @Override

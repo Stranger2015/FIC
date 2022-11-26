@@ -5,11 +5,10 @@ import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.ESplitKind;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
-import org.stranger2015.opencv.fic.core.codec.RegionOfInterest;
+import org.stranger2015.opencv.fic.core.codec.IImageBlock;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.util.Deque;
 import java.util.List;
 
 import static org.stranger2015.opencv.fic.core.codec.ESplitKind.HORIZONTAL;
@@ -33,7 +32,6 @@ class BinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
                    IIntSize domainSize,
                    IEncoder <N, A, G> encoder,
                    ITreeNodeBuilder <N, A, G> builder ) {
-
         super(image, rangeSize, domainSize, encoder, builder);
     }
 
@@ -53,55 +51,36 @@ class BinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
         return 2;
     }
 
+    /**
+     * @param roi
+     * @param blockWidth
+     * @param blockHeight
+     * @return
+     * @throws ValueError
+     */
     @Override
     public
-    List <IImageBlock <A>> generateRangeBlocks ( RegionOfInterest <A> roi,
+    List <IImageBlock <A>> generateRangeBlocks ( IImageBlock <A> roi,
                                                  int blockWidth,
                                                  int blockHeight ) throws ValueError {
-
         return List.of(roi.getSubImage());
     }
 
     /**
      * @param imageBlockGeometry
+     * @param node
      * @param imageBlock
      */
     @Override
     public
-    void segmentGeometry ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentGeometry ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
 
     }
 
     @Override
     public
-    void segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
-    }
-
-    @Override
-    public
-    Deque <IImageBlock <A>> getDeque () {
-        return null;
-    }
-
-    @Override
-    public
-    void onAddNode ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) {
-
-    }
-
-    @Override
-    public
-    void onAddLeafNode ( TreeNode.LeafNode <N, A, G> leafNode, IImageBlock <A> imageBlock ) {
-
-    }
-
-    /**
-     *
-     */
-    @Override
-    public
-    void onFinish () {
-
+    void segmentQuadrilateral ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+        super.segmentQuadrilateral(node, imageBlock);
     }
 
     /**
@@ -110,32 +89,35 @@ class BinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      */
     @Override
     public
-    void segmentSquare ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentSquare ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
         int x = imageBlock.getX();
         int y = imageBlock.getY();
 
         int w = imageBlock.getWidth();
         int h = imageBlock.getHeight();
 
-        IImageBlock <A> result1;
-        IImageBlock <A> result2;
+        IImageBlock <A> r1;
+        IImageBlock <A> r2;
 
         ESplitKind dir = chooseDirection(imageBlock);
 
         if (dir == HORIZONTAL) {
-            result1 = imageBlock.getSubImage(x, y, w, h / 2);
-            result2 = imageBlock.getSubImage(x, y + h / 2, w, h / 2);
+            r1 = imageBlock.getSubImage(x, y, w, h / 2);
+            r2 = imageBlock.getSubImage(x, y + h / 2, w, h / 2);
         }
         else if (dir == VERTICAL) {
-            result1 = imageBlock.getSubImage(x, y, w / 2, h);
-            result2 = imageBlock.getSubImage(x + w / 2, y, w / 2, h);
+            r1 = imageBlock.getSubImage(x, y, w / 2, h);
+            r2 = imageBlock.getSubImage(x + w / 2, y, w / 2, h);
         }
         else {
             throw new IllegalStateException("Unexpected value: " + dir);
         }
 
-        getDeque().push(result1);
-        getDeque().push(result2);
+        getImageBlockDeque().push(r1);
+        getImageBlockDeque().push(r2);
+
+        getNodeDeque().push(node.createChild(r1.getAddress(r1.getX(), r1.getY())));
+        getNodeDeque().push(node.createChild(r2.getAddress(r2.getX(), r2.getY())));
     }
 
     /**
@@ -145,10 +127,10 @@ class BinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
     @Override
     @Contract(value = "_, _ -> new")
     public
-    void segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentRectangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
         ESplitKind dir = chooseDirection(imageBlock);
 
-        doSegmentRectangle(imageBlock, dir);
+        doSegmentRectangle(node, imageBlock, dir);
     }
 
     /**
@@ -158,29 +140,34 @@ class BinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      * @throws ValueError
      */
     protected
-    void doSegmentRectangle ( IImageBlock <A> imageBlock, ESplitKind dir ) throws ValueError {
+    void doSegmentRectangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock, ESplitKind dir )
+            throws ValueError {
+
         int x1 = imageBlock.getX();
         int y1 = imageBlock.getY();
 
         int w = imageBlock.getWidth();
         int h = imageBlock.getHeight();
 
-        IImageBlock <A> result1 = null;
-        IImageBlock <A> result2 = null;
+        IImageBlock <A> r1;
+        IImageBlock <A> r2;
         if (dir == VERTICAL) {
-            result1 = imageBlock.getSubImage(x1, y1, w / 2, h);
-            result2 = imageBlock.getSubImage(x1 + w / 2, y1, w / 2, h);
+            r1 = imageBlock.getSubImage(x1, y1, w / 2, h);
+            r2 = imageBlock.getSubImage(x1 + w / 2, y1, w / 2, h);
         }
         else if (dir == HORIZONTAL) {
-            result1 = imageBlock.getSubImage(x1, y1, w, h / 2);
-            result2 = imageBlock.getSubImage(x1, y1 + h / 2, w, h / 2);
+            r1 = imageBlock.getSubImage(x1, y1, w, h / 2);
+            r2 = imageBlock.getSubImage(x1, y1 + h / 2, w, h / 2);
         }
         else {
             throw new IllegalStateException("Unexpected value: " + dir);
         }
 
-        getDeque().push(result1);
-        getDeque().push(result2);
+        getImageBlockDeque().push(r1);
+        getImageBlockDeque().push(r2);
+
+        getNodeDeque().push(node.createNode(node, r1.getAddress(r1.getX(), r1.getY())));
+        getNodeDeque().push(node.createNode(node, r2.getAddress(r2.getX(), r2.getY())));
     }
 
     /**
@@ -188,22 +175,17 @@ class BinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      */
     @Override
     public
-    void segmentTriangle ( IImageBlock <A> imageBlock ) {
+    void segmentTriangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) {
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public
-    void segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
-
-    }
-
     /**
-     * @param node
+     * @param imageBlock
+     * @throws ValueError
      */
     @Override
     public
-    void addLeafNode ( TreeNode <N, A, G> node ) {
+    void segmentPolygon ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
 
     }
 
@@ -215,9 +197,7 @@ class BinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      */
     @Override
     public
-    List <Vertex> generateVerticesSet ( RegionOfInterest <A> roi,
-                                        int blockWidth,
-                                        int blockHeight ) {
+    List <Vertex> generateVerticesSet ( IImageBlock <A> roi, int blockWidth, int blockHeight ) {
         return List.of(new Vertex[0]);
     }
 
@@ -228,13 +208,10 @@ class BinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      * @return
      * @throws ValueError
      */
-    @Override
     public
-    List <IImageBlock <A>> generateInitialRangeBlocks ( RegionOfInterest <A> roi,
-                                                        int blockWidth,
-                                                        int blockHeight )
+    List <IImageBlock <A>> generateInitialRangeBlocks ( IImageBlock <A> roi, int blockWidth, int blockHeight )
             throws ValueError {
 
-        return List.of(roi);
+        return List.of(roi.getSubImage());
     }
 }

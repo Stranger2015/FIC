@@ -1,4 +1,4 @@
-package org.stranger2015.opencv.fic.core.index;
+package org.stranger2015.opencv.fic.core.math.index;
 
 import org.locationtech.jts.index.ItemVisitor;
 import org.stranger2015.opencv.fic.core.geom.Envelope;

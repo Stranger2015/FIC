@@ -3,7 +3,7 @@ package org.stranger2015.opencv.fic.core;
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.MatOfInt;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.core.codec.RegionOfInterest;
+import org.stranger2015.opencv.fic.core.codec.IImageBlock;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.utils.BitBuffer;
 
@@ -587,7 +587,7 @@ class BinTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
      */
 //    @Override
     public
-    List <RegionOfInterest <A>> getRegions () {
+    List <IImageBlock <A>> getRegions () {
         return null;
     }
 
@@ -596,12 +596,12 @@ class BinTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
      */
 //    @Override
     public
-    void setRegions ( List <RegionOfInterest <A>> regions ) {
+    void setRegions ( List <IImageBlock <A>> regions ) {
 
     }
 
     public
-    void put ( int x, int i ) {
+    void put ( int x, int i, double[] pixel ) {
 
     }
 
@@ -653,7 +653,7 @@ class BinTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
 
     @Override
     public
-    Rectangle getBoundingBox () {
+    IIntSize getBoundingBox () {
         return boundingBox;
     }
 

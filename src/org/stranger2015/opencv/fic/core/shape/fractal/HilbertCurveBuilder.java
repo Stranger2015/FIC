@@ -13,11 +13,11 @@ package org.stranger2015.opencv.fic.core.shape.fractal;
  */
 
 import org.jetbrains.annotations.Contract;
+import org.stranger2015.opencv.fic.core.AbstractNode;
 import org.stranger2015.opencv.fic.core.geom.Coordinate;
 import org.stranger2015.opencv.fic.core.geom.Geometry;
 import org.stranger2015.opencv.fic.core.geom.GeometryFactory;
 import org.stranger2015.opencv.fic.core.geom.LineSegment;
-import org.stranger2015.opencv.fic.core.shape.GeometricShapeBuilder;
 
 import static org.stranger2015.opencv.fic.core.shape.fractal.HilbertCode.*;
 
@@ -29,7 +29,7 @@ import static org.stranger2015.opencv.fic.core.shape.fractal.HilbertCode.*;
  * @see HilbertCode
  */
 public
-class HilbertCurveBuilder extends GeometricShapeBuilder {
+class HilbertCurveBuilder extends AbstractNode.GeometricShapeBuilder {
 
     /**
      * Creates a new instance using the provided {@link GeometryFactory}.

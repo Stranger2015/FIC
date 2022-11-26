@@ -32,7 +32,7 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
             IDistanceator <A> comparator,
             Set <ImageTransform <A, G>> transforms,
             Set <IImageFilter <A>> filters,
-            FicFileModel <N, A, G> fractalModel
+            FCImageModel <N, A, G> fractalModel
     ) {
         super(
                 scheme,
@@ -118,8 +118,8 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
     @Override
     public
-    List <RegionOfInterest <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds ) throws ValueError {
-        return List.of(new RegionOfInterest <>(image));
+    List <IImageBlock <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds ) throws ValueError {
+        return List.of(new IImageBlock <>(image));
     }
 //
 //    @Override
@@ -128,7 +128,6 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
 //        return new HvPartitionProcessor <>(image, image.getWidth(), image.getHeight());
 //    }
 
-/
     /**
      * @param node
      */
@@ -147,6 +146,9 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
 
     }
 
+    /**
+     * @param node
+     */
     @Override
     public
     void addLeafNode ( TreeNodeBase <N, A, G> node ) {
@@ -158,83 +160,6 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
     Class <?> getTilerClass () {
         return tilerClass;
     }
-
-    /**
-     * @param node
-     */
-//    @Override
-    public
-    void addLeafNode ( TreeNode <N, A, G> node ) {
-
-    }
-
-    /**
-     * @param tiler
-     * @param scheme
-     * @param encoder
-     * @param image
-     * @param rangeSize
-     * @param domainSize
-     * @return
-     */
-//    @Override
-//    public
-//    ImageBlockGenerator <N, A, G> createBlockGenerator ( ITiler <M, A> tiler,
-//                                                            EPartitionScheme scheme,
-//                                                            IEncoder <N, A, G> encoder,
-//                                                            GrayScaleImage <A> image,
-//                                                            IntSize rangeSize,
-//                                                            IntSize domainSize ) {
-//        return new ;
-//    }
-//
-//    /**
-//     * @return
-//     */
-//    @Override
-//    public
-//    FicFileModel <N, A, G> getModel () {
-//        return null;
-//    }
-
-//    /**
-//     * @param filename
-//     * @return
-//     */
-//    @Override
-//    public
-//    FicFileModel <N, A, G> loadModel ( String filename ) {
-//        return null;
-//    }
-
-//    /**
-//     * @param image
-//     * @return
-//     */
-//    @Override
-//    public
-//    void segmentImage ( IImage<A> image ) {
-//        blockGenerator.generateRangeBlocks(image);
-//        blockGenerator.generateDomainBlocks(image);
-//        blockGenerator.createCodebookBlocks(image, domainBlocks);
-//    }
-
-//    /**
-//     * @param encoder
-//     * @param image
-//     * @param rangeSize
-//     * @param domainSize
-//     * @return
-//     */
-//    @Override
-//    protected
-//    ImageBlockGenerator <N, A, G> createBlockGenerator ( IEncoder <N, A, G> encoder,
-//                                                            IImage<A> image,
-//                                                            IntSize rangeSize,
-//                                                            IntSize domainSize ) {
-//        return new HvBlockGenerator <>(new HvTiler <>(image.rows(), image.cols()), encoder, image, rangeSize, domainSize);
-//    }
-
 
     /**
      * @param image
@@ -291,23 +216,19 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
     @Override
     public
-    List <IImageBlock <A>> generateAllTransformedBlocks ( IImage <A> image, int sourceSize, int destinationSize, int step ) {
+    List <IImageBlock <A>> generateAllTransformedBlocks ( IImage <A> image,
+                                                          int sourceSize,
+                                                          int destinationSize,
+                                                          int step ) {
         return null;//todo
     }
-
-    @Override
-    public
-    ISingleLinked <IPipeline <IImage <A>, IImage <A>>> getNext () {
-        return null;
-    }
-
-    @Override
+//    @Override
     public
     IImage <A> getInput () {
         return null;
     }
 
-    @Override
+//    @Override
     public
     IImage <A> getOutput () {
         return null;

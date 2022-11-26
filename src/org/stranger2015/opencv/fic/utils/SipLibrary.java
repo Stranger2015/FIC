@@ -741,4 +741,9 @@ class SipLibrary<A extends IAddress <A>> extends Library <A> implements IAddress
     int[] getPowersOfThree () {
         return powersOfThree;
     }
+
+    public
+    IImage <A> convertImageToSipImage ( SipTree<A,?> buildTree ) {
+        return null;
+    }
 }

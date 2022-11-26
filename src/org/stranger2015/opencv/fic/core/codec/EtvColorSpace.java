@@ -10,4 +10,3 @@ enum EtvColorSpace {
     Y_CB_CR,
     Y_PB_PR,
 }
-//

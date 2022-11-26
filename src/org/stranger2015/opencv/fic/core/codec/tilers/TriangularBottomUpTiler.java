@@ -2,6 +2,7 @@ package org.stranger2015.opencv.fic.core.codec.tilers;
 
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
 import org.stranger2015.opencv.utils.BitBuffer;
 
@@ -47,61 +48,53 @@ class TriangularBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <
                 getBuilder());
     }
 
+    /**
+     * @param node
+     * @param imageBlock
+     * @throws ValueError
+     */
     @Override
     public
-    void segmentGeometry ( IImageBlock <A> imageBlock ) throws ValueError {
-        return null;
+    void segmentGeometry ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
     }
 
+    /**
+     * @param node
+     * @param imageBlock
+     * @throws ValueError
+     */
     @Override
     public
-    void segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
-        return null;
-    }
-//
-//    /**
-//     * @param imageBlock
-//     * @param minRangeSize
-//     * @param queue
-//     * @return
-//     * @throws ValueError
-//     */
-//    @Override
-//    public
-//    List <IImageBlock <A>> doTile ( IImageBlock <A> imageBlock,
-//                                    IIntSize minRangeSize,
-//                                    Deque <IImageBlock <A>> queue ) throws ValueError {
-//
-//        return super.doTile(imageBlock, minRangeSize, queue);
-//    }
-
-    @Override
-    public
-    IIntSize getRangeSize () {
-        return null;
+    void segmentRectangle (TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
     }
 
+    /**
+     * @param node
+     * @param imageBlock
+     * @throws ValueError
+     */
     @Override
     public
-    IIntSize getDomainSize () {
-        return null;
+    void segmentPolygon (TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
     }
 
+    /**
+     * @param node
+     * @param imageBlock
+     * @throws ValueError
+     */
     @Override
     public
-    void segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
-        return null;
+    void segmentQuadrilateral ( TreeNodeBase <N, A, G> node,IImageBlock <A> imageBlock ) throws ValueError {
+
     }
 
+    /**
+     * @param node
+     */
     @Override
     public
-    void segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
-        return null;
-    }
-
-    @Override
-    public
-    void addLeafNode ( TreeNode <N, A, G> node ) {
+    void addLeafNode ( LeafNode <N, A, G> node ) {
 
     }
 
@@ -111,6 +104,6 @@ class TriangularBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <
     @Override
     public
     int successorAmount () {
-        return 0;
+        return 1;
     }
 }

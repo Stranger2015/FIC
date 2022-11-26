@@ -10,7 +10,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
 
 public
 class EncoderFactory<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer> {
-    protected
+    public
     EncoderFactory () {
     }
 
@@ -25,7 +25,7 @@ class EncoderFactory<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
 //        IDistanceator <A> comparator,
 //        Set <ImageTransform <A, G>> imageTransforms,
 //        Set <IImageFilter <A>> imageFilters,
-//        FicFileModel <N, A, G> fractalModel    }
+//        FCImageModel <N, A, G> fractalModel    }
 
     /**
      * @param image

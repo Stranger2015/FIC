@@ -69,7 +69,34 @@ public class CompressedImage<A extends IAddress <A>>
      */
     @Override
     public
-    List <ImageTransform <A, ?>> getTransforms () {
+    List <IImageBlock <A>> getRangeBlocks () {
+        return null;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    List <IImageBlock <A>> getDomainBlocks () {
+        return null;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    IIntSize getOriginalSize () {
+        return null;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    List <ImageTransform <A, G>> getTransforms () {
         return transforms;
     }
 
@@ -142,11 +169,11 @@ public class CompressedImage<A extends IAddress <A>>
     }
 
     /**
-     * @param meanPixelValue
+     * @param originalImageWidth
      */
-//    @Override
+    @Override
     public
-    void setMeanPixelValue ( int meanPixelValue ) {
+    void setOriginalImageWidth ( int originalImageWidth ) {
 
     }
 
@@ -159,38 +186,46 @@ public class CompressedImage<A extends IAddress <A>>
         return originalImageHeight;
     }
 
+    /**
+     * @param o
+     * @return
+     */
     @Override
     public
     int compareTo ( @NotNull IIntSize o ) {
         return -1;
     }
 
+    /**
+     * @return
+     */
     @Override
     public
     Size toSize () {
         return IIntSize.super.toSize();
     }
 
-    /**
-     * @param address
-     * @param pixel
-     */
+//    /**
+//     * @param address
+//     * @param pixel
+//     */
+
 //    @Override
-    public
-    void putPixel ( IAddress <A> address, int pixel ) {
-
-    }
-
-    /**
-     * @param i
-     * @param i1
-     * @param width
-     * @param height
-     * @param img1pixels
-     * @param i2
-     * @param i3
-     */
-    @Override
+////    public
+////    void putPixel ( IAddress <A> address, double[] pixel ) {
+////
+////    }
+//
+//    /**
+//     * @param i
+//     * @param i1
+//     * @param width
+//     * @param height
+//     * @param img1pixels
+//     * @param i2
+//     * @param i3
+//     */
+//    @Override
     public
     void getRGB ( int i, int i1, int width, int height, int[] img1pixels, int i2, int i3 ) {
 

@@ -41,6 +41,7 @@ class EdgeIntersectionList {
             return ei;
         }
         nodeMap.put(eiNew, eiNew);
+
         return eiNew;
     }
 
@@ -112,71 +113,69 @@ class EdgeIntersectionList {
      * (and including) the two intersections.
      * The label for the new edge is the same as the label for the parent edge.
      */
-    Edge createSplitEdge( org.locationtech.jts.geomgraph.EdgeIntersection ei0, org.locationtech.jts.geomgraph.EdgeIntersection ei1)
-    {
+    Edge createSplitEdge ( EdgeIntersection ei0, EdgeIntersection ei1 ) {
 //Debug.print("\ncreateSplitEdge"); Debug.print(ei0); Debug.print(ei1);
         int npts = ei1.segmentIndex - ei0.segmentIndex + 2;
 
-        org.locationtech.jts.geom.Coordinate lastSegStartPt = edge.pts[ei1.segmentIndex];
+        Coordinate lastSegStartPt = edge.pts[ei1.segmentIndex];
         // if the last intersection point is not equal to the its segment start pt,
         // add it to the points list as well.
         // (This check is needed because the distance metric is not totally reliable!)
         // The check for point equality is 2D only - Z values are ignored
-        boolean useIntPt1 = ei1.dist > 0.0 || ! ei1.coord.equals2D(lastSegStartPt);
-        if (! useIntPt1) {
+        boolean useIntPt1 = ei1.dist > 0.0 || !ei1.coord.equals2D(lastSegStartPt);
+        if (!useIntPt1) {
             npts--;
         }
 
-        org.locationtech.jts.geom.Coordinate[] pts = new org.locationtech.jts.geom.Coordinate[npts];
+        Coordinate[] pts = new Coordinate[npts];
         int ipt = 0;
-        pts[ipt++] = new org.locationtech.jts.geom.Coordinate(ei0.coord);
+        pts[ipt++] = new Coordinate(ei0.coord);
         for (int i = ei0.segmentIndex + 1; i <= ei1.segmentIndex; i++) {
             pts[ipt++] = edge.pts[i];
         }
-        if (useIntPt1) pts[ipt] = ei1.coord;
-        return new org.locationtech.jts.geomgraph.Edge(pts, new org.locationtech.jts.geomgraph.Label(edge.label));
-    }
-            return new Edge(pts, new Label(edge.getLabel().getGeometryCount()));
+        if (useIntPt1) {
+            pts[ipt] = ei1.coord;
         }
-
-
-        public void print ()
-        {
-            System.out.println("Intersections:");
-            for (Iterator <EdgeIntersection> it = iterator(); it.hasNext(); ) {
-                EdgeIntersection ei = it.next();
-                System.out.print(ei);
-            }
-        }
+        return new Edge(pts, new Label(edge.getLabel()));
     }
 
-    /**
-     * MonotoneChains are a way of partitioning the segments of an edge to
-     * allow for fast searching of intersections.
-     * Specifically, a sequence of contiguous line segments
-     * is a monotone chain if all the vectors defined by the oriented segments
-     * lies in the same quadrant.
-     * <p>
-     * Monotone Chains have the following useful properties:
-     * <ol>
-     * <li>the segments within a monotone chain will never intersect each other
-     * <li>the envelope of any contiguous subset of the segments in a monotone chain
-     * is simply the envelope of the endpoints of the subset.
-     * </ol>
-     * Property 1 means that there is no need to test pairs of segments from within
-     * the same monotone chain for intersection.
-     * Property 2 allows
-     * binary search to be used to find the intersection points of two monotone chains.
-     * For many types of real-world data, these properties eliminate a large number of
-     * segment comparisons, producing substantial speed gains.
-     * <p>
-     * Note that due to the efficient intersection test, there is no need to limit the size
-     * of chains to obtain fast performance.
-     *
-     * @version 1.7
-     */
-    public static
-    class MonotoneChainIndexer{
+    public
+    void print () {
+        System.out.println("Intersections:");
+        for (Iterator <EdgeIntersection> it = iterator(); it.hasNext(); ) {
+            EdgeIntersection ei = it.next();
+            System.out.print(ei);
+        }
+    }
+}
+
+/**
+ * MonotoneChains are a way of partitioning the segments of an edge to
+ * allow for fast searching of intersections.
+ * Specifically, a sequence of contiguous line segments
+ * is a monotone chain if all the vectors defined by the oriented segments
+ * lies in the same quadrant.
+ * <p>
+ * Monotone Chains have the following useful properties:
+ * <ol>
+ * <li>the segments within a monotone chain will never intersect each other
+ * <li>the envelope of any contiguous subset of the segments in a monotone chain
+ * is simply the envelope of the endpoints of the subset.
+ * </ol>
+ * Property 1 means that there is no need to test pairs of segments from within
+ * the same monotone chain for intersection.
+ * Property 2 allows
+ * binary search to be used to find the intersection points of two monotone chains.
+ * For many types of real-world data, these properties eliminate a large number of
+ * segment comparisons, producing substantial speed gains.
+ * <p>
+ * Note that due to the efficient intersection test, there is no need to limit the size
+ * of chains to obtain fast performance.
+ *
+ * @version 1.7
+ */
+public
+class MonotoneChainIndexer {
 
     public static
     int[] toIntArray ( List <Integer> list ) {

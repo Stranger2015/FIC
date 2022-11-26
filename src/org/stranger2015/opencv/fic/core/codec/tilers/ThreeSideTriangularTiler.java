@@ -3,10 +3,11 @@ package org.stranger2015.opencv.fic.core.codec.tilers;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
-import org.stranger2015.opencv.fic.core.codec.RegionOfInterest;
+import org.stranger2015.opencv.fic.core.codec.IImageBlock;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
 import org.stranger2015.opencv.utils.BitBuffer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -50,13 +51,14 @@ class ThreeSideTriangularTiler<N extends TreeNode <N, A, G>, A extends IAddress 
     }
 
     /**
+     * @param node
      * @param imageBlock
      * @throws ValueError
      */
     @Override
     public
-    void segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
-        return List.of();
+    void segmentRectangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+
     }
 
     /**
@@ -65,21 +67,30 @@ class ThreeSideTriangularTiler<N extends TreeNode <N, A, G>, A extends IAddress 
      */
     @Override
     public
-    void segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
-        return List.of();
+    void segmentPolygon ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+        List.of();
+    }
+
+    /**
+     * @param imageBlock
+     * @throws ValueError
+     */
+    @Override
+    public
+    void segmentQuadrilateral (TreeNodeBase <N, A, G> node,  IImageBlock <A> imageBlock ) throws ValueError {
+        List.of();
     }
 
     @Override
     public
-    List <Vertex> generateVerticesSet ( RegionOfInterest <A> roi,
+    List <Vertex> generateVerticesSet ( IImageBlock <A> roi,
                                    int blockWidth,
                                    int blockHeight ) {
-        return new Vertex[0];
+        return new ArrayList <>();
     }
 
-    @Override
     public
-    List <IImageBlock <A>> generateInitialRangeBlocks ( RegionOfInterest <A> roi,
+    List <IImageBlock <A>> generateInitialRangeBlocks ( IImageBlock <A> roi,
                                                         int blockWidth,
                                                         int blockHeight ) throws ValueError {
         return List.of();
@@ -93,7 +104,7 @@ class ThreeSideTriangularTiler<N extends TreeNode <N, A, G>, A extends IAddress 
 
     @Override
     public
-    List <IImageBlock <A>> generateRangeBlocks ( RegionOfInterest <A> roi,
+    List <IImageBlock <A>> generateRangeBlocks ( IImageBlock <A> roi,
                                                  int blockWidth,
                                                  int blockHeight ) throws ValueError {
         return List.of();

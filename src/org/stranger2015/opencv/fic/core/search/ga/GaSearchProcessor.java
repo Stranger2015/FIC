@@ -35,7 +35,7 @@ import java.util.stream.IntStream;
  *      While Loop (Number of iterations reached){
  *          While Loop (until all Regions not coded){
  * <p>
- *              -Select RegionOfInterest Blocks sequentially
+ *              -Select IImageBlock Blocks sequentially
  * <p>
  *              While Loop (until last generation reached){
  * <p>

@@ -40,7 +40,7 @@ class DtImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>
      */
     @Override
     public
-    List <RegionOfInterest <A>> generateRegions ( IImage <A> inputImage, List <Rectangle> bounds ) throws ValueError {
+    List <IImageBlock <A>> generateRegions ( IImage <A> inputImage, List <Rectangle> bounds ) throws ValueError {
         return super.generateRegions(inputImage, bounds);
     }
 
@@ -52,7 +52,7 @@ class DtImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>
      */
     @Override
     public
-    List <IImageBlock <A>> generateRangeBlocks ( RegionOfInterest <A> roi, int rangeSize, int domainSize ) {
+    List <IImageBlock <A>> generateRangeBlocks ( IImageBlock <A> roi, int rangeSize, int domainSize ) {
 //        List <IImageBlock <A>> list = new ArrayList <>();
 //        int x=0;
 //        int y=0;

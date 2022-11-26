@@ -72,7 +72,7 @@ class BinTreePartitionProcessor<N extends TreeNode <N, A, G>, A extends IAddress
      */
     @Override
     public
-    List <RegionOfInterest <A>> generateRegions ( IImage <A> image, List <Rectangle> rectangles ) {
+    List <IImageBlock <A>> generateRegions ( IImage <A> image, List <Rectangle> rectangles ) {
         return null;
     }
 }

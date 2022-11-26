@@ -25,8 +25,20 @@ import org.stranger2015.opencv.fic.core.math.DD;
  */
 public
 class Triangle<T extends Triangle <T>>
-
         extends Polygon <T> {
+
+    /**
+     * @param coordinates
+     */
+    public
+    Triangle ( LinearRing coordinates ) {
+        super(coordinates);
+    }
+
+    public
+    Triangle ( CoordinateList coordinates ) {
+        super(coordinates);
+    }
 
     /**
      * Tests whether a triangle is acute. A triangle is acute if all interior

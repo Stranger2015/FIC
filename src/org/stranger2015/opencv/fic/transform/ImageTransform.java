@@ -5,10 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-import org.stranger2015.opencv.fic.core.CompressedImage;
-import org.stranger2015.opencv.fic.core.IAddress;
-import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.fic.core.ValueError;
+import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import static org.stranger2015.opencv.fic.core.IAddress.valueOf;
@@ -29,9 +26,12 @@ import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
  * [  m10  m11  m12  ] <=> [ shy  scy  try ]
  * [   0    0    1   ]     [  0   0     1  ]
  */
-public abstract
+public
 class ImageTransform<A extends IAddress <A>, G extends BitBuffer>
         implements ITransform <A, G> {
+
+    private int originalDomainX;
+    private int originalDomainY;
 
     /**
      * @param image
@@ -46,9 +46,9 @@ class ImageTransform<A extends IAddress <A>, G extends BitBuffer>
     /**
      * @throws ValueError
      */
-    protected
+    public
     ImageTransform () throws ValueError {
-        address = valueOf(0, inputImage.getWidth(), i2);
+        address = valueOf(0, EAddressKind.ORDINARY);//TODO squiral == SIP
         outputImage = null;
         type = BILINEAR;
     }
@@ -62,9 +62,41 @@ class ImageTransform<A extends IAddress <A>, G extends BitBuffer>
     }
 
     /**
+     * @param originalDomainX
+     */
+    public
+    void setOriginalDomainX ( int originalDomainX ) {
+        this.originalDomainX = originalDomainX;
+    }
+
+    /**
+     * @return
+     */
+    public
+    int getOriginalDomainX () {
+        return originalDomainX;
+    }
+
+    /**
+     * @param originalDomainY
+     */
+    public
+    void setOriginalDomainY ( int originalDomainY ) {
+        this.originalDomainY = originalDomainY;
+    }
+
+    /**
+     * @return
+     */
+    public
+    int getOriginalDomainY () {
+        return originalDomainY;
+    }
+
+    /**
      *
      */
-    enum Masks {
+    enum Masks  {
         ADDRESS_MASK(0b1111_1111_1111_1111_0000_0000_0000_0000),
         BRIGHTNESS_OFFSET_MASK(0b0000_0000_0000_0000_1111_1000_0000_0000),
         CONTRAST_SCALE_MASK(0b0000_0000_0000_0000_0000_0111_1111_0000),
@@ -92,6 +124,7 @@ class ImageTransform<A extends IAddress <A>, G extends BitBuffer>
     }
 
     protected final IImage <A> outputImage;
+
     protected final EInterpolationType type;
 
     protected IAddress <A> address;//16 bits        >>> 16

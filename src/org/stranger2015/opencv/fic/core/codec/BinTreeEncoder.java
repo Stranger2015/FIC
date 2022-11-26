@@ -48,7 +48,7 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
             IDistanceator <A> comparator,
             Set <ImageTransform <A, G>> transforms,
             Set <IImageFilter <A>> filters,
-            FicFileModel <N, A, G> fractalModel ) {
+            FCImageModel <N, A, G> fractalModel ) {
 
         super(
                 scheme,
@@ -96,7 +96,8 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
                 encoder,
                 image,
                 rangeSize,
-                domainSize);
+                domainSize
+        );
     }
 
     /**
@@ -106,11 +107,6 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
     @Override
     public
     IPartitionProcessor <N, A, G> doCreatePartitionProcessor ( ITiler <N, A, G> tiler ) {
-        return new BinTreePartitionProcessor <>( tiler, imageBlockGenerator, nodeBuilder);
-    }
-
-    public
-    IPartitionProcessor <N, A, G> createPartitionProcessor0 ( ITiler <N, A, G> tiler ) {
         return new BinTreePartitionProcessor <>(tiler, imageBlockGenerator, nodeBuilder);
     }
 
@@ -132,15 +128,6 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
 
     }
 
-    /**
-     * @param node
-     */
-    @Override
-    public
-    void addLeafNode ( TreeNodeBase <N, A, G> node ) {
-
-    }
-
     @Override
     public
     Class <?> getTilerClass () {
@@ -152,7 +139,25 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Override
     public
-    CompressedImage <A> getOutputImage () {
+    List <IImageBlock <A>> getRangeBlocks () {
+        return null;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    List <IImageBlock <A>> getDomainBlocks () {
+        return null;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    ICompressedImage <A> getOutputImage () {
         return super.getOutputImage();
     }
 
@@ -160,12 +165,15 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      * @param inputImage
      * @return
      */
-    @Override
+    //@Override
     public final
-    List <RegionOfInterest <A>> segmentImage ( IImage <A> inputImage ) throws ValueError {
+    List <IImageBlock <A>> segmentImage ( IImage <A> inputImage ) throws ValueError {
         return segmentImage(inputImage, List.of());
     }
 
+    /**
+     * @throws Exception
+     */
     @Override
     public
     void initialize () throws Exception {
@@ -179,41 +187,41 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
 
     @Override
     public
-    IImage <A> doEncode ( IImage <A> image ) throws ValueError {
+    IImage <A> doEncode ( IImage <A> image ) throws ValueError, ReflectiveOperationException {
         return super.doEncode(image);
     }
 
-    /**
-     * @param roi
-     * @param blockWidth
-     * @param blockHeight
-     */
-    @Override
-    public
-    void segmentRegion ( RegionOfInterest <A> roi, int blockWidth, int blockHeight ) throws ValueError {
+//    /**
+//     * @param roi
+//     * @param blockWidth
+//     * @param blockHeight
+//     */
+//    @Override
+//    public
+//    void segmentRegion ( IImageBlock <A> roi, int blockWidth, int blockHeight ) throws ValueError {
 //        List <IImageBlock <A>> list = imageBlockGenerator.generateRangeBlocks(roi, blockWidth, blockHeight);
-//        ?roi.rangeBlocks.addAll(list);
-    }
-
+//        roi.rangeBlocks.addAll(list);
+//    }
+//
     /**
      * @param image
      * @return
      */
-    @Override
     public
-    List <RegionOfInterest <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds ) throws ValueError {
-        List <RegionOfInterest <A>> result;
-        List <RegionOfInterest <A>> regionOfInterests = new ArrayList <>();
+    List <IImageBlock <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds ) throws ValueError {
+        List <IImageBlock <A>> result = null;
+        List <IImageBlock <A>> rois = new ArrayList <>();
         if (bounds.isEmpty()) {
-            result = List.of(new RegionOfInterest <>(image.getSubImage(
+            result = List.of(
+                    image.getSubImage(
                     0,
                     0,
                     image.getWidth(),
-                    image.getHeight())));
+                    image.getHeight()));
         }
         else {
-            imageBlockGenerator.generateRegions(image, bounds);
-            result = regionOfInterests;
+//            imageBlockGenerator.generateRegions(image, bounds);
+//            result = regionOfInterests;
         }
 
         return result;
@@ -226,7 +234,7 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Override
     public
-    int getDistance ( IImageBlock <A> range, IImageBlock <A> domain ) {
+    int[] getDistance ( IImageBlock <A> range, IImageBlock <A> domain ) {
         return super.getDistance(range, domain);
     }
 
@@ -300,7 +308,7 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
             IImage <A> image,
             int sourceSize,
             int destinationSize,
-            int step ) {
+            int step ) throws ValueError {
 
         return List.of(image.getSubImage());
     }
@@ -668,20 +676,4 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
     void finalize () throws Throwable {
         super.finalize();
     }
-
-//    /**
-//     * @return
-//     */
-//    public
-//    IImage <A> getInput () {
-//        return null;
-//    }
-//
-//    /**
-//     * @return
-//     */
-//    public
-//    IImage <A> getOutput () {
-//        return null;
-//    }
 }

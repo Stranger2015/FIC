@@ -75,7 +75,7 @@ class BinTreeImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddres
      */
     @Override
     public
-    List <RegionOfInterest <A>> generateRegions ( IImage <A> inputImage, List <Rectangle> bounds ) throws ValueError {
+    List <IImageBlock <A>> generateRegions ( IImage <A> inputImage, List <Rectangle> bounds ) throws ValueError {
         return super.generateRegions(inputImage, bounds);
     }
 
@@ -99,7 +99,7 @@ class BinTreeImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddres
      */
     @Override
     public
-    List <IImageBlock <A>> generateRangeBlocks ( RegionOfInterest <A> roi,
+    List <IImageBlock <A>> generateRangeBlocks ( IImageBlock <A> roi,
                                                  int rangeSize,
                                                  int domainSize ) throws ValueError {
         return super.generateRangeBlocks(
@@ -115,7 +115,7 @@ class BinTreeImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddres
      */
     @Override
     public
-    List <IImageBlock <A>> generateDomainBlocks ( RegionOfInterest <A> roi,
+    List <IImageBlock <A>> generateDomainBlocks ( IImageBlock <A> roi,
                                                   List <IImageBlock <A>> rangeBlocks )
             throws ValueError {
 
@@ -130,7 +130,7 @@ class BinTreeImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddres
      */
     @Override
     public
-    List <IImageBlock <A>> createCodebookBlocks ( RegionOfInterest <A> roi, List <IImageBlock <A>> domainBlocks )
+    List <IImageBlock <A>> createCodebookBlocks ( IImageBlock <A> roi, List <IImageBlock <A>> domainBlocks )
             throws ValueError {
 
         return super.createCodebookBlocks(roi, domainBlocks);

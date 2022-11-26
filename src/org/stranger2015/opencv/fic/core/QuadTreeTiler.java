@@ -46,7 +46,7 @@ class QuadTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exte
      */
     @Override
     public
-    void segmentRectangle ( IImageBlock <A> imageBlock ) {
+    void segmentRectangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
         throw new UnsupportedOperationException("QuadTreeTiler#segmentRectangle()");
     }
 

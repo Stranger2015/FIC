@@ -64,7 +64,8 @@ class BlockSegmentationTransform<A extends IAddress <A>, G extends BitBuffer>
      */
     @Override
     public
-    IImage <A> transform ( M inputImage, Mat transformMatrix, EInterpolationType type ) {
+    IImage <A> transform ( IImage<A> inputImage, Mat transformMatrix, EInterpolationType type ) {
+
         return super.transform(inputImage, transformMatrix, type);
     }
 }

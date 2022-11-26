@@ -4,7 +4,6 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.ICodec;
-import org.stranger2015.opencv.fic.utils.GrayScaleImage;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
@@ -52,12 +51,12 @@ interface IImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
     default
     IImage<A> preprocess ( IImage<A> inputImage ) throws ValueError {
         IntSize size = adjustSize(
-                inputImage.getAddress().radix(),
+                inputImage.getAddress(0,0).radix(),
                 inputImage.getWidth(),
                 inputImage.getHeight()
         );
         //image or block or roi
-        IImage<A> destImage = new GrayScaleImage <A>(inputImage.getMat());
+        IImage<A> destImage = new Image <>(inputImage.getMat());
         Imgproc.resize(
                 inputImage.getMat(),
                 destImage.getMat(),

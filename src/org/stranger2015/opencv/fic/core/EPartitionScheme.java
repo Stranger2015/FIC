@@ -2,17 +2,13 @@ package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.stranger2015.opencv.fic.core.codec.IListener;
 import org.stranger2015.org.enumus.Hierarchy;
-
-import java.util.List;
 
 /**
  *
  */
 public
 enum  EPartitionScheme implements ICodecs {
-
     FIXED_SIZE(CODEC, "", "", null, null),
     BIN_TREE(BIN_TREE_CODEC, BIN_TREE_ENCODER, BIN_TREE_DECODER, null, null),
     DCT(DCT_CODEC, DCT_ENCODER, DCT_DECODER, null, null),
@@ -61,7 +57,6 @@ enum  EPartitionScheme implements ICodecs {
                        EPartitionScheme parent,
                        EPartitionScheme backend
     ) {
-
         this.codecClassName = codecClassName;
         this.encoderClassName = encoderClassName;
         this.decoderClassName = decoderClassName;
@@ -78,6 +73,7 @@ enum  EPartitionScheme implements ICodecs {
                        String encoderClassName,
                        String decoderClassName,
                        EPartitionScheme parent) {
+
         this(codecClassName, encoderClassName, decoderClassName, parent, null);
     }
 
@@ -134,12 +130,19 @@ enum  EPartitionScheme implements ICodecs {
         return PATH + encoderClassName;
     }
 
-    /**
-     * @return 
-     */
-    @Contract(pure = true)
-    public @NotNull
-    String getDecoderClassName () {
-        return PATH + decoderClassName;
-    }
+//    /**
+//     * @return
+//     */
+//    @Contract(pure = true)
+//    public @NotNull
+//    String getDecoderClassName () {
+//        return PATH + decoderClassName;
+//    }
+//    @Contract(value = "_ -> !null", pure = true)
+//    String getTilerClassName ( String encoderClassName) {
+//        Map<String, String> mapper=new HashMap <>();
+//        mapper.put(BIN_TREE_ENCODER, );
+//
+//        return PATH + encoderClassName;
+//    }
 }

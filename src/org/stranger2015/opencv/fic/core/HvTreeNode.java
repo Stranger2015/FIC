@@ -13,8 +13,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
  * @param <N>
  * @param <A>
  */
-public class HvTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, M extends IImage<A>, G extends BitBuffer>
-
+public class HvTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
        extends TreeNodeBase <N, A, G> {
 
     /**
@@ -100,7 +99,53 @@ public class HvTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, M 
      */
     @Override
     public
-    TreeNode<N, A, G> createNode ( TreeNode <N, A, G> parent, Rect boundingBox ) throws ValueError {
+    TreeNodeBase<N, A, G> createNode ( TreeNodeBase <N, A, G> parent, Rectangle boundingBox ) throws ValueError {
+        return null;
+    }
+
+    /**
+     * @param address@return
+     * @throws ValueError
+     */
+    @Override
+    public
+    LeafNode <N, A, G> createChild ( IAddress <A> address ) throws ValueError {
+        return null;
+    }
+
+    /**
+     * @param imageBlock
+     * @param address
+     * @return
+     * @throws ValueError
+     */
+    @Override
+    public
+    LeafNode <N, A, G> createChild ( IImageBlock <A> imageBlock, IAddress <A> address ) throws ValueError {
+        return null;
+    }
+
+    /**
+     * @param parent
+     * @param imageBlock
+     * @param address
+     * @return
+     * @throws ValueError
+     */
+    @Override
+    public
+    TreeNodeBase <N, A, G> createNode ( TreeNodeBase <N, A, G> parent, IImageBlock <A> imageBlock, IAddress <A> address ) throws ValueError {
+        return null;
+    }
+
+    /**
+     * @param parent
+     * @param address
+     * @return
+     */
+    @Override
+    public
+    TreeNodeBase <N, A, G> createNode ( TreeNodeBase <N, A, G> parent, IAddress <A> address ) throws ValueError {
         return null;
     }
 
@@ -109,11 +154,11 @@ public class HvTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, M 
      * @param <A>
      */
     public static
-    class HvLeafNode<N extends HvLeafNode <N, A, G>, A extends IAddress <A>, M extends IImage<A>, G extends BitBuffer>
+    class HvLeafNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
             extends LeafNode <N, A, G>
             implements ILeaf <N, A, G> {
 
-        private M image;
+        private IImage<A> image;
 
         /**
          * @param parent
@@ -121,8 +166,8 @@ public class HvTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, M 
          * @param rect
          */
         protected
-        HvLeafNode ( TreeNode <N, A, G> parent, M image, Rect rect ) {
-            super(parent, point, image, rect);
+        HvLeafNode ( TreeNode <N, A, G> parent, IImageBlock<A> image, Rectangle rect ) throws ValueError {
+            super(parent, image, rect);
         }
 
         /**
@@ -133,7 +178,7 @@ public class HvTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, M 
          * @return
          * @throws ValueError
          */
-        @Override
+//        @Override
         public
         TreeNode <N, A, G> createChild ( GrayScaleImage <A> point, int layerIndex, int clusterIndex, IAddress <A> address ) throws ValueError {
             throw new UnsupportedOperationException();
@@ -178,14 +223,14 @@ public class HvTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, M 
          */
 //        @Override
         public
-        HvLeafNode <N, A, G> createNode ( TreeNode<N, A, G> parent, EDirection quadrant, Rect boundingBox )
+        HvLeafNode <N, A, G> createChild ( TreeNodeBase<N, A, G> parent, EDirection quadrant, Rectangle boundingBox )
                 throws ValueError {
             return new HvLeafNode <>(parent, null, boundingBox);//fixme
         }
 
         //        @Override
         public
-        HvLeafNode <N, A, G> createNode ( TreeNode <N, A, G> parent, M image, Rect boundingBox )
+        HvLeafNode <N, A, G> create ( TreeNode <N, A, G> parent, Rectangle boundingBox )
                 throws ValueError {
             return new HvLeafNode <>(parent, image, boundingBox);
         }
@@ -243,7 +288,7 @@ public class HvTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, M 
          */
         @Override
         public
-        Rect getBoundingBox () {
+        IIntSize getBoundingBox () {
             return null;
         }
 
