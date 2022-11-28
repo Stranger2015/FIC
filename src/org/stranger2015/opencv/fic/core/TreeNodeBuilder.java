@@ -25,15 +25,15 @@ class TreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>,  G e
      * maps block coordinate (point(x,y)) to image blk instance
      */
     protected final Map <Point, IImageBlock <A>> mapBlockCoordToBlock = new DualHashBidiMap <>();
+
     protected final List <IImageBlock <A>> blockList = new ArrayList <>();
 
-//    public final int sideSize;
-    public/* final */IImage <A> image;
-    private /*final */IIntSize rangeSize;
-    private /*final*/ IIntSize domainSize;
-    private/* final*/ IEncoder <N, A, G> encoder;
+    public final IImage <A> image;
+    private final IIntSize rangeSize;
+    private final IIntSize domainSize;
+    private final IEncoder <N, A, G> encoder;
 
-    public/* final*/ Library <A> library;
+    public final Library <A> library;
 
     protected TreeNode <N, A, G> lastNode;
 
@@ -45,12 +45,19 @@ class TreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>,  G e
     protected TreeNodeBase <N, A, G> lastNodeBase;
     protected LeafNode <N, A, G> lastLeafNode;
 
+    /**
+     * @param image
+     * @param rangeSize
+     * @param domainSize
+     * @param encoder
+     * @param library
+     */
     protected
-    TreeNodeBuilder ( IImage<A> image,
+    TreeNodeBuilder ( IImage <A> image,
                       IIntSize rangeSize,
                       IIntSize domainSize,
-                      IEncoder<N, A, G> encoder,
-                      Library<A> library) {
+                      IEncoder <N, A, G> encoder,
+                      Library <A> library ) {
 
         this.image = image;
         this.rangeSize = rangeSize;
@@ -59,52 +66,42 @@ class TreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>,  G e
         this.library = library;
     }
 
+    /**
+     * @return
+     */
     public
     Library <A> getLibrary () {
         return library;
     }
 
+    /**
+     * @return
+     */
     public
     IIntSize getRangeSize () {
         return rangeSize;
     }
 
+    /**
+     * @return
+     */
     public
     IIntSize getDomainSize () {
         return domainSize;
     }
 
+    /**
+     * @return
+     */
     public
     IEncoder <N, A, G> getEncoder () {
         return encoder;
     }
 
     /**
-     * @param imageBlock
      * @return
-     * @throws ValueError
      */
     @Override
-    public
-    Tree <N, A, G> buildTree ( IImageBlock <A> imageBlock ) throws ValueError {
-        TreeNode <N, A, G> root = (TreeNode <N, A, G>) lastNode.createNode(
-                null,
-                imageBlock,
-                lastNode.address);//fixme
-
-        Tree <N, A, G> tree = ITree.create(lastNode.getTreeClass(), root, imageBlock);
-        tree.getNodes().add(root);
-
-        return tree;
-    }
-
-    /**
-     *
-     * @param parent
-     * @return
-     */
-    public TreeNodeBase<N, A, G> buildNode(TreeNodeBase<N, A, G> parent){
-
-        return parent;
-    }
+    public abstract
+    ITreeNodeBuilder <N, A, G> newInstance ();
 }

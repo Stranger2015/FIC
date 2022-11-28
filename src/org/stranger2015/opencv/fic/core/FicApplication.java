@@ -15,6 +15,7 @@ import org.stranger2015.opencv.fic.transform.ScaleTransform;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -48,11 +49,49 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
                    Consumer <String> {
 
     protected final Logger logger = Logger.getLogger(String.valueOf(getClass()));
+
     private final Consumer <String> action = this;
     private final FicConfig <N, A, G> config;
-
     private EtvColorSpace colorSpace;
+    private ITreeNodeBuilder <N, A, G> nodeBuilder;
+    private final Set <ImageTransform <A, G>> transforms = new HashSet <>();
+    private final List <Task <N, A, G>> tasks = new ArrayList <>();
 
+    /**
+     * @return
+     */
+    public
+    EtvColorSpace getColorSpace () {
+        return colorSpace;
+    }
+
+    /**
+     * @param colorSpace
+     */
+    public
+    void setColorSpace ( EtvColorSpace colorSpace ) {
+        this.colorSpace = colorSpace;
+    }
+
+    /**
+     * @param nodeBuilder
+     */
+    public
+    void setNodeBuilder ( ITreeNodeBuilder <N, A, G> nodeBuilder ) {
+        this.nodeBuilder = nodeBuilder;
+    }
+
+    /**
+     * @return
+     */
+    public
+    List <Task <N, A, G>> getTasks () {
+        return tasks;
+    }
+
+    /**
+     *
+     */
     protected
     enum ECommands {
         COMPRESS,
@@ -60,14 +99,19 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
     }
 
     /**
-     * @param config
      * @param nodeBuilder
+     * @param config
+     * @param colorSpace
      */
     public
     FicApplication ( FicConfig <N, A, G> config ) {
         this.config = config;
     }
 
+    /**
+     * @param input
+     * @return
+     */
     @SuppressWarnings({"unchecked"})
     public
     IImage <A> readImage ( File input ) {
@@ -88,135 +132,9 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      * @param fractalModel
      */
     void decompress ( FCImageModel <N, A, G> fractalModel ) {
-
         fractalModel.getModel();
     }
 
-    //
-////    /**
-////     * @param tiler
-////     * @param encoder
-////     * @param image
-////     * @param rangeSize
-////     * @param domainSize
-////     * @return
-////     */
-////    @SuppressWarnings("unchecked")
-////    @Contract(value = "_, _, _, _, _ -> new", pure = true)
-////    private @NotNull
-////    ImageBlockGenerator <N, A, G> createBlockGenerator (
-////            IPartitionProcessor <N, A, G> partitionProcessor,
-////            EPartitionScheme scheme,
-////            IEncoder <N, A, G> encoder,
-////            IImage <A> image,
-////            IIntSize rangeSize,
-////            IIntSize domainSize
-////    ) {
-////        return new ImageBlockGenerator <>(
-////                partitionProcessor,
-////                scheme,
-////                encoder,
-////                image,
-////                rangeSize,
-////                domainSize
-////        ) {
-////            /**
-////             * @param partitionProcessor
-////             * @param scheme
-////             * @param encoder
-////             * @param image
-////             * @param rangeSize
-////             * @param domainSize
-////             * @return
-////             */
-////            @Override
-////            public
-////            ImageBlockGenerator <N, A, G> newInstance ( IPartitionProcessor <N, A, G> partitionProcessor, EPartitionScheme scheme, IEncoder <N, A, G> encoder, IImage <A> image, IIntSize rangeSize, IIntSize domainSize ) {
-////                return null;
-////            }
-////        };
-////    }
-//
-////    /**
-////     * @return
-////     */
-////    public
-////    IImageProcessor <N, A, G> getProcessor () {
-////        return processor;
-////    }
-////
-////    final IDistanceator <M, A> comparator=
-////        final Set <ImageTransform <M, A, G>> transforms,
-////        final Set <IImageFilter <M, A>> filters,
-////        FCImageModel <N, A, G> fractalModel ) throws NullPointerException {
-//
-////            ICompressor <N, A, G> compressor = new Compressor <N, A, G>(
-////                config.domainScale(),
-////                new SquareImageBlockGenerator <N, A, G>(
-////                        config.tiler(),
-////                        image, image.getAddress(). new IntSize(0, 0), new IntSize(1, 1)
-////                ),
-////                new ImageComparator <>(config.metrics(), config.fuzz()),
-////                new HashSet <ImageTransform <M, A, G>>(6) {{
-////                    add(new NoneTransform <>(
-////                            image,
-////                            BILINEAR,
-////                            new DecAddress <>(0),
-////                            0,
-////                            0,
-////                            -1));
-////                    add(new FlipTransform <>(image, false, new DecAddress <>(0)));
-////                    add(new FlopTransform <>(image, BILINEAR, new DecAddress <>(0)));
-////                    add(new AffineRotateQuadrantsTransform <A, G>(image, 1, new DecAddress <>(0)));
-////                    add(new AffineRotateQuadrantsTransform <A, G>(image, 2, new DecAddress <>(0)));
-////                    add(new AffineRotateQuadrantsTransform <A, G>(image, 3, new DecAddress <>(0)));
-////                }},
-////                new HashSet <IImageFilter <M, A>>(1) {{
-////                    add(new NoneFilter <>());
-////                }},
-////                this);
-//
-////        return compressor.compress(image, 0, 0, 0);//fixme
-//    /**
-//     * @return
-//     */
-////    public
-////    FCImageModel <N, A, G> readModel () {
-////
-////        FCImageModel <N, A, G> model = null;
-////
-////        FractalReader <N, A, G> fractalReader = new FractalReader <>(config.command().getInput());
-////        model = fractalReader.readModel();
-////        fractalReader.close();
-////
-////        return model;
-////    }
-//
-//
-// //   /**
-//   //  * @param model
-//    // */
-////    public
-////    void writeModel ( FCImageModel <N, A, G> model, boolean allowOverwrite ) {
-////        FractalWriter <N, A, G> writer = new FractalWriter <>(output, model.getImageInfo(), allowOverwrite);
-////        writer.writeModel(model);
-////        writer.close();
-////    }
-//
-////    /**
-////     * @param image
-////     */
-////    public
-////    void writeImage ( IImage<A> image ) {
-////        Imgcodecs.imwrite(output.getAbsolutePath(), image.getMat());
-////    }
-////
-////    /**
-////     * read the args, start the app
-////     *
-////     * @param args the command line arguments
-////     */
-////
     public static
     void main ( String[] args ) throws ClassNotFoundException, NoSuchMethodException {
         FicConfig <?, ?, ?> configuration = new FicConfig <>(args);
@@ -284,27 +202,6 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
                     config.partitionScheme(),
                     Class.forName(config.partitionScheme().getCodecClassName()).getConstructor());
 
-            IEncoder <N, A, G> encoder = null;
-
-            encoder = Encoder.create(
-                    config.partitionScheme(),
-                    nodeBuilder(),
-                    partitionProcessor(),
-                    options.getSearchProcessor(),
-                    scaleTransform(),
-                    imageBlockGenerator(),
-                    distanceator(),
-                    createTransforms(),
-                    imageFilter(),
-                    fractalModel()
-            );
-            //IEncoder<N,A,G> encoder =   config.getCommand()== ECommands.COMPRESS
-            //config.getCommand()== ECommands.COMPRESS
-//            IDecoder <N, A, G> decoder = Utils.invoke();
-//            if (config.getCommand()== ECommands.COMPRESS){
-            // config.getCommand()== ECommands.DECOMPRESS Utils.invoke();
-//            }
-            //todo invoke encoder before codec
             EncodeTask <N, A, G> encodeTask = new EncodeTask <>(
                     filename,
                     config.partitionScheme(),
@@ -321,15 +218,22 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
             codec.addTask(encodeTask);
             codec.addTask(decodeTask);
 
-            ImageProcessor <N, A, G> processor = new ImageProcessor <>(
+            IEncoder <N, A, G> encoder = Encoder.create(
                     filename,
                     config.partitionScheme(),
-                    codec,
-                    List.of(encodeTask, decodeTask),
-                    config.colorSpace()
+                    config.tasks(),
+                    config.colorSpace(),
+                    nodeBuilder(),
+                    partitionProcessor(),
+                    options.getSearchProcessor(),
+                    scaleTransform(),
+                    imageBlockGenerator(),
+                    distanceator(),
+                    createTransforms(),
+                    imageFilter(),
+                    fractalModel()
             );
-
-            processor.execute(filename);
+            //processor.execute(filename);
 
         } catch (ReflectiveOperationException | ValueError e) {
             e.printStackTrace();
@@ -342,7 +246,7 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Contract(value = " -> new", pure = true)
     private
-    Set <IImageFilter> imageFilter () {
+    Set <IImageFilter <A>> imageFilter () {
         return new HashSet <>();
     }
 
@@ -351,7 +255,7 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Contract(value = " -> new", pure = true)
     private @NotNull
-    Set <ImageTransform <?, ?>> imageTransform () {
+    Set <ImageTransform <A, G>> imageTransform () {
         return new HashSet <>();
     }
 
@@ -362,7 +266,7 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
 
     private
     ImageBlockGenerator <N, A, G> imageBlockGenerator () {
-        return null;
+        return newInstance();
     }
 
     /**
@@ -385,7 +289,7 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
     }
 
     private
-    ITreeNodeBuilder nodeBuilder () {
+    ITreeNodeBuilder <N, A, G> nodeBuilder () {
         return nodeBuilder;
     }
 
@@ -399,9 +303,15 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Contract(pure = true)
     private
-    Set <ImageTransform> createTransforms () {
+    Set <ImageTransform <A, G>> createTransforms () {
         return transforms;
     }
+
+    public final
+    ITreeNodeBuilder <N, A, G> getNodeBuilder () {
+        return nodeBuilder;
+    }
+
 
 //    /**
 //     * @return

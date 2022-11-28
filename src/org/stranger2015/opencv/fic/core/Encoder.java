@@ -1,6 +1,7 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +64,8 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
     protected IImage <A> inputImage;
     protected CompressedImage <A> outputImage;
 
-//    protected IImage <A> image;
+    List <IImageBlock <A>> rangeBlocks;
+    List <IImageBlock <A>> domainBlocks;
 
     protected IIntSize rangeSize;
     protected IIntSize domainSize;
@@ -71,7 +73,6 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
     /**
      *
      */
-//    @SuppressWarnings("unchecked")
     protected
     Encoder (
             String fn,
@@ -112,10 +113,31 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
         tilerClass = partitionProcessor.getTiler().getClass();
     }
 
+    /**
+     * @param fn
+     * @param scheme
+     * @param codec
+     * @param tasks
+     * @param colorSpace
+     * @param nodeBuilder
+     * @param partitionProcessor
+     * @param searchProcessor
+     * @param scaleTransform
+     * @param imageBlockGenerator
+     * @param comparator
+     * @param imageTransforms
+     * @param imageFilters
+     * @param fractalModel
+     * @param <N>
+     * @param <A>
+     * @param <G>
+     * @return
+     * @throws ReflectiveOperationException
+     */
     @SuppressWarnings("unchecked")
     public static
     <N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-    IEncoder <N, A, G> create (
+    @NotNull IEncoder <N, A, G> create (
             String fn,
             EPartitionScheme scheme,
             ICodec <N, A, G> codec,
@@ -216,6 +238,7 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
     /**
      * @return
      */
+    @Override
     public
     EPartitionScheme getScheme () {
         return scheme;
@@ -322,6 +345,7 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
     EtvColorSpace getColorSpace () {
         return colorSpace;
     }
+
     /**
      *
      */
@@ -330,20 +354,39 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
     void segmentImage ( IImageBlock <A> roi, int blockWidth, int blockHeight )
             throws ValueError {
 
-        List <IImageBlock <A>> rangeBlocks = partitionProcessor.generateRangeBlocks(
+        rangeBlocks = imageBlockGenerator.generateRangeBlocks(
                 roi,
                 blockWidth,
                 blockHeight
         );
 
-        List <IImageBlock <A>> domainBlocks = imageBlockGenerator.generateDomainBlocks(
+        domainBlocks = imageBlockGenerator.generateDomainBlocks(
                 roi,
-                rangeBlocks);
+                blockWidth,
+                blockHeight);
 
-        List <IImageBlock <A>> codebookBlocks = imageBlockGenerator.createCodebookBlocks(
-                roi,
-                domainBlocks
-        );
+//        List <IImageBlock <A>> codebookBlocks = imageBlockGenerator.createCodebookBlocks(
+//                roi,
+//                domainBlocks
+//        );
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    List <IImageBlock <A>> getRangeBlocks () {
+        return rangeBlocks;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    List <IImageBlock <A>> getDomainBlocks () {
+        return domainBlocks;
     }
 
     /**
@@ -356,8 +399,8 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
     public final
     IImage <A> encode ( IImage <A> image ) throws Exception {
         assert image != null : "Cannot compress null image";
-
         initialize();
+
         return doEncode(image);
     }
 
@@ -366,14 +409,16 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
      */
     @Override
     public
-    IImage <A> doEncode ( IImage <A> image ) throws ValueError, ReflectiveOperationException {
+    IImage <A> doEncode ( IImage <A> image ) throws Exception {
+        IImageBlock <A> imageBlock = image.getSubImage();
+        segmentImage(
+                imageBlock,
+                rangeSize.getWidth(),
+                rangeSize.getHeight());
+
         iterateRangeBlocks(
-                image.getSubImage(),
-                getImageBlockGenerator().generateRangeBlocks(
-                        image.getSubImage(),
-                        4,
-                        4
-                )
+                imageBlock,
+                rangeBlocks
         );
 
         return searchProcessor.search();
@@ -396,7 +441,8 @@ class Encoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
                 rangeSize,
                 domainSize,
                 this,
-                library);
+                library
+        );
 
         Tree <N, A, G> tree = nodeBuilder.buildTree(inputImage.getSubImage());
         library.setTree(tree);

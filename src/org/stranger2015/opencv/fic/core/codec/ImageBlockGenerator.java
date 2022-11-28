@@ -7,7 +7,6 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -169,19 +168,8 @@ class ImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
      * @return
      */
     public
-    List <IImageBlock <A>> createCodebookBlocks (IImageBlock <A> roi, List <IImageBlock <A>> domainBlocks ) {
+    List <IImageBlock <A>> createCodebookBlocks (IImageBlock <A> roi,
+                                                 List <IImageBlock <A>> domainBlocks ) throws ValueError {
         return domainBlocks;
-    }
-
-    /**
-     * @param roi
-     * @param rangeBlocks
-     * @return
-     */
-    public
-    List <IImageBlock <A>> generateDomainBlocks ( IImageBlock <A> roi, List <IImageBlock <A>> rangeBlocks ) {
-
-        final List <IImageBlock <A>> l=new ArrayList <>();
-        return l;
     }
 }

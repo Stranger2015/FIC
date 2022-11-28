@@ -14,6 +14,8 @@ import java.util.List;
 public
 interface ITreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer> {
 
+    ITreeNodeBuilder<N,A,G> newInstance();
+
     /**
      * @return
      * @throws ValueError

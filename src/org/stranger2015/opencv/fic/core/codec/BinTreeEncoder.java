@@ -39,29 +39,37 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     public
     BinTreeEncoder (
+            String fn,
             EPartitionScheme scheme,
-            TreeNodeBuilder <N, A, G> nodeBuilder,
+            ICodec <N, A, G> codec,
+            List <Task <N, A, G>> tasks,
+            EtvColorSpace colorSpace,
+            ITreeNodeBuilder <N, A, G> nodeBuilder,
             IPartitionProcessor <N, A, G> partitionProcessor,
             ISearchProcessor <N, A, G> searchProcessor,
             ScaleTransform <A, G> scaleTransform,
             ImageBlockGenerator <N, A, G> imageBlockGenerator,
             IDistanceator <A> comparator,
-            Set <ImageTransform <A, G>> transforms,
-            Set <IImageFilter <A>> filters,
+            Set <ImageTransform <A, G>> imageTransforms,
+            Set <IImageFilter <A>> imageFilters,
             FCImageModel <N, A, G> fractalModel ) {
 
-        super(
+        super(fn,
                 scheme,
+                codec,
+                tasks,
+                colorSpace,
                 nodeBuilder,
                 partitionProcessor,
                 searchProcessor,
                 scaleTransform,
                 imageBlockGenerator,
                 comparator,
-                transforms,
-                filters,
+                imageTransforms,
+                imageFilters,
                 fractalModel
         );
+
     }
 
     /**
@@ -84,12 +92,14 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Override
     public
-    ImageBlockGenerator <N, A, G> createBlockGenerator ( IPartitionProcessor <N, A, G> partitionProcessor,
-                                                         EPartitionScheme scheme,
-                                                         IEncoder <N, A, G> encoder,
-                                                         IImage <A> image,
-                                                         IIntSize rangeSize,
-                                                         IIntSize domainSize ) {
+    ImageBlockGenerator <N, A, G> createBlockGenerator (
+            IPartitionProcessor <N, A, G> partitionProcessor,
+            EPartitionScheme scheme,
+            IEncoder <N, A, G> encoder,
+            IImage <A> image,
+            IIntSize rangeSize,
+            IIntSize domainSize ) {
+
         return new BinTreeImageBlockGenerator <>(
                 partitionProcessor,
                 scheme,
@@ -128,6 +138,9 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
 
     }
 
+    /**
+     * @return
+     */
     @Override
     public
     Class <?> getTilerClass () {
@@ -184,25 +197,13 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      * @param image
      * @return
      */
-
     @Override
     public
-    IImage <A> doEncode ( IImage <A> image ) throws ValueError, ReflectiveOperationException {
-        return super.doEncode(image);
+    IImage <A> doEncode ( IImage <A> image ) throws Exception {
+        process(image);
+        return image;
     }
 
-//    /**
-//     * @param roi
-//     * @param blockWidth
-//     * @param blockHeight
-//     */
-//    @Override
-//    public
-//    void segmentRegion ( IImageBlock <A> roi, int blockWidth, int blockHeight ) throws ValueError {
-//        List <IImageBlock <A>> list = imageBlockGenerator.generateRangeBlocks(roi, blockWidth, blockHeight);
-//        roi.rangeBlocks.addAll(list);
-//    }
-//
     /**
      * @param image
      * @return
@@ -214,10 +215,10 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
         if (bounds.isEmpty()) {
             result = List.of(
                     image.getSubImage(
-                    0,
-                    0,
-                    image.getWidth(),
-                    image.getHeight()));
+                            0,
+                            0,
+                            image.getWidth(),
+                            image.getHeight()));
         }
         else {
 //            imageBlockGenerator.generateRegions(image, bounds);

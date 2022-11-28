@@ -449,16 +449,16 @@ class Image<A extends IAddress <A>>
         int newWidth = this.getWidth() / contractivity;
         int newHeight = this.getHeight() / contractivity;
         int channels = this.getChannelsAmount();
-        double[] newPixelValues = new double[newWidth * newHeight*channels];
+        double[] newPixelValues = new double[newWidth * newHeight * channels];
         for (int c = 0; c < channels; c++) {
             for (int i = 0; i < newWidth; i++) {
                 for (int j = 0; j < newHeight; j++) {
-                    newPixelValues(i ,j)[c] = (double) ((
-                              pixelValues(i * 2,j * 2)[c]
-                            + pixelValues(i * 2,j * 2 + 1)[c]
-                            + pixelValues(i * 2 + 1,j * 2)[c]
-                            + pixelValues(i * 2 + 1,j * 2)[c]
-                    ) / contractivity * contractivity);
+                    newPixelValues(i, j)[c] =
+                            (double) ((pixelValues(i * 2, j * 2)[c]
+                                    + pixelValues(i * 2, j * 2 + 1)[c]
+                                    + pixelValues(i * 2 + 1, j * 2)[c]
+                                    + pixelValues(i * 2 + 1, j * 2)[c]
+                            ) / contractivity * contractivity);
                 }
             }
         }
@@ -693,7 +693,7 @@ class Image<A extends IAddress <A>>
      * @param i2
      * @param i3
      */
-                     //   @Override
+    //   @Override
     public
     void getRGB ( int i, int i1, int width, int height, double[] img1pixels, int i2, int i3 ) {
         getRGB(i, i1, width, img1pixels, i2, i3);
@@ -771,7 +771,7 @@ class Image<A extends IAddress <A>>
      * @return
      */
     public
-    int[][]etAddressTable () {
+    int[][] etAddressTable () {
         return new int[0][0];//table;
     }
 //

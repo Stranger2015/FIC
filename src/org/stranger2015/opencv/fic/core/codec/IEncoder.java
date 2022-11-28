@@ -181,7 +181,7 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      * @param image
      * @return
      */
-    IImage <A> doEncode ( IImage <A> image ) throws ValueError, ReflectiveOperationException;
+    IImage <A> doEncode ( IImage <A> image ) throws Exception;
 
     /**
      * @return
@@ -335,7 +335,6 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
                 minDistance[c] = 0;
             }
             ImageTransform <A, G> bestTransform = ImageTransform.create(roi, rangeBlock.getAddress(0, 0));
-
             try {
                 iterateDomainBlocks(
                         rangeBlock,
@@ -346,10 +345,8 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
             } catch (ValueError e) {
                 throw new RuntimeException(e);
             }
-
             getTransforms().add(bestTransform);
         }
-
         getOutputImage().setTransforms((List <ImageTransform <A, ?>>) getTransforms());
 
         return (IImageBlock <A>) getOutputImage();

@@ -26,9 +26,9 @@ ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
         implements IImageProcessor <N, A, G> {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+
     private final EPartitionScheme scheme;
     private final EtvColorSpace colorSpace;
-
     private EncodeTask <N, A, G> task;
 
     /**
@@ -80,33 +80,7 @@ ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
         postprocTasks.add(task1.getInverseTask());
         postprocTasks.add(task2.getInverseTask());
 
-//        Codec.create()
-//        codec = new DefaultCodec<>(scheme, new EncodeAction(filename), getFilename());
     }
-
-//    /**
-//     * @param <N>
-//     * @param <A>
-//     * @param filename
-//     * @return
-//     */
-//    public static
-//    <N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-//
-//    ImageProcessor <N, A, G> create ( String filename,
-//                                      EPartitionScheme scheme,
-//                                      ICodec <N, A, G> codec,
-//                                      List <Task <N, A, G>> tasks,
-//                                      EtvColorSpace colorSpace ) {
-//
-//        return new ImageProcessor <>(
-//                filename,
-//                scheme,
-//                codec,
-//                tasks,
-//                colorSpace
-//        );
-//    }
 
     /**
      * 1. Divide the image into range blocks.
@@ -119,15 +93,14 @@ ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      * 3. Define  a  finite  set  of  contractive  affine  transformations,  wi
      * (which IImage ap from a range block R to a domain block Di).
      * <p>
-     * 4. For each domain block {
-     * <p>
-     * For each range block {
-     * For each transformation {
-     * Calculate the Hausdorff distance h(wi(R  G), Di  G) (or use another IImage metrics )
+     * 4.
+     * For each domain block {
+     *----->For each range block {
+     *----------> For each transformation {
+     *-------------------> Calculate the Hausdorff distance h(wi(R  G), Di  G) (or use another IImage metrics )
+     *-------------------> }
+     *----------> }
      * }
-     * }
-     * }
-     * <p>
      * 5. Record the transformed domain block which is found to be the best approximation for
      * the current range block is assigned to that range block.
      * <p>
@@ -141,8 +114,6 @@ ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
     IImage <A> process ( IImage <A> image ) throws Exception {
         FCImageModel <N, A, G> cimg;
         IEncoder <N, A, G> encoder = codec.getEncoder();
-//        List <IImageBlock <A>> regions = image.getRegions();
-//        for (IImageBlock <A> region : regions) {
         List <IImage <A>> list = image.split();
         List <IImage <A>> layers = new ArrayList <>();
         for (IImage <A> imageBlock : list) {
@@ -153,7 +124,6 @@ ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
             layer = postprocess((FCImageModel <N, A, G>) layer).toImage();
             layers.add(layer);
         }
-//            regions = (List <IImageBlock <A>>) region.merge(layers, region);
         image.merge(layers, image);
         cimg = composeImage(image);
 
@@ -161,7 +131,7 @@ ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
     }
 
     private
-    FCImageModel <N, A, G> composeImage (/* List <IImageBlock <A>> rois, */IImage <A> image ) throws ValueError {
+    FCImageModel <N, A, G> composeImage (IImage <A> image ) throws ValueError {
         return new FCImageModel <>(image, new HashMap <>());
 
     }
@@ -170,7 +140,7 @@ ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      * @param outputImage
      * @return
      */
-//    @Override
+    @Override
     public
     FCImageModel <N, A, G> postprocess ( FCImageModel <N, A, G> outputImage ) {
 
@@ -189,14 +159,11 @@ ImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
     /**
      * @param image
      */
-//    @SuppressWarnings("unchecked")
     protected
-    FCImageModel <?, A, ?> compressImage ( IImage <A> image ) throws ValueError {
+    FCImageModel <N, A, G> compressImage ( IImage <A> image ) throws ValueError {
 
-        FCImageModel <?, A, ?> imageOut = new FCImageModel <>(image, new HashMap <>());
-
+        FCImageModel <N, A, G> imageOut = new FCImageModel <>(image, new HashMap <>());
         HighGui.namedWindow("OpenCV");
-
         System.out.println(imageOut.dump());
 
         HighGui.destroyAllWindows();

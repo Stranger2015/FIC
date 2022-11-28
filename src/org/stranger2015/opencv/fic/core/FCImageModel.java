@@ -61,9 +61,8 @@ class FCImageModel<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      * @param simpleModel
      */
     public
-    FCImageModel ( IImage<A> image, Map <Point, Entry <IImageBlock<A>, ImageTransform <A, G>>> simpleModel )
+     FCImageModel ( IImage<A> image, Map <Point, Entry <IImageBlock<A>, ImageTransform <A, G>>> simpleModel )
             throws ValueError {
-
         this.image = image;
         model = new HashMap <>();
         analyze(simpleModel);

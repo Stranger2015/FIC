@@ -14,6 +14,8 @@ public
 interface IImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
         extends IProcessor <N, A, G> {
 
+    FCImageModel <N, A, G> postprocess ( FCImageModel <N, A, G> outputImage );
+
     /**
      * @return
      */

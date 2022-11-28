@@ -28,7 +28,7 @@ class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      */
     @Override
     public
-    IImage <A> doEncode ( IImage <A> image ) throws ValueError {
+    IImage <A> doEncode ( IImage <A> image ) throws ValueError, ReflectiveOperationException {
         return super.doEncode(image);
     }
 
@@ -37,27 +37,35 @@ class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      */
     public
     QuadTreeEncoder (
+            String fn,
             EPartitionScheme scheme,
-            TreeNodeBuilder <N, A, G> nodeBuilder,
+            ICodec <N, A, G> codec,
+            List <Task <N, A, G>> tasks,
+            EtvColorSpace colorSpace,
+            ITreeNodeBuilder <N, A, G> nodeBuilder,
             IPartitionProcessor <N, A, G> partitionProcessor,
             ISearchProcessor <N, A, G> searchProcessor,
             ScaleTransform <A, G> scaleTransform,
             ImageBlockGenerator <N, A, G> imageBlockGenerator,
             IDistanceator <A> comparator,
-            Set <ImageTransform <A, G>> transforms,
-            Set <IImageFilter <A>> filters,
+            Set <ImageTransform <A, G>> imageTransforms,
+            Set <IImageFilter <A>> imageFilters,
             FCImageModel <N, A, G> fractalModel
+
     ) {
-        super(
+        super(fn,
                 scheme,
+                codec,
+                tasks,
+                colorSpace,
                 nodeBuilder,
                 partitionProcessor,
                 searchProcessor,
                 scaleTransform,
                 imageBlockGenerator,
                 comparator,
-                transforms,
-                filters,
+                imageTransforms,
+                imageFilters,
                 fractalModel
         );
     }
@@ -167,7 +175,7 @@ class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      */
     @Override
     public
-    FCImageModel <N, A, G> loadModel ( String filename ) {
+    FCImageModel <N, A, G> loadModel ( String filename ) throws ValueError {
         FractalReader <N, A, G> reader = new FractalReader <>(new File(filename));
 
         return new FCImageModel <>(null);

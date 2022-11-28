@@ -5,7 +5,6 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.BinTreeImageBlockGenerator;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
 import org.stranger2015.opencv.fic.core.codec.IPartitionProcessor;
-import org.stranger2015.opencv.fic.core.codec.IImageBlock;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
 import org.stranger2015.opencv.utils.BitBuffer;
 
@@ -52,20 +51,6 @@ class DelaunayImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddre
             throws ValueError {
 
         return super.generateRangeBlocks(roi, rangeSize, domainSize);
-    }
-
-    /**
-     * @param roi
-     * @param rangeBlocks
-     * @return
-     * @throws ValueError
-     */
-    @Override
-    public
-    List <IImageBlock <A>> generateDomainBlocks ( IImageBlock <A> roi, List <IImageBlock <A>> rangeBlocks )
-            throws ValueError {
-
-        return super.generateDomainBlocks(roi, rangeBlocks);
     }
 
     /**

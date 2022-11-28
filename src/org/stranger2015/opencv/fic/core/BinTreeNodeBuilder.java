@@ -16,22 +16,21 @@ public
 class BinTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
         extends TreeNodeBuilder <N, A, G> {
 
-    private IIntSize domainSize;
-    private IIntSize rangeSize;
-
     /**
      * @param image
      * @param rangeSize
      * @param domainSize
      * @param encoder
      * @param library
+     * @param domainSize1
+     * @param rangeSize1
      */
     public
     BinTreeNodeBuilder ( IImage <A> image,
                          IIntSize rangeSize,
                          IIntSize domainSize,
                          IEncoder <N, A, G> encoder,
-                         Library <A> library ) {
+                         Library <A> library) {
 
         super(image, rangeSize, domainSize, encoder, library);
     }
@@ -43,8 +42,8 @@ class BinTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
     @Override
     public
     Tree <N, A, G> buildTree ( IImageBlock <A> imageBlock ) throws ValueError {
-
-        return super.buildTree(imageBlock);
+        BinTreeNode <N, A,G> root = new BinTreeNode <>(null, imageBlock.getSize().getWidth(), imageBlock.getHeight());
+        return new BinTree <>(root,imageBlock,new TreeNodeTask <>(root, codec, image));
     }
 
     /**
@@ -106,5 +105,14 @@ class BinTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
     public
     IIntSize getDomainSize () {
         return domainSize;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    ITreeNodeBuilder <N, A, G> newInstance () {
+        return new BinTreeNodeBuilder<>();
     }
 }

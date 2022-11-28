@@ -39,21 +39,6 @@ interface ITiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
         return partitionProcessor;
     }
 
-//    static
-//    <N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-//    ITiler <N, A, G> create ( String encoderClassName) throws ReflectiveOperationException {
-//
-//        Class <?> clazz = getTilerClass(encoderClassName);
-//
-//        return (ITiler <N, A, G>) clazz.getConstructor().newInstance();
-//    }
-
-//    static
-//    Class <?> getTilerClass ( IEncoder<        mapper.put();
-//> encoderClassName ) {
-//Class<?>.forname(encoderClassName);
-//    }
-
     /**
      * @return
      */
@@ -212,6 +197,9 @@ interface ITiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      */
     void addNode ( TreeNodeBase <N, A, G> node );
 
+    /**
+     *
+     */
     default
     void onFinish () {
         getLogger().info("On finishing tile() ...");
@@ -287,6 +275,9 @@ interface ITiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      */
     List <Vertex> generateVerticesSet ( IImageBlock <A> roi, int blockWidth, int blockHeight );
 
+    /**
+     * @return
+     */
     int successorAmount ();
 
     /**
@@ -340,6 +331,13 @@ interface ITiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
         return blocks;
     }
 
+    /**
+     * @param roi
+     * @param blockWidth
+     * @param blockHeight
+     * @return
+     * @throws ValueError
+     */
     default
     List <IImageBlock <A>> generateDomainBlocks ( IImageBlock <A> roi, int blockWidth, int blockHeight )
             throws ValueError {

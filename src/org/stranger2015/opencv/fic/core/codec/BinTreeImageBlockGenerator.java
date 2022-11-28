@@ -70,25 +70,31 @@ class BinTreeImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddres
         );
     }
 
-    /**
-     * @param inputImage
-     */
-    @Override
-    public
-    List <IImageBlock <A>> generateRegions ( IImage <A> inputImage, List <Rectangle> bounds ) throws ValueError {
-        return super.generateRegions(inputImage, bounds);
-    }
+//    /**
+//     * @param inputImage
+//     */
+//    @Override
+//    public
+//    List <IImageBlock <A>> generateRegions ( IImage <A> inputImage, List <Rectangle> bounds ) throws ValueError {
+//        return super.generateRegions(inputImage, bounds);
+//    }
 
+    /**
+     * @param imageBlocks
+     * @param blocksToMerge
+     * @return
+     * @throws ValueError
+     */
     //    @Override
     protected
     IImageBlock <A> mergeBlocks ( List <IImageBlock <A>> imageBlocks,
                                   List <IImageBlock <A>> blocksToMerge
-    ) {
+    ) throws ValueError {
         for (int i = 0; i < blocksToMerge.size(); i++) {
 
         }
 
-        IImageBlock <A> block = new ImageBlock <>(image.getMat(), blockSize, geometry);
+        IImageBlock <A> block = new ImageBlock <>(image.getMat() /*blockSize, geometry*/);
 
         return block;
     }
@@ -106,20 +112,6 @@ class BinTreeImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddres
                 roi,
                 rangeSize,
                 domainSize);
-    }
-
-    /**
-     * @param roi
-     * @param rangeBlocks
-     * @return
-     */
-    @Override
-    public
-    List <IImageBlock <A>> generateDomainBlocks ( IImageBlock <A> roi,
-                                                  List <IImageBlock <A>> rangeBlocks )
-            throws ValueError {
-
-        return super.generateDomainBlocks(roi, rangeBlocks);
     }
 
     /**

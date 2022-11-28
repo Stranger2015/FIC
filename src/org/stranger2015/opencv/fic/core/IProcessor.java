@@ -35,7 +35,7 @@ interface IProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      * @return
      */
     default
-    CompressedImage <A> postprocess ( CompressedImage <A> outputImage ) {
+    FCImageModel <N,A,G> postprocess ( CompressedImage <A> outputImage ) {
         IIntSize size = outputImage.getSize();
         int w = size.getWidth();
         int h = size.getHeight();
