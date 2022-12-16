@@ -10,16 +10,16 @@ import java.util.List;
  *
  */
 public
-class SquareImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
+class SquareImageBlockGenerator<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
 
-        extends ImageBlockGenerator <N, A, G> {
+        extends ImageBlockGenerator <N> {
 
 //    @Override
 //    public
-//    ImageBlockGenerator <N, A, G> newInstance ( IPartitionProcessor <N, A, G> partitionProcessor,
+//    ImageBlockGenerator <N> newInstance ( IPartitionProcessor <N> partitionProcessor,
 //                                                EPartitionScheme scheme,
-//                                                IEncoder <N, A, G> encoder,
-//                                                IImage <A> image,
+//                                                IEncoder <N> encoder,
+//                                                IImage image,
 //                                                IIntSize rangeSize,
 //                                                IIntSize domainSize ) {
 //        return new SquareImageBlockGenerator <>(
@@ -38,7 +38,7 @@ class SquareImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress
      */
     @Override
     public
-    List <IImageBlock <A>> generateRangeBlocks ( IImageBlock <A> roi,
+    List <IImageBlock > generateRangeBlocks ( IImageBlock  roi,
                                                  int blockWidth,
                                                  int blockHeight ) throws ValueError {
 
@@ -52,10 +52,10 @@ class SquareImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress
      * @param domainSize
      */
     public
-    SquareImageBlockGenerator ( IPartitionProcessor <N, A, G> partitionProcessor,
+    SquareImageBlockGenerator ( IPartitionProcessor <N> partitionProcessor,
                                 EPartitionScheme scheme,
-                                IEncoder <N, A, G> encoder,
-                                IImage <A> image,
+                                IEncoder <N> encoder,
+                                IImage image,
                                 IIntSize rangeSize,
                                 IIntSize domainSize
     ) {
@@ -73,11 +73,11 @@ class SquareImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress
      */
     @Override
     public
-    ImageBlockGenerator <N, A, G> newInstance (
-            IPartitionProcessor <N, A, G> partitionProcessor,
+    ImageBlockGenerator <N> newInstance (
+            IPartitionProcessor <N> partitionProcessor,
             EPartitionScheme scheme,
-            IEncoder <N, A, G> encoder,
-            IImage <A> image,
+            IEncoder <N> encoder,
+            IImage image,
             IIntSize rangeSize,
             IIntSize domainSize ) {
 

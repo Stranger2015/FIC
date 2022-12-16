@@ -48,11 +48,11 @@ import org.stranger2015.opencv.utils.BitBuffer;
  *
  * @param <N>
  
- * @param <A>
+ * @param
  */
 public
-class SabVrEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, M extends IImage<A>, G extends BitBuffer>
-        extends SaEncoder <N, A, G> {
+class SabVrEncoder<N extends TreeNode <N>, A extends IAddress , IImage extends IImage, G extends BitBuffer>
+        extends SaEncoder <N> {
 
     /**
      * @param inputImage
@@ -60,7 +60,7 @@ class SabVrEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, M exten
      * @param domainSize
      */
     public
-    SabVrEncoder ( M inputImage, GrayScaleImage<A> rangeSize, IntSize domainSize ) {
+    SabVrEncoder ( IImage inputImage, GrayScaleImage rangeSize, IntSize domainSize ) {
         super(inputImage, rangeSize, domainSize);
     }
 
@@ -73,8 +73,8 @@ class SabVrEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, M exten
      */
     @Override
     public
-    ImageBlockGenerator <N, A, G> createBlockGenerator ( IEncoder <N, A, G> encoder,
-                                                              M image,
+    ImageBlockGenerator <N> createBlockGenerator ( IEncoder <N> encoder,
+                                                              IImage image,
                                                               IntSize rangeSize,
                                                               IntSize domainSize ) {
 

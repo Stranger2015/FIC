@@ -11,13 +11,13 @@ import java.util.List;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class BinTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends BinTreeTiler <N, A, G>
-        implements ITopDownTiler <N, A, G> {
+class BinTreeTopDownTiler<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends BinTreeTiler <N>
+        implements ITopDownTiler <N> {
 
     /**
      * @param image
@@ -27,11 +27,11 @@ class BinTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
      * @param builder
      */
     public
-    BinTreeTopDownTiler ( IImage <A> image,
+    BinTreeTopDownTiler ( IImage image,
                           IIntSize rangeSize,
                           IIntSize domainSize,
-                          IEncoder <N, A, G> encoder,
-                          ITreeNodeBuilder <N, A, G> builder ) {
+                          IEncoder <N> encoder,
+                          ITreeNodeBuilder <N> builder ) {
 
         super(image, rangeSize, domainSize, encoder, builder);
     }
@@ -41,7 +41,7 @@ class BinTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
      */
     @Override
     public
-    ITiler <N, A, G> instance () {
+    ITiler <N> instance () {
         return new BinTreeTopDownTiler <>(
                 getImage(),
                 getRangeSize(),
@@ -56,7 +56,7 @@ class BinTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
      */
     @Override
     public
-    void onSuccessors ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) {
+    void onSuccessors ( TreeNodeBase <N> node, IImageBlock  imageBlock ) {
         super.onSuccessors(node, imageBlock);
     }
 
@@ -66,7 +66,7 @@ class BinTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
      */
     @Override
     public
-    void onSuccessor ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) {
+    void onSuccessor ( TreeNodeBase <N> node, IImageBlock  imageBlock ) {
         super.onSuccessor(node, imageBlock);
     }
 
@@ -77,7 +77,7 @@ class BinTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
      */
     @Override
     public
-    void segmentGeometry ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentGeometry ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
     }
 
     /**
@@ -95,7 +95,7 @@ class BinTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
      */
     @Override
     public
-    void segmentPolygon ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentPolygon ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
 //        return List.of(imageBlock);
     }
 
@@ -103,15 +103,15 @@ class BinTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
      * @param <N>
      */
     public static
-    class BuildTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-            extends TreeNodeTask <N, A, G> {
+    class BuildTask<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+            extends TreeNodeTask <N> {
         /**
          * @param scheme
          * @param codec
          * @param tasks
          */
         public
-        BuildTask ( EPartitionScheme scheme, ICodec <N, A, G> codec, List <Task <N, A, G>> tasks ) {
+        BuildTask ( EPartitionScheme scheme, ICodec <N> codec, List <Task <N>> tasks ) {
             super(scheme, codec, tasks);
         }
     }
@@ -120,7 +120,7 @@ class BinTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
      * @param domainPool
      */
     public
-    void BuildTask ( List <IImageBlock <A>> domainPool ) {
+    void BuildTask ( List <IImageBlock > domainPool ) {
     }
 }
 

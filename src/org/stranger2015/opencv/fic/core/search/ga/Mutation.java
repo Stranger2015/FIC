@@ -1,15 +1,12 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
-import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.utils.BitBuffer;
-
 /**
  * @param <T>
  */
 public
-class Mutation<T extends Individual<T,A,G>, A extends Address<A>, G extends BitBuffer, C extends Chromosome<T,A,G>>
-        extends Operator <T, A,G>
-        implements IMutationOperator <T> {
+class Mutation
+        extends Operator
+        implements IMutationOperator {
 
     private int geneIndex;
 
@@ -17,7 +14,7 @@ class Mutation<T extends Individual<T,A,G>, A extends Address<A>, G extends BitB
      * @param rate
      */
     protected
-    Mutation ( GaSearchProcessor <T, A,G,C> gaProcessor, double rate ) {
+    Mutation ( GaSearchProcessor gaProcessor, double rate ) {
         super(gaProcessor, rate);
     }
 

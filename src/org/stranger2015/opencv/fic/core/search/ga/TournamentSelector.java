@@ -9,7 +9,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
  * @param <C>
  */
 public
-class TournamentSelector<T extends Individual <T, A, G, C>, A extends IAddress <A>, G extends BitBuffer,
+class TournamentSelector<T extends Individual <T, A, G, C>, A extends IAddress , G extends BitBuffer,
         C extends Chromosome <T, A, G>>
 
         extends Selector <T, A, G, C> {

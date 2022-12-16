@@ -11,7 +11,7 @@ import static java.util.stream.IntStream.range;
  *
  */
 public abstract
-class Address<A extends IAddress <A>> extends AtomicInteger implements IAddress <A> {
+class Address extends AtomicInteger implements IAddress  {
 
     static {
         range(0, cache.length())
@@ -26,7 +26,7 @@ class Address<A extends IAddress <A>> extends AtomicInteger implements IAddress 
      * @param offset
      */
     public
-    Address ( int row, int stride, int col ) {
+    Address ( int row ) {
         super(Math.toIntExact((long) row * stride + col));
         this.stride = stride;
     }
@@ -37,7 +37,7 @@ class Address<A extends IAddress <A>> extends AtomicInteger implements IAddress 
      */
     @Override
     public
-    IAddress <A> applyTable ( int[][] table ) {
+    IAddress  applyTable ( int[][] table ) {
         return null;
     }
 
@@ -48,7 +48,7 @@ class Address<A extends IAddress <A>> extends AtomicInteger implements IAddress 
      */
     @Override
     public
-    IAddress <A> plus ( IAddress <A> address1, IAddress <A> address2 ) throws ValueError {
+    IAddress  plus ( IAddress  address1, IAddress  address2 ) throws ValueError {
         long addr1 = address1.longValue();
         long addr2 = address2.longValue();
 
@@ -73,7 +73,7 @@ class Address<A extends IAddress <A>> extends AtomicInteger implements IAddress 
      */
     @Override
     public
-    IAddress <A> minus ( IAddress <A> address1, IAddress <A> address2 ) throws ValueError {
+    IAddress  minus ( IAddress  address1, IAddress  address2 ) throws ValueError {
         return null;//todo
     }
 
@@ -84,7 +84,7 @@ class Address<A extends IAddress <A>> extends AtomicInteger implements IAddress 
      */
     @Override
     public
-    IAddress <A> mult ( IAddress <A> address1, IAddress <A> address2 ) throws ValueError {
+    IAddress  mult ( IAddress  address1, IAddress  address2 ) throws ValueError {
         return null;//
     }
 
@@ -122,7 +122,7 @@ class Address<A extends IAddress <A>> extends AtomicInteger implements IAddress 
         return new int[0][];
     }
 
-    @Override
+//    @Override
     public
     int stride () {
         return stride;
@@ -175,7 +175,7 @@ class Address<A extends IAddress <A>> extends AtomicInteger implements IAddress 
      */
     @Override
     public
-    IAddress <A> newInstance ( long index ) throws ValueError {
+    IAddress  newInstance ( long index ) throws ValueError {
         return null;
     }
 
@@ -187,7 +187,7 @@ class Address<A extends IAddress <A>> extends AtomicInteger implements IAddress 
      */
     @Override
     public
-    IAddress <A> newInstance ( long address, int offset ) throws ValueError {
+    IAddress  newInstance ( long address, int offset ) throws ValueError {
         return IAddress.super.newInstance(address, offset);
     }
 

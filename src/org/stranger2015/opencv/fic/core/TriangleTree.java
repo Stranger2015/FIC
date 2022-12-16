@@ -7,7 +7,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
  * root --> rectangle diagonally divided into 2 triangles --> triangle tree nodes
  */
 public
-class TriangleTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, M extends IImage<A>, G extends BitBuffer>
+class TriangleTree<N extends TreeNode <N>, A extends IAddress , IImage extends IImage, G extends BitBuffer>
         extends BinTree<N,A,G> {
     /**
      * Constructs a new object.
@@ -17,7 +17,7 @@ class TriangleTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, M exten
      * @param action
      */
     public
-    TriangleTree ( TreeNode <N,A,G> parent, IImageBlock <A> image, TreeNodeTask <N,A,G> action ) {
+    TriangleTree ( TreeNode <N,A,G> parent, IImageBlock  image, TreeNodeTask <N,A,G> action ) {
         super(parent, image, action);
     }
 
@@ -40,6 +40,6 @@ class TriangleTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, M exten
     @SuppressWarnings("unchecked")
     public
     Class <? extends TreeNode <N,A,G>> getNodeClass ( TreeNode <N,A,G> clazz ) {
-        return (Class <? extends TreeNode <N, A, G>>) clazz.getClass();
+        return (Class <? extends TreeNode <N>>) clazz.getClass();
     }
 }

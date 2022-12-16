@@ -9,10 +9,10 @@ import org.stranger2015.opencv.utils.BitBuffer;
 import java.util.ArrayList;
 
 public
-class ImageBlocks<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends ArrayList<IImageBlock <A>> {
+class ImageBlocks<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends ArrayList<IImageBlock > {
 
-    protected Tree<N, A, G> tree;
+    protected Tree<N> tree;
 
 
 

@@ -11,7 +11,7 @@ package org.stranger2015.opencv.fic.core;
  * format based on the spiral addressing scheme. The
  * steps are as following:
  * <p>
- * For a given image with size M × N , the number of SIP layers λ
+ * For a given image with size IImage × N , the number of SIP layers λ
  * can be found by λ = ( logM + logN )/log( 9 ); then the length of the SIP image is 9^λ.
  * Because the SIP address scheme is base 9, the conversion
  * between the SIP address and a decimal number
@@ -40,7 +40,7 @@ package org.stranger2015.opencv.fic.core;
  * L( 8 ) = ( -1, -1 )
  */
 public
-class SipAddress<A extends IAddress <A>> extends SaAddress <A> {
+class SipAddress extends SaAddress  {
 
     public static int radix = 9;
 

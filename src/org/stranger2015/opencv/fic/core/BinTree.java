@@ -7,8 +7,8 @@ import org.stranger2015.opencv.utils.BitBuffer;
  *
  */
 public
-class BinTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends Tree <N, A, G> {
+class BinTree<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends Tree <N> {
 
     /**
      * @param root
@@ -16,7 +16,7 @@ class BinTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
      * @param action
      */
     public
-    BinTree ( TreeNode <N, A, G> root, IImageBlock <A> imageBlock, TreeNodeTask <N, A, G> action ) {
+    BinTree ( TreeNode <N> root, IImageBlock  imageBlock, TreeNodeTask <N> action ) {
         super(root, imageBlock, action);
     }
 
@@ -28,7 +28,7 @@ class BinTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
      */
     @Override
     public
-    TreeNode <N, A, G> nodeInstance ( TreeNodeBase <N, A, G> parent, EDirection quadrant, IIntSize rect )
+    TreeNode <N> nodeInstance ( TreeNodeBase <N> parent, EDirection quadrant, IIntSize rect )
             throws ValueError {
 
         return new BinTreeNode <>(parent, quadrant, rect);

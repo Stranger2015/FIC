@@ -178,7 +178,7 @@ class IntersectionMatrix implements Cloneable {
      */
     public static
     boolean matches ( String actualDimensionSymbols, String requiredDimensionSymbols ) {
-        IntersectionMatrix m = new IntersectionMatrix(actualDimensionSymbols);
+        IntersectionMatrix IImage = new IntersectionMatrix(actualDimensionSymbols);
         return m.matches(requiredDimensionSymbols);
     }
 

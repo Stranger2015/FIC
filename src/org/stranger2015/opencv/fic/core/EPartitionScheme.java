@@ -130,6 +130,11 @@ enum  EPartitionScheme implements ICodecs {
         return PATH + encoderClassName;
     }
 
+    public
+    String getDecoderClassName () {
+        return PATH+decoderClassName;
+    }
+
 //    /**
 //     * @return
 //     */

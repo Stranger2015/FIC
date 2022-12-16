@@ -11,13 +11,13 @@ import java.util.List;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class TriangularTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends TriangularTiler <N, A, G>
-        implements ITopDownTiler <N, A, G> {
+class TriangularTopDownTiler<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends TriangularTiler <N>
+        implements ITopDownTiler <N> {
     /**
      * @param image
      * @param rangeSize
@@ -26,11 +26,11 @@ class TriangularTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A
      * @param builder
      */
     protected
-    TriangularTopDownTiler ( IImage <A> image,
+    TriangularTopDownTiler ( IImage image,
                              IIntSize rangeSize,
                              IIntSize domainSize,
-                             IEncoder <N, A, G> encoder,
-                             ITreeNodeBuilder <N, A, G> builder ) {
+                             IEncoder <N> encoder,
+                             ITreeNodeBuilder <N> builder ) {
 
         super(image, rangeSize, domainSize, encoder, builder);
     }
@@ -41,7 +41,7 @@ class TriangularTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A
      */
     @Override
     public
-    void segmentPolygon (TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentPolygon (TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
         List.of(imageBlock);
     }
 
@@ -51,7 +51,7 @@ class TriangularTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A
      */
     @Override
     public
-    void segmentQuadrilateral ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentQuadrilateral ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
         List.of(imageBlock);
     }
 
@@ -63,7 +63,7 @@ class TriangularTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A
      */
     @Override
     public
-    List <Vertex> generateVerticesSet ( IImageBlock <A> roi, int blockWidth, int blockHeight ) {
+    List <Vertex> generateVerticesSet ( IImageBlock  roi, int blockWidth, int blockHeight ) {
         return List.of();
     }
 
@@ -75,8 +75,8 @@ class TriangularTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A
      * @throws ValueError
      */
     public
-    List <IImageBlock <A>> generateInitialRangeBlocks ( IImageBlock <A> roi, int blockWidth, int blockHeight ) throws ValueError {
-        return List. <IImageBlock <A>>of(roi.getSubImage(roi.getX(), roi.getY(), blockWidth, blockHeight));
+    List <IImageBlock > generateInitialRangeBlocks ( IImageBlock  roi, int blockWidth, int blockHeight ) throws ValueError {
+        return List. <IImageBlock >of(roi.getSubImage(roi.getX(), roi.getY(), blockWidth, blockHeight));
     }
 
     /**
@@ -97,7 +97,7 @@ class TriangularTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A
      */
     @Override
     public
-    List <IImageBlock <A>> generateRangeBlocks ( IImageBlock <A> roi, int blockWidth, int blockHeight )
+    List <IImageBlock > generateRangeBlocks ( IImageBlock  roi, int blockWidth, int blockHeight )
             throws ValueError {
 
         return generateInitialRangeBlocks(roi, blockWidth, blockHeight);
@@ -108,7 +108,7 @@ class TriangularTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A
      */
     @Override
     public
-    ITiler <N, A, G> instance () {
+    ITiler <N> instance () {
         return new TriangularTopDownTiler <>(
                 getImage(),
                 getRangeSize(),
@@ -125,7 +125,7 @@ class TriangularTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A
      */
     @Override
     public
-    void segmentRectangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentRectangle ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
 
     }
 }

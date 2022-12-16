@@ -1,19 +1,15 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.IAddress;
-import org.stranger2015.opencv.utils.BitBuffer;
-
-import java.nio.ByteBuffer;
+import org.stranger2015.opencv.fic.core.IImage;
 
 import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
 
 /**
  * functor class to rotate an image by the given quadrant
  */
-public class AffineRotateQuadrantsTransform</*M extends IImage<A>,*/ A extends IAddress <A>, G extends BitBuffer>
-        extends AffineTransform< A, G> {
+public class AffineRotateQuadrantsTransform
+        extends AffineTransform {
 
     private final int quadrants;
 
@@ -22,10 +18,10 @@ public class AffineRotateQuadrantsTransform</*M extends IImage<A>,*/ A extends I
      * @param interpolationType
      */
     public
-    AffineRotateQuadrantsTransform ( IImage<A> image,
+    AffineRotateQuadrantsTransform ( IImage image,
                                      int quadrants,
                                      EInterpolationType interpolationType,
-                                     IAddress <A> address ) {
+                                     IAddress  address ) {
         super(image, interpolationType, address );
         this.quadrants = quadrants;
     }
@@ -34,7 +30,7 @@ public class AffineRotateQuadrantsTransform</*M extends IImage<A>,*/ A extends I
      * @param image
      * @param quadrants
      */
-    public AffineRotateQuadrantsTransform(IImage<A> image, int quadrants, IAddress<A> address) {
+    public AffineRotateQuadrantsTransform(IImage image, int quadrants, IAddress address) {
         this(image, quadrants, BILINEAR, address);
     }
 

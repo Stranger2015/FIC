@@ -2,7 +2,6 @@ package org.stranger2015.opencv.fic.core;
 
 import jdk.internal.HotSpotIntrinsicCandidate;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
@@ -12,8 +11,7 @@ import static org.stranger2015.opencv.fic.core.EAddressKind.ORDINARY;
  * long address
  */
 public
-interface IAddress<A extends IAddress <A>> extends IAddressMath <A> {
-    int stride();
+interface IAddress extends IAddressMath  {
     AtomicIntegerArray cache = new AtomicIntegerArray(128 + 127 + 1);
 
     /**
@@ -35,8 +33,8 @@ interface IAddress<A extends IAddress <A>> extends IAddressMath <A> {
      */
     @HotSpotIntrinsicCandidate
     static
-    <A extends IAddress <A>>
-    @NotNull IAddress <A> valueOf ( int l, int stride, int i2 ) throws ValueError {
+
+    IAddress valueOf ( int l, int stride, int i2 ) throws ValueError {
         return valueOf(l * stride + i2, defaultAddressKind());
     }
 
@@ -45,13 +43,12 @@ interface IAddress<A extends IAddress <A>> extends IAddressMath <A> {
     /**
      * @param l
      * @param addressKind
-     * @param <A>
+     * @param
      * @return
      * @throws ValueError
      */
     static
-    <A extends IAddress <A>>
-    @NotNull IAddress <A> valueOf ( int l, EAddressKind addressKind ) throws ValueError {
+    IAddress valueOf ( int l, EAddressKind addressKind ) throws ValueError {
         int result;
         final int offset = 128;
         if (l >= -128 && l <= 127) { // will cache
@@ -75,21 +72,20 @@ interface IAddress<A extends IAddress <A>> extends IAddressMath <A> {
     /**
      * @param result
      * @param addressKind
-     * @param <A>
+     * @param
      * @return
      * @throws ValueError
      */
     @Contract("_, _ -> new")
     static
-    <A extends IAddress <A>>
-    @NotNull IAddress <A> create ( int row, int stride, int col, EAddressKind addressKind ) throws ValueError {
+    IAddress create ( int row, int stride, int col, EAddressKind addressKind ) throws ValueError {
         switch (addressKind) {
             case ORDINARY:
-                return new DecAddress <>(row, stride, col);
+                return new DecAddress (row, stride, col);
             case SPIRAL:
-                return new SaAddress <>(row, stride, col);
+                return new SaAddress (row, stride, col);
             case SQUIRAL:
-                return new SipAddress <>(row, stride, col);
+                return new SipAddress (row, stride, col);
             default:
                 throw new IllegalStateException("Unexpected value: " + addressKind);
         }
@@ -101,8 +97,8 @@ interface IAddress<A extends IAddress <A>> extends IAddressMath <A> {
     EAddressKind getAddressKind ();
 
     static
-    <A extends IAddress <A>>
-    IAddress <A> cache ( int i ) throws ValueError {
+
+    IAddress cache ( int i ) throws ValueError {
         return  create(cache.get(i), 1, 0,defaultAddressKind());//fixme
     }
 
@@ -116,7 +112,7 @@ interface IAddress<A extends IAddress <A>> extends IAddressMath <A> {
      * @param index
      * @return
      */
-    IAddress <A> newInstance ( long index ) throws ValueError;
+    IAddress  newInstance ( long index ) throws ValueError;
 
     /**
      * @return
@@ -130,7 +126,7 @@ interface IAddress<A extends IAddress <A>> extends IAddressMath <A> {
      * @throws ValueError
      */
     default
-    IAddress <A> newInstance ( long address, int offset ) throws ValueError {
+    IAddress  newInstance ( long address, int offset ) throws ValueError {
         return newInstance(address + offset);
     }
 

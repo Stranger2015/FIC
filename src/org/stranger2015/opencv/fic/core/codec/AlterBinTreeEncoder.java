@@ -1,22 +1,20 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.stranger2015.opencv.fic.core.*;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.fic.transform.ScaleTransform;
-import org.stranger2015.opencv.utils.BitBuffer;
 
+import java.util.List;
 import java.util.Set;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class AlterBinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends BinTreeEncoder <N, A, G> {
+class AlterBinTreeEncoder extends BinTreeEncoder {
 
     /**
      * @param scheme
@@ -31,27 +29,36 @@ class AlterBinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
      * @param fractalModel
      */
     public
-    AlterBinTreeEncoder ( EPartitionScheme scheme,
-                          TreeNodeBuilder <N, A, G> nodeBuilder,
-                          IPartitionProcessor <N, A, G> partitionProcessor,
-                          ISearchProcessor <N, A, G> searchProcessor,
-                          ScaleTransform <A, G> scaleTransform,
-                          ImageBlockGenerator <N, A, G> imageBlockGenerator,
-                          IDistanceator <A> comparator,
-                          Set <ImageTransform <A, G>> transforms,
-                          Set <IImageFilter <A>> filters,
-                          FCImageModel <N, A, G> fractalModel
-    ) {
+    AlterBinTreeEncoder (
+            String fileName,
+            EPartitionScheme scheme,
+            ICodec codec,
+            List <Task> tasks,
+            EtvColorSpace colorSpace,
+            ITreeNodeBuilder <?> nodeBuilder,
+            IPartitionProcessor partitionProcessor,
+            ISearchProcessor searchProcessor,
+            ScaleTransform scaleTransform,
+            ImageBlockGenerator <?> imageBlockGenerator,
+            IDistanceator comparator,
+            Set <ImageTransform> imageTransforms,
+            Set <IImageFilter> imageFilters,
+            FCImageModel fractalModel ) {
+
         super(
+                fileName,
                 scheme,
+                codec,
+                tasks,
+                colorSpace,
                 nodeBuilder,
                 partitionProcessor,
                 searchProcessor,
                 scaleTransform,
                 imageBlockGenerator,
                 comparator,
-                transforms,
-                filters,
+                imageTransforms,
+                imageFilters,
                 fractalModel
         );
     }

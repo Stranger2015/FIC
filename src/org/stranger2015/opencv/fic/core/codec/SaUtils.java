@@ -26,7 +26,7 @@ class SaUtils {
      */
     @SuppressWarnings("unchecked")
     public static
-    <A extends IAddress <A>> A createAddress ( int number, int radix, EAddressKind addressKind )
+    <A extends IAddress > A createAddress ( int number, int radix, EAddressKind addressKind )
             throws ValueError {
         boolean loop = true;
         for (int i = 0; loop; i++) {
@@ -43,11 +43,11 @@ class SaUtils {
         }
         switch (addressKind) {
             case ORDINARY:
-                return (A) new DecAddress <A>(number);
+                return (A) new DecAddress (number);
             case SPIRAL:
-                return (A) new SaAddress <A>(number);
+                return (A) new SaAddress (number);
             case SQUIRAL:
-                return (A) new SipAddress <A>(number);
+                return (A) new SipAddress (number);
             default:
                 throw new IllegalStateException("Unexpected value: " + addressKind);
         }

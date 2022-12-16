@@ -18,7 +18,7 @@ public class WKTConstants {
 
     public static final String EMPTY = "EMPTY";
 
-    public static final String M = "M";
+    public static final String IImage = "M";
     public static final String Z = "Z";
     public static final String ZM = "ZM";
 

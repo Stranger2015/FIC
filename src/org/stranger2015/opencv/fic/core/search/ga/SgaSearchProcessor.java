@@ -1,15 +1,14 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
-import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.transform.ITransform;
+import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <T>
  */
 public
-class SgaSearchProcessor<T extends Individual <T, A, G, C>, A extends IAddress <A>, G extends BitBuffer, C extends Chromosome <T, A, G>>
-        extends GaSearchProcessor <T, A, G, C> {
+class SgaSearchProcessor<C extends Chromosome>
+        extends GaSearchProcessor <C> {
 
     /**
      * Please see chapter2/GeneticAlgorithm for additional comments.

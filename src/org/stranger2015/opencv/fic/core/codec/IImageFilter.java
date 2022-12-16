@@ -1,17 +1,16 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.IImage;
 
 /**
  
- * @param <A>
+ * @param 
  */
 public
-interface IImageFilter< A extends IAddress <A>> {
+interface IImageFilter {
     /**
      * @param image
      * @return
      */
-    IImage<A> filter ( IImage <A> image );
+    IImage filter ( IImage image );
 }

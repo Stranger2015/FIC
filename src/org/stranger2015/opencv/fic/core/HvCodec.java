@@ -1,17 +1,15 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.checkerframework.checker.units.qual.A;
 import org.stranger2015.opencv.fic.core.codec.*;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  
  */
 public
-class HvCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends Codec <N, A, G> {
+class HvCodec extends Codec {
 
     /**
      * @param scheme
@@ -20,8 +18,8 @@ class HvCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
      */
     public
     HvCodec ( EPartitionScheme scheme,
-              EncodeTask <N, A, G> encodeTask,
-              DecodeTask <N, A, G> decodeTask ) {
+              EncodeTask  encodeTask,
+              DecodeTask <N> decodeTask ) {
 
         super(scheme, encodeTask, decodeTask);
     }
@@ -33,9 +31,9 @@ class HvCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
      * @return
      */
     public
-    ICodec <N, A, G> create ( EPartitionScheme scheme,
-                              EncodeTask <N, A, G> encodeTask,
-                              DecodeTask <N, A, G> decodeTask ) {
+    ICodec <N> create ( EPartitionScheme scheme,
+                              EncodeTask <N> encodeTask,
+                              DecodeTask <N> decodeTask ) {
 
         return new HvCodec <>(scheme, encodeTask, decodeTask);
     }
@@ -48,8 +46,8 @@ class HvCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
      */
 //    @Override
     public
-    IEncoder <N, A, G> getEncoder ( IImage<A> image, IIntSize rangeSize, IIntSize domainSize ) {
-        return new HvEncoder <N, A, G>(image, rangeSize, domainSize);
+    IEncoder <N> getEncoder ( IImage image, IIntSize rangeSize, IIntSize domainSize ) {
+        return new HvEncoder <N>(image, rangeSize, domainSize);
     }
 
     /**
@@ -57,7 +55,7 @@ class HvCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
      */
     @Override
     public
-    IEncoder<N,A,M,G>  getEncoder () {
+    IEncoder<N, A,M,G>  getEncoder () {
         return null;
     }
 
@@ -86,7 +84,7 @@ class HvCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
      */
     @Override
     public
-    IAddress <A> createAddress ( int address ) throws ValueError {
+    IAddress  createAddress ( int address ) throws ValueError {
         return new DecAddress <>(address);
     }
 }

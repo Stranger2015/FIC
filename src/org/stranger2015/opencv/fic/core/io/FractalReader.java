@@ -1,87 +1,176 @@
 package org.stranger2015.opencv.fic.core.io;
 
-import ar.com.hjg.pngj.IImageLine;
-import ar.com.hjg.pngj.IImageLineSet;
-import ar.com.hjg.pngj.PngReader;
 import org.stranger2015.opencv.fic.core.FCImageModel;
-import org.stranger2015.opencv.fic.core.IAddress;
+import org.stranger2015.opencv.fic.core.ImageInfo;
 import org.stranger2015.opencv.fic.core.ValueError;
+import org.stranger2015.opencv.fic.core.codec.EtvColorSpace;
+import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.io.File;
+import java.io.EOFException;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.GZIPInputStream;
 
-import static org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import static java.nio.file.Files.newInputStream;
+import static org.stranger2015.opencv.fic.core.FCImageModel.LABEL;
 
 /**
  * @param <N>
- * @param <A>
- 
+ * @param
  * @param <G>
  */
 public
-class FractalReader<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-       /* extends PngReader*/ {
+class FractalReader extends FractalIOBase {
+    private final List <ImageTransform> transforms = new ArrayList <>();
 
     /**
-     * Constructs a PngReader object from a stream, with default options. This reads the signature and the first IHDR
-     * chunk only.
+     * Constructs a Reader object from a stream, with default options
      * <p>
      * Warning: In case of exception the stream is NOT closed.
      * <p>
      * Warning: By default the stream will be closed when this object is {@link #close()}d. See
-     * PngReader or {@link #setShouldCloseStream(boolean)}
+     * Reader or {@link #setShouldCloseStream(boolean)}
      * <p>
      *
-     * @param inputStream PNG stream
+     * @param inputStream stream
+     */
+    /**
+     * Creates a new {@code FileReader}, given the name of the file to read,
+     * using the platform's
+     * {@linkplain Charset#defaultCharset() default charset}.
+     *
+     * @param fileName the name of the file to read
+     * @throws FileNotFoundException if the named file does not exist,
+     *                               is a directory rather than a regular file,
+     *                               or for some other reason cannot be opened for
+     *                               reading.
      */
     public
-    FractalReader ( InputStream inputStream ) {
-        /*super(inputStream);*/
+    FractalReader ( String fileName, FCImageModel model ) throws IOException, ValueError {
+        super(fileName, model);
     }
 
     /**
-     * Same as  but allows to specify early if the stream must be closed
-     *
-     * @param inputStream
-     * @param shouldCloseStream The stream will be closed in case of exception (constructor included) or normal
-     */
-    public
-    FractalReader ( InputStream inputStream, boolean shouldCloseStream ) {
-        /*super(inputStream, shouldCloseStream);*/
-    }
-
-    /**
-     * Constructs a PngReader opening a file. Sets <tt>shouldCloseStream=true</tt>, so that the stream will be closed with
-     * this object.
-     *
-     * @param file PNG image file
-     */
-    public
-    FractalReader ( File file ) {
-       // super(file);
-    }
-
-    /**
-     *
-     *
      * @return
      */
     public
-    FCImageModel <N, A, G> readModel () throws ValueError {
-        FCImageModel <N, A, G> model = new FCImageModel <>(/*new HashMap <>()*/);
+    FCImageModel readModel ( String fileName ) throws Exception {
+        InputStream fis;
+        try (InputStream is = new GZIPInputStream(fis = newInputStream(Path.of(fileName)))) {
+            readLabel(fis);
+            byte[] ifsRecords = readData(is);
+            fractalModel = new FCImageModel(ifsRecords);
 
-//        IImageLineSet <? extends IImageLine> rows = readRows();///*/*/*/**/*/*/*/
-        for (int i = 0; i < rows.size(); i++) {
-            IImageLine line = rows.getImageLine(i);
-            byte[] raw = new byte[0];
-            int len = 0;
-            int offset = 0;
-            int step = 0;
-            line.readFromPngRaw(raw, len, offset, step);
+            return fractalModel;
+        }
+    }
+
+    /**
+     * See the general contract of the <code>readInt</code>
+     * method of <code>DataInput</code>.
+     * <p>
+     * Bytes
+     * for this operation are read from the contained
+     * input stream.
+     *
+     * @return the next four bytes of this input stream, interpreted as an
+     * <code>int</code>.
+     * @throws EOFException if this input stream reaches the end before
+     *                      reading four bytes.
+     * @throws IOException  the stream has been closed and the contained
+     *                      input stream does not support reading after close, or
+     *                      another I/O error occurs.
+     * @see java.io.FilterInputStream#in
+     */
+    public final
+    int readInt ( InputStream is ) throws IOException {
+        int ch1 = read(is);
+        int ch2 = read(is);
+        int ch3 = read(is);
+        int ch4 = read(is);
+
+        if ((ch1 | ch2 | ch3 | ch4) < 0) {
+            throw new EOFException();
         }
 
-        return model;
+        return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + ch4);
+    }
+
+    /**
+     * @throws IOException
+     */
+    void readLabel ( InputStream is ) throws IOException {
+        int rc = is.read(LABEL.getBytes());
+        if (rc != LABEL.getBytes().length) {
+            throw new IllegalStateException();
+        }
+    }
+
+    /**
+     *
+     */
+    public
+    byte[] readData ( InputStream is ) throws Exception {
+        int dataLength = readInt(is);
+        fractalModel.setImageInfo( readImageInfo(is));
+        byte[] rawBytes = is.readNBytes(dataLength);
+
+        bitBuffer.getBytes().put(rawBytes);
+//        for (int i = 0; i < dataLength / ifsRecordLength; i++) {
+//            ImageTransform transform = bitBuffer.readIfsCodeRecord(imageInfo.getWidth());
+//            transforms.add(transform);
+//        }
+
+        return rawBytes;
+    }
+
+    /**
+     * @param is
+     * @returnnD
+     * @throws IOException
+     */
+    private
+    ImageInfo readImageInfo ( InputStream is ) throws IOException {
+        int w = readInt(is);
+        int h = readInt(is);
+        int origW = readInt(is);
+        int origH = readInt(is);
+
+        EtvColorSpace origColorSpace = EtvColorSpace.values()[readInt(is)];
+
+        return new ImageInfo(w, h, origW, origH, origColorSpace);
+    }
+
+    /**
+     * Reads the next byte of data from the input stream. The value byte is
+     * returned as an <code>int</code> in the range <code>0</code> to
+     * <code>255</code>. If no byte is available because the end of the stream
+     * has been reached, the value <code>-1</code> is returned. This method
+     * blocks until input data is available, the end of the stream is detected,
+     * or an exception is thrown.
+     *
+     * <p> A subclass must provide an implementation of this method.
+     *
+     * @return the next byte of data, or <code>-1</code> if the end of the
+     * stream is reached.
+     * @throws IOException if an I/O error occurs.
+     */
+    public
+    int read ( InputStream is ) throws IOException {
+        return is.read(this.oneByte);
+    }
+
+    /**
+     * @param bitBuffer
+     */
+    public
+    void setBitBuffer ( BitBuffer bitBuffer ) {
+        this.bitBuffer = bitBuffer;
     }
 }

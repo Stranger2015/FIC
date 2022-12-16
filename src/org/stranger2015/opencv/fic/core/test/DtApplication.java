@@ -16,12 +16,12 @@ import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 public
-class DtApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
+class DtApplication<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
         implements Runnable, Consumer <String> {
 
     protected final Logger logger = Logger.getLogger(String.valueOf(getClass()));
 
-    private final Config <N, A, G> config;
+    private final Config <N> config;
     private final EtvColorSpace colorSpace;
     private final EPartitionScheme scheme;
     private final Consumer <String> action = this;
@@ -29,17 +29,17 @@ class DtApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exte
     private final File input;
     private final File output;
 
-    private final FCImageModel <N, A, G> fractalModel;
-    private final Set <ImageTransform <A, G>> transforms = new HashSet <>();
+    private final FCImageModel <N> fractalModel;
+    private final Set <ImageTransform> transforms = new HashSet <>();
 
     private final IIntSize rangeSize;
     private final IIntSize domainSize;
 
-    private ImageProcessor <N, A, G> processor;
+    private ImageProcessor <N> processor;
 
 
     public
-    DtApplication ( Config <N, A, G> config, FCImageModel <N, A, G> fractalModel, IIntSize rangeSize, IIntSize domainSize ) {
+    DtApplication ( Config <N> config, FCImageModel <N> fractalModel, IIntSize rangeSize, IIntSize domainSize ) {
         this.config = config;
         colorSpace = config.colorSpace();
         scheme = config.partitionScheme();
@@ -57,21 +57,21 @@ class DtApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exte
             Class <?>[] pt = new Class <?>[]{};
             Object[] p = new Object[]{};
 
-            IEncoder <N, A, G> encoder = Encoder.create(getScheme(), pt, p);//todo invoke encoder before codec
-            IDecoder <N, A, G> decoder = Decoder.create(getScheme(), pt, p);
+            IEncoder <N> encoder = Encoder.create(getScheme(), pt, p);//todo invoke encoder before codec
+            IDecoder <N> decoder = Decoder.create(getScheme(), pt, p);
 
-            ICodec <N, A, G> codec = Codec.create(
+            ICodec <N> codec = Codec.create(
                     getScheme(),
                     new Class <?>[]{},
                     new Object[]{});
 
-            EncodeTask <N, A, G> encodeTask = new EncodeTask <>(
+            EncodeTask <N> encodeTask = new EncodeTask <>(
                     filename,
                     getScheme(),
                     codec,
                     List.of()
             );
-            DecodeTask <N, A, G> decodeTask = new DecodeTask <>(
+            DecodeTask <N> decodeTask = new DecodeTask <>(
                     filename,
                     getScheme(),
                     codec,
@@ -127,7 +127,7 @@ class DtApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exte
      * @return
      */
     public
-    Config <N, A, G> getConfig () {
+    Config <N> getConfig () {
         return config;
     }
 
@@ -159,7 +159,7 @@ class DtApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exte
      * @return
      */
     public
-    FCImageModel <N, A, G> getFractalModel () {
+    FCImageModel <N> getFractalModel () {
         return fractalModel;
     }
 

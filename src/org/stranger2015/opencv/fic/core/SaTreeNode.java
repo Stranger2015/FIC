@@ -11,8 +11,8 @@ import org.stranger2015.opencv.utils.BitBuffer;
  */
 @SuppressWarnings("unchecked")
 public
-class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends TreeNode <N, A, G> {
+class SaTreeNode<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends TreeNode <N> {
 
     protected int layerIndex;
 
@@ -23,7 +23,7 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      * @throws ValueError
      */
     public
-    SaTreeNode ( TreeNodeBase <N, A, G> parent, EDirection hexant, IIntSize boundingBox ) throws ValueError {
+    SaTreeNode ( TreeNodeBase <N> parent, EDirection hexant, IIntSize boundingBox ) throws ValueError {
         super(parent,hexant, boundingBox);
     }
 
@@ -33,7 +33,7 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      * @throws ValueError
      */
     public
-    SaTreeNode ( TreeNodeBase <N, A, G> parent, IIntSize boundingBox ) throws ValueError {
+    SaTreeNode ( TreeNodeBase <N> parent, IIntSize boundingBox ) throws ValueError {
         super(parent, null, boundingBox);
     }
 
@@ -43,7 +43,7 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      * @param boundingBox
      */
     public
-    SaTreeNode ( TreeNodeBase <N, A, G> parent, IImage <A> image, IIntSize boundingBox ) {
+    SaTreeNode ( TreeNodeBase <N> parent, IImage image, IIntSize boundingBox ) {
         super(parent, image, boundingBox);
     }
 
@@ -56,7 +56,7 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
 //
     @Override
     public
-    TreeNode <N, A, G> createChild ( int addr ) throws ValueError {
+    TreeNode <N> createChild ( int addr ) throws ValueError {
         return null;
     }
 
@@ -68,19 +68,19 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      */
     @Override
     public
-    TreeNodeBase <N, A, G> createChild ( IImageBlock <A> imageBlock, IAddress <A> address ) throws ValueError {
+    TreeNodeBase <N> createChild ( IImageBlock  imageBlock, IAddress  address ) throws ValueError {
         return null;
     }
 
     @Override
     public
-    TreeNodeBase <N, A, G> createNode ( TreeNodeBase <N, A, G> parent, IImageBlock <A> imageBlock, IAddress <A> address ) throws ValueError {
+    TreeNodeBase <N> createNode ( TreeNodeBase <N> parent, IImageBlock  imageBlock, IAddress  address ) throws ValueError {
         return null;
     }
 
     @Override
     public
-    TreeNodeBase <N, A, G> createNode ( TreeNodeBase <N, A, G> parent, IAddress <A> address ) throws ValueError {
+    TreeNodeBase <?> createNode ( TreeNodeBase <?> parent, IAddress  address ) throws ValueError {
         return null;
     }
 
@@ -91,7 +91,7 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      */
 //    @Override
     public
-    TreeNode<N, A, G> createNode ( TreeNodeBase <N, A, G> parent, IIntSize boundingBox ) throws ValueError {
+    TreeNode<N> createNode ( TreeNodeBase <N> parent, IIntSize boundingBox ) throws ValueError {
         return null;
     }
 
@@ -105,10 +105,10 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      */
 //    @Override
     public
-    TreeNode <N, A, G> createChild ( IImageBlock <A> imageBlock,
+    TreeNode <N> createChild ( IImageBlock  imageBlock,
                                         int layerIndex,
                                         int clusterIndex,
-                                        IAddress <A> address ) throws ValueError {
+                                        IAddress  address ) throws ValueError {
         return null;
     }
 
@@ -122,10 +122,10 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      */
 //    @Override
     public
-    TreeNode <N, A, G> createChild ( IImage <A> image,
+    TreeNode <N> createChild ( IImage image,
                                         int layerIndex,
                                         int clusterIndex,
-                                        IAddress <A> address ) throws ValueError {
+                                        IAddress  address ) throws ValueError {
         return null;
     }
 
@@ -139,10 +139,10 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      */
 //    @Override
     public
-    TreeNode <N, A, G> createChild ( GrayScaleImage <A> ib,
+    TreeNode <N> createChild ( GrayScaleImage  ib,
                                         int layerIndex,
                                         int clusterIndex,
-                                        IAddress <A> address ) throws ValueError {
+                                        IAddress  address ) throws ValueError {
         return null;
     }
 
@@ -158,7 +158,7 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      */
 //    @Override
     public
-    TreeNode <N, A, G> createChild ( Point point, int layerIndex, int clusteIndex, int x, int y, int address )
+    TreeNode <N> createChild ( Point point, int layerIndex, int clusteIndex, int x, int y, int address )
             throws ValueError {
 
         return null;
@@ -174,7 +174,7 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      */
 //    @Override
     public
-    TreeNode <N, A, G> createChild ( Point point,
+    TreeNode <N> createChild ( Point point,
                                         int layerIndex,
                                         int clusterIndex,
                                         int address ) throws ValueError {
@@ -188,7 +188,7 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      */
 //    @Override
     public
-    TreeNodeBase <N, A, G> createChild ( EDirection hexant, IntSize boundingBox ) throws ValueError {
+    TreeNodeBase <N> createChild ( EDirection hexant, IntSize boundingBox ) throws ValueError {
         return new SaTreeNode <>(this, hexant, boundingBox);
     }
 
@@ -199,7 +199,7 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      */
 //    @Override
     public
-    TreeNode <N, A, G> createNode ( TreeNodeBase <N, A, G> parent, IntSize boundingBox ) throws ValueError {
+    TreeNode <N> createNode ( TreeNodeBase <N> parent, IntSize boundingBox ) throws ValueError {
         return new SaTreeNode <>(parent, boundingBox);
     }
 
@@ -210,18 +210,18 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      * @return
      */
     public
-    TreeNode <N, A, G> createNode ( TreeNode <N, A, G> parent, EDirection hexant, IIntSize boundingBox )
+    TreeNode <N> createNode ( TreeNode <N> parent, EDirection hexant, IIntSize boundingBox )
             throws ValueError {
         return new SaTreeNode <>(parent, hexant, boundingBox);
     }
 
     /**
      * @param <N>
-     * @param <A>
+     * @param
      */
     public static
-    class SaLayerClusterNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-            extends LeafNode <N, A, G> {
+    class SaLayerClusterNode<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+            extends LeafNode <N> {
 
         /**
          * @param parent
@@ -230,15 +230,15 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
          * @param rect
          */
         protected
-        SaLayerClusterNode ( TreeNodeBase <N, A, G> parent,
+        SaLayerClusterNode ( TreeNodeBase <N> parent,
                              Point point,
-                             IImageBlock <A> imageBlock,
+                             IImageBlock  imageBlock,
                              IIntSize rect ) throws ValueError {
             super(parent, point, imageBlock, rect);
         }
 
         protected int layerIndex;
-        protected IAddress <A> address;
+        protected IAddress  address;
 
         /**
          * @param parent
@@ -248,8 +248,8 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
          * @param address
          */
         protected
-        SaLayerClusterNode ( TreeNodeBase <N, A, G> parent,
-                             IImageBlock <A> image,
+        SaLayerClusterNode ( TreeNodeBase <N> parent,
+                             IImageBlock  image,
                              IIntSize rect,
                              int layerIndex,
                              int address ) throws ValueError {
@@ -267,7 +267,7 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
          * @param boundingBox
          */
         protected
-        SaLayerClusterNode ( TreeNode <N, A, G> parent, Point point, IImage<A> image, IntSize boundingBox ) throws ValueError {
+        SaLayerClusterNode ( TreeNode <N> parent, Point point, IImage image, IntSize boundingBox ) throws ValueError {
             super(parent, point, image.getSubImage(), boundingBox);
         }
 
@@ -281,68 +281,68 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
 //         * @param address
 //         */
 //        public
-////        <N extends TreeNode <N, A, G>, A extends SipAddress <A>, M extends IImage<A>,
-//        SaLayerClusterNode ( TreeNode <N, A, G> parent,
-//                              M image,
+////        <N extends TreeNode <N>, A extends SipAddress , IImage extends IImage,
+//        SaLayerClusterNode ( TreeNode <N> parent,
+//                              IImage image,
 //                              IntSize boundingBox,
 //                              int layerIndex,
-//                              IAddress<A> address ) {
+//                              IAddress address ) {
 //            super(parent, image, image.getWidth(), image.getHeight());
 //        }
 
 //        public
-////        </*M extends IImage<A>,*/ A extends SipAddress <A>, N extends TreeNode <N, A, G>>
-//        SaLayerClusterNode ( TreeNode <N, A, G> parent,
-//                             IImage<A> image,
+////        </*M extends IImage,*/ A extends SipAddress , N extends TreeNode <N>>
+//        SaLayerClusterNode ( TreeNode <N> parent,
+//                             IImage image,
 //                             int layerIndex,
 //                             int clusterIndex,
-//                             IAddress <A> address ) {
+//                             IAddress  address ) {
 //            //todo
 //            this(parent, image, layerIndex, clusterIndex, image.getOriginalImageSideSize(), address);
 //        }
 
 //        public
-////        <N extends TreeNode <N, A, G>, A extends SipAddress <A>, M extends IImage<A>,
-//        SaLayerClusterNode ( TreeNode <N, A, G> parent,
+////        <N extends TreeNode <N>, A extends SipAddress , IImage extends IImage,
+//        SaLayerClusterNode ( TreeNode <N> parent,
 //                             IntSize boundingBox,
 //                             int layerIndex,
 //                             int clusterIndex,
-//                             IAddress<A> address ) {
+//                             IAddress address ) {
 //
 //            this(parent, layerIndex, clusterIndex, 0, 0, address);
 //        }
 
 //        public
-////        <N extends TreeNode <N, A, G>, A extends SipAddress <A>, M extends IImage<A>,
-//        SaLayerClusterNode ( TreeNode <N, A, G> parent,
+////        <N extends TreeNode <N>, A extends SipAddress , IImage extends IImage,
+//        SaLayerClusterNode ( TreeNode <N> parent,
 //                             int layerIndex,
 //                             int clusterIndex,
-//                             IAddress <A> address ) {
+//                             IAddress  address ) {
 //            super(parent, image, rect.width, rect.height);
 //        }
 
 //        public
-////        </*M extends IImage<A>,*/ N extends TreeNode <N, A, G>, A extends SipAddress <A>>
-//        SaLayerClusterNode ( TreeNode <N, A, G> parent,
+////        </*M extends IImage,*/ N extends TreeNode <N>, A extends SipAddress >
+//        SaLayerClusterNode ( TreeNode <N> parent,
 //                             int layerIndex,
 //                             int clusterIndex,
 //                             int i,
 //                             int i1,
-//                             IAddress <A> address ) {
+//                             IAddress  address ) {
 //
 //
 //            super(parent, image, rect.width, rect.height);
 //        }
 
 //        public
-//        SaLayerClusterNode ( TreeNode <N, A, G> parent, M image, IntSize boundingBox, int i, int i1 ) {
+//        SaLayerClusterNode ( TreeNode <N> parent, IImage image, IntSize boundingBox, int i, int i1 ) {
 //
 //            super(parent, image, boundingBox.width, boundingBox.height);
 //        }
 
         public
-        SaLayerClusterNode ( TreeNodeBase <N, A, G> parent,
-                             IImageBlock <A> imageBlock,
+        SaLayerClusterNode ( TreeNodeBase <N> parent,
+                             IImageBlock  imageBlock,
                              int layerIndex,
                              int clusterIndex,
                              int addr ) throws ValueError {
@@ -356,15 +356,15 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
         }
 
         public
-        SaLayerClusterNode ( TreeNodeBase<N, A, G> parent,
-                             IImageBlock<A> imageBlock,
+        SaLayerClusterNode ( TreeNodeBase<N> parent,
+                             IImageBlock imageBlock,
                              IIntSize boundingBox,
-                             IAddress<A> address ) {
+                             IAddress address ) {
             super(parent, imageBlock, boundingBox, address);
         }
 
         public
-        SaLayerClusterNode ( ImageBlock<A> imageBlock, IIntSize bb, int layerIndex, int clusterIndex, IAddress<A> address ) {
+        SaLayerClusterNode ( ImageBlock imageBlock, IIntSize bb, int layerIndex, int clusterIndex, IAddress address ) {
             super(imageBlock, bb, layerIndex, clusterIndex, address);
         }
 
@@ -378,8 +378,8 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
          */
 //        @Override
         public
-        TreeNode <N, A, G> createNode ( TreeNodeBase <N, A, G> parent,
-                                           IImageBlock <A> imageBlock,
+        TreeNode <N> createNode ( TreeNodeBase <N> parent,
+                                           IImageBlock  imageBlock,
                                            IIntSize boundingBox )
                 throws ValueError {
 
@@ -396,7 +396,7 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
          */
         //@Override
         public
-        TreeNodeBase <N, A, G> createChild (
+        TreeNodeBase <N> createChild (
                                             Point point,
                                             int layerIndex,
                                             int clusterIndex,
@@ -427,7 +427,7 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
          */
         @Override
         public
-        IImageBlock <A> getImageBlock () {
+        IImageBlock  getImageBlock () {
             return imageBlock;
         }
 
@@ -445,7 +445,7 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
          */
         @Override
         public
-        IImage<A> getImage () {
+        IImage getImage () {
             return imageBlock;
         }//todo
 
@@ -457,7 +457,7 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
          */
         @Override
         public
-        TreeNodeBase <N, A, G> createChild ( IImageBlock <A> imageBlock, IAddress <A> address ) throws ValueError {
+        TreeNodeBase <N> createChild ( IImageBlock  imageBlock, IAddress  address ) throws ValueError {
             return null;
         }
 
@@ -477,7 +477,7 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
          */
         @Override
         public
-        TreeNode <N, A, G> createNode ( TreeNodeBase <N, A, G> parent, IIntSize boundingBox ) throws ValueError {
+        TreeNode <N> createNode ( TreeNodeBase <N> parent, IIntSize boundingBox ) throws ValueError {
             return null;
         }
 
@@ -492,7 +492,7 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
          */
 //        @Override
         public
-        TreeNodeBase <N, A, G> createChild ( Point point,
+        TreeNodeBase <N> createChild ( Point point,
                                             int layerIndex,
                                             int clusteIndex,
                                             int x,
@@ -511,7 +511,7 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
          */
 //        @Override
         public
-        TreeNodeBase <N, A, G> createChild ( Point point, int layerIndex, int clusterIndex, IAddress <A> address )
+        TreeNodeBase <N> createChild ( Point point, int layerIndex, int clusterIndex, IAddress  address )
                 throws ValueError {
 
             return null;
@@ -525,9 +525,9 @@ class SaTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
          * @return
          */
         public
-        TreeNode <N, A, G> createNode ( TreeNodeBase <N, A, G> parent,
+        TreeNode <N> createNode ( TreeNodeBase <N> parent,
                                            Point point,
-                                           IImage <A> image,
+                                           IImage image,
                                            IIntSize boundingBox )
                 throws ValueError {
 

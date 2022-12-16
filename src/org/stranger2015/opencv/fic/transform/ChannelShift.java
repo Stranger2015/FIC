@@ -2,16 +2,13 @@ package org.stranger2015.opencv.fic.transform;
 
 import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
- 
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class ChannelShift</*M extends IImage<A>,*/ A extends IAddress <A>, G extends BitBuffer>
-        extends ShiftTransform<A, G>{
+class ChannelShift extends ShiftTransform {
 
     /**
      * @param image
@@ -20,7 +17,7 @@ class ChannelShift</*M extends IImage<A>,*/ A extends IAddress <A>, G extends Bi
      * @param address
      */
     protected
-    ChannelShift ( IImage<A> image, float intensity, int channelAxis, IAddress<A> address ) {
+    ChannelShift ( IImage image, float intensity, int channelAxis, IAddress address ) {
         super(image, intensity, channelAxis, address);
     }
 }

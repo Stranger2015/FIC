@@ -1,35 +1,32 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.stranger2015.opencv.fic.core.*;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.io.FractalReader;
 import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.fic.transform.ScaleTransform;
-import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  */
 public
-class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends BinTreeEncoder <N, A, G> {
+class QuadTreeEncoder
+        extends BinTreeEncoder {
 
     /**
      * @param image
-     * @return
      * @throws ValueError
      */
     @Override
     public
-    IImage <A> doEncode ( IImage <A> image ) throws ValueError, ReflectiveOperationException {
-        return super.doEncode(image);
+    void doEncode ( IImage image ) throws Exception {
+        super.doEncode(image);
     }
 
     /**
@@ -37,23 +34,24 @@ class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      */
     public
     QuadTreeEncoder (
-            String fn,
+            String fileName,
             EPartitionScheme scheme,
-            ICodec <N, A, G> codec,
-            List <Task <N, A, G>> tasks,
+            ICodec codec,
+            List <Task> tasks,
             EtvColorSpace colorSpace,
-            ITreeNodeBuilder <N, A, G> nodeBuilder,
-            IPartitionProcessor <N, A, G> partitionProcessor,
-            ISearchProcessor <N, A, G> searchProcessor,
-            ScaleTransform <A, G> scaleTransform,
-            ImageBlockGenerator <N, A, G> imageBlockGenerator,
-            IDistanceator <A> comparator,
-            Set <ImageTransform <A, G>> imageTransforms,
-            Set <IImageFilter <A>> imageFilters,
-            FCImageModel <N, A, G> fractalModel
+            ITreeNodeBuilder <?> nodeBuilder,
+            IPartitionProcessor partitionProcessor,
+            ISearchProcessor searchProcessor,
+            ScaleTransform  scaleTransform,
+            ImageBlockGenerator <?> imageBlockGenerator,
+            IDistanceator  comparator,
+            Set <ImageTransform> imageTransforms,
+            Set <IImageFilter > imageFilters,
+            FCImageModel fractalModel
 
     ) {
-        super(fn,
+        super(
+                fileName,
                 scheme,
                 codec,
                 tasks,
@@ -77,7 +75,7 @@ class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      */
     @Override
     public
-    IImage <A> randomTransform ( IImage <A> image, ImageTransform <A, G> transform ) {
+    IImage randomTransform ( IImage image, ImageTransform transform ) {
         return image;//todo
     }
 
@@ -88,7 +86,7 @@ class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      */
     @Override
     public
-    IImage <A> applyTransform ( IImage <A> image, ImageTransform <A, G> transform ) {
+    IImage applyTransform ( IImage image, ImageTransform transform ) {
         return image;//todo
     }
 
@@ -99,7 +97,7 @@ class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      */
     @Override
     public
-    IImage <A> applyAffineTransform ( IImage <A> image, AffineTransform <A, G> transform ) {
+    IImage applyAffineTransform ( IImage image, AffineTransform  transform ) {
         return image;//todo
     }
 
@@ -112,10 +110,12 @@ class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      */
     @Override
     public
-    List <IImageBlock <A>> generateAllTransformedBlocks ( IImage <A> image,
+    List <IImageBlock > generateAllTransformedBlocks ( IImage image,
                                                           int sourceSize,
                                                           int destinationSize,
-                                                          int step ) throws ValueError {
+                                                          int step )
+            throws ValueError {
+
         return List.of(image.getSubImage());
     }
 
@@ -131,11 +131,11 @@ class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      */
     @Override
     public
-    ImageBlockGenerator <N, A, G> createBlockGenerator (
-            IPartitionProcessor <N, A, G> partitionProcessor,
+    ImageBlockGenerator <?> createBlockGenerator (
+            IPartitionProcessor partitionProcessor,
             EPartitionScheme scheme,
-            IEncoder <N, A, G> encoder,
-            IImage <A> image,
+            IEncoder encoder,
+            IImage image,
             IIntSize rangeSize,
             IIntSize domainSize ) {
 
@@ -156,18 +156,18 @@ class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      */
     @Override
     public
-    IImage <A> flipAxis ( IImage <A> image, int axis ) {
+    IImage flipAxis ( IImage image, int axis ) {
         return image;
     }
 
-    /**
-     * @return
-     */
-//    @Override
-    public
-    ISearchProcessor <N, A, G> createSearchProcessor () {
-        return null;
-    }
+//    /**
+//     * @return
+//     */
+////    @Override
+//    public
+//    ISearchProcessor createSearchProcessor () {
+//        return null;
+//    }
 
     /**
      * @param filename
@@ -175,9 +175,10 @@ class QuadTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      */
     @Override
     public
-    FCImageModel <N, A, G> loadModel ( String filename ) throws ValueError {
-        FractalReader <N, A, G> reader = new FractalReader <>(new File(filename));
+    FCImageModel loadModel ( String filename ) throws ValueError, IOException {
+        FCImageModel m= new FCImageModel(null);
+        new FractalReader(filename);
 
-        return new FCImageModel <>(null);
+        return m;
     }
 }

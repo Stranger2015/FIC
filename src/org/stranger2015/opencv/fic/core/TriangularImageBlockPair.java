@@ -8,15 +8,15 @@ import org.stranger2015.opencv.fic.core.geom.Polygon;
 import java.util.List;
 
 /**
- * @param <A>
+ * @param 
  */
 public
-class TriangularImageBlockPair<A extends IAddress<A>>
-        extends ImageBlock<A>
-        implements ITriangularImageBlockPair <A> {
+class TriangularImageBlockPair<A extends IAddress>
+        extends ImageBlock
+        implements ITriangularImageBlockPair  {
 
-    private IImageBlock <A> block1;
-    private IImageBlock <A> block2;
+    private IImageBlock  block1;
+    private IImageBlock  block2;
 
     /**
      * @param image
@@ -27,13 +27,13 @@ class TriangularImageBlockPair<A extends IAddress<A>>
      * @throws ValueError
      */
     public
-    TriangularImageBlockPair ( IImage <A> image,
+    TriangularImageBlockPair ( IImage image,
                                int x,
                                int y,
                                int sideSize,
                                Point[] vertices,
-                               IImageBlock <A> block1,
-                               IImageBlock <A> block2
+                               IImageBlock  block1,
+                               IImageBlock  block2
     ) throws ValueError {
 
         super(image, x, y, sideSize, vertices, kind);
@@ -49,7 +49,7 @@ class TriangularImageBlockPair<A extends IAddress<A>>
      * @param block2
      */
     public
-    TriangularImageBlockPair ( IImage <A> inputImage, int i, Point[] vertices, IImageBlock <A> block1, IImageBlock <A> block2 ) {
+    TriangularImageBlockPair ( IImage inputImage, int i, Point[] vertices, IImageBlock  block1, IImageBlock  block2 ) {
         this(inputImage.getMat(),vertices, block1);
     }
 
@@ -58,7 +58,7 @@ class TriangularImageBlockPair<A extends IAddress<A>>
      * @param block1
      */
     public
-    TriangularImageBlockPair ( MatOfInt submat, Point[] vertices, IImageBlock <A> block1 ) {
+    TriangularImageBlockPair ( MatOfInt submat, Point[] vertices, IImageBlock  block1 ) {
         super(submat, vertices, geometry);
         this.block1 = block1;
     }
@@ -70,11 +70,11 @@ class TriangularImageBlockPair<A extends IAddress<A>>
      * @param block1
      */
     public
-    TriangularImageBlockPair ( IImage <A> image,
+    TriangularImageBlockPair ( IImage image,
                                IIntSize blockSize,
-                               IAddress <A> address,
+                               IAddress  address,
                                Point[] vertices,
-                               IImageBlock <A> block1 ) {
+                               IImageBlock  block1 ) {
 
         super(image, blockSize, address, vertices, geometry);
 
@@ -89,7 +89,7 @@ class TriangularImageBlockPair<A extends IAddress<A>>
      * @param block1
      */
     public
-    TriangularImageBlockPair ( MatOfInt image, Point[] vertices, int rows, int cols, int[] pixels, IImageBlock <A> block1 ) throws ValueError {
+    TriangularImageBlockPair ( MatOfInt image, Point[] vertices, int rows, int cols, int[] pixels, IImageBlock  block1 ) throws ValueError {
         super(image, vertices, rows, cols, pixels);
         this.block1 = block1;
     }
@@ -133,7 +133,7 @@ class TriangularImageBlockPair<A extends IAddress<A>>
      */
     @Override
     public
-    int[] getSamples ( IAddress <A> address, int sideSize, int dummy, int b, int[] iArray ) throws ValueError {
+    int[] getSamples ( IAddress  address, int sideSize, int dummy, int b, int[] iArray ) throws ValueError {
         return super.getSamples(address, sideSize, dummy, b, iArray);
     }
 
@@ -142,7 +142,7 @@ class TriangularImageBlockPair<A extends IAddress<A>>
      */
     @Override
     public
-    IImageBlock <A> getBlock1 () {
+    IImageBlock  getBlock1 () {
         return block1;
     }
 
@@ -151,13 +151,13 @@ class TriangularImageBlockPair<A extends IAddress<A>>
      */
     @Override
     public
-    IImageBlock <A> getBlock2 () {
+    IImageBlock  getBlock2 () {
         return null;
     }
 
     @Override
     public
-    boolean isBlockHomogenous ( IImageBlock <A> block ) {
+    boolean isBlockHomogenous ( IImageBlock  block ) {
         return false;
     }
 }

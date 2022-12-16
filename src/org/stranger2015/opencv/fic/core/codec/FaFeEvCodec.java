@@ -8,20 +8,20 @@ import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  
  * @param <G>
  */
 public
-class FaFeEvCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends Codec <N, A, G> {
+class FaFeEvCodec
+        extends Codec {
     /**
      * @param scheme
      * @param paramTypes
      * @param params
      */
     protected
-    FaFeEvCodec ( EPartitionScheme scheme, Class <?>[] paramTypes, Object... params/*EncodeTask <N, A, G> encodeTask, DecodeTask <N, A, G> decodeTask*/ ) {
+    FaFeEvCodec ( EPartitionScheme scheme, Class <?>[] paramTypes, Object... params/*EncodeTask <N> encodeTask, DecodeTask <N> decodeTask*/ ) {
         super(scheme, paramTypes, params/*encodeTask, decodeTask*/);
     }
 //
@@ -30,7 +30,7 @@ class FaFeEvCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
 //     */
 //    @Override
 //    public
-//    IEncoder<N, A, G> getEncoder () {
+//    IEncoder<N> getEncoder () {
 //        return null;
 //    }
 //
@@ -59,7 +59,7 @@ class FaFeEvCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extend
      */
     @Override
     public
-    IAddress <A> createAddress ( int address ) throws ValueError {
+    IAddress  createAddress ( int address ) throws ValueError {
 //        return super.createAddress(address);
         return null;
     }

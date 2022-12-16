@@ -22,17 +22,17 @@ import java.io.FileNotFoundException;
  * The available options to the system
  */
 public
-class Options<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer> {
+class Options<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer> {
    @Argument(metaVar = "COMMAND", handler = CommandHandler.class)
     @Option(name = "-e")
     public
-    IEncoder <N, A, G> encoder;
+    IEncoder <N> encoder;
 
     @Option(name = "-d")
     public
-    IDecoder <N, A, G> decoder;
+    IDecoder <N> decoder;
 
-    public IPartitionProcessor <N, A, G> partitionProcessor;
+    public IPartitionProcessor <N> partitionProcessor;
 
     protected int blockHeight;
 
@@ -186,7 +186,7 @@ class Options<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
 //    protected String filename;
 //    protected EPartitionScheme scheme;
 
-    protected ScaleTransform <A, G> domainScale
+    protected ScaleTransform  domainScale
             = new ScaleTransform <>(
             null,
             .5,

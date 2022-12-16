@@ -8,12 +8,12 @@ import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class SplitAndMergeCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends Codec <N, A, G> {
+class SplitAndMergeCodec<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends Codec <N> {
 //    /**
 //     * @param scheme
 //     * @param paramTypes
@@ -30,7 +30,7 @@ class SplitAndMergeCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      * @param decoder
      */
     public
-    SplitAndMergeCodec ( EPartitionScheme scheme, IEncoder <N, A, G> encoder, IDecoder <N, A, G> decoder ) {
+    SplitAndMergeCodec ( EPartitionScheme scheme, IEncoder <N> encoder, IDecoder <N> decoder ) {
         super(scheme, encoder, decoder);
     }
 
@@ -41,7 +41,7 @@ class SplitAndMergeCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      */
     @Override
     public
-    IAddress <A> createAddress ( int address ) throws ValueError {
+    IAddress  createAddress ( int address ) throws ValueError {
         return null;
     }
 }

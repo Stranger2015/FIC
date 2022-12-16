@@ -1,7 +1,7 @@
 package org.stranger2015.opencv.fic.transform;
 
 import org.opencv.core.Range;
-import org.stranger2015.opencv.utils.BitBuffer;
+import org.stranger2015.opencv.fic.core.IImage;
 
 import java.util.ArrayList;
 
@@ -9,15 +9,14 @@ import java.util.ArrayList;
  *
  */
 public
-class AffineTransforms</*M extends IImage<A>,*/ A extends IAddress <A>, G extends BitBuffer>
-        extends ArrayList<ImageTransform<M, A, G>> {
+class AffineTransforms extends ArrayList <ImageTransform> {
 
     /**
      * @param x
      * @param axis
      */
     public
-    M flipAxis ( M x, int axis ) {
+    IImage flipAxis ( IImage x, int axis ) {
         return x;
     }
 //    x = np.asarray(x).swapaxes(axis, 0)
@@ -28,29 +27,29 @@ class AffineTransforms</*M extends IImage<A>,*/ A extends IAddress <A>, G extend
     /**
      * Performs a random rotation of an image tensor.
      *
-     * @param image               Input tensor. Must be 3D.
-     * @param rg                  Rotation range, in degrees.
-     * @param rowAxis             Index of axis for rows in the input tensor.
-     * @param colAxis             Index of axis for columns in the input tensor.
-     * @param channelAxis         Index of axis for channels in the input tensor.
-     * @param fillMode            Points outside the boundaries of the input
-     *                            are filled according to the given mode
-     *                            (one of `{'constant', 'nearest', 'reflect', 'wrap'}`).
-     * @param cval                Value used for points outside the boundaries
-     *                            of the input if `mode='constant'`.
+     * @param image              Input tensor. Must be 3D.
+     * @param rg                 Rotation range, in degrees.
+     * @param rowAxis            Index of axis for rows in the input tensor.
+     * @param colAxis            Index of axis for columns in the input tensor.
+     * @param channelAxis        Index of axis for channels in the input tensor.
+     * @param fillMode           Points outside the boundaries of the input
+     *                           are filled according to the given mode
+     *                           (one of `{'constant', 'nearest', 'reflect', 'wrap'}`).
+     * @param cval               Value used for points outside the boundaries
+     *                           of the input if `mode='constant'`.
      * @param interpolationOrder int, order of spline interpolation.
-     *                            see `ndimage.interpolation.affine_transform`
+     *                           see `ndimage.interpolation.affine_transform`
      * @return Rotated image tensor.
      */
     public
-    M randomTransform/*Rotation*/ ( M image,
-                            Range rg,
-                            int rowAxis/*=1*/,
-                            int colAxis/*=2*/,
-                            int channelAxis/*=0*/,
-                            EFillMode fillMode,
-                            int cval,
-                            int interpolationOrder ) {
+    IImage randomTransform/*Rotation*/ ( IImage image,
+                                    Range rg,
+                                    int rowAxis/*=1*/,
+                                    int colAxis/*=2*/,
+                                    int channelAxis/*=0*/,
+                                    EFillMode fillMode,
+                                    int cval,
+                                    int interpolationOrder ) {
 
         return null;
     }
@@ -317,8 +316,7 @@ class AffineTransforms</*M extends IImage<A>,*/ A extends IAddress <A>, G extend
 //        zoom_matrix = np.array([[zx, 0, 0],
 //                                [0, zy, 0],
 //                                [0, 0, 1]])
-//        if transform_matrix is None:
-//            transform_matrix = zoom_matrix
+//        if transform_matrix is None:78
 //        else:
 //            transform_matrix = np.dot(transform_matrix, zoom_matrix)
 //

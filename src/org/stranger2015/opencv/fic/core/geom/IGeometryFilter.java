@@ -9,7 +9,7 @@ interface IGeometryFilter {
     /**
      * @param geometry
      */
-    void filter ( Geometry geometry );
+    void filter ( Geometry<?> geometry );
 }
 
 

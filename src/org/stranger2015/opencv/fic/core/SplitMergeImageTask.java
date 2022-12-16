@@ -8,21 +8,21 @@ import java.util.List;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  
  * @param <G>
  */
 @Deprecated
 public
-class SplitMergeImageTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */,
+class SplitMergeImageTask<N extends TreeNode <N>, A extends IAddress , /* IImage extends IImage */,
         G extends BitBuffer>
 
-        extends BidiTask <N, A, G> {
+        extends BidiTask <N> {
     /**
      * @param fn
      * @param scheme //     * @param tasks
      */
-    SplitMergeImageTask ( String fn, EPartitionScheme scheme, ICodec <N, A, G> codec ) {
+    SplitMergeImageTask ( String fn, EPartitionScheme scheme, ICodec <N> codec ) {
         super(fn, scheme, codec, List.of());
     }
 }

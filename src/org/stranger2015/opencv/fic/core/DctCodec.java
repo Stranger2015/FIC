@@ -1,19 +1,16 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.opencv.core.Size;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.Codec;
 import org.stranger2015.opencv.fic.core.codec.IDecoder;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  */
 public
-class DctCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends Codec <N, A, G> {
+class DctCodec extends Codec {
 
     /**
      * @param scheme
@@ -36,7 +33,7 @@ class DctCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      */
 //    @Override
     public
-    IEncoder <N, A, G> getEncoder ( IImage <A> image, Size rangeSize, Size domainSize ) {
+    IEncoder getEncoder ( IImage image, Size rangeSize, Size domainSize ) {
         return null;
     }
 
@@ -45,7 +42,7 @@ class DctCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      */
     @Override
     public
-    IEncoder <N, A, G> getEncoder () {
+    IEncoder getEncoder () {
         return null;
     }
 
@@ -54,7 +51,7 @@ class DctCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      */
     @Override
     public
-    IDecoder <N, A, G> getDecoder () {
+    IDecoder getDecoder () {
         return null;
     }
 
@@ -74,7 +71,16 @@ class DctCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      */
     @Override
     public
-    IAddress <A> createAddress ( int address ) throws ValueError {
+    IAddress createAddress ( int address ) throws ValueError {
         return null;
+    }
+
+    /**
+     * @param task
+     */
+    @Override
+    public
+    void addTask ( Task task ) {
+
     }
 }

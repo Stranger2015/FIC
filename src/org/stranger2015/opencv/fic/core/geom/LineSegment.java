@@ -279,7 +279,7 @@ public class LineSegment
 
     /**
      * Computes the {@link Coordinate} that lies a given
-     * fraction along the line defined by this segment and offset from 
+     * fraction along the line defined by this segment and offset from
      * the segment by a given distance.
      * A fraction of <code>0.0</code> offsets from the start point of the segment;
      * a fraction of <code>1.0</code> offsets from the end point of the segment.
@@ -544,7 +544,7 @@ public class LineSegment
      * Computes an intersection point between two line segments, if there is one.
      * There may be 0, 1 or many intersection points between two segments.
      * If there are 0, null is returned. If there is 1 or more, 
-     * exactly one of them is returned 
+     * exactly one of them is returned
      * (chosen at the discretion of the algorithm).  
      * If more information is required about the details of the intersection,
      * the {@link RobustLineIntersector} class should be used.

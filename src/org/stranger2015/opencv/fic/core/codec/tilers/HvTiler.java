@@ -12,24 +12,24 @@ import java.util.List;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  
  * @param <G>
  */
 public
-class HvTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends Tiler <N, A, G> {
+class HvTiler<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends Tiler <N> {
 
-//    private final RectangularTiler <N, A, G> rectangularTiler;
+//    private final RectangularTiler <N> rectangularTiler;
 
     public
-    HvTiler ( IImage <A> image, int width, int height ) {
+    HvTiler ( IImage image, int width, int height ) {
         super(image, width, height);
     }
 
     @Override
     public
-    void addLeaf ( LeafNode <N, A, G> node ) {
+    void addLeaf ( LeafNode <N> node ) {
 
     }
 
@@ -41,13 +41,13 @@ class HvTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
 
     @Override
     public
-    ITiler <N, A, G> instance () {
+    ITiler <N> instance () {
         return null;
     }
 
     @Override
     public
-    void segmentGeometry ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentGeometry ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
         List.of();
     }
 
@@ -58,13 +58,13 @@ class HvTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
      */
     @Override
     public
-    void segmentRectangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentRectangle ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
 
     }
 
     @Override
     public
-    void segmentRectangle ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentRectangle ( IImageBlock  imageBlock ) throws ValueError {
         return null;
     }
 
@@ -75,7 +75,7 @@ class HvTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
      */
 //    @Override
     public
-    List <IImageBlock <A>> tile ( IImage <A> image ) throws ValueError, MinimalRangeSizeReached {
+    List <IImageBlock > tile ( IImage image ) throws ValueError, MinimalRangeSizeReached {
     //    return rectangularTiler.tile(image, null, queue);//TODO;
         return null;
     }
@@ -85,7 +85,7 @@ class HvTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
      * @param cols
      */
     public
-    HvTiler ( IImage <A> image, IIntSize rangeSize, IIntSize domainSize, int rows, int cols ) {
+    HvTiler ( IImage image, IIntSize rangeSize, IIntSize domainSize, int rows, int cols ) {
         super(image, rangeSize, domainSize, rows, cols);
 //        rectangularTiler = new RectangularTiler <>(image, rangeSize, domainSize);
     }
@@ -96,36 +96,36 @@ class HvTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
      * @param domainSize
      */
     public
-    HvTiler (IImage <A> image, IIntSize rangeSize, IIntSize domainSize ) {
+    HvTiler (IImage  image, IIntSize rangeSize, IIntSize domainSize ) {
         this(image, rangeSize, domainSize, 0, 0);
     }
 
 //    @Override
     public
-    void segmentPolygon ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentPolygon ( IImageBlock  imageBlock ) throws ValueError {
         return null;
     }
 
 //    @Override
     public
-    void segmentQuadrilateral ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentQuadrilateral ( IImageBlock  imageBlock ) throws ValueError {
         return null;
     }
 
     @Override
     public
-    void addLeafNode ( TreeNode <N, A, G> node ) {
+    void addLeafNode ( TreeNode <N> node ) {
 
     }
 
     @Override
     public
-    List <Vertex> generateVerticesSet ( IImageBlock <A> roi, int blockWidth, int blockHeight ) {
+    List <Vertex> generateVerticesSet ( IImageBlock  roi, int blockWidth, int blockHeight ) {
         return null;
     }
 
     private
-    List <IImageBlock <A>> generateInitialRangeBlocks ( IImageBlock <A> roi, int blockWidth, int blockHeight )
+    List <IImageBlock > generateInitialRangeBlocks ( IImageBlock  roi, int blockWidth, int blockHeight )
             throws ValueError {
 
         return null;

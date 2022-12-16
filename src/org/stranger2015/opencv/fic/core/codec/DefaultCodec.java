@@ -7,19 +7,19 @@ import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  
  */
 public
-class DefaultCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends Codec <N, A, G>
+class DefaultCodec<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends Codec <N>
 
         implements IConstants {
 
     private EPartitionScheme scheme;
 
-    private EncodeTask <N, A, G> task;
-    private DecodeTask <N, A, G> inverseTask;
+    private EncodeTask <N> task;
+    private DecodeTask <N> inverseTask;
 
     /**
      * @param scheme
@@ -37,7 +37,7 @@ class DefaultCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      */
 //    @Override
     public
-    IEncoder <N, A, G> getEncoder ( IImage<A> image, IIntSize rangeSize, IIntSize domainSize ) {
+    IEncoder <N> getEncoder ( IImage image, IIntSize rangeSize, IIntSize domainSize ) {
         return encoder;
     }
 
@@ -57,13 +57,13 @@ class DefaultCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      */
     @Override
     public
-    IAddress <A> createAddress ( int address ) throws ValueError {
+    IAddress  createAddress ( int address ) throws ValueError {
         return null;
     }
 //
 //    @Override
 //    public
-//    IAddress <A> createAddress ( int address ) throws ValueError {
+//    IAddress  createAddress ( int address ) throws ValueError {
 //        switch (getScheme()) {
 //            case FIXED_SIZE:                        //FALLING
 //            case BIN_TREE:
@@ -97,7 +97,7 @@ class DefaultCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      */
     @Override
     public
-    IEncoder <N, A, G> getEncoder () {
+    IEncoder <N> getEncoder () {
         return encoder;
     }
 
@@ -106,7 +106,7 @@ class DefaultCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      */
     @Override
     public
-    IDecoder <N, A, G> getDecoder () {
+    IDecoder <N> getDecoder () {
         return decoder;
     }
 
@@ -123,7 +123,7 @@ class DefaultCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      * @param task
      */
     public
-    void setTask ( EncodeTask <N, A, G> task ) {
+    void setTask ( EncodeTask <N> task ) {
         this.task = task;
     }
 
@@ -131,7 +131,7 @@ class DefaultCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      * @return
      */
     public
-    DecodeTask <N, A, G> getInverseTask () {
+    DecodeTask <N> getInverseTask () {
         return inverseTask;
     }
 
@@ -147,7 +147,7 @@ class DefaultCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      * @return
      */
     public
-    EncodeTask <N, A, G> getTask () {
+    EncodeTask <N> getTask () {
         return task;
     }
 
@@ -155,7 +155,7 @@ class DefaultCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      * @param inverseTask
      */
     public
-    void setInverseTask ( DecodeTask <N, A, G> inverseTask ) {
+    void setInverseTask ( DecodeTask <N> inverseTask ) {
         this.inverseTask = inverseTask;
     }
 }

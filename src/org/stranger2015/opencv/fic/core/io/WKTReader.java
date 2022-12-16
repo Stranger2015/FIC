@@ -49,7 +49,7 @@ import java.util.Locale;
  * (The specification uses a syntax language similar to that used in
  * the C and Java language specifications.)
  * <p>
- * As of version 1.15, JTS can read (but not write) WKT Strings including Z, M or ZM
+ * As of version 1.15, JTS can read (but not write) WKT Strings including Z, IImage or ZM
  * in the name of the geometry type (ex. POINT Z, LINESTRINGZM).
  * Note that it only makes the reader more flexible, but JTS could already read
  * 3D coordinates from WKT String and still can't read 4D coordinates.
@@ -155,7 +155,7 @@ public class WKTReader
     }
 
     /**
-     * Sets a flag indicating, that coordinates may have 3 ordinate values even though no Z or M ordinate indicator
+     * Sets a flag indicating, that coordinates may have 3 ordinate values even though no Z or IImage ordinate indicator
      * is present. The default value is {@link #ALLOW_OLD_JTS_COORDINATE_SYNTAX}.
      *
      * @param value a boolean value
@@ -485,7 +485,7 @@ public class WKTReader
             coord.setZ(getNextNumber(tokenizer));
         }
         if (isNumberNext(tokenizer)) {
-            getNextNumber(tokenizer); // ignore M value
+            getNextNumber(tokenizer); // ignore IImage value
         }
         precisionModel.makePrecise(coord);
         return coord;
@@ -582,7 +582,7 @@ public class WKTReader
 
     /**
      *  Returns the next ordinate flag information in the stream as uppercase text.
-     *  This can be Z, M or ZM.
+     *  This can be Z, IImage or ZM.
      *
      *@return                  the next EMPTY or L_PAREN in the stream as uppercase
      *      text.

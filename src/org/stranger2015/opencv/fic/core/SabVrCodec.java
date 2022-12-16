@@ -8,13 +8,13 @@ import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  
  * @param <G>
  */
 public
-class SabVrCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends SaCodec <N, A, G> {
+class SabVrCodec<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends SaCodec <N> {
 
     /**
      * @param scheme
@@ -22,7 +22,7 @@ class SabVrCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      * @param decodeTask
      */
     protected
-    SabVrCodec ( EPartitionScheme scheme, EncodeTask <N, A, G> encodeTask, DecodeTask <N, A, G> decodeTask ) {
+    SabVrCodec ( EPartitionScheme scheme, EncodeTask <N> encodeTask, DecodeTask <N> decodeTask ) {
         super(scheme, encodeTask, decodeTask);
     }
 }

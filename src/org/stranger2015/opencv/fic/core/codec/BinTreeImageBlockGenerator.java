@@ -2,18 +2,17 @@ package org.stranger2015.opencv.fic.core.codec;
 
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class BinTreeImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends ImageBlockGenerator <N, A, G> {
+class BinTreeImageBlockGenerator<N extends TreeNode <N>>
+        extends ImageBlockGenerator <N> {
 
     /**
      * @param tiler
@@ -24,10 +23,10 @@ class BinTreeImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddres
      * @param domainSize
      */
     public
-    BinTreeImageBlockGenerator ( IPartitionProcessor <N, A, G> partitionProcessor,
+    BinTreeImageBlockGenerator ( IPartitionProcessor partitionProcessor,
                                  EPartitionScheme scheme,
-                                 IEncoder <N, A, G> encoder,
-                                 IImage <A> image,
+                                 IEncoder encoder,
+                                 IImage image,
                                  IIntSize rangeSize,
                                  IIntSize domainSize ) {
 
@@ -52,11 +51,11 @@ class BinTreeImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddres
      */
     @Override
     public
-    ImageBlockGenerator <N, A, G> newInstance (
-            IPartitionProcessor <N, A, G> partitionProcessor,
+    ImageBlockGenerator <N> newInstance (
+            IPartitionProcessor partitionProcessor,
             EPartitionScheme scheme,
-            IEncoder <N, A, G> encoder,
-            IImage <A> image,
+            IEncoder encoder,
+            IImage image,
             IIntSize rangeSize,
             IIntSize domainSize ) {
 
@@ -75,7 +74,7 @@ class BinTreeImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddres
 //     */
 //    @Override
 //    public
-//    List <IImageBlock <A>> generateRegions ( IImage <A> inputImage, List <Rectangle> bounds ) throws ValueError {
+//    List <IImageBlock > generateRegions ( IImage inputImage, List <Rectangle> bounds ) throws ValueError {
 //        return super.generateRegions(inputImage, bounds);
 //    }
 
@@ -87,17 +86,30 @@ class BinTreeImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddres
      */
     //    @Override
     protected
-    IImageBlock <A> mergeBlocks ( List <IImageBlock <A>> imageBlocks,
-                                  List <IImageBlock <A>> blocksToMerge
+    IImageBlock  mergeBlocks ( List <IImageBlock > imageBlocks,
+                                  List <IImageBlock > blocksToMerge
     ) throws ValueError {
         for (int i = 0; i < blocksToMerge.size(); i++) {
 
         }
 
-        IImageBlock <A> block = new ImageBlock <>(image.getMat() /*blockSize, geometry*/);
-
-        return block;
+        return new ImageBlock(image);
     }
+
+//    /**
+//     * @param partitionProcessor
+//     * @param scheme
+//     * @param encoder
+//     * @param image
+//     * @param rangeSize
+//     * @param domainSize
+//     * @return
+//     */
+//    @Override
+//    public
+//    ImageBlockGenerator <?> newInstance ( IPartitionProcessor partitionProcessor, EPartitionScheme scheme, IEncoder encoder, IImage image, IIntSize rangeSize, IIntSize domainSize ) {
+//        return null;
+//    }
 
     /**
      * @param roi
@@ -105,7 +117,7 @@ class BinTreeImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddres
      */
     @Override
     public
-    List <IImageBlock <A>> generateRangeBlocks ( IImageBlock <A> roi,
+    List <IImageBlock > generateRangeBlocks ( IImageBlock  roi,
                                                  int rangeSize,
                                                  int domainSize ) throws ValueError {
         return super.generateRangeBlocks(
@@ -122,7 +134,7 @@ class BinTreeImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddres
      */
     @Override
     public
-    List <IImageBlock <A>> createCodebookBlocks ( IImageBlock <A> roi, List <IImageBlock <A>> domainBlocks )
+    List <IImageBlock > createCodebookBlocks ( IImageBlock  roi, List <IImageBlock > domainBlocks )
             throws ValueError {
 
         return super.createCodebookBlocks(roi, domainBlocks);

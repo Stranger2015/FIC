@@ -1,16 +1,17 @@
 package org.stranger2015.opencv.fic.core;
 
+import org.checkerframework.checker.units.qual.A;
 import org.opencv.core.Mat;
 import org.stranger2015.opencv.fic.core.geom.Geometry;
 
 import java.util.List;
 
 /**
- * @param <A>
+ * @param
  */
 public
-interface IImageBlock<A extends IAddress <A>>
-        extends IImage <A> {
+interface IImageBlock
+        extends IImage {
 
     /**
      * @return
@@ -34,7 +35,7 @@ interface IImageBlock<A extends IAddress <A>>
     /**
      * @return
      */
-    IImageBlock <A> subImage ( int rowStart, int rowEnd, int colStart, int colEnd );
+    IImageBlock subImage ( int rowStart, int rowEnd, int colStart, int colEnd );
 
     /**
      * @return
@@ -54,7 +55,7 @@ interface IImageBlock<A extends IAddress <A>>
      * @throws ArrayIndexOutOfBoundsException if the coordinates or
      *                                        the band index are not in bounds.
      */
-    void setSample ( IAddress <A> address, int b, int s );
+    void setSample ( IAddress address, int b, int s );
 
     /**
      * Returns the sample in a specified band for the pixel located
@@ -69,7 +70,7 @@ interface IImageBlock<A extends IAddress <A>>
      * @throws ArrayIndexOutOfBoundsException if the coordinates or
      *                                        the band index are not in bounds.
      */
-    int getSample ( IAddress <A> address, int b );
+    int getSample ( IAddress address, int b );
 
     /**
      * @return
@@ -128,5 +129,5 @@ interface IImageBlock<A extends IAddress <A>>
      * @param blocksToMerge
      * @return
      */
-    A merge ( List <IImageBlock <A>> blocks, List <IImageBlock <A>> blocksToMerge );
+    A merge ( List <IImageBlock> blocks, List <IImageBlock> blocksToMerge );
 }

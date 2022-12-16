@@ -1,25 +1,21 @@
 package org.stranger2015.opencv.fic.core.codec.tilers;
 
-import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.IImageBlock;
 import org.stranger2015.opencv.fic.core.TreeNodeBase;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.ValueError;
-import org.stranger2015.opencv.fic.core.codec.IImageBlock;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @param <N>
- * @param <A>
+ * @param 
  * @param <G>
  */
 public
-interface IBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends ITiler <N, A, G> {
+interface IBottomUpTiler extends ITiler {
 
     /**
      * @param roi
@@ -29,7 +25,7 @@ interface IBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      */
     @Override
     default
-    List <Vertex> generateVerticesSet ( IImageBlock <A> roi, int blockWidth, int blockHeight ) {
+    List <Vertex> generateVerticesSet ( IImageBlock  roi, int blockWidth, int blockHeight ) {
         int numOfVerticesPerWidth = roi.getWidth() / blockWidth + 1;
         int numOfVerticesPerHeight = roi.getHeight() / blockHeight + 1;
 
@@ -54,12 +50,12 @@ interface IBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      * @return
      */
     default
-    List <IImageBlock <A>> generateInitialRangeBlocks ( IImageBlock <A> roi,
+    List <IImageBlock > generateInitialRangeBlocks ( IImageBlock  roi,
                                                         int blockWidth,
                                                         int blockHeight ) throws ValueError {
 
         List <Vertex> pointSet = generateVerticesSet(roi, blockWidth, blockHeight);
-        List <IImageBlock <A>> initialRangeBlocks = new ArrayList <>(pointSet.size());
+        List <IImageBlock > initialRangeBlocks = new ArrayList <>(pointSet.size());
 
         for (Vertex point : pointSet) {
             initialRangeBlocks.add(
@@ -82,14 +78,14 @@ interface IBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      */
     @Override
     default
-    List <IImageBlock <A>> generateRangeBlocks ( IImageBlock <A> roi, int blockWidth, int blockHeight )
+    List <IImageBlock > generateRangeBlocks ( IImageBlock  roi, int blockWidth, int blockHeight )
             throws ValueError {
 
-        List <IImageBlock <A>> rangeBlocks = generateInitialRangeBlocks(roi, blockWidth, blockHeight);
+        List <IImageBlock > rangeBlocks = generateInitialRangeBlocks(roi, blockWidth, blockHeight);
         int mergeables = successorAmount();
 
-        IImageBlock <A> block1;
-        IImageBlock <A> block2;
+        IImageBlock  block1;
+        IImageBlock  block2;
 
         for (int i = 0; i < rangeBlocks.size(); i++) {
             block1 = rangeBlocks.get(i);
@@ -106,14 +102,14 @@ interface IBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      * @throws ValueError
      */
     @Override
-    void segmentRectangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError;
+    void segmentRectangle ( TreeNodeBase <?> node, IImageBlock  imageBlock ) throws ValueError;
 
     /**
      * @param imageBlock
      * @throws ValueError
      */
     @Override
-    void segmentSquare ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError;
+    void segmentSquare ( TreeNodeBase <?> node, IImageBlock  imageBlock ) throws ValueError;
 
     /**
      * @param imageBlock
@@ -121,21 +117,21 @@ interface IBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      */
     default
     @Override
-    void segmentTriangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentTriangle ( TreeNodeBase <?> node, IImageBlock  imageBlock ) throws ValueError {
     }
 
     /**
      *
      */
     @Override
-    void onSuccessors ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock );
+    void onSuccessors ( TreeNodeBase <?> node, IImageBlock  imageBlock );
 
     /**
      * @param node
      * @param imageBlock
      */
-    @Override
-    void onSuccessor ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock );
+//    @Override
+    void onSuccessor ( TreeNodeBase <?> node, IImageBlock  imageBlock );
 
     /**
      * @return

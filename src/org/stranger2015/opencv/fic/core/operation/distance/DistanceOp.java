@@ -1,10 +1,6 @@
 package org.stranger2015.opencv.fic.core.operation.distance;
 
 
-import org.locationtech.jts.geom.util.LinearComponentExtracter;
-import org.locationtech.jts.geom.util.PointExtracter;
-import org.locationtech.jts.geom.util.PolygonExtracter;
-import org.locationtech.jts.operation.distance.ConnectedElementLocationFilter;
 import org.stranger2015.opencv.fic.core.algorithm.Distance;
 import org.stranger2015.opencv.fic.core.algorithm.PointLocator;
 import org.stranger2015.opencv.fic.core.geom.*;
@@ -41,7 +37,7 @@ class DistanceOp {
      * @return the distance between the geometries
      */
     public static
-    double distance ( Geometry g0, Geometry g1 ) {
+    double distance ( Geometry<?> g0, Geometry<?> g1 ) {
         DistanceOp distOp = new DistanceOp(g0, g1);
 
         return distOp.distance();

@@ -6,30 +6,29 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
 import org.stranger2015.opencv.fic.core.codec.SipImage;
+import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
 import org.stranger2015.opencv.fic.utils.Point;
 import org.stranger2015.opencv.fic.utils.SipLibrary;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.*;
 
-import static org.stranger2015.opencv.fic.core.IShape.EShape;
 import static org.stranger2015.opencv.fic.core.SipAddress.radix;
 import static org.stranger2015.opencv.fic.core.SipImageBlock.blockSideSize;
 import static org.stranger2015.opencv.fic.core.SipTreeNode.SipLayerClusterNode.blocks;
 
 /**
  * @param <N>
- * @param <A>
+ * @param 
  */
 public
-class SipTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
+class SipTreeNodeBuilder<N extends TreeNode <N>
 
-        extends TreeNodeBuilder <N, A, G> {
+        extends TreeNodeBuilder <N> {
 
-    protected SipLibrary <A> sipLibrary;
-    protected IImageBlock <A> imageBlock;
-    protected TreeNode <N, A, G> lastCluster;
-    private SipImage <A> image;
+    protected SipLibrary  sipLibrary;
+    protected IImageBlock  imageBlock;
+    protected TreeNode <N> lastCluster;
+    private SipImage  image;
     private int layerIndex;
     private int clusterIndex;
     protected int sideSize;
@@ -38,17 +37,17 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      *
      */
     public
-    SipTreeNodeBuilder ( IImage <A> image ) {
+    SipTreeNodeBuilder ( IImage image ) {
         super(image, new SipLibrary <>());
-        sipLibrary = (SipLibrary <A>) this.getLibrary();
+        sipLibrary = (SipLibrary ) this.getLibrary();
     }
 
     public
-    SipTreeNodeBuilder ( IImageBlock <A> image,
+    SipTreeNodeBuilder ( IImageBlock  image,
                          IIntSize rangeSize,
                          IIntSize domainSize,
-                         IEncoder <N, A, G> encoder,
-                         Library <A> library ) {
+                         IEncoder <N> encoder,
+                         Library  library ) {
 
         super(image, rangeSize, domainSize, encoder, library);
    }
@@ -60,17 +59,17 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
     @Override
     @SuppressWarnings("unchecked")
     public
-    SipTree <N, A, G> buildTree ( IImageBlock <A> imageBlock ) {
-//        SipTreeNode <N, A, G> root = new SipTreeNode <>(
+    SipTree <N> buildTree ( IImageBlock  imageBlock ) {
+//        SipTreeNode <N> root = new SipTreeNode <>(
 //                null,
 //                imageBlock,
 //                lastNode.boundingBox);//fixme
-//        SipTree <N, A, G> tree = new SipTree <>(root, imageBlock);
+//        SipTree <N> tree = new SipTree <>(root, imageBlock);
 //        tree.getNodes().add(root);
 //        tree.getNodes().addAll(buildMpfr(root));
 
 
-        SipTree <N, A, G> tree
+        SipTree <N> tree
                 = null;
         return tree;
     }
@@ -80,7 +79,7 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      */
     @Override
     public
-    List <TreeNodeBase <N, A, G>> getSuccessors () {
+    List <TreeNodeBase <?>> getSuccessors () {
         return null;
     }
 
@@ -89,7 +88,7 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      */
     @Override
     public
-    void add ( TreeNodeBase <N, A, G> node ) {
+    void add ( TreeNodeBase <?> node ) {
 
     }
 
@@ -98,7 +97,7 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      */
     @Override
     public
-    void addLeafNode ( LeafNode <N, A, G> node ) {
+    void addLeafNode ( LeafNode <?> node ) {
 
     }
 
@@ -107,7 +106,7 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      */
     @Override
     public
-    TreeNodeBase <N, A, G> getLastNode () {
+    TreeNodeBase <N> getLastNode () {
         return lastNode;
     }
 
@@ -116,7 +115,7 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      */
     @Override
     public
-    LeafNode <N, A, G> getLastLeafNode () {
+    LeafNode <N> getLastLeafNode () {
         return lastLeafNode;
     }
 
@@ -124,7 +123,7 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      *
      */
     void onNewCluster () {
-        SipLibrary <A> sipLibrary = (SipLibrary <A>) library;
+        SipLibrary  sipLibrary = (SipLibrary ) library;
         if (sipLibrary.clusterIndex == sipLibrary.clustersAmount) {
             if (sipLibrary.layersAmount == sipLibrary.layerIndex) {
                 sipLibrary.layersAmount++;
@@ -151,13 +150,13 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      */
     @SuppressWarnings("unchecked")
     private
-    List <TreeNode <N, A, G>> buildLayers ( SipTreeNode <N, A, G> root ) throws ValueError {
-        blocks.addAll((Collection <? extends ImageBlock <?>>) splitSipImageToBlocks((SipImage <A>) imageBlock));
+    List <TreeNode <N>> buildLayers ( SipTreeNode <N> root ) throws ValueError {
+        blocks.addAll((Collection <? extends ImageBlock <?>>) splitSipImageToBlocks((SipImage ) imageBlock));
 //        int sideSize = 0;
         sipLibrary.layersAmount = sipLibrary.calcLayersAmount(sideSize);
         int startAddress = 0;
         int endAddress = 0;
-        List <TreeNode <N, A, G>> clusters = null;
+        List <TreeNode <N>> clusters = null;
         while (sipLibrary.layerIndex++ < sipLibrary.layersAmount) {
             sipLibrary.clustersAmount = calcClustersAmount(sipLibrary.layerIndex);
             switch (sipLibrary.layerIndex) {
@@ -173,13 +172,13 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
                     try {
                         startAddress = endAddress + 1;
                         endAddress = startAddress + sipLibrary.clustersAmount * radix;
-                        List <TreeNode <N, A, G>> l =
+                        List <TreeNode <N>> l =
                                 createNewClusterNodes(
                                         root,
                                         sipLibrary.layerIndex,
                                         startAddress,
                                         endAddress);
-                        clusters.add((TreeNode <N, A, G>) l);
+                        clusters.add((TreeNode <N>) l);
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -200,20 +199,20 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      */
     @SuppressWarnings("unchecked")
     private
-    List <TreeNode <N, A, G>> createNewClusterNodes ( SipTreeNode <N, A, G> parent,
+    List <TreeNode <N>> createNewClusterNodes ( SipTreeNode <N> parent,
                                                       int layerIndex,
                                                       int startAddress,
                                                       int endAddress ) throws ValueError {
-        List <TreeNode <N, A, G>> l = new ArrayList <>();
+        List <TreeNode <N>> l = new ArrayList <>();
         List <Point> ccs = sipLibrary.getCartesianCoordinates(radix);
         for (int i = 0, amount = endAddress - startAddress; i < amount; i++) {
-            List <IImageBlock <A>> domainPool = new ArrayList <>();
+            List <IImageBlock > domainPool = new ArrayList <>();
             List <N> leaves = new ArrayList <>();
             List <Point> shifts = sipLibrary.derivePixelShifts(
-                    new SipTree <N, A, G>(
+                    new SipTree <N>(
                             parent,
                             blocks,
-                            new TreeNode Task <N, A, G>(null, domainPool, leaves)),
+                            new TreeNode Task <N>(null, domainPool, leaves)),
                     ccs,
                     sipLibrary.pixelCapacity,
                     startAddress,
@@ -221,13 +220,13 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
             );
             lastNode = lastCluster = createNewClusterNode(
                     parent,
-                    (SipImage <A>) imageBlock,//fixme loc var
+                    (SipImage ) imageBlock,//fixme loc var
                     layerIndex,
                     i
             );
 
             l.add(lastNode);
-            parent = (SipTreeNode <N, A, G>) lastNode;
+            parent = (SipTreeNode <N>) lastNode;
             onNewCluster();
         }
 
@@ -243,9 +242,9 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      */
     @SuppressWarnings("unchecked")
     private
-    TreeNode <N, A, G> createNewClusterNode (
-            TreeNode <N, A, G> parent,
-            SipImage <A> image,
+    TreeNode <N> createNewClusterNode (
+            TreeNode <N> parent,
+            SipImage  image,
             int layerIndex,
             int addr ) {
 
@@ -256,7 +255,7 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
     }
 
     protected
-    TreeNode <N, A, G> createNewClusterNode0 ( SipImage <A> image, int layerIndex, int clusterIndex, int addr ) {
+    TreeNode <N> createNewClusterNode0 ( SipImage  image, int layerIndex, int clusterIndex, int addr ) {
         this.image = image;
         this.layerIndex = layerIndex;
         this.clusterIndex = clusterIndex;
@@ -272,11 +271,11 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
     @SuppressWarnings("unchecked")
     //Image blk generator ---> generateRegions()
     private @NotNull
-    Map <Point, IImageBlock <A>> splitSipImageToBlocks ( SipImage <A> image ) {
-        Map <Point, IImageBlock <A>> map = new DualHashBidiMap <>();
+    Map <Point, IImageBlock > splitSipImageToBlocks ( SipImage  image ) {
+        Map <Point, IImageBlock > map = new DualHashBidiMap <>();
         for (int x = 0; x < sideSize; x += blockSideSize) {
             for (int y = 0; y < sideSize; y += blockSideSize) {
-                IImageBlock <A> imageBlock = new SipImageBlock <>(image.submat(x, y, blockSideSize, blockSideSize));
+                IImageBlock  imageBlock = new SipImageBlock <>(image.submat(x, y, blockSideSize, blockSideSize));
                 map.put(new Point(x, y), imageBlock);//fixme
             }
         }
@@ -294,13 +293,13 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
 
 //    @Override
 //    public
-//    ITiler <N, A, G> instance ( IIntSize rangeSize, IIntSize domainSlze ) {
+//    ITiler <N> instance ( IIntSize rangeSize, IIntSize domainSlze ) {
 //        return null;
 //    }
 
     @Override
     public
-    ITiler <N, A, G> instance () {
+    ITiler <N> instance () {
         return new SipTreeNodeBuilder <>();
     }
 
@@ -312,7 +311,7 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      */
     @Override
     public
-    List <IImageBlock <A>> tile ( IImage <A> image, IIntSize minRangeSize, Deque <IImageBlock <A>> queue )
+    List <IImageBlock > tile ( IImage image, IIntSize minRangeSize, Deque <IImageBlock > queue )
             throws ValueError, MinimalRangeSizeReached {
 
         return null;
@@ -354,9 +353,9 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
     @Override
     public
     void segmentShape ( EShape imageBlockShape,
-                        IImageBlock <A> imageBlock,
+                        IImageBlock  imageBlock,
                         IIntSize minRangeSize,
-                        Deque <IImageBlock <A>> queue ) {
+                        Deque <IImageBlock > queue ) {
 
     }
 
@@ -365,7 +364,7 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      */
     @Override
     public
-    void segmentRectangle ( IImageBlock <A> imageBlock ) {
+    void segmentRectangle ( IImageBlock  imageBlock ) {
         throw new UnsupportedOperationException("SipTreeNodeBuilder # segmentRectangle()");
     }
 
@@ -375,7 +374,7 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      */
     @Override
     public
-    void segmentSquare ( IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentSquare ( IImageBlock  imageBlock ) throws ValueError {
 
     }
 
@@ -384,7 +383,7 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      */
     @Override
     public
-    void addLeafNode ( TreeNode <N, A, G> node ) {
+    void addLeafNode ( TreeNode <N> node ) {
 
     }
 
@@ -392,7 +391,7 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      * @return
      */
     public
-    SipImage <A> getImage () {
+    SipImage  getImage () {
         return image;
     }
 
@@ -400,7 +399,7 @@ class SipTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      * @param image
      */
     public
-    void setImage ( SipImage <A> image ) {
+    void setImage ( SipImage  image ) {
         this.image = image;
     }
 

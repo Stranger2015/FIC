@@ -8,31 +8,29 @@ import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.fic.transform.ScaleTransform;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
 import java.util.Set;
 
 /**
- * @param <N>
- * @param <A>
+ * @param <?>
+ * @param
  */
 public
-class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends Encoder <N, A, G> {
+class HvEncoder extends Encoder {
 
     protected
     HvEncoder (
             EPartitionScheme scheme,
-            ITreeNodeBuilder <N, A, G> nodeBuilder,
-            IPartitionProcessor <N, A, G> partitionProcessor,
-            ISearchProcessor <N, A, G> searchProcessor,
-            ScaleTransform <A, G> scaleTransform,
-            ImageBlockGenerator <N, A, G> imageBlockGenerator,
-            IDistanceator <A> comparator,
-            Set <ImageTransform <A, G>> transforms,
-            Set <IImageFilter <A>> filters,
-            FCImageModel <N, A, G> fractalModel
+            ITreeNodeBuilder <?> nodeBuilder,
+            IPartitionProcessor partitionProcessor,
+            ISearchProcessor searchProcessor,
+            ScaleTransform  scaleTransform,
+            ImageBlockGenerator <?> imageBlockGenerator,
+            IDistanceator  comparator,
+            Set <ImageTransform> transforms,
+            Set <IImageFilter > filters,
+            FCImageModel fractalModel
     ) {
         super(
                 scheme,
@@ -58,11 +56,11 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
     @Override
     public
-    ImageBlockGenerator <N, A, G> createBlockGenerator (
-            IPartitionProcessor <N, A, G> partitionProcessor,
+    ImageBlockGenerator <?> createBlockGenerator (
+            IPartitionProcessor partitionProcessor,
             EPartitionScheme scheme,
-            IEncoder <N, A, G> encoder,
-            IImage <A> image,
+            IEncoder encoder,
+            IImage image,
             IIntSize rangeSize,
             IIntSize domainSize ) {
 
@@ -77,13 +75,13 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
 
     @Override
     public
-    IPartitionProcessor <N, A, G> doCreatePartitionProcessor ( ITiler <N, A, G> tiler ) {
+    IPartitionProcessor doCreatePartitionProcessor ( ITiler tiler ) {
         return null;
     }
 
-    @Override
+//    @Override
     public
-    IPartitionProcessor <N, A, G> createPartitionProcessor0 ( ITiler <N, A, G> tiler ) {
+    IPartitionProcessor createPartitionProcessor0 ( ITiler tiler ) {
         return null;
     }
 
@@ -94,7 +92,7 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
     @Override
     public
-    IImage <A> flipAxis ( IImage <A> image, int axis ) {
+    IImage flipAxis ( IImage image, int axis ) {
         return image;
     }
 
@@ -106,7 +104,7 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
 
     @Override
     public
-    IImage <A> doEncode ( IImage <A> image ) {
+    void doEncode ( IImage image ) {
         return image;
     }
 
@@ -116,15 +114,15 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      * @return
      * @throws ValueError
      */
-    @Override
+//    @Override
     public
-    List <IImageBlock <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds ) throws ValueError {
-        return List.of(new IImageBlock <>(image));
+    List <IImageBlock > segmentImage ( IImage image, List <Rectangle> bounds ) throws ValueError {
+        return List.of(new ImageBlock((IImage) image.getMat()));
     }
 //
 //    @Override
 //    public
-//    IPartitionProcessor <N, A, G> getPartitionProcessor () {
+//    IPartitionProcessor <?> getPartitionProcessor () {
 //        return new HvPartitionProcessor <>(image, image.getWidth(), image.getHeight());
 //    }
 
@@ -133,7 +131,7 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
     @Override
     public
-    void add ( TreeNode <N, A, G> node ) {
+    void add ( TreeNode <?> node ) {
 
     }
 
@@ -142,33 +140,52 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
     @Override
     public
-    void addLeafNode ( LeafNode <N, A, G> node ) {
+    void addLeafNode ( LeafNode <?> node ) {
 
     }
 
     /**
      * @param node
      */
-    @Override
+//    @Override
     public
-    void addLeafNode ( TreeNodeBase <N, A, G> node ) {
+    void addLeafNode ( TreeNodeBase <?> node ) {
 
     }
 
     @Override
     public
-    Class <?> getTilerClass () {
+    Class <? extends ITiler> getTilerClass () {
         return tilerClass;
     }
 
     /**
+     * @param tilerClass
+     */
+    @Override
+    public
+    void addAllowableSubtiler ( Class <ITiler> tilerClass ) {
+
+    }
+
+    /**
+     * @param tiler
+     * @return
+     */
+    @Override
+    public
+    IPartitionProcessor doCreatePartitionProcessor ( ITiler tiler ) {
+        return null;
+    }
+
+    /**
      * @param image
      * @param transform
      * @return
      */
     @Override
     public
-    IImage <A> randomTransform ( IImage <A> image, ImageTransform <A, G> transform ) {
+    IImage randomTransform ( IImage image, ImageTransform transform ) {
         return null;//todo
     }
 
@@ -179,7 +196,7 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
     @Override
     public
-    IImage <A> applyTransform ( IImage <A> image, ImageTransform <A, G> transform ) {
+    IImage applyTransform ( IImage image, ImageTransform transform ) {
         return null;//todo
     }
 
@@ -190,7 +207,7 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
     @Override
     public
-    IImage <A> applyAffineTransform ( IImage <A> image, AffineTransform <A, G> transform ) {
+    IImage applyAffineTransform ( IImage image, AffineTransform  transform ) {
         return image;
     }
 
@@ -203,7 +220,7 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
 //    @Override
     public
-    List <ImageTransform <A, G>> compress ( IImage <A> image, int sourceSize, int destinationSize, int step ) {
+    List <ImageTransform> compress ( IImage image, int sourceSize, int destinationSize, int step ) {
         return null;//todo
     }
 
@@ -216,7 +233,7 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
     @Override
     public
-    List <IImageBlock <A>> generateAllTransformedBlocks ( IImage <A> image,
+    List <IImageBlock > generateAllTransformedBlocks ( IImage image,
                                                           int sourceSize,
                                                           int destinationSize,
                                                           int step ) {
@@ -224,13 +241,23 @@ class HvEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
     }
 //    @Override
     public
-    IImage <A> getInput () {
+    IImage getInput () {
         return null;
     }
 
 //    @Override
     public
-    IImage <A> getOutput () {
+    IImage getOutput () {
+        return null;
+    }
+
+    /**
+     * @param outputImage
+     * @return
+     */
+    @Override
+    public
+    IImage postprocess ( IImage outputImage ) {
         return null;
     }
 

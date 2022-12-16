@@ -4,8 +4,8 @@ import org.opencv.core.Rect;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 
 public
-class RLTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, M extends IImage<A>, G extends BitBuffer>
-        extends Tree <N, A, G> {
+class RLTree<N extends TreeNode <N>>
+        extends Tree <N> {
     /**
      * Constructs a new object.
      *
@@ -14,7 +14,7 @@ class RLTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, M extends IIm
      * @param action
      */
     public
-    RLTree ( TreeNode <N, A, G> root, M image, TreeNodeTask <N, A, G> action ) {
+    RLTree ( TreeNode <N> root, IImage image, TreeNodeTask <N> action ) {
         this(root, image, action, DEFAULT_BOUNDING_BOX, DEFAULT_DEPTH);
     }
 
@@ -28,7 +28,7 @@ class RLTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, M extends IIm
      * @param depth
      */
     protected
-    RLTree ( TreeNode <N, A, G> root, M image, TreeNodeTask <N, A, G> action, Rect area, int depth ) {
+    RLTree ( TreeNode <N> root, IImage image, TreeNodeTask <N> action, Rect area, int depth ) {
         super(root, image, action, area, depth);
     }
 
@@ -39,15 +39,15 @@ class RLTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, M extends IIm
      * @return
      */
     public
-    TreeNode <N, A, G> nodeInstance ( TreeNode <N, A, G> parent, EDirection quadrant, Rect rect )
+    TreeNode <N> nodeInstance ( TreeNode <N> parent, EDirection quadrant, Rect rect )
             throws ValueError {
         return new RLTreeNode <>(parent, quadrant, rect);
     }
 
     @SuppressWarnings("unchecked")
-    @Override
+//    @Override
     public
-    Class <? extends TreeNode <N, A, G>> getNodeClass ( TreeNode <N, A, G> clazz ) {
-        return (Class <? extends TreeNode <N, A, G>>) clazz.getClass();
+    Class <? extends TreeNode <N>> getNodeClass ( TreeNode <N> clazz ) {
+        return (Class <? extends TreeNode <N>>) clazz.getClass();
     }
 }

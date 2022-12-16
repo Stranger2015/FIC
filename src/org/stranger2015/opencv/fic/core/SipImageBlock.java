@@ -6,7 +6,7 @@ import org.opencv.core.Mat;
  *
  */
 public
-class SipImageBlock<A extends IAddress <A>> extends SaImageBlock <A> {
+class SipImageBlock<A extends IAddress > extends SaImageBlock  {
 
     public static final int blockSideSize = 3;//in encoder
 
@@ -29,7 +29,7 @@ class SipImageBlock<A extends IAddress <A>> extends SaImageBlock <A> {
      * @param centerX
      */
     public
-    SipImageBlock ( IImage <A> image, int x, int y, int w, int h, int centerX, int centerY ) throws ValueError {
+    SipImageBlock ( IImage image, int x, int y, int w, int h, int centerX, int centerY ) throws ValueError {
         super(image, x, y, w, h);
     }
 
@@ -39,7 +39,7 @@ class SipImageBlock<A extends IAddress <A>> extends SaImageBlock <A> {
      * @param y
      */
     public
-    SipImageBlock ( IImage <A> image, int x, int y ) throws ValueError {
+    SipImageBlock ( IImage image, int x, int y ) throws ValueError {
         super(image, x, y, blockSideSize, blockSideSize);
     }
 
@@ -78,7 +78,7 @@ class SipImageBlock<A extends IAddress <A>> extends SaImageBlock <A> {
             return false;
         }
 
-        SipImageBlock <A> that = (SipImageBlock <A>) o;
+        SipImageBlock  that = (SipImageBlock ) o;
 
         if (getCenterX() != that.getCenterX()) {
             return false;
@@ -93,7 +93,7 @@ class SipImageBlock<A extends IAddress <A>> extends SaImageBlock <A> {
      */
     @Override
     public
-    IImage <A> contract ( int contractivity ) {
+    IImage contract ( int contractivity ) {
         return super.contract(contractivity);
     }
 

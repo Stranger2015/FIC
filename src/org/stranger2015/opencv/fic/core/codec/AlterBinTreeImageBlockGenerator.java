@@ -8,12 +8,12 @@ import java.util.List;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class AlterBinTreeImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends BinTreeImageBlockGenerator <N, A, G> {
+class AlterBinTreeImageBlockGenerator<N extends TreeNode <N>>
+        extends BinTreeImageBlockGenerator <N> {
 
     /**
      * @param partitionProcessor
@@ -24,10 +24,10 @@ class AlterBinTreeImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IA
      * @param domainSize
      */
     public
-    AlterBinTreeImageBlockGenerator ( IPartitionProcessor <N, A, G> partitionProcessor,
+    AlterBinTreeImageBlockGenerator ( IPartitionProcessor <N> partitionProcessor,
                                       EPartitionScheme scheme,
-                                      IEncoder <N, A, G> encoder,
-                                      IImage <A> image,
+                                      IEncoder <N> encoder,
+                                      IImage image,
                                       IIntSize rangeSize,
                                       IIntSize domainSize ) {
 
@@ -42,7 +42,7 @@ class AlterBinTreeImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IA
      */
     @Override
     public
-    List <IImageBlock <A>> generateRangeBlocks ( IImageBlock <A> roi,
+    List <IImageBlock > generateRangeBlocks ( IImageBlock  roi,
                                                  int rangeSize,
                                                  int domainSize ) throws ValueError {
 

@@ -1,6 +1,5 @@
 package org.stranger2015.opencv.fic.core.math;
 
-
 import java.io.Serializable;
 
 /**
@@ -67,7 +66,7 @@ import java.io.Serializable;
  * <h3>References</h3>
  * <ul>
  * <li>Priest, D., <i>Algorithms for Arbitrary Precision Floating Point Arithmetic</i>,
- * in P. Kornerup and D. Matula, Eds., Proc. 10th Symposium on Computer Arithmetic, 
+ * in P. Kornerup and D. Matula, Eds., Proc. 10th Symposium on Computer Arithmetic,
  * IEEE Computer Society Press, Los Alamitos, Calif., 1991.
  * <li>Yozo Hida, Xiaoye S. Li and David H. Bailey, 
  * <i>Quad-Double Arithmetic: Algorithms, Implementation, and Application</i>, 
@@ -105,7 +104,7 @@ public strictfp final class DD
             6.123233995736766036e-17);
 
     /**
-     * The value nearest to the constant e (the natural logarithm base). 
+     * The value nearest to the constant e (the natural logarithm base).
      */
     public static final DD E = new DD(
             2.718281828459045091e+00,
@@ -186,8 +185,8 @@ public strictfp final class DD
     /**
      * Creates a new DoubleDouble with value (hi, lo).
      *
-     * @param hi the high-order component 
-     * @param lo the high-order component 
+     * @param hi the high-order component
+     * @param lo the high-order component
      */
     public DD(double hi, double lo)
     {
@@ -724,7 +723,7 @@ public strictfp final class DD
 
     /**
      * Returns the integer which is largest in absolute value and not further
-     * from zero than this value.  
+     * from zero than this value.
      * Special cases:
      * <ul>
      * <li>If this value is NaN, returns NaN.

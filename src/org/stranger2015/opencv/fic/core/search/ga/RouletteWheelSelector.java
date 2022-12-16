@@ -1,8 +1,9 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
-import org.stranger2015.opencv.utils.BitBuffer;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 import java.util.stream.IntStream;
 
 /**
@@ -39,8 +40,8 @@ import java.util.stream.IntStream;
  * @author Daniel Dyer
  */
 public
-class RouletteWheelSelector<T extends Individual <G, C>, G extends BitBuffer, C extends Chromosome <G>>
-        extends Selector <T, G, C> {
+class RouletteWheelSelector<C extends Chromosome>
+        extends Selector < C> {
     /**
      *
      */
@@ -64,7 +65,7 @@ class RouletteWheelSelector<T extends Individual <G, C>, G extends BitBuffer, C 
      * @return The selected candidates.
      */
     public
-    <S> List <S> select ( List <T> population,
+    <S> List <S> select ( List <C> population,
                           boolean naturalFitnessScores,
                           int selectionSize,
                           Random rng ) {

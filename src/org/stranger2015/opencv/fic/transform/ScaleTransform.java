@@ -2,7 +2,6 @@ package org.stranger2015.opencv.fic.transform;
 
 import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import static java.lang.String.format;
 
@@ -10,8 +9,8 @@ import static java.lang.String.format;
  * functor class to affineScale an image
  */
 public
-class ScaleTransform< A extends IAddress <A>, G extends BitBuffer>
-        extends PreserveAlphaTransform<A, G> {
+class ScaleTransform
+        extends PreserveAlphaTransform {
 
     private final double scaleX;
     private final double scaleY;
@@ -23,7 +22,7 @@ class ScaleTransform< A extends IAddress <A>, G extends BitBuffer>
      * @param address
      */
     public
-    ScaleTransform ( IImage<A> image, double scaleX, double scaleY, IAddress<A> address ) {
+    ScaleTransform ( IImage image, double scaleX, double scaleY, IAddress address ) {
         this(image, scaleX, scaleY, false, address);
     }
 
@@ -34,7 +33,7 @@ class ScaleTransform< A extends IAddress <A>, G extends BitBuffer>
      * @param address
      */
     public
-    ScaleTransform ( IImage<A> image, double scaleX, double scaleY, boolean preserveAlpha, IAddress <A> address ) {
+    ScaleTransform ( IImage image, double scaleX, double scaleY, boolean preserveAlpha, IAddress  address ) {
         super(image, preserveAlpha, address);
 
         this.scaleX = scaleX;

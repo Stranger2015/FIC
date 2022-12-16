@@ -8,19 +8,18 @@ import org.stranger2015.opencv.fic.core.ValueError;
 import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
 import org.stranger2015.opencv.fic.core.geom.Envelope;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.QuadEdgeSubdivision;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
- * @param <A>
+ * @param 
  * @param <G>
  */
 public
-class DelaunayTriangulation<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends QuadEdgeSubdivision <N, A, G>
-        implements ILeaf <N, A, G> {
+class DelaunayTriangulation<N extends TreeNode <N>>
+        extends QuadEdgeSubdivision <N>
+        implements ILeaf <N> {
 
-    private final ITiler <N, A, G> subtiler;
+    private final ITiler subtiler;
 
     /**
      * Creates a new instance of a quad-edge subdivision based on a frame triangle
@@ -32,11 +31,11 @@ class DelaunayTriangulation<N extends TreeNode <N, A, G>, A extends IAddress <A>
      * @param subtiler
      */
     public
-    DelaunayTriangulation ( TreeNodeBase <N, A, G> parent, Envelope env, double tolerance, ITiler <N, A, G> subtiler ) {
+    DelaunayTriangulation ( TreeNodeBase <N> parent, Envelope env, double tolerance, ITiler subtiler ) {
         super(parent, env, tolerance);
+
         this.subtiler = subtiler;
     }
-/
 
     /**
      *
@@ -47,7 +46,12 @@ class DelaunayTriangulation<N extends TreeNode <N, A, G>, A extends IAddress <A>
 
     }
 
-    IAddress <A> getAddress ( int row, int col ) throws ValueError {
+    IAddress  getAddress ( int row, int col ) throws ValueError {
         return null;
+    }
+
+    public
+    ITiler getSubtiler () {
+        return subtiler;
     }
 }

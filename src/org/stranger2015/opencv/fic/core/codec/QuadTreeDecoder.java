@@ -7,17 +7,17 @@ import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  
- * @param <A>
+ * @param
  */
 public
-class QuadTreeDecoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends Decoder <N, A, G> {
+class QuadTreeDecoder<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends Decoder <N> {
 
     /**
      * @param image
      */
     public
-    QuadTreeDecoder ( IImage<A> image ) {
+    QuadTreeDecoder ( IImage image ) {
         super(image);
     }
 }

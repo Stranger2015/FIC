@@ -9,19 +9,19 @@ import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
- * @param <A>
+ * @param 
  * @param <G>
  */
 public
-class BlockSegmentationTransform<A extends IAddress <A>, G extends BitBuffer>
-        extends ImageTransform <A, G> {
+class BlockSegmentationTransform
+        extends ImageTransform {
     /**
      * @param image
      * @param type
      * @param address
      */
     public
-    BlockSegmentationTransform ( IImage <A> image, EInterpolationType type, IAddress <A> address ) {
+    BlockSegmentationTransform ( IImage image, EInterpolationType type, IAddress  address ) {
         super(image, type, address);
     }
 
@@ -41,9 +41,9 @@ class BlockSegmentationTransform<A extends IAddress <A>, G extends BitBuffer>
      * @param dihedralAffineTransformIndex
      */
     public
-    BlockSegmentationTransform ( IImage <A> image,
+    BlockSegmentationTransform ( IImage image,
                                  EInterpolationType type,
-                                 IAddress <A> address,
+                                 IAddress  address,
                                  int brightnessOffset,
                                  double contrastScale,
                                  int dihedralAffineTransformIndex ) {
@@ -64,7 +64,7 @@ class BlockSegmentationTransform<A extends IAddress <A>, G extends BitBuffer>
      */
     @Override
     public
-    IImage <A> transform ( IImage<A> inputImage, Mat transformMatrix, EInterpolationType type ) {
+    IImage transform ( IImage inputImage, Mat transformMatrix, EInterpolationType type ) {
 
         return super.transform(inputImage, transformMatrix, type);
     }

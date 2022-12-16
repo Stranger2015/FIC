@@ -10,11 +10,11 @@ import java.util.List;
  *
  */
 public
-class CodecTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends BidiTask <N, A, G> {
+class CodecTask<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends BidiTask <N> {
 
-    private/* final*/ IEncoder <N, A, G> encoder;
-    private /*final*/ IDecoder <N, A, G> decoder;
+    private/* final*/ IEncoder <N> encoder;
+    private /*final*/ IDecoder <N> decoder;
 
     /**
      * @param encoder
@@ -25,10 +25,10 @@ class CodecTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
     public
     CodecTask ( String fn,
                 EPartitionScheme scheme,
-            ICodec<N, A, G> codec,
-                IEncoder <N, A, G> encoder,
-                IDecoder <N, A, G> decoder,
-                Task <N, A, G>... tasks ) {
+            ICodec<N> codec,
+                IEncoder <N> encoder,
+                IDecoder <N> decoder,
+                Task <N>... tasks ) {
 
         this(fn, scheme, codec, encoder, decoder, List.of(tasks));
     }
@@ -41,11 +41,11 @@ class CodecTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
     public
     CodecTask ( String fn,
                 EPartitionScheme scheme,
-                ICodec<N, A, G> codec,
+                ICodec<N> codec,
 
-                IEncoder <N, A, G> encoder,
-                IDecoder <N, A, G> decoder,
-                List <Task <N, A, G>> tasks ) {
+                IEncoder <N> encoder,
+                IDecoder <N> decoder,
+                List <Task <N>> tasks ) {
 
         super(fn, scheme, codec, tasks);
 
@@ -59,8 +59,8 @@ class CodecTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
     public
     CodecTask ( String fn,
                 EPartitionScheme scheme,
-                ICodec<N, A, G> codec,
-                List <Task <N, A, G>> tasks) {
+                ICodec<N> codec,
+                List <Task <N>> tasks) {
         super(
                 fn,
                 scheme,
@@ -74,7 +74,7 @@ class CodecTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      * @return
      */
     public
-    IEncoder <N, A, G> getEncoder () {
+    IEncoder <N> getEncoder () {
         return encoder;
     }
 
@@ -82,7 +82,7 @@ class CodecTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      * @return
      */
     public
-    IDecoder <N, A, G> getDecoder () {
+    IDecoder <N> getDecoder () {
         return decoder;
     }
 
@@ -202,12 +202,12 @@ class CodecTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      * (linear) color spaces that will explain a lot. Yeah, I’m a tease.
      *
      * @param <N>
-     * @param <A>
+     * @param
      * @param <G>
      */
     public static
-    class ColorspaceConversionTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-            extends BidiTask <N, A, G> {
+    class ColorspaceConversionTask<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+            extends BidiTask <N> {
 
         protected final EtvColorSpace colorSpace;
 
@@ -219,7 +219,7 @@ class CodecTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
         public
         ColorspaceConversionTask ( String filename,
                                    EPartitionScheme scheme,
-                                   ICodec <N, A, G> codec,
+                                   ICodec <N> codec,
                                    EtvColorSpace colorSpace
         ) {
             this(
@@ -253,9 +253,9 @@ class CodecTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
         public
         ColorspaceConversionTask ( String fileName,
                                    EPartitionScheme scheme,
-                                   ICodec <N, A, G> codec,
+                                   ICodec <N> codec,
                                    EtvColorSpace colorSpace,
-                                   List <Task <N, A, G>> tasks
+                                   List <Task <N>> tasks
         ) {
             super(fileName, scheme, codec, tasks);
 
@@ -268,8 +268,8 @@ class CodecTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
          */
         @Override
         protected
-        IImage <A> execute ( String filename ) throws ValueError {
-            IImage <A> image = super.execute(filename);
+        IImage execute ( String filename ) throws ValueError {
+            IImage image = super.execute(filename);
     //getTask();
             return image;
         }

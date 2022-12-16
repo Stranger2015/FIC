@@ -1,7 +1,5 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
@@ -17,51 +15,49 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.stranger2015.opencv.fic.core.EAddressKind.ORDINARY;
 import static org.stranger2015.opencv.fic.core.IAddress.create;
 
 /**
  *
  */
 public
-class Image<A extends IAddress <A>>
-        implements IImage <A> {
+class Image implements IImage {
 
-    public static final EAddressKind ADDRESS_KIND = EAddressKind.ORDINARY;
+    public static final EAddressKind ADDRESS_KIND = ORDINARY;
 
-    public final Mat actualImage;
-    protected final IIntSize blockSize;
+    //    public final Mat actualImage;
+    protected /*final*/ IIntSize blockSize;
     //    rotected final int[,] table;
-    protected final int originalImageWidth;
-    protected final int originalImageHeight;
-
+//    protected final int originalImageWidth;
+//    protected final int originalImageHeight;
+//
     //    protected final MatOfInt roi;
     private GeometryFactory factory;
-    protected final int x;
-    protected final int y;
-    //    protected List <IImageBlock <A>> regions;
+    //    protected final int x;
+//    protected final int y;
+    //    protected List <IImageBlock > regions;
     protected double[] meanPixelValue;
 
     /**
      * @param roi
+     * @param regions
      * @param actualImage
      * @param blockSize1
      * @param i
      * @param j
-     * @param blockSize
-     * @param regions
      */
     public
-    Image ( Mat actualImage, IIntSize blockSize1, int i, int j, int[] blockSize/*List <IImageBlock <A>> regions */ ) {
+    Image ( IImageBlock actualImage, int blockSize1, int i, int j /*List <IImageBlock > regions */ ) {
 //        this(actualImage, roi, i, j);
-        this.actualImage = actualImage;
-        this.blockSize = blockSize1;
+//        this.actualImage = actualImage;
+//        this.blockSize = blockSize1;
 //        this.roi = roi;
-        x = i;
-        y = j;
+//        x = i;
+//        y = j;
         //      this.regions = regions;
-        originalImageWidth = actualImage.width();
-        originalImageHeight = actualImage.height();
-        //size=new IntSize(actualImage);
+        actualImage.getWidth();
+        actualImage.getHeight();
     }
 
     /**
@@ -72,13 +68,13 @@ class Image<A extends IAddress <A>>
      */
     public
     Image ( MatOfInt actualImage, IIntSize blockSize ) {
-        this.actualImage = actualImage;
-        this.blockSize = blockSize;
+//        this.actualImage = actualImage;
+//        this.blockSize = blockSize;
 //        this.roi = roi;
-        x = 0;
-        y = 0;
-        originalImageWidth = actualImage.width();
-        originalImageHeight = actualImage.height();
+//        x = 0;
+//        y = 0;
+//        originalImageWidth = actualImage.width();
+//        originalImageHeight = actualImage.height();
     }
 
     /**
@@ -89,13 +85,13 @@ class Image<A extends IAddress <A>>
      * @throws ValueError
      */
     public
-    Image ( IImage <A> roi, int x, int y, int blockWidth, int blockHeight ) throws ValueError {
-        actualImage = roi.getMat();
-        this.x = x;
-        this.y = y;
-        blockSize = new IntSize(blockWidth, blockHeight);
-        originalImageWidth = actualImage.width();
-        originalImageHeight = actualImage.height();
+    Image ( MatOfInt roi, int x, int y, int blockWidth ) throws ValueError {
+//        actualImage = roi.getMat();
+//        this.x = x;
+//        this.y = y;
+        blockSize = new IntSize(blockWidth, blockWidth);
+        //originalImageWidth = actualImage.width();
+        //originalImageHeight = actualImage.height();
     }
 
     /**
@@ -105,13 +101,13 @@ class Image<A extends IAddress <A>>
      * @param blockSize
      */
     public
-    Image ( MatOfInt image, IAddress <A> address, IIntSize blockSize ) {
-        actualImage = image;
-        x = address.getX();
-        y = address.getY();
+    Image ( MatOfInt image, IAddress address, IIntSize blockSize ) {
+//        actualImage = image;
+//        x = address.getX();
+//        y = address.getY();
         this.blockSize = blockSize;
-        originalImageWidth = actualImage.width();
-        originalImageHeight = actualImage.height();
+//        originalImageWidth = actualImage.width();
+//        originalImageHeight = actualImage.height();
     }
 
 //    /**
@@ -122,7 +118,7 @@ class Image<A extends IAddress <A>>
 //    public
 //    Image ( Mat dest, IIntSize blockSize ) {
 //        actualImage = dest;
-//        this.blockSize = blockSize;
+//        this.blockSize = blockSize2321;
 //        this.roi = roi;
 //        originalImageWidth = actualImage.width();
 //        originalImageHeight = actualImage.height();
@@ -139,15 +135,15 @@ class Image<A extends IAddress <A>>
      * @param factory
      */
     public
-    Image ( IImage <A> image, IAddress <A> address, IIntSize blockSize, GeometryFactory factory ) {
-        actualImage = image.getMat();
-        x = address.getX();
-        y = address.getY();
-        this.blockSize = blockSize;
+    Image ( IImage image, IAddress address, IIntSize blockSize, GeometryFactory factory ) {
+//        actualImage = image.getMat();
+//        x = address.getX();
+//        y = address.getY();
+//        this.blockSize = blockSize;
 
         this.factory = factory;
-        originalImageWidth = actualImage.width();
-        originalImageHeight = actualImage.height();
+//        originalImageWidth = actualImage.width();
+//        originalImageHeight = actualImage.height();
     }
 
     /**
@@ -156,40 +152,45 @@ class Image<A extends IAddress <A>>
      * @param originalImageWidth
      * @param originalImageHeight
      */
-    @Contract(pure = true)
+//    @Contract(pure = true)
     public
     Image ( Mat submat, IIntSize blockSize, int originalImageWidth, int originalImageHeight ) {
-        actualImage = submat;
+//        actualImage = submat;
         this.blockSize = blockSize;
-        this.originalImageWidth = originalImageWidth;
-        this.originalImageHeight = originalImageHeight;
-        x = 0;
-        y = 0;
+//        this.originalImageWidth = originalImageWidth;
+//        this.originalImageHeight = originalImageHeight;
+//        x = 0;
+//        y = 0;
     }
 
     public
-    Image ( IImage <A> image, int x, int y, IIntSize blockSize ) {
-        actualImage = image.getMat();
-        this.x = x;
-        this.y = y;
-        this.blockSize = blockSize;
-        this.originalImageWidth = blockSize.getWidth();
-        this.originalImageHeight = blockSize.getHeight();
+    Image ( IImage image, int x, int y, IIntSize blockSize ) {
+//        actualImage = image.getMat();
+//        this.x = x;
+//        this.y = y;
+//        this.blockSize = blockSize;
+        // this.originalImageWidth = blockSize.getWidth();
+        //this.originalImageHeight = blockSize.getHeight();
     }
 
     public
-    Image ( IImage <A> image, int x, int y, int blockWidth, List <IImageBlock <A>> regions ) {
-        actualImage = image.getMat();
-        this.x = x;
-        this.y = y;
-        this.blockSize = new IntSize(blockWidth, blockWidth);
-        this.originalImageWidth = blockSize.getWidth();
-        this.originalImageHeight = blockSize.getHeight();
+    Image ( IImage image, int x, int y, int blockWidth, int regions ) {
+//        actualImage = image.getMat();
+//        this.x = x;
+//        this.y = y;
+//        this.blockSize = new IntSize(blockWidth, blockWidth);
+//        th//is.originalImageWidth = blockSize.getWidth();
+//        this.originalImageHeight = blockSize.getHeight();
     }
 
     public
     Image ( Mat mat ) {
         super();
+    }
+
+    public
+    Image ( IImage src, IAddress address, int targetSize ) {
+
     }
 
 
@@ -198,8 +199,8 @@ class Image<A extends IAddress <A>>
      */
     @SuppressWarnings("unchecked")
     public
-    IImageBlock <A> subImage ( int rowStart, int rowEnd, int colStart, int colEnd ) {
-        return (IImageBlock <A>) submat(rowStart, rowEnd, colStart, colEnd);
+    IImageBlock subImage ( int rowStart, int rowEnd, int colStart, int colEnd ) {
+        return (IImageBlock) submat(rowStart, rowEnd, colStart, colEnd);
     }
 
     //    @Override
@@ -253,11 +254,7 @@ class Image<A extends IAddress <A>>
         return getWidth() * getHeight();
     }
 
-//    @Override
-//    public
-//    void setAddress ( IAddress <A> address ) {
-
-    protected List <ImageTransform <A, ?>> transforms;
+    protected List <ImageTransform> transforms;
 
 
     /**
@@ -273,7 +270,8 @@ class Image<A extends IAddress <A>>
     @Override
     public
     void initialize () {
-        /*createAddressTable()*/
+
+
     }
 
     /**
@@ -340,8 +338,8 @@ class Image<A extends IAddress <A>>
     }
 
     public
-    double[] put ( IAddress <A> addr, double[] data ) throws ValueError {
-        put(addr.getX(), addr.getY(), data);
+    double[] put ( IAddress address, double[] data ) throws ValueError {
+        put(address.getX(), address.getY(), data);
 
         return data;
     }
@@ -351,12 +349,15 @@ class Image<A extends IAddress <A>>
      * @return
      */
     public
-    IImage <A> reduce ( IImage <A> inputImage ) {
-        IImage <A> image = new Image <>(
+    IImage reduce ( IImage inputImage ) {
+        IImage image = new Image(
                 inputImage.getMat(),
                 inputImage.getSize(),
-                originalImageWidth,
-                originalImageHeight);
+                inputImage.getWidth(),
+                inputImage.getHeight()
+//                ioriginalImageWidth,
+//                originalImageHeight
+        );
 
         Core.reduce(inputImage.getMat(), image.getMat(), -1, -1, -2);//fixme - dim, rtype, dtype
 
@@ -379,7 +380,7 @@ class Image<A extends IAddress <A>>
      * @return
      */
     public
-    IImage <A> convertTo ( IImage <A> image ) {
+    IImage convertTo ( IImage image ) {
         return image;
     }
 
@@ -389,7 +390,7 @@ class Image<A extends IAddress <A>>
      * @return
      */
     public
-    void putPixels ( IAddress <A> addr, double[] data ) throws ValueError {
+    void putPixels ( IAddress addr, double[] data ) throws ValueError {
         put(addr.getX(), addr.getY(), data);
     }
 
@@ -397,8 +398,11 @@ class Image<A extends IAddress <A>>
      * @return
      */
     public
-    IImage <A> createInputImage ( IImage <A> image ) throws ValueError {
-        return new Image <>(image.getMat(), image.getSize(), originalImageWidth, originalImageHeight);
+    IImage createInputImage ( IImage image ) throws ValueError {
+        return new Image(image.getMat(),
+                image.getSize(),
+                image.getWidth(),// originalImageWidth,
+                image.getHeight());
     }
 
     /**
@@ -406,8 +410,8 @@ class Image<A extends IAddress <A>>
      * @return
      */
     public
-    IImage <A> createOutputImage ( IImage <A> image ) {
-        return new CompressedImage <>(image);
+    IImage createOutputImage ( IImage image ) {
+        return new CompressedImage(image);
     }
 
     /**
@@ -416,8 +420,8 @@ class Image<A extends IAddress <A>>
      */
     @Override
     public
-    IImage <A> contract ( int contractivity ) {
-        IImage <A> image = new Image <>((MatOfInt) this.getMat(), this.getSize());
+    IImage contract ( int contractivity ) {
+        IImage image = new Image((MatOfInt) this.getMat(), this.getSize());
 
         int newWidth = image.getWidth() / contractivity;
         int newHeight = image.getHeight() / contractivity;
@@ -433,8 +437,8 @@ class Image<A extends IAddress <A>>
      * @return
      */
     public
-    IImage <A> resize ( double scale ) {
-        IImage <A> image = new Image <>((MatOfInt) this.getMat(), this.getSize());
+    IImage resize ( double scale ) {
+        IImage image = new Image((MatOfInt) this.getMat(), this.getSize());
 
         int newWidth = (int) (image.getWidth() * scale);
         int newHeight = (int) (image.getHeight() * scale);
@@ -445,7 +449,7 @@ class Image<A extends IAddress <A>>
     }
 
     public
-    Image <A> resize ( int contractivity ) {
+    Image resize ( int contractivity ) {
         int newWidth = this.getWidth() / contractivity;
         int newHeight = this.getHeight() / contractivity;
         int channels = this.getChannelsAmount();
@@ -462,10 +466,17 @@ class Image<A extends IAddress <A>>
                 }
             }
         }
-        IImage <A> image = new Image <>();
-        this.swidth = newWidth;
-        this.height = newHeight;
-        this.pixelValues = newPixelValues;
+        IImage image = new Image(getMat());
+//    image
+//        this.cols(newWidth) = newWidth;
+//        this.height = newHeight;
+//        this.pixelValues = newPixelValues;
+        return (Image) image;
+    }
+
+    private
+    double[] newPixelValues ( int i, int j ) {
+        return new double[0];
     }
 
     /**
@@ -487,7 +498,8 @@ class Image<A extends IAddress <A>>
     @Override
     public
     int getOriginalImageWidth () {
-        return originalImageWidth;
+//        return originalImageWidth;
+        return getWidth();
     }
 
     @Override
@@ -502,16 +514,15 @@ class Image<A extends IAddress <A>>
      */
     @Override
     public
-    int compareTo ( @NotNull IImage <A> other ) {
+    int compareTo ( /*@NotNull*/ IImage other ) {
         return 0;
     }
 
     /**
      * @param blocks
      */
-    @Override
     public
-    void setRegions ( List <IImageBlock <A>> blocks ) {
+    void setRegions ( List <IImageBlock> blocks ) {
 
     }
 
@@ -520,7 +531,7 @@ class Image<A extends IAddress <A>>
      */
     @Override
     public
-    List <IImageBlock <A>> getRegions () {
+    List <IImageBlock> getRegions () {
         return null;
     }
 
@@ -528,7 +539,7 @@ class Image<A extends IAddress <A>>
      * @param address
      */
     public
-    void putPixel ( IAddress <A> address, double[] pixel ) throws ValueError {
+    void putPixel ( IAddress address, double[] pixel ) throws ValueError {
         put(address.getX(), address.getY(), pixel);
     }
 
@@ -543,7 +554,7 @@ class Image<A extends IAddress <A>>
      * @return
      */
     public
-    double[] getPixel ( IAddress <A> address ) {
+    double[] getPixel ( IAddress address ) {
         return getPixel(address.getX(), address.getY());
     }
 
@@ -561,12 +572,12 @@ class Image<A extends IAddress <A>>
     @Override
     public
     boolean isGrayScale () {
-        return this instanceof GrayScaleImage <?>;
+        return this instanceof GrayScaleImage;
     }
 
     @Override
     public
-    List <IImage <A>> getComponents () {
+    List <IImage> getComponents () {
         return List.of();
     }
 
@@ -593,9 +604,9 @@ class Image<A extends IAddress <A>>
      */
     @Override
     public
-    List <IImage <A>> split () {
+    List <IImage> split () {
 //        List <Mat> list = new ArrayList <>();
-        List <IImage <A>> layers = new ArrayList <>();
+        List <IImage> layers = new ArrayList <>();
 //        fixme
 //        Core . split(getMat(), Collections.unmodifiableList(list));
 //        for (Mat mat : list) {
@@ -611,9 +622,9 @@ class Image<A extends IAddress <A>>
      */
     @Override
     public
-    IImage <A> merge ( List <IImage <A>> layers, IImage <A> inputImage ) {
+    IImage merge ( List <IImage> layers, IImage inputImage ) {
         List <Mat> l = copyOf(layers);
-        IImage <A> img = new Image <>((MatOfInt) inputImage.getMat(), blockSize);
+        IImage img = new Image((MatOfInt) inputImage.getMat(), blockSize);
         Core.merge(l, img.getMat());
 
         return img;
@@ -624,7 +635,7 @@ class Image<A extends IAddress <A>>
      * @return
      */
     private
-    List <Mat> copyOf ( List <IImage <A>> layers ) {
+    List <Mat> copyOf ( List <IImage> layers ) {
         return layers.stream().map(IImage::getMat)
                 .collect(Collectors.toCollection(() -> new ArrayList <>(layers.size())));
     }
@@ -644,7 +655,7 @@ class Image<A extends IAddress <A>>
     @Override
     public
     String dump () {
-        return null;
+        return "null";
     }
 
     /**
@@ -666,8 +677,8 @@ class Image<A extends IAddress <A>>
 //    @SuppressWarnings("unchecked")
     @Override
     public
-    IImageBlock <A> getSubImage ( int x, int y, int width, int height ) throws ValueError {
-        return new ImageBlock <>(this, x, y, width, height);
+    IImageBlock getSubImage ( int x, int y, int width, int height ) throws ValueError {
+        return new ImageBlock(this, x, y, width, height);
     }
 
     /**
@@ -704,7 +715,7 @@ class Image<A extends IAddress <A>>
      */
     @Override
     public
-    List <ImageTransform <A, ?>> getTransforms () throws ValueError {
+    List <ImageTransform> getTransforms () throws ValueError {
         return transforms;
     }
 
@@ -713,7 +724,7 @@ class Image<A extends IAddress <A>>
      */
     @Override
     public
-    void setTransforms ( List <ImageTransform <A, ?>> imageTransforms ) throws ValueError {
+    void setTransforms ( List <ImageTransform> imageTransforms ) throws ValueError {
         this.getTransforms().addAll(imageTransforms);
     }
 
@@ -733,7 +744,7 @@ class Image<A extends IAddress <A>>
 //    @Override
 //    @Contract(pure = true)
 //    public final
-//    List <IImageBlock <A>> getRegions () {
+//    List <IImageBlock > getRegions () {
 //        return regions;
 //    }
 
@@ -745,7 +756,7 @@ class Image<A extends IAddress <A>>
      */
     @Override
     public
-    IAddress <A> getAddress ( int row, int col ) throws ValueError {
+    IAddress getAddress ( int row, int col ) throws ValueError {
         return create(row, getWidth(), col, getAddressKind());
     }
 
@@ -755,7 +766,7 @@ class Image<A extends IAddress <A>>
     @Override
     public
     EAddressKind getAddressKind () {
-        return EAddressKind.ORDINARY;
+        return ORDINARY;
     }
 
 //    /**
@@ -763,7 +774,7 @@ class Image<A extends IAddress <A>>
 //     */
 //    @Override
 //    public
-//    void setRegions ( List <IImageBlock <A>> regions ) {
+//    void setRegions ( List <IImageBlock > regions ) {
 //        this.regions.addAll(regions);
 //    }
 
@@ -841,14 +852,14 @@ class Image<A extends IAddress <A>>
 
     @Override
     public
-    IImageBlock <A> getSubImage ( Rectangle rectangle ) throws ValueError {
+    IImageBlock getSubImage ( Rectangle rectangle ) throws ValueError {
         return this.getSubImage(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
     }
 
     @Override
     public
-    IImageBlock <A> getSubImage () throws ValueError {
-        return new ImageBlock <>(getMat(), new Rectangle(0, 0, getWidth(), getHeight()));
+    IImageBlock getSubImage () throws ValueError {
+        return new ImageBlock(getMat(), new Rectangle(0, 0, getWidth(), getHeight()));
     }
 
     /**
@@ -857,7 +868,7 @@ class Image<A extends IAddress <A>>
     @Override
     public
     int getOriginalImageHeight () {
-        return originalImageHeight;
+        return getHeight();
     }
 
     public
@@ -886,7 +897,7 @@ class Image<A extends IAddress <A>>
         /**
          * @param cType
          */
-        @Contract(pure = true)
+//        /@Contract(pure = true)
         EColorType ( int cType ) {
             this.cType = cType;
         }
@@ -894,7 +905,7 @@ class Image<A extends IAddress <A>>
         /**
          * @return
          */
-        @Contract(pure = true)
+//        @Contract(pure = true)
         public
         int getCType () {
             return cType;
@@ -935,12 +946,25 @@ class Image<A extends IAddress <A>>
     }
 
     /**
+     * @param w
      * @param h
      * @param originalImageWidth
      * @param originalImageHeight
      * @return
      */
     @Override
+    public
+    IIntSize restoreSize ( int w, int h, int originalImageWidth, int originalImageHeight ) {
+        return null;
+    }
+
+    /**
+     * @param h
+     * @param originalImageWidth
+     * @param originalImageHeight
+     * @return
+     */
+//    @Override
     public
     IIntSize restoreSize ( int h, int originalImageWidth, int originalImageHeight ) {
         return null;

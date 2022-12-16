@@ -1,7 +1,5 @@
 package org.stranger2015.opencv.fic.core.search;
 
-import java.awt.image.BufferedImage;
-
 /**
  * different metrics to count the distance of two integers representing pixels.<br />
  *
@@ -17,7 +15,6 @@ public enum EMetrics {
      * Return 1 if pixels differ, 0 if there is no difference
      */
     AE {
-
         @Override
         public final double distance( final double a, final double b, final double fuzz) {
             return super.distance(a, b) <= fuzz ? 0 : 1;

@@ -8,12 +8,12 @@ import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class QuadTreeImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends BinTreeImageBlockGenerator <N, A, G> {
+class QuadTreeImageBlockGenerator<N extends TreeNode <N>, A extends IAdd>
+        extends BinTreeImageBlockGenerator <N> {
 
     /**
      * @param tiler
@@ -24,10 +24,10 @@ class QuadTreeImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddre
      * @param domainSize
      */
     public
-    QuadTreeImageBlockGenerator ( IPartitionProcessor <N, A, G> partitionProcessor,
+    QuadTreeImageBlockGenerator ( IPartitionProcessor <N> partitionProcessor,
                                   EPartitionScheme scheme,
-                                  IEncoder <N, A, G> encoder,
-                                  IImage <A> image,
+                                  IEncoder <N> encoder,
+                                  IImage image,
                                   IIntSize rangeSize,
                                   IIntSize domainSize ) {
         super(

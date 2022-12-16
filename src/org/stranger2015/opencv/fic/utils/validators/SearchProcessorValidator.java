@@ -9,11 +9,11 @@ import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class SearchProcessorValidator</* M extends IImage <A> */, A extends IAddress <A>, G extends BitBuffer>
+class SearchProcessorValidator</* IImage extends IImage */, A extends IAddress , G extends BitBuffer>
         extends NoValidator implements IParameterValidator{
 
 

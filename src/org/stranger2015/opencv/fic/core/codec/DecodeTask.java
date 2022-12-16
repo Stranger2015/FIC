@@ -1,8 +1,9 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.stranger2015.opencv.fic.core.*;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.utils.BitBuffer;
+import org.stranger2015.opencv.fic.core.EPartitionScheme;
+import org.stranger2015.opencv.fic.core.FCImageModel;
+import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.fic.core.Task;
 
 import java.util.List;
 
@@ -10,10 +11,9 @@ import java.util.List;
  *
  */
 public
-class DecodeTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends Task <N, A, G> {
+class DecodeTask extends Task {
 
-    private final IDecoder <N, A, G> decoder;
+    private final IDecoder decoder;
 
     /**
      * @param filename
@@ -21,8 +21,8 @@ class DecodeTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
     public
     DecodeTask ( String filename,
                  EPartitionScheme scheme,
-                 ICodec <N, A, G> codec,
-                 List <Task <N, A, G>> tasks ) {
+                 ICodec codec,
+                 List <Task > tasks ) {
 
         super(filename, scheme, codec, tasks);
 
@@ -33,7 +33,7 @@ class DecodeTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      * @return
      */
     public
-    IDecoder <N, A, G> getDecoder () {
+    IDecoder getDecoder () {
         return decoder;
     }
 
@@ -43,9 +43,9 @@ class DecodeTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      */
     @Override
     protected
-    IImage <A> execute ( String filename ) throws ValueError {
-        IImage <A> image = super.execute(filename);
-        FCImageModel <N, A, G> fm = codec.getEncoder().getModel();
+    IImage execute ( String filename ) throws Exception {
+        IImage image = super.execute(filename);
+        FCImageModel fm = codec.getEncoder().getMOdel();
 
         return decoder.decode(fm);
     }

@@ -1,24 +1,21 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.jetbrains.annotations.Contract;
-import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.ITreeNodeBuilder;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public abstract
-class PartitionProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        implements IPartitionProcessor <N, A, G> {
+class PartitionProcessor
+        implements IPartitionProcessor{
 
-    protected ITiler <N, A, G> tiler;
-    protected ImageBlockGenerator <N, A, G> imageBlockGenerator;
-    protected ITreeNodeBuilder <N, A, G> nodeBuilder;
+    protected ITiler tiler;
+    protected ImageBlockGenerator <?> imageBlockGenerator;
+    protected ITreeNodeBuilder <?> nodeBuilder;
 
     /**
      * @param tiler
@@ -27,13 +24,19 @@ class PartitionProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      */
     @Contract(pure = true)
     protected
-    PartitionProcessor ( ITiler <N, A, G> tiler,
-                         ImageBlockGenerator <N, A, G> imageBlockGenerator,
-                         ITreeNodeBuilder<N,A,G> nodeBuilder ) {
+    PartitionProcessor ( ITiler tiler,
+                         ImageBlockGenerator <?> imageBlockGenerator,
+                         ITreeNodeBuilder<?> nodeBuilder ) {
 
         this.tiler = tiler;
         this.imageBlockGenerator = imageBlockGenerator;
         this.nodeBuilder = nodeBuilder;
+    }
+
+    public
+    PartitionProcessor ( ITiler tiler ) {
+
+        this.tiler = tiler;
     }
 
     /**
@@ -41,7 +44,7 @@ class PartitionProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      */
     @Override
     public
-    ITiler <N, A, G> getTiler () {
+    ITiler getTiler () {
         return tiler;
     }
 
@@ -49,7 +52,7 @@ class PartitionProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      * @return
      */
     public
-    ITreeNodeBuilder <N, A, G> getNodeBuilder () {
+    ITreeNodeBuilder <?> getNodeBuilder () {
         return nodeBuilder;
     }
 
@@ -57,7 +60,7 @@ class PartitionProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      * @return
      */
     public
-    ImageBlockGenerator <N, A, G> getImageBlockGenerator () {
+    ImageBlockGenerator <?> getImageBlockGenerator () {
         return imageBlockGenerator;
     }
 }

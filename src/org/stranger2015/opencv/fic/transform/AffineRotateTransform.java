@@ -1,16 +1,15 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.stranger2015.opencv.fic.core.Address;
+import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
 
 /**
  * functor class to rotate an image by the given degrees
  */
-public class AffineRotateTransform</*M extends IImage<A>,*/ A extends IAddress <A>, G extends BitBuffer>
-        extends AffineTransform<A, G> {
+public class AffineRotateTransform
+        extends AffineTransform {
 
     private final double degrees;
 
@@ -18,7 +17,11 @@ public class AffineRotateTransform</*M extends IImage<A>,*/ A extends IAddress <
      * @param degrees
      * @param interpolationType
      */
-    public AffineRotateTransform(M image, double degrees, EInterpolationType interpolationType, Address<A> address) {
+    public AffineRotateTransform( IImage image,
+                                  double degrees,
+                                  EInterpolationType interpolationType,
+                                  IAddress address) {
+
         super(image, interpolationType, address );
         this.degrees = degrees;
     }
@@ -26,7 +29,7 @@ public class AffineRotateTransform</*M extends IImage<A>,*/ A extends IAddress <
     /**
      * @param degrees
      */
-    public AffineRotateTransform(M image , double degrees, Address<A> address) {
+    public AffineRotateTransform(IImage image , double degrees, IAddress address) {
         this(image, degrees, BILINEAR, address);
     }
 
@@ -39,16 +42,16 @@ public class AffineRotateTransform</*M extends IImage<A>,*/ A extends IAddress <
 //    @SuppressWarnings("unchecked")
 //    @Override
 //    public
-//    M warpAffine ( M src, M transformMatrix, EInterpolationType interpolationType, Address<A> address ) {
+//    IImage warpAffine ( IImage src, IImage transformMatrix, EInterpolationType interpolationType, Address address ) {
 //        // Creating a Point object
 //        Point point = new Point(300, 200);//todo
 //
 //        // Creating the transformation matrix M
-//        M rotationMatrix = (M) Imgproc.getRotationMatrix2D(point, getDegrees(), 1);
+//        IImage rotationMatrix = (M) Imgproc.getRotationMatrix2D(point, getDegrees(), 1);
 //
 //        // Creating the object of the class Size
 //        Size size = new Size(src.cols(), src.cols());
-//        M out = (M) new Image(src);
+//        IImage out = (M) new Image(src);
 //
 //        // Rotating the given image
 //        Imgproc.warpAffine((Mat)src, (Mat)out, (Mat)rotationMatrix, size);

@@ -137,7 +137,7 @@ class InputExtracter implements IGeometryFilter
     }
 
     @Override
-    public void filter(Geometry geom) {
+    public void filter( Geometry <?> geom) {
         recordDimension( geom.getDimension() );
         if (geom instanceof GeometryCollection) {
             return;

@@ -1,36 +1,45 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.stranger2015.opencv.fic.core.FCImageModel;
-import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.utils.BitBuffer;
+import org.stranger2015.opencv.fic.core.ValueError;
+
+import java.io.IOException;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class BinTreeDecoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends Decoder <N, A, G> {
+class BinTreeDecoder extends Decoder {
     /**
      * @param image
      */
     public
-    BinTreeDecoder ( IImage <A> image ) {
+    BinTreeDecoder ( IImage image ) {
         super(image);
     }
 
     @Override
     public
-    IImage <A> decode ( FCImageModel <N, A, G> fractalModel ) {
-        return super.decode(fractalModel);
+    IImage decode ( String fileName ) throws ValueError, IOException {
+       return super.decode(fileName);
+    }
+
+    /**
+     * @param filename
+     * @param fractalModel
+     */
+    @Override
+    public
+    void saveModel ( String filename, FCImageModel fractalModel ) {
+
     }
 
     @Override
     public
-    void onCreated ( ICodec <N, A, G> instance ) {
+    void onCreated ( ICodec instance ) {
         super.onCreated(instance);
     }
 }

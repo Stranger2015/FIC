@@ -12,13 +12,13 @@ import java.util.List;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class FromTvToRgbColorspaceConversionTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
+class FromTvToRgbColorspaceConversionTask<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
 
-        extends CodecTask.ColorspaceConversionTask <N, A, G> {
+        extends CodecTask.ColorspaceConversionTask <N> {
 
     /**
      * @param imageFilename
@@ -29,9 +29,9 @@ class FromTvToRgbColorspaceConversionTask<N extends TreeNode <N, A, G>, A extend
     public
     FromTvToRgbColorspaceConversionTask ( String imageFilename,
                                           EPartitionScheme scheme,
-                                          ICodec <N, A, G> codec,
+                                          ICodec <N> codec,
                                           EtvColorSpace colorSpace,
-                                          List <Task <N, A, G>> tasks ) {
+                                          List <Task <N>> tasks ) {
 
         super(imageFilename, scheme, codec, colorSpace, tasks);
     }
@@ -122,10 +122,10 @@ class FromTvToRgbColorspaceConversionTask<N extends TreeNode <N, A, G>, A extend
      */
     @Override
     protected
-    IImage <A> execute ( String filename ) throws ValueError {
-        IImage <A> imageSrc = super.execute(filename);
+    IImage execute ( String filename ) throws ValueError {
+        IImage imageSrc = super.execute(filename);
 
-        IImage <A> imageDst = new Image <>((MatOfInt) imageSrc.getMat(), imageSrc.getSize());
+        IImage imageDst = new Image <>((MatOfInt) imageSrc.getMat(), imageSrc.getSize());
 
         float[] cc = new float[3];
         int[] tvCS = convertColorToRGB(cc, colorSpace);

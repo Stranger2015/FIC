@@ -1,17 +1,13 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
 import org.jetbrains.annotations.Contract;
-import org.stranger2015.opencv.fic.core.IAddress;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  
  */
 public abstract
-class Operator<A extends IAddress <A>, G extends BitBuffer>{
-//        C extends Chromosome <T, A, G>> {
-
-    protected final GaSearchProcessor <A, G> gaProcessor;
+class Operator{
+    protected final GaSearchProcessor  gaProcessor;
     protected final double rate;
 
     /**
@@ -19,7 +15,7 @@ class Operator<A extends IAddress <A>, G extends BitBuffer>{
      */
     @Contract(pure = true)
     protected
-    Operator ( GaSearchProcessor <A, G> gaProcessor, double rate ) {
+    Operator ( GaSearchProcessor  gaProcessor, double rate ) {
         this.gaProcessor = gaProcessor;
         this.rate = rate;
     }

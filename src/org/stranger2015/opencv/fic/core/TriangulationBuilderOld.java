@@ -6,11 +6,11 @@ import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
- * @param <A>
+ * @param 
  * @param <G>
  */
 public abstract
-class TriangulationBuilderOld<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer> {
+class TriangulationBuilderOld<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer> {
     /**
      * @return
      */

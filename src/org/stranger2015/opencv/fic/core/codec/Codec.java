@@ -1,12 +1,9 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.jetbrains.annotations.Contract;
 import org.stranger2015.opencv.fic.core.EPartitionScheme;
 import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.Task;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.ValueError;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,24 +11,22 @@ import java.util.List;
 /**
  * @param <N>
  
- * @param <A>
+ * @param
  */
 public abstract
-class Codec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        implements ICodec <N, A, G> {
-
+class Codec implements ICodec{
     protected final EPartitionScheme scheme;
 
 //    protected Class <?>[] paramTypes;
 //    protected Object[] params;
 
-    protected IEncoder <N, A, G> encoder;
-    protected IDecoder <N, A, G> decoder;
+    protected IEncoder encoder;
+    protected IDecoder decoder;
 
-    protected EncodeTask <N, A, G> encodeTask;
-    protected DecodeTask <N, A, G> decodeTask;
+    protected EncodeTask encodeTask;
+    protected DecodeTask decodeTask;
 
-    protected final List <ICodecListener <N, A, G>> listeners = new ArrayList <>();
+    protected final List <ICodecListener > listeners = new ArrayList <>();
 
 //    /**
 //     * @param scheme
@@ -45,8 +40,8 @@ class Codec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
 //        this.scheme = scheme;
 //        this.paramTypes = paramTypes;
 //        this.params = params;
-//        this.encodeTask = (EncodeTask <N, A, G>) params[0];
-//        this.decodeTask = (DecodeTask <N, A, G>) params[1];
+//        this.encodeTask = (EncodeTask <N>) params[0];
+//        this.decodeTask = (DecodeTask <N>) params[1];
 //    }
 
     /**
@@ -61,18 +56,18 @@ class Codec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      * @return
      */
     public
-    EncodeTask <N, A, G> getEncodeTask () {
+    EncodeTask  getEncodeTask () {
         return encodeTask;
     }
 
 //    @SuppressWarnings("unchecked")
 //    public static
-//    <N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-//    ICodec <N, A, G> create ( @NotNull EPartitionScheme scheme,
+//    <N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+//    ICodec <N> create ( @NotNull EPartitionScheme scheme,
 //                                 Class <?>[] paramTypes,
 //                                 Object... params ) throws ReflectiveOperationException {
 //
-//        return (ICodec <N, A, G>) Utils.create(
+//        return (ICodec <N>) Utils.create(
 //                scheme.getCodecClassName(),
 //                ICodec.getListeners(),
 //                paramTypes,
@@ -84,7 +79,7 @@ class Codec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      * @return
      */
     public
-    DecodeTask <N, A, G> getDecodeTask () {
+    DecodeTask getDecodeTask () {
         return decodeTask;
     }
 
@@ -93,7 +88,7 @@ class Codec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      */
     @Override
     public
-    IEncoder <N, A, G> getEncoder () {
+    IEncoder getEncoder () {
         return encoder;
     }
 
@@ -102,9 +97,9 @@ class Codec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      * @param encoder
      * @param decoder
      */
-    @Contract(pure = true)
+//    @Contract(pure = true)
     public
-    Codec ( EPartitionScheme scheme, IEncoder <N, A, G> encoder, IDecoder <N, A, G> decoder ) {
+    Codec ( EPartitionScheme scheme, IEncoder encoder, IDecoder decoder ) {
         this.scheme = scheme;
         this.encoder = encoder;
         this.decoder = decoder;
@@ -115,7 +110,7 @@ class Codec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      */
     @Override
     public
-    IDecoder <N, A, G> getDecoder () {
+    IDecoder getDecoder () {
         return decoder;
     }
 
@@ -135,14 +130,14 @@ class Codec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      */
     @Override
     public abstract
-    IAddress <A> createAddress ( int address ) throws ValueError;
+    IAddress  createAddress ( int address ) throws ValueError;
 
     /**
      * @param task
      */
     @Override
     public
-    void addTask ( Task <N, A, G> task ) {
+    void addTask ( Task task ) {
 
     }
 
@@ -167,7 +162,7 @@ class Codec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      * @param listeners
      */
     private
-    void fireCodecCreated ( List <ICodecListener <N, A, G>> listeners ) {
+    void fireCodecCreated ( List <ICodecListener> listeners ) {
         listeners.forEach(listener -> listener.onCreated(this));
     }
 
@@ -175,7 +170,7 @@ class Codec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      * @param listeners
      */
     private
-    void fireCodecInvoked ( List <ICodecListener <N, A, G>> listeners ) {
+    void fireCodecInvoked ( List <ICodecListener> listeners ) {
         listeners.forEach(listener -> listener.onCreated(this));
     }
 }

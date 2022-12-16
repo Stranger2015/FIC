@@ -1,10 +1,10 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
-import org.stranger2015.opencv.fic.core.ValueError;
 import org.stranger2015.opencv.fic.core.IAddress;
+import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.fic.core.ValueError;
 import org.stranger2015.opencv.fic.transform.EInterpolationType;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * Chromosome is the abstract base class for all chromosomes. It defines each chromosome's
@@ -17,8 +17,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
  * @author Jeff Smith jeff@SoftTechDesign.com
  */
 public abstract
-class Chromosome</*M extends IImage<A>,*/ A extends IAddress <A>, G extends BitBuffer>
-        extends ImageTransform <A, G> {
+class Chromosome        extends ImageTransform {
 
     /**
      * absolute (not relative) fitness value
@@ -36,7 +35,7 @@ class Chromosome</*M extends IImage<A>,*/ A extends IAddress <A>, G extends BitB
      * @param address
      */
     public
-    Chromosome ( M image, EInterpolationType type, IAddress <A> address ) {
+    Chromosome ( IImage image, EInterpolationType type, IAddress  address ) {
         super(image, type, address);
     }
 
@@ -49,9 +48,9 @@ class Chromosome</*M extends IImage<A>,*/ A extends IAddress <A>, G extends BitB
      * @param dihedralAffineTransformIndex
      */
     public
-    Chromosome ( M image,
+    Chromosome ( IImage image,
                  EInterpolationType type,
-                 IAddress <A> address,
+                 IAddress  address,
                  int brightnessOffset,
                  double contrastScale,
                  int dihedralAffineTransformIndex ) {
@@ -73,18 +72,18 @@ class Chromosome</*M extends IImage<A>,*/ A extends IAddress <A>, G extends BitB
      * Get the genes as a string
      */
     abstract
-    G getGenesAsG ();
+    Chromosome getGenesAsG ();
 
     /**
      * Copy the genes from the given chromosome over this chromosome's genes
      */
     abstract
-    void copyChromGenes ( Chromosome <A, G> chromosome );
+    void copyChromGenes ( Chromosome  chromosome );
 
     /**
      * Get the number of genes in common between this chromosome and the given chromosome
      */
     abstract
-    int getNumGenesInCommon ( Chromosome <A, G> chromosome );
+    int getNumGenesInCommon ( Chromosome  chromosome );
 }
 

@@ -7,8 +7,8 @@ import org.stranger2015.opencv.utils.BitBuffer;
 import java.util.List;
 
 public
-class RestoreImageShapeTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends Task <N, A, G> {
+class RestoreImageShapeTask<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends Task <N> {
 
     /**
      * @param filename
@@ -18,8 +18,8 @@ class RestoreImageShapeTask<N extends TreeNode <N, A, G>, A extends IAddress <A>
     public
     RestoreImageShapeTask ( String filename,
                             EPartitionScheme scheme,
-                            ICodec <N, A, G> codec,
-                            List <Task <N, A, G>> tasks ) {
+                            ICodec <N> codec,
+                            List <Task <N>> tasks ) {
 
         super(filename, scheme, codec,tasks);
     }

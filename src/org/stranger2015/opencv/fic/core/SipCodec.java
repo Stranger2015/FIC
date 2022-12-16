@@ -1,17 +1,14 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.*;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  
  */
 public
-class SipCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends Codec <N, A, G> {
+class SipCodec    extends Codec {
 
     /**
      * @param scheme
@@ -19,12 +16,12 @@ class SipCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      * @param decoder
      */
     public
-    SipCodec ( EPartitionScheme scheme, IEncoder <N, A, G> encoder, IDecoder <N, A, G> decoder ) {
+    SipCodec ( EPartitionScheme scheme, IEncoder encoder, IDecoder <N> decoder ) {
         super(scheme, encoder, decoder);
     }
 
     public
-    SipCodec ( EPartitionScheme scheme, EncodeTask<N, A, G> action ) {
+    SipCodec ( EPartitionScheme scheme, EncodeTask action ) {
         super(scheme, action);
     }
 
@@ -36,7 +33,7 @@ class SipCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      */
 //    @Override
     public
-    IEncoder <N, A, G> getEncoder ( IImage<A> image, IIntSize rangeSize, IIntSize domainSize ) {
+    IEncoder <N> getEncoder ( IImage image, IIntSize rangeSize, IIntSize domainSize ) {
         return new SipEncoder <>(image, rangeSize, domainSize);
     }
 
@@ -45,7 +42,7 @@ class SipCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      */
     @Override
     public
-    IEncoder <N, A, G> getEncoder () {
+    IEncoder <N> getEncoder () {
         return null;
     }
 
@@ -74,7 +71,7 @@ class SipCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      */
     @Override
     public
-    IAddress <A> createAddress ( int address ) throws ValueError {
+    IAddress  createAddress ( int address ) throws ValueError {
         return new SipAddress <>(address);
     }
 }

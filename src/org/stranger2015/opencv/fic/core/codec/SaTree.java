@@ -10,8 +10,8 @@ import org.stranger2015.opencv.utils.BitBuffer;
  
  */
 public
-class SaTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends Tree <N, A, G> {
+class SaTree<N extends TreeNode <N>>
+        extends Tree <N> {
 
     /**
      * @param root
@@ -19,7 +19,7 @@ class SaTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bit
      * @param action
      */
     public
-    SaTree ( TreeNodeBase <N, A, G> root, IImage<A> image, TreeNodeTask <N, A, G> action ) {
+    SaTree ( TreeNodeBase <N> root, IImage image, TreeNodeTask <N> action ) {
         super(root, image, action);
     }
 
@@ -28,7 +28,7 @@ class SaTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bit
      * @param imageBlock
      */
     public
-    SaTree ( TreeNode <N, A, G> root, IImageBlock <A> imageBlock ) {
+    SaTree ( TreeNode <N> root, IImageBlock  imageBlock ) {
 
     }
 
@@ -40,7 +40,7 @@ class SaTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bit
      */
     @Override
     public
-    TreeNode <N, A, G> nodeInstance ( TreeNodeBase <N, A, G> parent, EDirection quadrant, IIntSize rect ) throws ValueError {
+    TreeNode <N> nodeInstance ( TreeNodeBase <N> parent, EDirection quadrant, IIntSize rect ) throws ValueError {
         return null;
     }
 
@@ -52,7 +52,7 @@ class SaTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bit
      */
 //    @Override
     public
-    TreeNode <N, A, G> nodeInstance ( TreeNodeBase <N, A, G> parent, EDirection quadrant, Rect rect ) throws ValueError {
+    TreeNode <N> nodeInstance ( TreeNodeBase <N> parent, EDirection quadrant, Rect rect ) throws ValueError {
         return null;
     }
 
@@ -64,7 +64,7 @@ class SaTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bit
     @SuppressWarnings("unchecked")
     @Override
     public//fixme
-    Class <? extends TreeNode <N, A, G>> getNodeClass ( TreeNode <N, A, G> clazz ) {
-        return (Class <? extends TreeNode <N, A, G>>) clazz.getClass();
+    Class <? extends TreeNode <N>> getNodeClass ( TreeNode <N> clazz ) {
+        return (Class <? extends TreeNode <N>>) clazz.getClass();
     }
 }

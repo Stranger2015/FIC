@@ -12,14 +12,14 @@ import java.util.List;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  
  * @param <G>
  */
 public
-class RestoreImageTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
+class RestoreImageTask<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
 
-        extends BidiTask <N, A, G> {
+        extends BidiTask <N> {
 
     /**
      * @param filename
@@ -29,8 +29,8 @@ class RestoreImageTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
     public
     RestoreImageTask ( String filename,
                        EPartitionScheme scheme,
-                       ICodec <N, A, G> codec,
-                       List <Task <N, A, G>> list ) {
+                       ICodec <N> codec,
+                       List <Task <N>> list ) {
 
         super(filename, scheme, codec, list);
     }
@@ -40,7 +40,7 @@ class RestoreImageTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
      */
     @Override
     public
-    void onCreated ( ICodec <N, A, G> instance ) {
+    void onCreated ( ICodec <N> instance ) {
         super.onCreated(instance);
     }
 
@@ -51,7 +51,7 @@ class RestoreImageTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
      */
     @Override
     public
-    void onPreprocess ( IImageProcessor <N, A, G> processor, String filename, IImage <A> image ) throws ValueError {
+    void onPreprocess ( IImageProcessor <N> processor, String filename, IImage image ) throws ValueError {
         super.onPreprocess(processor, filename, image);
     }
 
@@ -61,7 +61,7 @@ class RestoreImageTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
      */
     @Override
     public
-    void onPostprocess ( IImageProcessor <N, A, G> processor, CompressedImage <A> outputImage ) {
+    void onPostprocess ( IImageProcessor <N> processor, CompressedImage  outputImage ) {
         super.onPostprocess(processor, outputImage);
 
         outputImage = unionRegions(outputImage.getRegions());
@@ -73,9 +73,9 @@ class RestoreImageTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
      */
     @Contract("_ -> new")
     private @NotNull
-    CompressedImage <A> unionRegions (List <IImageBlock <A>> regions ) {
+    CompressedImage  unionRegions (List <IImageBlock > regions ) {
         Mat dest=new Mat();
-        for (IImageBlock <A> region : regions) {
+        for (IImageBlock  region : regions) {
             region.getMat().copyTo(dest);
         }
 

@@ -1,8 +1,8 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.IImageBlock;
 import org.stranger2015.opencv.fic.core.IIntSize;
+import org.stranger2015.opencv.fic.core.ValueError;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 
 import java.util.List;
@@ -11,17 +11,17 @@ import java.util.List;
  *
  */
 public
-interface ICompressedImage<A extends IAddress <A>>{
+interface ICompressedImage {
 
     /**
      * @return
      */
-    List<IImageBlock<A>> getRangeBlocks();
+    List<IImageBlock> getRangeBlocks();
 
     /**
      * @return
      */
-    List<IImageBlock<A>> getDomainBlocks();
+    List<IImageBlock> getDomainBlocks();
     /**
      * @return
      */
@@ -30,10 +30,16 @@ interface ICompressedImage<A extends IAddress <A>>{
     /**
      * @return
      */
-    List <ImageTransform <A, ?>> getTransforms ();
+    List <ImageTransform> getTransforms () throws ValueError;
 
     /**
      * @param transforms
      */
-    void setTransforms ( List <ImageTransform <A, ?>> transforms );
+    void setTransforms ( List <ImageTransform> transforms );
+
+//    IImage toImage ();
+
+    String dump ();
+
+    void release ();
 }

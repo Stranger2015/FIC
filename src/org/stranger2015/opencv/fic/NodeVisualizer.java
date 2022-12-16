@@ -8,13 +8,13 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase;
 public
 class NodeVisualizer /*implements IDrawable<Image> */ {
 
-    private TreeNodeBase <?, ?, ?> treeNode;
+    private TreeNodeBase <?> treeNode;
 
     /**
      * @param treeNode
      */
     public
-    void setNode ( TreeNodeBase <?, ?, ?> treeNode ) {
+    void setNode ( TreeNodeBase <?> treeNode ) {
         this.treeNode = treeNode;
     }
 
@@ -22,7 +22,7 @@ class NodeVisualizer /*implements IDrawable<Image> */ {
      * @return
      */
     public
-    TreeNodeBase <?, ?, ?> getTreeNode () {
+    TreeNodeBase <?> getTreeNode () {
         return treeNode;
     }
 
@@ -30,7 +30,7 @@ class NodeVisualizer /*implements IDrawable<Image> */ {
      * @param treeNode
      */
     public
-    void setTreeNode ( TreeNodeBase <?, ?, ?> treeNode ) {
+    void setTreeNode ( TreeNodeBase <?> treeNode ) {
         this.treeNode = treeNode;
     }
 }

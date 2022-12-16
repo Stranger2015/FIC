@@ -10,12 +10,12 @@ import static org.stranger2015.opencv.fic.core.EAddressKind.POINT;
 /**
  *
  *
- * @param <A>
+ * @param 
  */
 @Deprecated
 public
-class PointAddress<A extends IAddress <A>>
-        extends Address <A> {
+class PointAddress<A extends IAddress >
+        extends Address  {
 
     /**
      *
@@ -47,13 +47,13 @@ class PointAddress<A extends IAddress <A>>
      */
     @Override
     public
-    IAddress <A> applyTable ( int[][] table ) {
+    IAddress  applyTable ( int[][] table ) {
         return null;
     }
 
     @Override
     public
-    IAddress <A> minus ( IAddress <A> address1, IAddress <A> address2 ) throws ValueError {
+    IAddress  minus ( IAddress  address1, IAddress  address2 ) throws ValueError {
         return super.minus(address1, address2);
     }
 }

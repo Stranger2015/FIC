@@ -14,11 +14,11 @@ import static java.util.Map.*;
 /**
  * @param <N>
  
- * @param <A>
+ * @param
  */
 public
-class SipTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends SaTree <N, A, G> {
+class SipTree<N extends TreeNode <N>>
+        extends SaTree <N> {
 
     /**
      * @param parent
@@ -27,15 +27,15 @@ class SipTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
      */
     @SuppressWarnings("unchecked")
     public
-    SipTree ( TreeNode <N, A, G> parent,
-              Map<Point, SipImageBlock<A>> blocks,
-              TreeNodeTask <N, A, G> action ) {
+    SipTree ( TreeNode <N> parent,
+              Map<Point, SipImageBlock> blocks,
+              TreeNodeTask <N> action ) {
 
         super(parent, Map. <Object, Object>of(), action);
     }
 
     public
-    SipTree ( TreeNode <N, A, G> root, IImageBlock <A> imageBlock ) {
+    SipTree ( TreeNode <N> root, IImageBlock  imageBlock ) {
         super(root,imageBlock);
     }
 
@@ -44,7 +44,7 @@ class SipTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
      */
     @Override
     public
-    List <TreeNode<N, A, G>> getNodes () {
+    List <TreeNode<N>> getNodes () {
         return super.getNodes();
     }
 
@@ -54,7 +54,7 @@ class SipTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
      * @param action
      */
     public
-    SipTree ( TreeNode <N, A, G> root, IImage<A> image, TreeNodeTask <N, A, G> action ) {
+    SipTree ( TreeNode <N> root, IImage image, TreeNodeTask <N> action ) {
         super(root, image, action);
     }
 
@@ -67,7 +67,7 @@ class SipTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
     N findNode ( Point shift ) {
         for (N n = this.getRoot().getChild(0); n != null; n = n.getChild(0)) {
            if(n.isLeaf()){
-               if (((ILeaf<N, A, G>) n).getX() == shift.getX() && ((ILeaf<N, A, G>) n).getY() == shift.getY()) {
+               if (((ILeaf<N>) n).getX() == shift.getX() && ((ILeaf<N>) n).getY() == shift.getY()) {
                  return n;
                }
            }

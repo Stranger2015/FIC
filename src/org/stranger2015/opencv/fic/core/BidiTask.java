@@ -1,11 +1,8 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.DecodeTask;
 import org.stranger2015.opencv.fic.core.codec.EncodeTask;
-import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.codec.ICodec;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,11 +13,10 @@ import static org.stranger2015.opencv.fic.core.EPartitionScheme.FIXED_SIZE;
  *
  */
 public abstract
-class BidiTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends Task <N, A, G> {
+class BidiTask extends Task {
 
-    protected Task <N, A, G> task;
-    protected Task <N, A, G> inverseTask;
+    protected Task task;
+    protected Task inverseTask;
 
     /**
      * @param filename
@@ -30,8 +26,8 @@ class BidiTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
     @SafeVarargs
     BidiTask ( String filename,
                EPartitionScheme scheme,
-               ICodec <N, A, G> codec,
-               Task <N, A, G>... tasks ) {
+               ICodec codec,
+               Task... tasks ) {
 
         this(filename, scheme, codec, Arrays.asList(tasks));
     }
@@ -43,8 +39,8 @@ class BidiTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
     public
     BidiTask ( String filename,
                EPartitionScheme scheme,
-               ICodec <N, A, G> codec,
-               List <Task <N, A, G>> tasks ) {
+               ICodec codec,
+               List <Task> tasks ) {
 
         super(filename, scheme, codec, tasks);
 
@@ -65,10 +61,9 @@ class BidiTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
     public
     BidiTask ( String filename,
                EPartitionScheme scheme,
-               ICodec <N, A, G> codec,
-               Task <N, A, G> task,
-               Task <N, A, G> inverseTask ) {
-
+               ICodec codec,
+               Task task,
+               Task inverseTask ) {
         this(filename, scheme, codec, List.of(task, inverseTask));
 
         this.task = task;
@@ -83,9 +78,9 @@ class BidiTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      */
     public
     BidiTask ( String filename,
-               ICodec<N, A, G> codec,
-               EncodeTask <N, A, G> encodeTask,
-               DecodeTask <N, A, G> decodeTask ) {
+               ICodec codec,
+               EncodeTask encodeTask,
+               DecodeTask decodeTask ) {
 
         this(filename, FIXED_SIZE, codec, encodeTask, decodeTask);
     }
@@ -95,7 +90,7 @@ class BidiTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      * @return
      */
     public
-    Task <N, A, G> getTask () {
+    Task getTask () {
         return task;
     }
 
@@ -103,7 +98,7 @@ class BidiTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      * @return
      */
     public
-    Task <N, A, G> getInverseTask () {
+    Task getInverseTask () {
         return inverseTask;
     }
 
@@ -113,8 +108,7 @@ class BidiTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      */
     @Override
     protected
-    IImage<A> execute ( String filename ) throws Exception {
-
+    IImage execute ( String filename ) throws Exception {
         return super.execute(filename);
     }
 }

@@ -6,8 +6,8 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
-import org.stranger2015.opencv.utils.BitBuffer;
 
+import java.io.IOException;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -155,11 +155,11 @@ import java.util.Set;
  * Step 13: Apply a fractal compression algorithm to obtain a compressed IFS code.
  */
 public
-interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends IImageProcessorListener <N, A, G>,
-                ICodecListener <N, A, G>,
+interface IEncoder
+        extends IImageProcessorListener,
+                ICodecListener,
                 IConstants,
-                ICompositeEncoder <N, A, G> {
+                ICompositeEncoder {
     /**
      *
      */
@@ -169,19 +169,19 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      * @return
      */
     default
-    IImage <A> encode ( IImage <A> image ) throws Exception {
+    void encode ( IImage image ) throws Exception {
+        assert image != null : "Cannot compress null image";
         initialize();
 
-        return doEncode(image);
+        doEncode(image);
     }
 
-    ICompressedImage <A> getOutputImage ();
+    ICompressedImage getOutputImage ();
 
     /**
      * @param image
-     * @return
      */
-    IImage <A> doEncode ( IImage <A> image ) throws Exception;
+    void doEncode ( IImage image ) throws Exception;
 
     /**
      * @return
@@ -196,28 +196,28 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      * @param axis
      * @return
      */
-    IImage <A> flipAxis ( IImage <A> image, int axis );
+    IImage flipAxis ( IImage image, int axis );
 
     /**
      * @param image
      * @param transform
      * @return
      */
-    IImage <A> randomTransform ( IImage <A> image, ImageTransform <A, G> transform );
+    IImage randomTransform ( IImage image, ImageTransform transform );
 
     /**
      * @param image
      * @param transform
      * @return
      */
-    IImage <A> applyTransform ( IImage <A> image, ImageTransform <A, G> transform );
+    IImage applyTransform ( IImage image, ImageTransform transform );
 
     /**
      * @param image
      * @param transform
      * @return
      */
-    IImage <A> applyAffineTransform ( IImage <A> image, AffineTransform <A, G> transform );
+    IImage applyAffineTransform ( IImage image, AffineTransform transform );
 
     /**
      * @param image
@@ -226,21 +226,23 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      * @param step
      * @return
      */
-    List <IImageBlock <A>> generateAllTransformedBlocks ( IImage <A> image,
-                                                          int sourceSize,
-                                                          int destinationSize,
-                                                          int step
+    List <IImageBlock> generateAllTransformedBlocks (
+            IImage image,
+            int sourceSize,
+            int destinationSize,
+            int step
+
     ) throws ValueError;
 
     /**
      * @return
      */
-    Set <ImageTransform <A, G>> getTransforms ();
+    Set <ImageTransform> getTransforms ();
 
     /**
      * @return
      */
-    IImage <A> getInputImage ();
+    IImage getInputImage ();
 
     /**
      * @param tiler
@@ -250,11 +252,11 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      * @param domainSize
      * @return
      */
-    ImageBlockGenerator <N, A, G> createBlockGenerator (
-            IPartitionProcessor <N, A, G> partitionProcessor,
+    ImageBlockGenerator <?> createBlockGenerator (
+            IPartitionProcessor partitionProcessor,
             EPartitionScheme scheme,
-            IEncoder <N, A, G> encoder,
-            IImage <A> image,
+            IEncoder encoder,
+            IImage image,
             IIntSize rangeSize,
             IIntSize domainSize
     );
@@ -263,8 +265,8 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      * @return
      */
     default
-    IPartitionProcessor <N, A, G> createPartitionProcessor ( ITiler <N, A, G> tiler ) {
-        IPartitionProcessor <N, A, G> partitionProcessor = getPartitionProcessor();
+    IPartitionProcessor createPartitionProcessor ( ITiler tiler ) {
+        IPartitionProcessor partitionProcessor = getPartitionProcessor();
         if (partitionProcessor == null) {
             partitionProcessor = doCreatePartitionProcessor(tiler);
         }
@@ -275,33 +277,33 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
     /**
      * @return
      */
-    IPartitionProcessor <N, A, G> doCreatePartitionProcessor ( ITiler <N, A, G> tiler );
+    IPartitionProcessor doCreatePartitionProcessor ( ITiler tiler );
 
     /**
      * @return
      */
-    IPartitionProcessor <N, A, G> getPartitionProcessor ();
+    IPartitionProcessor getPartitionProcessor ();
 
     /**
      * @return
      */
-    FCImageModel <N, A, G> getModel ();
+    FCImageModel getModel ();
 
     /**
      * @param filename
      * @return
      */
-    FCImageModel <N, A, G> loadModel ( String filename ) throws ValueError;
+    FCImageModel loadModel ( String filename ) throws ValueError, IOException;
 
     /**
      * @param node
      */
-    void add ( TreeNode <N, A, G> node );
+    void add ( TreeNode <?> node );
 
     /**
      * @param node
      */
-    void addLeafNode ( LeafNode <N, A, G> node );
+    void addLeafNode ( LeafNode <?> node );
 
     /**
      * @return
@@ -312,9 +314,9 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      * @param imageBlock
      * @return
      */
-    EnumSet <ESplitKind> chooseDirection ( IImageBlock <A> imageBlock );
+    EnumSet <ESplitKind> chooseDirection ( IImageBlock imageBlock );
 
-    void segmentImage ( IImageBlock <A> roi, int blockWidth, int blockHeight ) throws ValueError;
+    void segmentImage ( IImageBlock roi, int blockWidth, int blockHeight ) throws ValueError;
 
     // progress report
     // int percent = 100 * (rangeBlocks.indexOf(rangeBlock) + 1) / rangeBlocks.size();
@@ -326,15 +328,15 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      */
     @SuppressWarnings("unchecked")
     default
-    IImageBlock <A> iterateRangeBlocks ( IImageBlock <A> roi, List <IImageBlock <A>> rangeBlocks ) throws ValueError {
+    IImageBlock iterateRangeBlocks ( IImageBlock roi, List <IImageBlock> rangeBlocks ) throws ValueError {
         int channels = roi.getChannelsAmount();
         int[] minDistance = new int[channels];
 
-        for (IImageBlock <A> rangeBlock : rangeBlocks) {
+        for (IImageBlock rangeBlock : rangeBlocks) {
             for (int c = 0; c < channels; c++) {
                 minDistance[c] = 0;
             }
-            ImageTransform <A, G> bestTransform = ImageTransform.create(roi, rangeBlock.getAddress(0, 0));
+            ImageTransform bestTransform = ImageTransform.create((IImage) roi, rangeBlock.getAddress(0, 0));
             try {
                 iterateDomainBlocks(
                         rangeBlock,
@@ -347,34 +349,34 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
             }
             getTransforms().add(bestTransform);
         }
-        getOutputImage().setTransforms((List <ImageTransform <A, ?>>) getTransforms());
+        getOutputImage().setTransforms((List <ImageTransform>) getTransforms());
 
-        return (IImageBlock <A>) getOutputImage();
+        return (IImageBlock) getOutputImage();
     }
 
     /**
      * @return
      */
-    List <IImageBlock <A>> getRangeBlocks ();
+    List <IImageBlock> getRangeBlocks ();
 
     /**
      * @return
      */
-    List <IImageBlock <A>> getDomainBlocks ();
+    List <IImageBlock> getDomainBlocks ();
 
     /**
      * @param rangeBlock
      * @param bestTransform
      */
-    //        ImageBlock <A> domainBlock = (ImageBlock <A>) rangeBlock.resize(2);
+    //        ImageBlock  domainBlock = (ImageBlock ) rangeBlock.resize(2);
     default
-    void iterateDomainBlocks ( IImageBlock <A> rangeBlock,
-                               List <IImageBlock <A>> domainBlocks,
+    void iterateDomainBlocks ( IImageBlock rangeBlock,
+                               List <IImageBlock> domainBlocks,
                                int[] minDistance,
-                               ImageTransform <A, G> bestTransform )
+                               ImageTransform bestTransform )
             throws ValueError {
 
-        for (IImageBlock <A> domainBlock : domainBlocks) {
+        for (IImageBlock domainBlock : domainBlocks) {
             int channels = domainBlock.getChannelsAmount();
             double[] alpha = new double[channels];
             double[] newPixelValue = new double[channels];
@@ -393,7 +395,8 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
                 );
 
                 for (int indx = 0; indx < 8; indx++) {
-                    IImageBlock <A> transformedDomainBlock = new ImageBlock <>(
+                    IImageBlock transformedDomainBlock = new ImageBlock(
+                            domainBlock,
                             domainBlock.getX(),
                             domainBlock.getY(),
                             domainBlock.getWidth(),
@@ -438,7 +441,7 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
     /**
      * @return
      */
-    Set <IImageFilter <A>> getFilters ();
+    Set <IImageFilter> getFilters ();
 
     /**
      * @param range
@@ -446,7 +449,7 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      * @return
      */
     default
-    int[] getDistance ( IImageBlock <A> rangeBlock, IImageBlock <A> domainBlock ) {
+    int[] getDistance ( IImageBlock rangeBlock, IImageBlock domainBlock ) {
         int channels = rangeBlock.getChannelsAmount();
         double[] error = new double[channels];
         int[] dist = new int[channels];
@@ -467,10 +470,10 @@ interface IEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
     /**
      * @return
      */
-    List <Class <ITiler <N, A, G>>> getAllowableSubtilers ();
+    List <Class <ITiler>> getAllowableSubtilers ();
 
     /**
      * @param tiler
      */
-    void addAllowableSubtiler ( Class <ITiler <N, A, G>> tilerClass );
+    void addAllowableSubtiler ( Class <ITiler> tilerClass );
 }

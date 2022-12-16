@@ -1,23 +1,19 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.stranger2015.opencv.fic.core.*;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
 import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.fic.transform.ScaleTransform;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
 import java.util.Set;
 
 /**
- * @param <N>
- * @param <A>
- * @param <G>
+ *
  */
 public
-class DtSplitAndMergeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends BinTreeEncoder <N, A, G> {
+class DtSplitAndMergeEncoder extends BinTreeEncoder {
 
     /**
      * @param scheme
@@ -32,28 +28,74 @@ class DtSplitAndMergeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A
      */
     public
     DtSplitAndMergeEncoder (
+            String fileName,
             EPartitionScheme scheme,
-            TreeNodeBuilder <N, A, G> nodeBuilder,
-            IPartitionProcessor <N, A, G> partitionProcessor,
-            ISearchProcessor <N, A, G> searchProcessor,
-            ScaleTransform <A, G> scaleTransform,
-            ImageBlockGenerator <N, A, G> imageBlockGenerator,
-            IDistanceator <A> comparator,
-            Set <ImageTransform <A, G>> transforms,
-            Set <IImageFilter <A>> filters,
-            FCImageModel <N, A, G> fractalModel
-    ) {
+            ICodec codec,
+            List <Task> tasks,
+            EtvColorSpace colorSpace,
+            ITreeNodeBuilder <?> nodeBuilder,
+            IPartitionProcessor partitionProcessor,
+            ISearchProcessor searchProcessor,
+            ScaleTransform scaleTransform,
+            ImageBlockGenerator <?> imageBlockGenerator,
+            IDistanceator comparator,
+            Set <ImageTransform> imageTransforms,
+            Set <IImageFilter> imageFilters,
+            FCImageModel fractalModel ) {
+
         super(
+                fileName,
                 scheme,
+                codec,
+                tasks,
+                colorSpace,
                 nodeBuilder,
                 partitionProcessor,
                 searchProcessor,
                 scaleTransform,
                 imageBlockGenerator,
                 comparator,
-                transforms,
-                filters,
+                imageTransforms,
+                imageFilters,
                 fractalModel
+        );
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    IImage getInputImage () {
+        return super.getInputImage();
+    }
+
+    /**
+     * @param tiler
+     * @param scheme
+     * @param encoder
+     * @param image
+     * @param rangeSize
+     * @param domainSize
+     * @return
+     */
+    @Override
+    public
+    ImageBlockGenerator <?> createBlockGenerator (
+            IPartitionProcessor partitionProcessor,
+            EPartitionScheme scheme,
+            IEncoder encoder,
+            IImage image,
+            IIntSize rangeSize,
+            IIntSize domainSize ) {
+
+        return new DtImageBlockGenerator <>(
+                partitionProcessor,
+                scheme,
+                encoder,
+                image,
+                rangeSize,
+                domainSize
         );
     }
 
@@ -64,7 +106,7 @@ class DtSplitAndMergeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A
      */
     @Override
     public
-    List <IImageBlock <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds ) throws ValueError {
+    List <IImageBlock> segmentImage ( IImage image, List <Rectangle> bounds ) throws ValueError {
         return super.segmentImage(image, bounds);
     }
 
@@ -73,7 +115,7 @@ class DtSplitAndMergeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A
      * @return
      * @throws ValueError
      */
-    IAddress <A> createAddress ( int addr ) throws ValueError {
+    IAddress createAddress ( int addr ) throws ValueError {
         return IAddress.valueOf(addr, inputImage.getWidth(), 0);
     }
 
@@ -83,7 +125,7 @@ class DtSplitAndMergeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A
 //     */
 //    @Override
 //    protected
-//    ESplitKind chooseDirection ( IImageBlock <A> imageBlock ) {
+//    ESplitKind chooseDirection ( IImageBlock  imageBlock ) {
 //        return DIAGONAL;
 //    }
 
@@ -97,26 +139,51 @@ class DtSplitAndMergeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A
     }
 
     /**
-     * @param image
+     * @param tiler
      * @return
+     */
+    @Override
+    public
+    IPartitionProcessor doCreatePartitionProcessor ( ITiler tiler ) {
+        return null;
+    }
+
+    /**
+     * @param image
      * @throws ValueError
      */
     @Override
     public
-    IImage <A> doEncode ( IImage <A> image ) throws ValueError {
-        List <IImageBlock <A>> regions = partitionProcessor.generateRegions(
-                image,
-                List.of(new Rectangle(image.getSize())));
-        List <IImageBlock <A>> rangeBlocks = partitionProcessor.generateRangeBlocks(
-                (IImageBlock <A>) regions,
+    void doEncode ( IImage image ) throws Exception {
+        List <IImageBlock> rangeBlocks = partitionProcessor.generateRangeBlocks(
+                (IImageBlock) image,
                 image.getWidth(),
                 image.getHeight());
 
-        List <IImageBlock <A>> domainBlocks = partitionProcessor.generateDomainBlocks(
+        List <IImageBlock> domainBlocks = partitionProcessor.generateDomainBlocks(//fixme
                 rangeBlocks,
                 partitionProcessor.getRangeSize(),
-                imageBlockGenerator.domainSize);
+                partitionProcessor.getDomainSize());
 
-        return super.doEncode(image);
+        super.doEncode(image);
+    }
+
+    /**
+     * @param tilerClass
+     */
+    @Override
+    public
+    void addAllowableSubtiler ( Class <ITiler> tilerClass ) {
+
+    }
+
+    /**
+     * @param outputImage
+     * @return
+     */
+    @Override
+    public
+    IImage postprocess ( IImage outputImage ) {
+        return null;
     }
 }

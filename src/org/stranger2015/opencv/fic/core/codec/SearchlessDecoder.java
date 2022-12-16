@@ -7,17 +7,17 @@ import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  
- * @param <A>
+ * @param
  */
 public
-class SearchlessDecoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends Decoder <N, A, G> {
+class SearchlessDecoder<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends Decoder <N> {
 
     /**
      * @param image
      */
     public
-    SearchlessDecoder ( IImage<A> image ) {
+    SearchlessDecoder ( IImage image ) {
 
         super(image);
     }
@@ -27,7 +27,7 @@ class SearchlessDecoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G 
      */
     @Override
     public
-    void onCodecCreated ( ICodec<N, A, G> codec ) {
+    void onCodecCreated ( ICodec<N> codec ) {
 
     }
 }

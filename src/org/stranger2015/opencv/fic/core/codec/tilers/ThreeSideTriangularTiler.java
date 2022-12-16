@@ -12,12 +12,12 @@ import java.util.List;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class ThreeSideTriangularTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends TriangularTiler <N, A, G> {
+class ThreeSideTriangularTiler<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends TriangularTiler <N> {
 
     /**
      * @param image
@@ -27,11 +27,11 @@ class ThreeSideTriangularTiler<N extends TreeNode <N, A, G>, A extends IAddress 
      * @param builder
      */
     public
-    ThreeSideTriangularTiler ( IImage <A> image,
+    ThreeSideTriangularTiler ( IImage image,
                                IIntSize rangeSize,
                                IIntSize domainSize,
-                               IEncoder <N, A, G> encoder,
-                               ITreeNodeBuilder <N, A, G> builder ) {
+                               IEncoder <N> encoder,
+                               ITreeNodeBuilder <N> builder ) {
 
         super(image, rangeSize, domainSize, encoder, builder);
     }
@@ -41,7 +41,7 @@ class ThreeSideTriangularTiler<N extends TreeNode <N, A, G>, A extends IAddress 
      */
     @Override
     public
-    ITiler <N, A, G> instance () {
+    ITiler <N> instance () {
         return new ThreeSideTriangularTiler<>(
                 getImage(),
                 getRangeSize(),
@@ -57,7 +57,7 @@ class ThreeSideTriangularTiler<N extends TreeNode <N, A, G>, A extends IAddress 
      */
     @Override
     public
-    void segmentRectangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentRectangle ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
 
     }
 
@@ -67,7 +67,7 @@ class ThreeSideTriangularTiler<N extends TreeNode <N, A, G>, A extends IAddress 
      */
     @Override
     public
-    void segmentPolygon ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentPolygon ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
         List.of();
     }
 
@@ -77,20 +77,20 @@ class ThreeSideTriangularTiler<N extends TreeNode <N, A, G>, A extends IAddress 
      */
     @Override
     public
-    void segmentQuadrilateral (TreeNodeBase <N, A, G> node,  IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentQuadrilateral (TreeNodeBase <N> node,  IImageBlock  imageBlock ) throws ValueError {
         List.of();
     }
 
     @Override
     public
-    List <Vertex> generateVerticesSet ( IImageBlock <A> roi,
+    List <Vertex> generateVerticesSet ( IImageBlock  roi,
                                    int blockWidth,
                                    int blockHeight ) {
         return new ArrayList <>();
     }
 
     public
-    List <IImageBlock <A>> generateInitialRangeBlocks ( IImageBlock <A> roi,
+    List <IImageBlock > generateInitialRangeBlocks ( IImageBlock  roi,
                                                         int blockWidth,
                                                         int blockHeight ) throws ValueError {
         return List.of();
@@ -104,7 +104,7 @@ class ThreeSideTriangularTiler<N extends TreeNode <N, A, G>, A extends IAddress 
 
     @Override
     public
-    List <IImageBlock <A>> generateRangeBlocks ( IImageBlock <A> roi,
+    List <IImageBlock > generateRangeBlocks ( IImageBlock  roi,
                                                  int blockWidth,
                                                  int blockHeight ) throws ValueError {
         return List.of();

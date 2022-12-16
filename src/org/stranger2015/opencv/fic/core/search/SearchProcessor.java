@@ -1,35 +1,33 @@
 package org.stranger2015.opencv.fic.core.search;
 
-import org.stranger2015.opencv.fic.core.IAddress;
-import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.IImageBlock;
 import org.stranger2015.opencv.fic.transform.ITransform;
-import org.stranger2015.opencv.utils.BitBuffer;
+
+import java.util.List;
 
 /**
  
- * @param <A>
+ * @param
  * @param <G>
  */
 public abstract
-class SearchProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>,  G extends BitBuffer>
-        implements ISearchProcessor <N, A, G> {
+class SearchProcessor implements ISearchProcessor {
 
-    protected ITransform <A, G> bestTransform;
+    protected ITransform bestTransform;
 
     /**
      *
      */
     @Override
     public abstract
-    ITransform <A, G> searchForBestTransform ();
+    ITransform searchForBestTransform ();
 
     /**
      * @return
      */
     @Override
     public abstract
-    IImage <A> search ();
+    byte[] search ( IImageBlock imageBlock, List <IImageBlock> rangeBlocks );
 
     /**
      * @return
@@ -43,7 +41,7 @@ class SearchProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>,  G e
      */
     @Override
     public
-    void setBestTransform ( ITransform <A, G> bestTransform ) {
+    void setBestTransform ( ITransform bestTransform ) {
         this.bestTransform = bestTransform;
     }
 
@@ -52,7 +50,7 @@ class SearchProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>,  G e
      */
     @Override
     public
-    ITransform <A, G> getBestTransform () {
+    ITransform getBestTransform () {
         return bestTransform;
     }
 }

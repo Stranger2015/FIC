@@ -8,13 +8,13 @@ import java.util.List;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  
  * @param <G>
  */
 public
-class NormalizeRestoreImageTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends BidiTask <N, A, G> {
+class NormalizeRestoreImageTask<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends BidiTask <N> {
 
     /**
      * @param filename
@@ -23,7 +23,7 @@ class NormalizeRestoreImageTask<N extends TreeNode <N, A, G>, A extends IAddress
     public
     NormalizeRestoreImageTask ( String filename,
                                 EPartitionScheme scheme,
-                                ICodec <N, A, G> codec
+                                ICodec <N> codec
     ) {
         super(
                 filename,

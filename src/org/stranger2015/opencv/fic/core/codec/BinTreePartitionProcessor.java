@@ -1,28 +1,23 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.stranger2015.opencv.fic.core.*;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.ITreeNodeBuilder;
 import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
-import org.stranger2015.opencv.utils.BitBuffer;
-
-import java.util.List;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class BinTreePartitionProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends PartitionProcessor <N, A, G> {
+class BinTreePartitionProcessor extends PartitionProcessor {
 
     /**
      * @param tiler
      */
     public
-    BinTreePartitionProcessor ( ITiler <N, A, G> tiler,
-                                ImageBlockGenerator <N, A, G> imageBlockGenerator,
-                                ITreeNodeBuilder <N, A, G> nodeBuilder ) {
+    BinTreePartitionProcessor ( ITiler tiler,
+                                ImageBlockGenerator <?> imageBlockGenerator,
+                                ITreeNodeBuilder <?> nodeBuilder ) {
 
         super(tiler, imageBlockGenerator, nodeBuilder);
     }
@@ -41,38 +36,10 @@ class BinTreePartitionProcessor<N extends TreeNode <N, A, G>, A extends IAddress
      */
     @Override
     public
-    IPartitionProcessor <N, A, G> instance ( ITiler <N, A, G> tiler,
-                                             ImageBlockGenerator <N, A, G> imageBlockGenerator,
-                                             ITreeNodeBuilder <N, A, G> nodeBuilder ) {
+    IPartitionProcessor instance ( ITiler tiler,
+                                   ImageBlockGenerator <?> imageBlockGenerator,
+                                   ITreeNodeBuilder <?> nodeBuilder ) {
 
-        return new BinTreePartitionProcessor <>(tiler, imageBlockGenerator, nodeBuilder);
-    }
-
-    /**
-     * @param rangeBlocks
-     * @param rangeSize
-     * @param domainSize
-     * @return
-     */
-    @Override
-    public
-    List <IImageBlock <A>> generateDomainBlocks ( List <IImageBlock <A>> rangeBlocks,
-                                                  IIntSize rangeSize,
-                                                  IIntSize domainSize ) {
-
-        return generateDomainBlocks(rangeBlocks,
-                rangeSize,
-                domainSize);
-    }
-
-    /**
-     * @param image
-     * @param rectangles
-     * @return
-     */
-    @Override
-    public
-    List <IImageBlock <A>> generateRegions ( IImage <A> image, List <Rectangle> rectangles ) {
-        return null;
+        return new BinTreePartitionProcessor(tiler, imageBlockGenerator, nodeBuilder);
     }
 }

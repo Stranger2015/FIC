@@ -13,8 +13,8 @@ import java.util.List;
  *
  */
 public
-class FromRgbToTvColorspaceConversionTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends CodecTask.ColorspaceConversionTask <N, A, G> {
+class FromRgbToTvColorspaceConversionTask<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends CodecTask.ColorspaceConversionTask <N> {
 
     /**
      * @param imageFilename
@@ -25,9 +25,9 @@ class FromRgbToTvColorspaceConversionTask<N extends TreeNode <N, A, G>, A extend
     public
     FromRgbToTvColorspaceConversionTask ( String imageFilename,
                                           EPartitionScheme scheme,
-                                          ICodec <N, A, G> codec,
+                                          ICodec <N> codec,
                                           EtvColorSpace colorSpace,
-                                          List <Task <N, A, G>> tasks ) {
+                                          List <Task <N>> tasks ) {
 
         super(imageFilename, scheme, codec, colorSpace, tasks);
     }
@@ -143,10 +143,10 @@ class FromRgbToTvColorspaceConversionTask<N extends TreeNode <N, A, G>, A extend
     @SuppressWarnings("unchecked")
     @Override
     protected
-    IImage<A> execute ( String filename ) throws ValueError {
-        IImage<A>  imageSrc = super.execute(filename);
+    IImage execute ( String filename ) throws ValueError {
+        IImage  imageSrc = super.execute(filename);
 
-        IImage<A>  imageDst = new Image <>(imageSrc, -1, -0, 0, List.of());
+        IImage  imageDst = new Image <>(imageSrc, -1, -0, 0, List.of());
         double[] pixels = imageSrc.getPixels();
         for (int i=0   ;i< pixels.length; i++) {//todo;
 

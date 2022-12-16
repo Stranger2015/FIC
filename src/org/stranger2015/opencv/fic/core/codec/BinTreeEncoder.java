@@ -9,7 +9,6 @@ import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.fic.transform.ScaleTransform;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.lang.ref.Cleaner;
 import java.lang.ref.PhantomReference;
@@ -22,12 +21,11 @@ import java.util.Set;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends Encoder <N, A, G> {
+class BinTreeEncoder extends Encoder {
 
     /**
      * @param scheme
@@ -39,22 +37,23 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     public
     BinTreeEncoder (
-            String fn,
+            String fileName,
             EPartitionScheme scheme,
-            ICodec <N, A, G> codec,
-            List <Task <N, A, G>> tasks,
+            ICodec codec,
+            List <Task> tasks,
             EtvColorSpace colorSpace,
-            ITreeNodeBuilder <N, A, G> nodeBuilder,
-            IPartitionProcessor <N, A, G> partitionProcessor,
-            ISearchProcessor <N, A, G> searchProcessor,
-            ScaleTransform <A, G> scaleTransform,
-            ImageBlockGenerator <N, A, G> imageBlockGenerator,
-            IDistanceator <A> comparator,
-            Set <ImageTransform <A, G>> imageTransforms,
-            Set <IImageFilter <A>> imageFilters,
-            FCImageModel <N, A, G> fractalModel ) {
+            ITreeNodeBuilder <?> nodeBuilder,
+            IPartitionProcessor partitionProcessor,
+            ISearchProcessor searchProcessor,
+            ScaleTransform scaleTransform,
+            ImageBlockGenerator <?> imageBlockGenerator,
+            IDistanceator comparator,
+            Set <ImageTransform> imageTransforms,
+            Set <IImageFilter> imageFilters,
+            FCImageModel fractalModel ) {
 
-        super(fn,
+        super(
+                fileName,
                 scheme,
                 codec,
                 tasks,
@@ -69,7 +68,6 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
                 imageFilters,
                 fractalModel
         );
-
     }
 
     /**
@@ -77,7 +75,7 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Override
     public
-    IImage <A> getInputImage () {
+    IImage getInputImage () {
         return super.getInputImage();
     }
 
@@ -92,11 +90,11 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Override
     public
-    ImageBlockGenerator <N, A, G> createBlockGenerator (
-            IPartitionProcessor <N, A, G> partitionProcessor,
+    ImageBlockGenerator <?> createBlockGenerator (
+            IPartitionProcessor partitionProcessor,
             EPartitionScheme scheme,
-            IEncoder <N, A, G> encoder,
-            IImage <A> image,
+            IEncoder encoder,
+            IImage image,
             IIntSize rangeSize,
             IIntSize domainSize ) {
 
@@ -116,8 +114,11 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Override
     public
-    IPartitionProcessor <N, A, G> doCreatePartitionProcessor ( ITiler <N, A, G> tiler ) {
-        return new BinTreePartitionProcessor <>(tiler, imageBlockGenerator, nodeBuilder);
+    IPartitionProcessor doCreatePartitionProcessor ( ITiler tiler ) {
+
+        return new BinTreePartitionProcessor(tiler,
+                imageBlockGenerator,
+                nodeBuilder);
     }
 
     /**
@@ -125,7 +126,7 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Override
     public
-    void add ( TreeNode <N, A, G> node ) {
+    void add ( TreeNode <?> node ) {
 
     }
 
@@ -134,7 +135,7 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Override
     public
-    void addLeafNode ( LeafNode <N, A, G> node ) {
+    void addLeafNode ( LeafNode <?> node ) {
 
     }
 
@@ -143,7 +144,7 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Override
     public
-    Class <?> getTilerClass () {
+    Class <? extends ITiler> getTilerClass () {
         return BinTreeTiler.class;
     }
 
@@ -152,8 +153,8 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Override
     public
-    List <IImageBlock <A>> getRangeBlocks () {
-        return null;
+    List <IImageBlock> getRangeBlocks () {
+        return super.getRangeBlocks();
     }
 
     /**
@@ -161,8 +162,8 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Override
     public
-    List <IImageBlock <A>> getDomainBlocks () {
-        return null;
+    List <IImageBlock> getDomainBlocks () {
+        return super.getDomainBlocks();
     }
 
     /**
@@ -170,7 +171,7 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Override
     public
-    ICompressedImage <A> getOutputImage () {
+    ICompressedImage getOutputImage () {
         return super.getOutputImage();
     }
 
@@ -178,9 +179,9 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      * @param inputImage
      * @return
      */
-    //@Override
+//    @Override
     public final
-    List <IImageBlock <A>> segmentImage ( IImage <A> inputImage ) throws ValueError {
+    List <IImageBlock> segmentImage ( IImage inputImage ) throws ValueError {
         return segmentImage(inputImage, List.of());
     }
 
@@ -195,13 +196,11 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
 
     /**
      * @param image
-     * @return
      */
     @Override
     public
-    IImage <A> doEncode ( IImage <A> image ) throws Exception {
+    void doEncode ( IImage image ) throws Exception {
         process(image);
-        return image;
     }
 
     /**
@@ -209,9 +208,9 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      * @return
      */
     public
-    List <IImageBlock <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds ) throws ValueError {
-        List <IImageBlock <A>> result = null;
-        List <IImageBlock <A>> rois = new ArrayList <>();
+    List <IImageBlock> segmentImage ( IImage image, List <Rectangle> bounds ) throws ValueError {
+        List <IImageBlock> result = null;
+        List <IImageBlock> rois = new ArrayList <>();
         if (bounds.isEmpty()) {
             result = List.of(
                     image.getSubImage(
@@ -235,7 +234,7 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Override
     public
-    int[] getDistance ( IImageBlock <A> range, IImageBlock <A> domain ) {
+    int[] getDistance ( IImageBlock range, IImageBlock domain ) {
         return super.getDistance(range, domain);
     }
 
@@ -244,7 +243,7 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Override
     public
-    Set <ImageTransform <A, G>> getTransforms () {
+    Set <ImageTransform> getTransforms () {
         return super.getTransforms();
     }
 
@@ -259,7 +258,7 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Override
     public
-    IImage <A> flipAxis ( IImage <A> image, int axis ) {
+    IImage flipAxis ( IImage image, int axis ) {
         return super.flipAxis(image, axis);
     }
 
@@ -270,7 +269,7 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Override
     public
-    IImage <A> randomTransform ( IImage <A> image, ImageTransform <A, G> transform ) {
+    IImage randomTransform ( IImage image, ImageTransform transform ) {
         return super.randomTransform(image, transform);
     }
 
@@ -281,7 +280,7 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Override
     public
-    IImage <A> applyTransform ( IImage <A> image, ImageTransform <A, G> transform ) {
+    IImage applyTransform ( IImage image, ImageTransform transform ) {
         return super.applyTransform(image, transform);
     }
 
@@ -292,7 +291,7 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Override
     public
-    IImage <A> applyAffineTransform ( IImage <A> image, AffineTransform <A, G> transform ) {
+    IImage applyAffineTransform ( IImage image, AffineTransform transform ) {
         return super.applyAffineTransform(image, transform);
     }
 
@@ -305,8 +304,8 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Override
     public
-    List <IImageBlock <A>> generateAllTransformedBlocks (
-            IImage <A> image,
+    List <IImageBlock> generateAllTransformedBlocks (
+            IImage image,
             int sourceSize,
             int destinationSize,
             int step ) throws ValueError {
@@ -319,7 +318,7 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Override
     public
-    ImageBlockGenerator <N, A, G> getImageBlockGenerator () {
+    ImageBlockGenerator <?> getImageBlockGenerator () {
         return super.getImageBlockGenerator();
     }
 
@@ -328,7 +327,7 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Override
     public
-    ScaleTransform <A, G> getScaleTransform () {
+    ScaleTransform getScaleTransform () {
         return super.getScaleTransform();
     }
 
@@ -337,7 +336,7 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Override
     public
-    IDistanceator <A> getComparator () {
+    IDistanceator getComparator () {
         return super.getComparator();
     }
 
@@ -346,7 +345,7 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Override
     public
-    void onCodecCreated ( ICodec <N, A, G> codec ) {
+    void onCodecCreated ( ICodec codec ) {
         super.onCodecCreated(codec);
     }
 
@@ -365,7 +364,7 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
 //    @Override
     public
-    void onPreprocess ( IImageProcessor <N, A, G> imageProcessor, String filename, IImage <A> image ) throws ValueError {
+    void onPreprocess ( IImageProcessor imageProcessor, String filename, IImage image ) throws ValueError {
         super.onPreprocess(imageProcessor, filename, image);
     }
 
@@ -375,7 +374,7 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Override
     public
-    void onProcess ( IImageProcessor <N, A, G> imageProcessor, IImage <A> inputImage ) {
+    void onProcess ( IImageProcessor imageProcessor, IImage inputImage ) {
         super.onProcess(imageProcessor, inputImage);
     }
 
@@ -383,9 +382,9 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      * @param imageProcessor
      * @param outputImage
      */
-    @Override
+//    @Override
     public
-    void onPostprocess ( IImageProcessor <N, A, G> imageProcessor, CompressedImage <A> outputImage ) {
+    void onPostprocess ( IImageProcessor imageProcessor, ICompressedImage outputImage ) {
         super.onPostprocess(imageProcessor, outputImage);
     }
 
@@ -394,7 +393,7 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Override
     public
-    void onCreated ( ICodec <N, A, G> instance ) {
+    void onCreated ( ICodec instance ) {
         super.onCreated(instance);
     }
 
@@ -676,5 +675,15 @@ class BinTreeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
     protected
     void finalize () throws Throwable {
         super.finalize();
+    }
+
+    /**
+     * @param outputImage
+     * @return
+     */
+    @Override
+    public
+    IImage postprocess ( IImage outputImage ) {
+        return null;
     }
 }

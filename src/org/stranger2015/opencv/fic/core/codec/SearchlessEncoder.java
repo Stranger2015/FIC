@@ -12,14 +12,14 @@ import java.util.List;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  
  */
 public
-class SearchlessEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, M extends IImage<A>,
+class SearchlessEncoder<N extends TreeNode <N>, A extends IAddress , IImage extends IImage,
         G extends BitBuffer>
 
-        extends Encoder <N, A, G> {
+        extends Encoder <N> {
 
     /**
      * @param inputImage
@@ -27,9 +27,9 @@ class SearchlessEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, M 
      * @param domainSize
      */
     public
-    SearchlessEncoder ( M inputImage,
-                        ISearchProcessor <N, A, G> rangeSize,
-                        ImageBlockGenerator <N, A, G> domainSize ) {
+    SearchlessEncoder ( IImage inputImage,
+                        ISearchProcessor <N> rangeSize,
+                        ImageBlockGenerator <N> domainSize ) {
         super(inputImage,
                 rangeSize,
                 rangeSize,
@@ -49,12 +49,12 @@ class SearchlessEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, M 
      */
 //    @Override
     protected
-    ImageBlockGenerator <N, A, G> createBlockGenerator ( IEncoder <N, A, G> encoder,
-                                                            M image,
+    ImageBlockGenerator <N> createBlockGenerator ( IEncoder <N> encoder,
+                                                            IImage image,
                                                             Size rangeSize,
                                                             Size domainSize ) {
         return new SquareImageBlockGenerator <>(
-                new RectangularTiler <N, A, G>(8),
+                new RectangularTiler <N>(8),
                 encoder,
                 image,
                 rangeSize,
@@ -63,31 +63,31 @@ class SearchlessEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, M 
 
     @Override
     public
-    M randomTransform ( M image, ImageTransform <A, G> transform ) {
+    IImage randomTransform ( IImage image, ImageTransform transform ) {
         return null;//todo
     }
 
     @Override
     public
-    M applyTransform ( M image, ImageTransform <A, G> transform ) {
+    IImage applyTransform ( IImage image, ImageTransform transform ) {
         return null;//todo
     }
 
     @Override
     public
-    M applyAffineTransform ( M image, AffineTransform <A, G> transform ) {
+    IImage applyAffineTransform ( IImage image, AffineTransform  transform ) {
         return null;//todo
     }
 //
 //    @Override
 //    public
-//    List <ImageTransform <M, A, G>> compress ( M image, int sourceSize, int destinationSize, int step ) {
+//    List <ImageTransform <M, A, G>> compress ( IImage image, int sourceSize, int destinationSize, int step ) {
 //        return null;//todo
 //    }
 
     @Override
     public
-    List<IImageBlock<A>> generateAllTransformedBlocks ( M image, int sourceSize, int destinationSize, int step ) {
+    List<IImageBlock> generateAllTransformedBlocks ( IImage image, int sourceSize, int destinationSize, int step ) {
         return null;//todo//todo
     }
 
@@ -135,7 +135,7 @@ class SearchlessEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, M 
      */
     @Override
     public
-    List <IImageBlock <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds ) throws ValueError {
+    List <IImageBlock > segmentImage ( IImage image, List <Rectangle> bounds ) throws ValueError {
         return null;
     }
 
@@ -144,7 +144,7 @@ class SearchlessEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, M 
      */
     @Override
     public
-    void add ( TreeNode <N, A, G> node ) {
+    void add ( TreeNode <N> node ) {
 
     }
 
@@ -153,13 +153,13 @@ class SearchlessEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, M 
      */
     @Override
     public
-    void addLeafNode ( TreeNode.LeafNode <N, A, G> node ) {
+    void addLeafNode ( TreeNode.LeafNode <N> node ) {
 
     }
 
     @Override
     public
-    void addLeafNode ( TreeNode <N, A, G> node ) {
+    void addLeafNode ( TreeNode <N> node ) {
 
     }
 
@@ -168,7 +168,7 @@ class SearchlessEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, M 
      */
     @Override
     public
-    IPipeline <IImage <A>, IImage <A>> getLinkedObject () {
+    IPipeline <IImage , IImage> getLinkedObject () {
         return null;
     }
 
@@ -177,25 +177,25 @@ class SearchlessEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, M 
      */
     @Override
     public
-    void setNext ( ISingleLinked <IPipeline <IImage <A>, IImage <A>>> link ) {
+    void setNext ( ISingleLinked <IPipeline <IImage , IImage>> link ) {
 
     }
 
     @Override
     public
-    ISingleLinked <IPipeline <IImage <A>, IImage <A>>> getNext () {
+    ISingleLinked <IPipeline <IImage , IImage>> getNext () {
         return null;
     }
 
     @Override
     public
-    IImage <A> getInput () {
+    IImage getInput () {
         return null;
     }
 
     @Override
     public
-    IImage <A> getOutput () {
+    IImage getOutput () {
         return null;
     }
 }

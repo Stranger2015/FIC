@@ -1,6 +1,6 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.jetbrains.annotations.NotNull;
+//import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.Rect;
@@ -16,15 +16,13 @@ import java.util.List;
 /**
  *
  */
-public class CompressedImage<A extends IAddress <A>>
-        extends Image <A>
-        implements ICompressedImage <A>,
-                   IIntSize {
+public class CompressedImage
+        extends Image
+        implements ICompressedImage, IIntSize {
 
-    public int originalImageWidth;
-    public int originalImageHeight;
-
-    private List <ImageTransform <A, ?>> transforms = new ArrayList <>(16);//fixme;
+    private List <ImageTransform> transforms = new ArrayList <>(16);//fixme;
+    private int originalImageWidth;
+    private int originalImageHeight;
 
     /**
      * @param rows
@@ -32,35 +30,40 @@ public class CompressedImage<A extends IAddress <A>>
      * @param type
      */
     public
-    CompressedImage ( IImage <A> image, int rows, int cols, int type ) throws ValueError {
-        super(image, rows, cols, type);
+    CompressedImage ( IImage image, int rows, int cols, int type ) throws ValueError {
+        super((IImageBlock) image, rows, cols, type);
     }
 
     /**
      * @param inputImage
      */
     public
-    CompressedImage ( IImage <A> inputImage ) {
+    CompressedImage ( IImage inputImage ) {
         super((MatOfInt) inputImage.getMat(), inputImage.getSize());
+
         inputImage.getOriginalImageWidth();
                 inputImage.getOriginalImageHeight();
     }
-//
-//    public
-//    CompressedImage ( Mat dest ) {
-//        super(dest, blockSize, originalImageWidth, originalImageHeight);
-//    }
 
+    /**
+     * @param bb
+     * @param polygonList
+     * @return
+     */
     @Override
     public
     Mat createMask ( IIntSize bb, List <Geometry <?>> polygonList ) {
         return super.createMask(bb, polygonList);
     }
 
+    /**
+     * @param layers
+     * @param inputImage
+     * @return
+     */
     @Override
     public
-    IImage<A> merge ( List <IImage <A>> layers, IImage<A> inputImage ) {
-
+    IImage merge ( List <IImage> layers, IImage inputImage ) {
         return null;
     }
 
@@ -69,7 +72,7 @@ public class CompressedImage<A extends IAddress <A>>
      */
     @Override
     public
-    List <IImageBlock <A>> getRangeBlocks () {
+    List <IImageBlock> getRangeBlocks () {
         return null;
     }
 
@@ -78,7 +81,7 @@ public class CompressedImage<A extends IAddress <A>>
      */
     @Override
     public
-    List <IImageBlock <A>> getDomainBlocks () {
+    List <IImageBlock> getDomainBlocks () {
         return null;
     }
 
@@ -96,7 +99,7 @@ public class CompressedImage<A extends IAddress <A>>
      */
     @Override
     public
-    List <ImageTransform <A, G>> getTransforms () {
+    List <ImageTransform> getTransforms () throws ValueError {
         return transforms;
     }
 
@@ -105,18 +108,9 @@ public class CompressedImage<A extends IAddress <A>>
      */
     @Override
     public
-    void setTransforms ( List <ImageTransform <A, ?>> transforms ) {
+    void setTransforms ( List <ImageTransform> transforms ) {
         this.transforms = transforms;
     }
-
-//    /**
-//     * @return
-//     */
-//    @Override
-//    public
-//    double[] getPixels () {
-//        return new double[0];
-//    }
 
     /**
      * @param rectangle
@@ -124,15 +118,15 @@ public class CompressedImage<A extends IAddress <A>>
      */
     @Override
     public
-    IImageBlock <A> getSubImage ( Rectangle rectangle ) throws ValueError {
+    IImageBlock getSubImage ( Rectangle rectangle ) throws ValueError {
         return getSubImage(rectangle.getAddress(), rectangle.width, rectangle.height);
     }
 
     public
-    IImageBlock <A> getSubImage ( IAddress <?> address, int width, int height ) throws ValueError {
+    IImageBlock getSubImage ( IAddress address, int width, int height ) throws ValueError {
         Mat mat = getMat().submat((Rect) address.getCartesianCoordinates(address.radix()));
 
-        return new ImageBlock <>(mat, new Rectangle(address, width, height));
+        return new ImageBlock (mat, new Rectangle(address, width, height));
     }
 
     /**
@@ -152,8 +146,8 @@ public class CompressedImage<A extends IAddress <A>>
 
     @Override
     public
-    double pixelValues ( int x, int y ) {
-        return 0;
+    double[] pixelValues ( int x, int y ) {
+        return new double[0];
     }
 
     @Override
@@ -192,7 +186,7 @@ public class CompressedImage<A extends IAddress <A>>
      */
     @Override
     public
-    int compareTo ( @NotNull IIntSize o ) {
+    int compareTo ( /*@NotNull*/ IIntSize o ) {
         return -1;
     }
 
@@ -205,29 +199,8 @@ public class CompressedImage<A extends IAddress <A>>
         return IIntSize.super.toSize();
     }
 
-//    /**
-//     * @param address
-//     * @param pixel
-//     */
-
-//    @Override
-////    public
-////    void putPixel ( IAddress <A> address, double[] pixel ) {
-////
-////    }
-//
-//    /**
-//     * @param i
-//     * @param i1
-//     * @param width
-//     * @param height
-//     * @param img1pixels
-//     * @param i2
-//     * @param i3
-//     */
-//    @Override
     public
-    void getRGB ( int i, int i1, int width, int height, int[] img1pixels, int i2, int i3 ) {
+    void getRGB ( int i, int i1, int width, int height, double[] img1pixels, int i2, int i3 ) {
 
     }
 
@@ -235,10 +208,21 @@ public class CompressedImage<A extends IAddress <A>>
      * @param address
      * @param pixels
      */
+    @Override    public
+    void putPixel ( IAddress address, double[] pixels ) {
+        getMat().put(address.getX(), address.getY(), pixels[0]);
+    }
+
+    /**
+     * @param x
+     * @param y
+     * @param pixelData
+     * @throws ValueError
+     */
     @Override
     public
-    void putPixel ( IAddress <A> address, double[] pixels ) {
-        getMat().put(address.getX(), address.getY(), pixels[0]);
+    void putPixel ( int x, int y, double[] pixelData ) throws ValueError {
+        super.putPixel(x, y, pixelData);
     }
 
     @Override

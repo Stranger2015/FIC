@@ -7,13 +7,13 @@ import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class AlterBinTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends AlterBinTreeTiler <N, A, G>
-        implements ITopDownTiler <N, A, G> {
+class AlterBinTreeTopDownTiler
+        extends AlterBinTreeTiler
+        implements ITopDownTiler  {
 
     /**
      * @param image
@@ -23,11 +23,11 @@ class AlterBinTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress 
      * @param builder
      */
     protected
-    AlterBinTreeTopDownTiler ( IImage <A> image,
+    AlterBinTreeTopDownTiler ( IImage image,
                                IIntSize rangeSize,
                                IIntSize domainSize,
-                               IEncoder <N, A, G> encoder,
-                               ITreeNodeBuilder <N, A, G> builder ) {
+                               IEncoder encoder,
+                               ITreeNodeBuilder <?> builder ) {
 
         super(image, rangeSize, domainSize, encoder, builder);
     }
@@ -37,8 +37,8 @@ class AlterBinTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress 
      */
     @Override
     public
-    ITiler <N, A, G> instance () {
-        return new AlterBinTreeTopDownTiler <>(
+    ITiler instance () {
+        return new AlterBinTreeTopDownTiler(
                 getImage(),
                 getRangeSize(),
                 getDomainSize(),
@@ -52,7 +52,7 @@ class AlterBinTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress 
      */
     @Override
     public
-    void onSuccessors ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) {
+    void onSuccessors ( TreeNodeBase <?> node, IImageBlock  imageBlock ) {
         super.onSuccessors(node, imageBlock);
     }
 
@@ -61,7 +61,7 @@ class AlterBinTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress 
      */
     @Override
     public
-    void onSuccessor ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) {
+    void onSuccessor ( TreeNodeBase <?> node, IImageBlock  imageBlock ) {
         super.onSuccessor(node, imageBlock);
     }
 
@@ -72,7 +72,7 @@ class AlterBinTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress 
      */
     @Override
     public
-    void segmentGeometry ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentGeometry ( TreeNodeBase <?> node, IImageBlock  imageBlock ) throws ValueError {
         segmentSquareOrRectangle(node, imageBlock);
     }
 
@@ -82,7 +82,7 @@ class AlterBinTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress 
      * @throws ValueError
      */
     private
-    void segmentSquareOrRectangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentSquareOrRectangle ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
         if (imageBlock.isSquare()) {
             segmentSquare(node, imageBlock);
         }
@@ -97,7 +97,7 @@ class AlterBinTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress 
      */
     @Override
     public
-    void segmentPolygon ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentPolygon ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
 
     }
 
@@ -107,7 +107,7 @@ class AlterBinTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress 
      */
     @Override
     public
-    void segmentRectangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentRectangle ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
         super.segmentRectangle(node, imageBlock);
     }
 
@@ -117,7 +117,7 @@ class AlterBinTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress 
      */
     @Override
     public
-    void segmentSquare ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentSquare ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
         super.segmentSquare(node, imageBlock);
     }
 
@@ -127,7 +127,7 @@ class AlterBinTreeTopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress 
      */
     @Override
     public
-    void segmentTriangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) {
+    void segmentTriangle ( TreeNodeBase <N> node, IImageBlock  imageBlock ) {
         super.segmentTriangle(node, imageBlock);
         
     }

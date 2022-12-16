@@ -7,13 +7,13 @@ import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class BinTreeBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends BinTreeTiler <N, A, G>
-        implements IBottomUpTiler <N, A, G> {
+class BinTreeBottomUpTiler<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends BinTreeTiler <N>
+        implements IBottomUpTiler <N> {
 
 
     /**
@@ -24,11 +24,11 @@ class BinTreeBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>,
      * @param builder
      */
     protected
-    BinTreeBottomUpTiler ( IImage <A> image,
+    BinTreeBottomUpTiler ( IImage image,
                            IIntSize rangeSize,
                            IIntSize domainSize,
-                           IEncoder <N, A, G> encoder,
-                           ITreeNodeBuilder <N, A, G> builder ) {
+                           IEncoder <N> encoder,
+                           ITreeNodeBuilder <N> builder ) {
 
         super(image, rangeSize, domainSize, encoder, builder);
     }
@@ -38,7 +38,7 @@ class BinTreeBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>,
      */
     @Override
     public
-    ITiler <N, A, G> instance () {
+    ITiler <N> instance () {
         return new BinTreeBottomUpTiler <>(
                 getImage(),
                 getRangeSize(),
@@ -55,7 +55,7 @@ class BinTreeBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>,
      */
     @Override
     public
-    void segmentGeometry ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentGeometry ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
     }
 
     /**
@@ -64,7 +64,7 @@ class BinTreeBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>,
      */
     @Override
     public
-    void segmentPolygon (TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentPolygon (TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
     }
 
     @Override

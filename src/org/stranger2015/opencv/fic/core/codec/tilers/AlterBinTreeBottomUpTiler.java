@@ -9,13 +9,13 @@ import java.util.List;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class AlterBinTreeBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends AlterBinTreeTiler <N, A, G>
-        implements IBottomUpTiler <N, A, G> {
+class AlterBinTreeBottomUpTiler<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends AlterBinTreeTiler <N>
+        implements IBottomUpTiler <N> {
 
     /**
      * @param image
@@ -25,11 +25,11 @@ class AlterBinTreeBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress
      * @param builder
      */
     public
-    AlterBinTreeBottomUpTiler ( IImage <A> image,
+    AlterBinTreeBottomUpTiler ( IImage image,
                                 IIntSize rangeSize,
                                 IIntSize domainSize,
-                                IEncoder <N, A, G> encoder,
-                                ITreeNodeBuilder <N, A, G> builder ) {
+                                IEncoder <N> encoder,
+                                ITreeNodeBuilder <N> builder ) {
 
         super(image, rangeSize, domainSize, encoder, builder);
     }
@@ -39,7 +39,7 @@ class AlterBinTreeBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress
      */
     @Override
     public
-    ITiler <N, A, G> instance () {
+    ITiler <N> instance () {
         return new AlterBinTreeBottomUpTiler <>(
                 getImage(),
                 getDomainSize(),
@@ -56,7 +56,7 @@ class AlterBinTreeBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress
      */
     @Override
     public
-    void segmentGeometry ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentGeometry ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
         List.of(imageBlock);
     }
 
@@ -66,7 +66,7 @@ class AlterBinTreeBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress
      */
     @Override
     public
-    void segmentPolygon (TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentPolygon (TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
         List.of(imageBlock);
     }
 }

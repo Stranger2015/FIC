@@ -24,7 +24,7 @@ public class CoordinateXYZM extends Coordinate {
      * @param x the X ordinate
      * @param y the Y ordinate
      * @param z the Z ordinate
-     * @param m the M measure value
+     * @param IImage the IImage measure value
      */
     public CoordinateXYZM(double x, double y, double z, double m) {
         super(x, y, z);
@@ -38,7 +38,7 @@ public class CoordinateXYZM extends Coordinate {
      */
     public CoordinateXYZM( Coordinate coord) {
         super(coord);
-        m = getM();
+        IImage = getM();
     }
 
     /**
@@ -48,7 +48,7 @@ public class CoordinateXYZM extends Coordinate {
      */
     public CoordinateXYZM( CoordinateXYZM coord) {
         super(coord);
-        m = coord.m;
+        IImage = coord.m;
     }
 
     /**
@@ -101,11 +101,11 @@ public class CoordinateXYZM extends Coordinate {
         x = other.x;
         y = other.y;
         z = other.getZ();
-        m = other.getM();
+        IImage = other.getM();
     }
 
     /**
-     * @param ordinateIndex 
+     * @param ordinateIndex
      * @param value
      */
     @Override
@@ -121,7 +121,7 @@ public class CoordinateXYZM extends Coordinate {
                 z = value;
                 break;
             case M:
-                m = value;
+                IImage = value;
                 break;
             default:
                 throw new IllegalArgumentException("Invalid ordinate index: " + ordinateIndex);

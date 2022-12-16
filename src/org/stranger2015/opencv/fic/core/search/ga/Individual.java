@@ -9,14 +9,15 @@ import org.stranger2015.opencv.utils.BitBuffer;
 import static org.stranger2015.opencv.utils.BitBuffer.allocate;
 
 /**
- * @param <A>
+ * @param
  * @param <G>
  * @param <C>
  */
 @SuppressWarnings("unchecked")
+@Deprecated
 public
-class Individual<A extends IAddress <A>, G extends BitBuffer, C extends Chromosome < A, G>>
-        extends Image <A> {
+class Individual
+        extends Image  {
     /**
      *
      */
@@ -32,7 +33,7 @@ class Individual<A extends IAddress <A>, G extends BitBuffer, C extends Chromoso
     public
     Individual ( int chromosomeLength ) throws ValueError {
         super();
-        chromosome = (C) new BinChromosome <A, G>(allocate(chromosomeLength));
+        chromosome = (C) new BinChromosome (allocate(chromosomeLength));
     }
 
     /**
@@ -96,7 +97,7 @@ class Individual<A extends IAddress <A>, G extends BitBuffer, C extends Chromoso
 
     @Override
     public
-    int get ( IAddress <A> address, int[] data ) {
+    int get ( IAddress  address, int[] data ) {
         return 0;
     }
 }

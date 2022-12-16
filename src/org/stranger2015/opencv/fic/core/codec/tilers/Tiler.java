@@ -1,15 +1,12 @@
 package org.stranger2015.opencv.fic.core.codec.tilers;
 
-import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stranger2015.opencv.fic.core.*;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.fic.core.codec.ESplitKind;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -23,18 +20,17 @@ import static org.stranger2015.opencv.fic.core.codec.ESplitKind.VERTICAL;
  */
 
 /**
- * @param <A>
+ * @param
  */
 public abstract
-class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        implements ITiler <N, A, G> {
+class Tiler implements ITiler {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     public static final int MAX_DEPTH = 32;
 
-    protected final IImage <A> image;
+    protected final IImage image;
 
-    protected final Deque <IImageBlock <A>> imageBlockDeque = new ArrayDeque <>();
+    protected final Deque <IImageBlock> imageBlockDeque = new ArrayDeque <>();
 
     public final static IIntSize[] minRangeSizes = {
             new IntSize(4, 4),
@@ -51,25 +47,24 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
     public IIntSize rangeSize;
     public IIntSize domainSize;
 
-    protected final IEncoder <N, A, G> encoder;
+    protected final IEncoder encoder;
 
-    protected final ITreeNodeBuilder <N, A, G> builder;
+    protected final ITreeNodeBuilder <?> builder;
 
-    protected IImageBlock <A> imageBlock;
+    protected IImageBlock imageBlock;
 
-    protected final Deque <TreeNodeBase <N, A, G>> nodeDeque = new ArrayDeque <>();
+    protected final Deque <TreeNodeBase <?>> nodeDeque = new ArrayDeque <>();
 
     protected ETilerState state;
 
 
-    protected final List <IImageBlock <A>> rangeBlocks = new ArrayList <>();
+    protected final List <IImageBlock> rangeBlocks = new ArrayList <>();
 
-    protected final List <IImageBlock <A>> domainBlocks = new ArrayList <>();
+    protected final List <IImageBlock> domainBlocks = new ArrayList <>();
 
+    protected final List <LeafNode <?>> leaves = new ArrayList <>();
 
-    protected final List <LeafNode <N, A, G>> leaves = new ArrayList <>();
-
-    protected final List <TreeNodeBase <N, A, G>> nodes = new ArrayList <>();
+    protected final List <TreeNodeBase <?>> nodes = new ArrayList <>();
 
     protected int depth;
 
@@ -78,7 +73,7 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      */
     @Override
     public
-    void addRangeBlock ( IImageBlock <A> imageBlock ) {
+    void addRangeBlock ( IImageBlock imageBlock ) {
         rangeBlocks.add(imageBlock);
     }
 
@@ -87,7 +82,7 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      */
     @Override
     public
-    void addLeaf ( LeafNode <N, A, G> node ) {
+    void addLeaf ( LeafNode <?> node ) {
         leaves.add(node);
     }
 
@@ -117,11 +112,11 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      * @param domainSize
      */
     protected
-    Tiler ( IImage <A> image,
+    Tiler ( IImage image,
             IIntSize rangeSize,
             IIntSize domainSize,
-            IEncoder <N, A, G> encoder,
-            ITreeNodeBuilder <N, A, G> builder ) {
+            IEncoder encoder,
+            ITreeNodeBuilder <?> builder ) {
 
         this.image = image;
         this.rangeSize = rangeSize;
@@ -134,7 +129,7 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      * @return
      */
     public
-    IImage <A> getImage () {
+    IImage getImage () {
         return image;
     }
 
@@ -142,7 +137,7 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      * @return
      */
     public abstract
-    ITiler <N, A, G> instance ();
+    ITiler instance ();
 
     /**
      * @param imageBlockShape
@@ -151,14 +146,14 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      * @throws ValueError
      */
     public abstract
-    void segmentGeometry ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError;
+    void segmentGeometry ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError;
 
     /**
      * @param node
      */
     @Override
     public
-    void addNode ( TreeNodeBase <N, A, G> node ) {
+    void addNode ( TreeNodeBase <?> node ) {
         nodes.add(node);
     }
 
@@ -168,15 +163,15 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      */
     @Override
     public abstract
-    void segmentRectangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError;
+    void segmentRectangle ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError;
 
     /**
      * @param image
      * @return
      */
-    @Contract(pure = true)
+//    @Contract(pure = true)
     protected
-    ESplitKind chooseDirection ( IImage <A> image ) {
+    ESplitKind chooseDirection ( IImage image ) {
         return VERTICAL;
     }
 
@@ -193,7 +188,7 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      * @param i
      * @return
      */
-    @Contract(pure = true)
+//    @Contract(pure = true)
     private
     IIntSize getMinRangeSize ( int i ) {
         return minRangeSizes[i];
@@ -211,10 +206,10 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
     /**
      * @return
      */
-    @Contract(pure = true)
+//    @Contract(pure = true)
     @Override
     public final
-    Deque <IImageBlock <A>> getImageBlockDeque () {
+    Deque <IImageBlock> getImageBlockDeque () {
         return imageBlockDeque;
     }
 
@@ -223,7 +218,7 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      */
     @Override
     public final
-    Deque <TreeNodeBase <N, A, G>> getNodeDeque () {
+    Deque <TreeNodeBase <?>> getNodeDeque () {
         return nodeDeque;
     }
 
@@ -247,12 +242,12 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
 
     @Override
     public
-    void onSuccessors ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) {
+    void onSuccessors ( TreeNodeBase <?> node, IImageBlock imageBlock ) {
     }
 
     @Override
     public
-    void onSuccessor ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) {
+    void onSuccessor ( TreeNodeBase <?> node, IImageBlock imageBlock ) {
     }
 
     /**
@@ -268,7 +263,7 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      * @param i
      * @return
      */
-    @Contract(pure = true)
+//    @Contract(pure = true)
     protected
     IIntSize getMinDomainSize ( int i ) {
         return minDomainSizes[i];
@@ -278,7 +273,7 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      * @return
      */
     public
-    IEncoder <N, A, G> getEncoder () {
+    IEncoder getEncoder () {
         return encoder;
     }
 
@@ -287,7 +282,7 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      */
     @Override
     public
-    ITreeNodeBuilder <N, A, G> getBuilder () {
+    ITreeNodeBuilder <?> getBuilder () {
         return builder;
     }
 
@@ -297,7 +292,7 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      */
     @Override
     public
-    void segmentTriangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentTriangle ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError {
     }
 
     /**
@@ -306,7 +301,7 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      */
     @Override
     public
-    void segmentPolygon ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentPolygon ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError {
     }
 
     /**
@@ -315,7 +310,7 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      */
     @Override
     public
-    void segmentQuadrilateral ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentQuadrilateral ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError {
     }
 
     /**
@@ -323,7 +318,7 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      */
     @Override
     public
-    void addLeafNode ( LeafNode <N, A, G> node ) {
+    void addLeafNode ( LeafNode <?> node ) {
         leaves.add(node);
     }
 
@@ -353,7 +348,7 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      */
     @Override
     public
-    List <Vertex> generateVerticesSet ( IImageBlock <A> roi, int blockWidth, int blockHeight ) {
+    List <Vertex> generateVerticesSet ( IImageBlock roi, int blockWidth, int blockHeight ) {
         return List.of();
     }
 
@@ -372,7 +367,7 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      */
     @Override
     public
-    void segmentSquare ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentSquare ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError {
     }
 
     /**
@@ -388,14 +383,14 @@ class Tiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitB
      * @return
      */
     public
-    List <IImageBlock <A>> getRangeBlocks () {
+    List <IImageBlock> getRangeBlocks () {
         return rangeBlocks;
     }
 
     /**
      * @return
      */
-    List <IImageBlock <A>> getDomainBlocks () {
+    List <IImageBlock> getDomainBlocks () {
         return domainBlocks;
     }
 }

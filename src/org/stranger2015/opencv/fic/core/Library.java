@@ -1,5 +1,6 @@
 package org.stranger2015.opencv.fic.core;
 
+import org.checkerframework.checker.units.qual.A;
 import org.jetbrains.annotations.Contract;
 import org.stranger2015.opencv.fic.utils.IPowers;
 import org.stranger2015.opencv.fic.utils.Point;
@@ -7,10 +8,10 @@ import org.stranger2015.opencv.fic.utils.Point;
 import java.util.List;
 
 /**
- * @param <A>
+ * @param
  */
 public
-class Library<A extends IAddress <A>> implements IPowers {
+class Library implements IPowers {
 
     public int clusterIndex;
     //    public int clustersAmount;
@@ -18,7 +19,7 @@ class Library<A extends IAddress <A>> implements IPowers {
     public int layerIndex;
     public int addr;
     public A pixelCapacity;
-    protected Tree <?, A, ?> tree;
+    protected Tree <?> tree;
     private List <Point> list;
     protected IIntSize size;
 
@@ -36,9 +37,8 @@ class Library<A extends IAddress <A>> implements IPowers {
      */
     @Contract(pure = true)
     public
-    Library ( Tree <?, A, ?> tree/*, int clusterIndex */ ) {
+    Library ( Tree <?> tree) {
         this.tree = tree;
-//        this.clusterIndex = clusterIndex;
     }
 
     /**
@@ -116,7 +116,7 @@ class Library<A extends IAddress <A>> implements IPowers {
      * @param clusterIndex
      */
     public
-    void derivePixelShifts ( Tree <?, A, ?> tree,
+    void derivePixelShifts ( Tree <?> tree,
                              List <Point> list,
                              IntSize size,
                              int layerIndex,
@@ -164,7 +164,7 @@ class Library<A extends IAddress <A>> implements IPowers {
     }
 
     public
-    void setTree ( Tree <?, A, ?> tree ) {
+    void setTree ( Tree <?> tree ) {
         this.tree = tree;
     }
 }

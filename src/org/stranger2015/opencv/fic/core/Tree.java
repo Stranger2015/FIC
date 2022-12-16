@@ -2,7 +2,6 @@ package org.stranger2015.opencv.fic.core;
 
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -15,20 +14,20 @@ import static java.util.EnumSet.of;
  * @param <N>
  */
 abstract public
-class Tree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        implements ITree <N, A, G> {
+class Tree<N extends TreeNode <N>>
+        implements ITree <N> {
 
     public static final int DEFAULT_DEPTH = MAX_VALUE;
     public static final IRectangle DEFAULT_BOUNDING_BOX = null;
 
-    protected final List <LeafNode <N, A, G>> leaves = new ArrayList <>();
+    protected final List <LeafNode <N>> leaves = new ArrayList <>();
 
-    protected final List <TreeNode <N, A, G>> nodes = new ArrayList <>();
+    protected final List <TreeNode <N>> nodes = new ArrayList <>();
 
-    protected IImage <A> image;
+    protected IImage image;
 
-    protected TreeNodeBase <N, A, G> root;
-    protected TreeNodeTask <N, A, G> action;
+    protected TreeNodeBase <N> root;
+    protected TreeNodeTask action;
     /**
      *
      */
@@ -49,9 +48,9 @@ class Tree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBu
      * @param area
      */
     protected
-    Tree ( TreeNodeBase <N, A, G> root,
-           IImage <A> image,
-           TreeNodeTask <N, A, G> action,
+    Tree ( TreeNodeBase <N> root,
+           IImage image,
+           TreeNodeTask  action,
            IRectangle area,
            int depth
     ) {
@@ -60,7 +59,7 @@ class Tree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBu
         this.area = area;
         this.depth = depth;
         this.action = action;
-        nodes.add((TreeNode <N, A, G>) root);
+        nodes.add((TreeNode <N>) root);
     }
 
     /**
@@ -69,7 +68,7 @@ class Tree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBu
      * @param action
      */
     protected
-    Tree ( TreeNodeBase <N, A, G> root, IImage <A> image, TreeNodeTask <N, A, G> action ) {
+    Tree ( TreeNodeBase <N> root, IImage image, TreeNodeTask action ) {
         this(
                 root,
                 image,
@@ -84,7 +83,7 @@ class Tree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBu
      * @param imageBlock
      */
     protected
-    void initialize ( TreeNode <N, A, G> root, IImageBlock <A> imageBlock ) {
+    void initialize ( TreeNode <N> root, IImageBlock  imageBlock ) {
 
     }
 
@@ -114,7 +113,7 @@ class Tree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBu
      * @return
      */
     abstract public
-    TreeNode <N, A, G> nodeInstance ( TreeNodeBase <N, A, G> parent,
+    TreeNode <N> nodeInstance ( TreeNodeBase <N> parent,
                                       EDirection quadrant,
                                       IIntSize rect )
             throws ValueError;
@@ -123,7 +122,7 @@ class Tree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBu
      * @return
      */
     public
-    TreeNodeBase <N, A, G> getRoot () {
+    TreeNodeBase <N> getRoot () {
         return root;
     }
 
@@ -131,7 +130,7 @@ class Tree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBu
      * @return
      */
     public
-    IImage <A> getImage () {
+    IImage getImage () {
         return image;
     }
 
@@ -142,9 +141,9 @@ class Tree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBu
      * @return
      */
     public
-    TreeTraverser <N, A, G> getTraverser ( Tree <N, A, G> tree,
+    TreeTraverser <N> getTraverser ( Tree <N> tree,
                                            int depth,
-                                           TreeNodeTask <N, A, G> action
+                                           TreeNodeTask action
     ) {
         return new TreeTraverser <>(tree, depth, action);
     }
@@ -161,7 +160,7 @@ class Tree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBu
      * @return
      */
     public
-    List <LeafNode <N, A, G>> getLeaves () {
+    List <LeafNode <N>> getLeaves () {
         return leaves;
     }
 
@@ -169,7 +168,7 @@ class Tree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBu
      * @return
      */
     public
-    List <TreeNode <N, A, G>> getNodes () {
+    List <TreeNode <N>> getNodes () {
         return nodes;
     }
 

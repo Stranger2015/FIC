@@ -9,15 +9,15 @@ import java.util.List;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  
  * @param <G>
  */
 public
-class SplitImageTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M extends IImage <A> */,
+class SplitImageTask<N extends TreeNode <N>, A extends IAddress , /* IImage extends IImage */,
         G extends BitBuffer>
 
-        extends Task <N, A, G> {
+        extends Task <N> {
 
     /**
      * @param filename
@@ -27,8 +27,8 @@ class SplitImageTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M 
     public
     SplitImageTask ( String filename,
                      EPartitionScheme scheme,
-                     ICodec <N, A, G> codec,
-                     List <Task <N, A, G>> tasks ) {
+                     ICodec <N> codec,
+                     List <Task <N>> tasks ) {
 
         super(filename, scheme, codec, tasks);
     }
@@ -39,7 +39,7 @@ class SplitImageTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, /* M 
     @SuppressWarnings("unchecked")
     @Override
     public
-    void onPreprocess ( IImageProcessor <N, A, G> processor, String filename ) {
+    void onPreprocess ( IImageProcessor <N> processor, String filename ) {
 
         super.onPreprocess(processor, filename);
 

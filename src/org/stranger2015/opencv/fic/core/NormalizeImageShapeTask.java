@@ -15,9 +15,9 @@ import java.util.function.Function;
  * make squared of side size radix equal to nearest greater power of radix
  */
 public
-class NormalizeImageShapeTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
+class NormalizeImageShapeTask<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
 
-        extends Task <N, A, G> {
+        extends Task <N> {
 
     /**
      * @param fileName
@@ -27,8 +27,8 @@ class NormalizeImageShapeTask<N extends TreeNode <N, A, G>, A extends IAddress <
     public
     NormalizeImageShapeTask ( String fileName,
                               EPartitionScheme scheme,
-                              ICodec <N, A, G> codec,
-                              Task <N, A, G>... tasks ) {
+                              ICodec <N> codec,
+                              Task <N>... tasks ) {
         this(fileName, scheme, codec, List.of(tasks));
     }
 
@@ -38,8 +38,8 @@ class NormalizeImageShapeTask<N extends TreeNode <N, A, G>, A extends IAddress <
      */
     @Override
     protected
-    IImage<A> execute ( String filename ) throws ValueError {
-        IImage<A> image = super.execute(filename);
+    IImage execute ( String filename ) throws ValueError {
+        IImage image = super.execute(filename);
 
         return image;
     }
@@ -51,8 +51,8 @@ class NormalizeImageShapeTask<N extends TreeNode <N, A, G>, A extends IAddress <
      */
     NormalizeImageShapeTask ( String fileName,
                               EPartitionScheme scheme,
-                              ICodec <N, A, G> codec,
-                              List <Task <N, A, G>> tasks ) {
+                              ICodec <N> codec,
+                              List <Task <N>> tasks ) {
 
         super(fileName, scheme, codec, tasks);
     }
@@ -62,7 +62,7 @@ class NormalizeImageShapeTask<N extends TreeNode <N, A, G>, A extends IAddress <
      */
 //    @Override
     public
-    void onCreate ( ICodec <N, A, G> instance ) {
+    void onCreate ( ICodec <N> instance ) {
 
     }
 
@@ -73,12 +73,12 @@ class NormalizeImageShapeTask<N extends TreeNode <N, A, G>, A extends IAddress <
      */
     @Override
     public
-    void onPreprocess ( IImageProcessor <N, A, G> processor, String filename, IImage<A> image ) throws ValueError {
-        final List <IImageBlock <A>> roiList = new ArrayList <>();
+    void onPreprocess ( IImageProcessor <N> processor, String filename, IImage image ) throws ValueError {
+        final List <IImageBlock > roiList = new ArrayList <>();
         super.onPreprocess(processor, filename, image);
         for (int i = 0; i < image.getRegions().size(); i++) {
-            IImageBlock <A> roi = image.getRegions().get(i);
-            roi = (IImageBlock <A>) processor.preprocess(roi);
+            IImageBlock  roi = image.getRegions().get(i);
+            roi = (IImageBlock ) processor.preprocess(roi);
             roiList.add(roi);
         }
     }
@@ -97,7 +97,7 @@ class NormalizeImageShapeTask<N extends TreeNode <N, A, G>, A extends IAddress <
      */
     @Override
     public
-    <V> Function <V, IImage <A>> compose ( @NotNull Function <? super V, ? extends String> before ) {
+    <V> Function <V, IImage> compose ( @NotNull Function <? super V, ? extends String> before ) {
         return super.compose(before);
     }
 
@@ -116,7 +116,7 @@ class NormalizeImageShapeTask<N extends TreeNode <N, A, G>, A extends IAddress <
     @NotNull
     @Override
     public
-    <V> Function <String, V> andThen ( Function <? super IImage <A>, ? extends V> after ) {
+    <V> Function <String, V> andThen ( Function <? super IImage, ? extends V> after ) {
         return super.andThen(after);
     }
 
@@ -125,7 +125,7 @@ class NormalizeImageShapeTask<N extends TreeNode <N, A, G>, A extends IAddress <
      */
     @Override
     public
-    void onCodecCreated ( ICodec <N, A, G> codec ) {
+    void onCodecCreated ( ICodec <N> codec ) {
         super.onCodecCreated(codec);
     }
 }

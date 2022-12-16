@@ -1,26 +1,26 @@
 package org.stranger2015.opencv.fic.utils;
 
+import org.checkerframework.checker.units.qual.A;
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 import org.stranger2015.opencv.fic.core.*;
-import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.geom.Coordinate;
 
 import java.util.List;
 
 /**
- * @param <A>
+ * @param
  */
 @Deprecated public
-class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
+class GrayScaleImage extends Image {
 
     /**
      * @param image
      */
     public
-    GrayScaleImage ( IImage <A> image ) {
+    GrayScaleImage ( IImage image ) {
         this(image.getMat());
     }
 
@@ -39,7 +39,7 @@ class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
     GrayScaleImage ( Mat inputImage, IIntSize size ) throws ValueError {//FIXME
         super(actualImage, inputImage, size);
 
-        IImage <A> dest = new GrayScaleImage <>(inputImage);
+        IImage dest = new GrayScaleImage <>(inputImage);
         Imgproc.resize(inputImage,dest.getMat(),size.toSize());
     }
 
@@ -50,7 +50,7 @@ class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
      * @param type
      */
     public
-    GrayScaleImage ( IImage <A> image, int rows, int cols, int type ) throws ValueError {
+    GrayScaleImage ( IImage image, int rows, int cols, int type ) throws ValueError {
         super(image, rows, cols);
     }
 
@@ -60,7 +60,7 @@ class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
      */
 //    @Override
     public
-    void putPixel ( IAddress <A> address, int pixel ) {
+    void putPixel ( IAddress  address, int pixel ) {
 
     }
 
@@ -82,7 +82,7 @@ class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
      */
     @Override
     public
-    void putPixels ( IAddress <A> address, int[][] pixels ) throws ValueError {
+    void putPixels ( IAddress  address, int[][] pixels ) throws ValueError {
         super.putPixels(address, pixels);
     }
 
@@ -91,13 +91,13 @@ class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
      */
     @Override
     public
-    IImage <A> getComponents () {
+    IImage getComponents () {
         return List.of(this);
     }
 
     @Override
     public
-    int get ( IAddress <A> address, int[] data ) {
+    int get ( IAddress  address, int[] data ) {
         return data[(int) address.getIndex()];
     }
 
@@ -117,7 +117,7 @@ class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
      */
     @Override
     public
-    int[] getPixels ( IAddress <A> address ) {
+    int[] getPixels ( IAddress  address ) {
         return new int[0];
     }
 
@@ -146,7 +146,7 @@ class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
 
     @Override
     public
-    IImageBlock <A> getSubImage ( Rectangle rectangle ) throws ValueError {
+    IImageBlock  getSubImage ( Rectangle rectangle ) throws ValueError {
         return null;
     }
 
@@ -155,7 +155,7 @@ class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
      */
     @Override
     public
-    IImageBlock <A> getSubImage () {
+    IImageBlock  getSubImage () {
         return null;
     }
 
@@ -177,7 +177,7 @@ class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
      */
     @Override
     public
-    void setPixel ( IAddress <A> address, int[] iArray ) {
+    void setPixel ( IAddress  address, int[] iArray ) {
         super.setPixel(address, iArray);
     }
 
@@ -208,7 +208,7 @@ class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
      */
 //    @Override
     public
-    int[] getSamples ( IAddress <A> address, int w, int h, int b, int[] iArray ) throws ValueError {
+    int[] getSamples ( IAddress  address, int w, int h, int b, int[] iArray ) throws ValueError {
         return super.getSamples(address, w, h, b, iArray);
     }
 
@@ -227,7 +227,7 @@ class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
      */
     @Override
     public
-    void setSample ( IAddress <A> address, int b, int s ) {
+    void setSample ( IAddress  address, int b, int s ) {
 
     }
 
@@ -246,7 +246,7 @@ class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
      */
     @Override
     public
-    int getSample ( IAddress <A> address, int b ) {
+    int getSample ( IAddress  address, int b ) {
         return 0;
     }
 
@@ -255,7 +255,7 @@ class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
      */
 //    @Override
     public
-    List <IImageBlock <A>> getRangeBlocks () {
+    List <IImageBlock > getRangeBlocks () {
         return null;
     }
 
@@ -264,7 +264,7 @@ class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
      */
   //  @Override
     public
-    List <IImageBlock <A>> getDomainBlocks () {
+    List <IImageBlock > getDomainBlocks () {
         return null;
     }
 
@@ -273,7 +273,7 @@ class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
      */
     //@Override
     public
-    List <IImageBlock <A>> getCodebookBlocks () {
+    List <IImageBlock > getCodebookBlocks () {
         return null;
     }
 
@@ -288,7 +288,7 @@ class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
 
     @Override
     public
-    void setAddress ( IAddress <A> address ) {
+    void setAddress ( IAddress  address ) {
 
     }
 
@@ -371,7 +371,7 @@ class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
      */
     @Override
     public
-    int compareTo ( @NotNull IImage <A> o ) {
+    int compareTo ( @NotNull IImage o ) {
         return 0;
     }
 
@@ -413,7 +413,7 @@ class GrayScaleImage<A extends IAddress <A>> extends Image <A> {
 
     @Override
     public
-    GrayScaleImage <A> clone () {
+    GrayScaleImage  clone () {
         return (GrayScaleImage) super.clone();
     }
 }

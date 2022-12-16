@@ -1,6 +1,5 @@
 package org.stranger2015.opencv.fic.core.operation.distance;
 
-import org.jetbrains.annotations.Contract;
 import org.stranger2015.opencv.fic.core.geom.*;
 
 import java.util.ArrayList;
@@ -18,8 +17,7 @@ import java.util.List;
  * @version 1.7
  */
 public
-class ConnectedElementLocationFilter
-        implements IGeometryFilter {
+class ConnectedElementLocationFilter implements IGeometryFilter {
 
     /**
      * Returns a list containing a point from each Polygon, LineString, and Point
@@ -28,7 +26,7 @@ class ConnectedElementLocationFilter
      * are {@link org.locationtech.jts.operation.distance.GeometryLocation}s.
      */
     public static
-    List <GeometryLocation> getLocations ( Geometry geom ) {
+    List <GeometryLocation> getLocations ( Geometry <?> geom ) {
         List <GeometryLocation> locations = Collections.unmodifiableList(new ArrayList <>());
         geom.apply(new ConnectedElementLocationFilter(locations));
 
@@ -40,13 +38,13 @@ class ConnectedElementLocationFilter
     /**
      * @param locations
      */
-    @Contract(pure = true)
+//    @Contract(pure = true)
     ConnectedElementLocationFilter ( List <GeometryLocation> locations ) {
         this.locations = locations;
     }
 
     public
-    void filter ( Geometry geom ) {
+    void filter ( Geometry <?> geom ) {
         // empty geometries do not provide a location
         if (geom.isEmpty()) {
             return;

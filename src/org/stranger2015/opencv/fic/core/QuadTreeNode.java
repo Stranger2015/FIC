@@ -7,16 +7,16 @@ import org.stranger2015.opencv.utils.BitBuffer;
  *
  */
 public
-class QuadTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends BinTreeNode <N, A, G> {
+class QuadTreeNode<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends BinTreeNode <N> {
 
     /**
-     * @param <N, A, G>Iparent
+     * @param <N>Iparent
      * @param quadrant
      * @param rect
      */
     public
-    QuadTreeNode ( TreeNodeBase <N, A, G> parent, EDirection quadrant, Rectangle rect ) throws ValueError {
+    QuadTreeNode ( TreeNodeBase <N> parent, EDirection quadrant, Rectangle rect ) throws ValueError {
         super(parent, quadrant, rect);
     }
 
@@ -26,7 +26,7 @@ class QuadTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      * @throws ValueError
      */
     public
-    QuadTreeNode ( TreeNodeBase <N, A, G> parent, Rectangle boundingBox ) throws ValueError {
+    QuadTreeNode ( TreeNodeBase <N> parent, Rectangle boundingBox ) throws ValueError {
         this(parent, null, boundingBox);
     }
 
@@ -37,7 +37,7 @@ class QuadTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      */
     @Override
     public
-    TreeNodeBase <N, A, G> createChild ( EDirection quadrant, Rectangle rect ) throws ValueError {
+    TreeNodeBase <N> createChild ( EDirection quadrant, Rectangle rect ) throws ValueError {
         return new QuadTreeNode <>(this, quadrant, rect);
     }
 }

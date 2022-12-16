@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.utils.GrayScaleImage;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
 
@@ -12,15 +11,15 @@ import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
  *
  */
 public
-class AffineFlipTransform</*M extends IImage<A>,*/ A extends IAddress <A>, G extends BitBuffer>
-        extends AffineTransform <A, G> {
+class AffineFlipTransform
+        extends AffineTransform{
 
     /**
      * @param image
      * @param interpolationType
      */
     public
-    AffineFlipTransform ( IImage <A> image, EInterpolationType interpolationType, IAddress <A> address ) {
+    AffineFlipTransform ( IImage image, EInterpolationType interpolationType, IAddress  address ) {
         super(image, interpolationType, address );
     }
 
@@ -28,7 +27,7 @@ class AffineFlipTransform</*M extends IImage<A>,*/ A extends IAddress <A>, G ext
      * @param inputImage
      */
     public
-    AffineFlipTransform (GrayScaleImage<A> inputImage, IAddress<A> address ) {
+    AffineFlipTransform (GrayScaleImage inputImage, IAddress address ) {
         this(inputImage, BILINEAR, address);
     }
 
@@ -40,8 +39,8 @@ class AffineFlipTransform</*M extends IImage<A>,*/ A extends IAddress <A>, G ext
      */
 //    @Override
     public
-    IImage<A> transform ( @NotNull IImage <A> inputImage,
-                                  IImage<A> transformMatrix,
+    IImage transform ( @NotNull IImage inputImage,
+                                  IImage transformMatrix,
                                   EInterpolationType type ) {
 
         return inputImage;

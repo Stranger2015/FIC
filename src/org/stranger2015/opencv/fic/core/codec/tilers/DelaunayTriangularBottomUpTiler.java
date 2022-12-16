@@ -2,19 +2,18 @@ package org.stranger2015.opencv.fic.core.codec.tilers;
 
 import org.slf4j.Logger;
 import org.stranger2015.opencv.fic.core.*;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class DelaunayTriangularBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends TriangularTiler <N, A, G>
-        implements IBottomUpTiler <N, A, G> {
+class DelaunayTriangularBottomUpTiler
+        extends TriangularTiler
+        implements IBottomUpTiler {
 
     /**
      * @param image
@@ -24,11 +23,11 @@ class DelaunayTriangularBottomUpTiler<N extends TreeNode <N, A, G>, A extends IA
      * @param builder
      */
     public
-    DelaunayTriangularBottomUpTiler ( IImage <A> image,
+    DelaunayTriangularBottomUpTiler ( IImage image,
                                       IIntSize rangeSize,
                                       IIntSize domainSize,
-                                      IEncoder <N, A, G> encoder,
-                                      ITreeNodeBuilder <N, A, G> builder ) {
+                                      IEncoder encoder,
+                                      ITreeNodeBuilder <?> builder ) {
 
         super(image, rangeSize, domainSize, encoder, builder);
     }
@@ -40,7 +39,7 @@ class DelaunayTriangularBottomUpTiler<N extends TreeNode <N, A, G>, A extends IA
      */
     @Override
     public
-    void segmentPolygon (TreeNodeBase <N, A, G> node,  IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentPolygon ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError {
 
     }
 
@@ -50,17 +49,17 @@ class DelaunayTriangularBottomUpTiler<N extends TreeNode <N, A, G>, A extends IA
      */
     @Override
     public
-    void segmentQuadrilateral (TreeNodeBase <N, A, G> node,  IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentQuadrilateral ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError {
     }
 
     @Override
     public
-    void segmentSquare (TreeNodeBase <N, A, G> node,  IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentSquare ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError {
     }
 
     @Override
     public
-    void segmentTriangle (TreeNodeBase <N, A, G> node,  IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentTriangle ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError {
         super.segmentTriangle(node, imageBlock);
     }
 
@@ -74,6 +73,24 @@ class DelaunayTriangularBottomUpTiler<N extends TreeNode <N, A, G>, A extends IA
     }
 
     /**
+     * @param node
+     */
+    @Override
+    public
+    void addLeaf ( LeafNode <?> node ) {
+
+    }
+
+    /**
+     * @param node
+     */
+    @Override
+    public
+    void addNode ( TreeNodeBase <?> node ) {
+
+    }
+
+    /**
      * @return
      */
     @Override
@@ -84,8 +101,22 @@ class DelaunayTriangularBottomUpTiler<N extends TreeNode <N, A, G>, A extends IA
 
     @Override
     public
-    void segmentGeometry ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentGeometry ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError {
 
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    ITiler instance () {
+        return new DelaunayTriangularBottomUpTiler(
+                getImage(),
+                getRangeSize(),
+                getDomainSize(),
+                getEncoder(),
+                getBuilder());
     }
 
     /**
@@ -95,21 +126,7 @@ class DelaunayTriangularBottomUpTiler<N extends TreeNode <N, A, G>, A extends IA
      */
     @Override
     public
-    void segmentRectangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentRectangle ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError {
 
-    }
-
-    /**
-     * @return
-     */
-    @Override
-    public
-    ITiler <N, A, G> instance () {
-        return new DelaunayTriangularBottomUpTiler <>(
-                getImage(),
-                getRangeSize(),
-                getDomainSize(),
-                getEncoder(),
-                getBuilder());
     }
 }

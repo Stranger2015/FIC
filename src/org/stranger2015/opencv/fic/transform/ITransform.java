@@ -3,15 +3,14 @@ package org.stranger2015.opencv.fic.transform;
 import org.opencv.core.Mat;
 import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.fic.core.ValueError;
-import org.stranger2015.opencv.utils.BitBuffer;
+import org.stranger2015.opencv.fic.core.codec.IConstants;
 
 /**
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-interface ITransform<A extends IAddress <A>, G extends BitBuffer> {
+interface ITransform extends IConstants {
 
     /**
      * @param inputImage
@@ -21,9 +20,9 @@ interface ITransform<A extends IAddress <A>, G extends BitBuffer> {
      */
     @SuppressWarnings("unchecked")
     default
-    IImage <A> transform ( IImage <A> inputImage,
-                           Mat transformMatrix,
-                           EInterpolationType type ) {
+    IImage transform ( IImage inputImage,
+                       Mat transformMatrix,
+                       EInterpolationType type ) {
 
         return warpAffine(inputImage, transformMatrix, type);
     }
@@ -32,27 +31,12 @@ interface ITransform<A extends IAddress <A>, G extends BitBuffer> {
      * @param inputImage
      * @return
      */
-    IImage <A> warpAffine ( IImage <A> inputImage,
-                            Mat transformMatrix,
-                            EInterpolationType interpolationType );
+    IImage warpAffine ( IImage inputImage,
+                        Mat transformMatrix,
+                        EInterpolationType interpolationType );
 
     /**
      * @return
      */
-    IAddress <A> getAddress () throws InstantiationException, IllegalAccessException;
-
-    /**
-     * @param bb
-     * @param transform
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     */
-    void writeBits ( G bb, ImageTransform <A, G> transform ) throws InstantiationException, IllegalAccessException;
-
-    /**
-     * @param bb
-     * @return
-     * @throws ValueError
-     */
-    ImageTransform <A, G> readBits ( G bb ) throws ValueError;
+    IAddress getAddress () throws InstantiationException, IllegalAccessException;
 }

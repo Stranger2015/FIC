@@ -17,22 +17,21 @@ import java.util.Set;
  *
  */
 public
-class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends Encoder <N, A, G> {
+class SaEncoder extends Encoder {
 
-//    private List <IImageBlock <A>> rangePool;
+//    private List <IImageBlock > rangePool;
 
     public
     SaEncoder ( EPartitionScheme scheme,
-                ITreeNodeBuilder <N, A, G> nodeBuilder,
-                IPartitionProcessor<N,A,G> partitionProcessor,
-                ISearchProcessor <N, A, G> searchProcessor,
-                ScaleTransform <A, G> scaleTransform,
-                ImageBlockGenerator <N, A, G> imageBlockGenerator,
-                IDistanceator <A> comparator,
-                Set <ImageTransform < A, G>> transforms,
-                Set <IImageFilter <A>> filters,
-                FCImageModel <N, A, G> fractalModel
+                ITreeNodeBuilder <?> nodeBuilder,
+                IPartitionProcessor partitionProcessor,
+                ISearchProcessor searchProcessor,
+                ScaleTransform  scaleTransform,
+                ImageBlockGenerator <?> imageBlockGenerator,
+                IDistanceator  comparator,
+                Set <ImageTransform > transforms,
+                Set <IImageFilter > filters,
+                FCImageModel fractalModel
     ) {
         super(
                 scheme,
@@ -50,12 +49,12 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
 
     @Override
     public
-    IPartitionProcessor <N, A, G> createPartitionProcessor0 ( ITiler <N, A, G> tiler ) {
+    IPartitionProcessor <N> createPartitionProcessor0 ( ITiler <N> tiler ) {
         return null;
     }
 
 //    public
-//    SaEncoder ( IImage<A> image, IIntSize rangeSize, IIntSize domainSize ) {
+//    SaEncoder ( IImage image, IIntSize rangeSize, IIntSize domainSize ) {
 //        super(image,rangeSize,domainSize);
 //
 //    }
@@ -66,7 +65,7 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
 //    @Override
     public
-    IImage<A> encode ( IImage<A>image ) throws ValueError {
+    IImage encode ( IImageimage ) throws ValueError {
         return super.encode(image);
     }
 
@@ -79,7 +78,7 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
 //    @Override
     public
-    List <ImageTransform <A, G>> compress ( IImageBlock<A> image,
+    List <ImageTransform> compress ( IImageBlock image,
                                                int sourceSize,
                                                int destinationSize,
                                                int step ) {
@@ -87,11 +86,11 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
     }
 
     public
-    ImageBlockGenerator <N, A, G> createBlockGenerator (
-            IPartitionProcessor <N, A, G> partitionProcessor,
+    ImageBlockGenerator <N> createBlockGenerator (
+            IPartitionProcessor <N> partitionProcessor,
             EPartitionScheme scheme,
-            IEncoder <N, A, G> encoder,
-            IImage <A> image,
+            IEncoder <N> encoder,
+            IImage image,
             IntSize rangeSize,
             IntSize domainSize
     ) {
@@ -114,7 +113,7 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
 //    @Override
     public
-    List <IImageBlock <A>> generateAllTransformedBlocks(IImageBlock<A> image,
+    List <IImageBlock > generateAllTransformedBlocks(IImageBlock image,
                                                          int sourceSize,
                                                          int destinationSize,
                                                          int step ) {
@@ -128,7 +127,7 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
     @Override
     public
-    IImage <A> flipAxis ( IImage <A> image, int axis ) {
+    IImage flipAxis ( IImage image, int axis ) {
         return image;
     }
 
@@ -137,7 +136,7 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
 //    @Override
 //    public
-//    List <IImageBlock <A>> getRangeBlocks () {
+//    List <IImageBlock > getRangeBlocks () {
 //        imageBlockGenerator.generateRangeBlocks(roi, rangeSize, domainSize);
 //    }
 
@@ -149,7 +148,7 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
 
     @Override
     public
-    IImage <A> doEncode ( IImage <A> image ) {
+    void doEncode ( IImage image ) {
         return null;
     }
 
@@ -161,7 +160,7 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
     @Override
     public
-    List <IImageBlock <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds ) throws ValueError {
+    List <IImageBlock > segmentImage ( IImage image, List <Rectangle> bounds ) throws ValueError {
         return null;
     }
 
@@ -170,7 +169,7 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
 //    @Override
     public
-    ITiler <N, A, G> createPartition0 () {
+    ITiler <N> createPartition0 () {
         return new SaTiler<>();
     }
 
@@ -179,7 +178,7 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
     @Override
     public
-    IPartitionProcessor <N, A, G> getPartitionProcessor () {
+    IPartitionProcessor <N> getPartitionProcessor () {
         return null;
     }
 
@@ -188,7 +187,7 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
     @Override
     public
-    FCImageModel <N, A, G> getModel () {
+    FCImageModel <N> getMOdel () {
         return null;
     }
 
@@ -198,7 +197,7 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
     @Override
     public
-    FCImageModel <N, A, G> loadModel ( String filename ) {
+    FCImageModel <N> loadModel ( String filename ) {
         return null;
     }
 
@@ -207,7 +206,7 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
     @Override
     public
-    void add ( TreeNode <N, A, G> node ) {
+    void add ( TreeNode <N> node ) {
 
     }
 
@@ -216,13 +215,13 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
     @Override
     public
-    void addLeafNode ( TreeNode.LeafNode <N, A, G> node ) {
+    void addLeafNode ( TreeNode.LeafNode <N> node ) {
 
     }
 
     @Override
     public
-    void addLeafNode ( TreeNodeBase <N, A, G> node ) {
+    void addLeafNode ( TreeNodeBase <N> node ) {
 
     }
 
@@ -231,7 +230,7 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
 //    @Override
     public
-    void addLeafNode ( TreeNode <N, A, G> node ) {
+    void addLeafNode ( TreeNode <N> node ) {
 
     }
 
@@ -242,7 +241,7 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
 //    @Override
     public
-    IImage<A> randomTransform ( IImage<A> image, ImageTransform <A, G> transform ) {
+    IImage randomTransform ( IImage image, ImageTransform transform ) {
         return image;
     }
 
@@ -253,7 +252,7 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
 //    @Override
     public
-    IImage<A> applyTransform ( IImage<A> image, ImageTransform <A, G> transform ) {
+    IImage applyTransform ( IImage image, ImageTransform transform ) {
         return image;
     }
 
@@ -264,13 +263,13 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
 //    @Override
     public
-    IImage<A> applyAffineTransform ( IImage<A> image, AffineTransform <A, G> transform ) {
+    IImage applyAffineTransform ( IImage image, AffineTransform  transform ) {
         return null;
     }
 
     @Override
     public
-    IPartitionProcessor <N, A, G> doCreatePartitionProcessor ( ITiler <N, A, G> tiler ) {
+    IPartitionProcessor <N> doCreatePartitionProcessor ( ITiler <N> tiler ) {
         return null;
     }
 
@@ -306,7 +305,7 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      */
 //    @Override
 //    public
-//    IPipeline <IImage <A>, IImage <A>> getLinkedObject () {
+//    IPipeline <IImage , IImage> getLinkedObject () {
 //        return null;
 //    }
 //
@@ -315,25 +314,25 @@ class SaEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
 //     */
 //    @Override
 //    public
-//    void setNext ( ISingleLinked <IPipeline <IImage <A>, IImage <A>>> link ) {
+//    void setNext ( ISingleLinked <IPipeline <IImage , IImage>> link ) {
 //
 //    }
 
 //    @Override
 //    public
-//    ISingleLinked <IPipeline <IImage <A>, IImage <A>>> getNext () {
+//    ISingleLinked <IPipeline <IImage , IImage>> getNext () {
 //        return null;
 //    }
 //
 //    @Override
 //    public
-//    IImage <A> getInput () {
+//    IImage getInput () {
 //        return null;
 //    }
 //
 //    @Override
 //    public
-//    IImage <A> getOutput () {
+//    IImage getOutput () {
 //        return null;
 //    }
 }

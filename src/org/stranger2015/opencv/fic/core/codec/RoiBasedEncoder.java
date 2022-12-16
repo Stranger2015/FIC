@@ -15,17 +15,17 @@ import java.util.Set;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public abstract
-class RoiBasedEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends Encoder <N, A, G>
-        implements IRoiBasedEncoder <N, A, G> {
+class RoiBasedEncoder<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends Encoder <N>
+        implements IRoiBasedEncoder <N> {
     /**
      *
      */
-    private final List <IImageBlock <A>> roiBlocks = new ArrayList <>();
+    private final List <IImageBlock > roiBlocks = new ArrayList <>();
 
     /**
      * @param scheme
@@ -41,15 +41,15 @@ class RoiBasedEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      */
     protected
     RoiBasedEncoder ( EPartitionScheme scheme,
-                      ITreeNodeBuilder <N, A, G> nodeBuilder,
-                      IPartitionProcessor <N, A, G> partitionProcessor,
-                      ISearchProcessor <N, A, G> searchProcessor,
-                      ScaleTransform <A, G> scaleTransform,
-                      ImageBlockGenerator <N, A, G> imageBlockGenerator,
-                      IDistanceator <A> comparator,
-                      Set <ImageTransform <A, G>> imageTransforms,
-                      Set <IImageFilter <A>> imageFilters,
-                      FCImageModel <N, A, G> fractalModel ) {
+                      ITreeNodeBuilder <N> nodeBuilder,
+                      IPartitionProcessor <N> partitionProcessor,
+                      ISearchProcessor <N> searchProcessor,
+                      ScaleTransform  scaleTransform,
+                      ImageBlockGenerator <N> imageBlockGenerator,
+                      IDistanceator  comparator,
+                      Set <ImageTransform> imageTransforms,
+                      Set <IImageFilter > imageFilters,
+                      FCImageModel <N> fractalModel ) {
         super(
                 scheme,
                 nodeBuilder,
@@ -64,30 +64,30 @@ class RoiBasedEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
     }
 
     /**
-     * @return
+     *
      */
     @Override
     public
-    IImage <A> doEncode ( IImage <A> image ) throws ValueError, ReflectiveOperationException {
+    void doEncode ( IImage image ) throws ValueError, ReflectiveOperationException {
         List <Rectangle> bounds = List.of(new Rectangle(image.getWidth(), image.getHeight()));
-        final List <IImageBlock <A>> regions = segmentImage(image, bounds);
-        List <List <IImageBlock <A>>> list = handleRegionList(regions);
-        for (List <IImageBlock <A>> region : list) {
+        final List <IImageBlock > regions = segmentImage(image, bounds);
+        List <List <IImageBlock >> list = handleRegionList(regions);
+        for (List <IImageBlock > region : list) {
             image = iterateRegions(regions);
 //            for (int j = 0, regionsSize = regions1.size(); j < regionsSize; j++) {
-//                IImageBlock <A> region = regions1.get(j);
+//                IImageBlock  region = regions1.get(j);
 
 //            }
         }
 
-        return searchProcessor.search();
+        return searchProcessor.search(, );
     }
 
     /**
      * @return
      */
     public final
-    List <IImageBlock <A>> getRegionBlocks () {
+    List <IImageBlock > getRegionBlocks () {
         return roiBlocks;
     }
 
@@ -97,7 +97,7 @@ class RoiBasedEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
 //     */
 //    @Override
 //    public
-//    IPartitionProcessor <N, A, G> createPartitionProcessor0 ( ITiler <N, A, G> tiler ) {
+//    IPartitionProcessor <N> createPartitionProcessor0 ( ITiler <N> tiler ) {
 //        return super.createPartitionProcessor0(tiler);
 //    }
 
@@ -116,7 +116,7 @@ class RoiBasedEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
 //     */
 //    @Override
 //    public
-//    IPartitionProcessor <N, A, G> createPartitionProcessor ( ITiler <N, A, G> tiler ) {
+//    IPartitionProcessor <N> createPartitionProcessor ( ITiler <N> tiler ) {
 //        return super.createPartitionProcessor(tiler);
 //    }
 
@@ -126,7 +126,7 @@ class RoiBasedEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      */
     @Override
     public
-    IPartitionProcessor <N, A, G> doCreatePartitionProcessor ( ITiler <N, A, G> tiler ) {
+    IPartitionProcessor <N> doCreatePartitionProcessor ( ITiler <N> tiler ) {
         return null;
     }
 
@@ -135,7 +135,7 @@ class RoiBasedEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      */
     @Override
     public
-    void add ( TreeNode <N, A, G> node ) {
+    void add ( TreeNode <N> node ) {
 
     }
 
@@ -144,7 +144,7 @@ class RoiBasedEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      */
     @Override
     public
-    void addLeafNode ( LeafNode <N, A, G> node ) {
+    void addLeafNode ( LeafNode <N> node ) {
 
     }
 
@@ -155,7 +155,7 @@ class RoiBasedEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      */
     @Override
     public
-    IImageBlock <A> iterateRangeBlocks ( IImageBlock <A> roi, List <IImageBlock <A>> rangeBlocks ) throws ValueError {
+    IImageBlock  iterateRangeBlocks ( IImageBlock  roi, List <IImageBlock > rangeBlocks ) throws ValueError {
         return super.iterateRangeBlocks(roi, rangeBlocks);
     }
 
@@ -167,9 +167,9 @@ class RoiBasedEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
 //     */
 //    @Override
 //    public
-//    void iterateDomainBlocks ( IImageBlock <A> rangeBlock,
-//                               List <IImageBlock <A>> domainBlocks,
-//                               ImageTransform <A, G> bestTransform )
+//    void iterateDomainBlocks ( IImageBlock  rangeBlock,
+//                               List <IImageBlock > domainBlocks,
+//                               ImageTransform bestTransform )
 //            throws ValueError {
 //
 //        super.iterateDomainBlocks(rangeBlock, domainBlocks, bestTransform);
@@ -182,7 +182,7 @@ class RoiBasedEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      */
     @Override
     public
-    int[] getDistance ( IImageBlock <A> range, IImageBlock <A> domain ) {
+    int[] getDistance ( IImageBlock  range, IImageBlock  domain ) {
         return super.getDistance(range, domain);
     }
 
@@ -194,7 +194,7 @@ class RoiBasedEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      */
     @Override
     public
-    List <IImageBlock <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds ) throws ValueError {
+    List <IImageBlock > segmentImage ( IImage image, List <Rectangle> bounds ) throws ValueError {
         return null;
     }
 
@@ -205,7 +205,7 @@ class RoiBasedEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      */
     @Override
     public
-    List <IImageBlock <A>> segmentImage ( IImage <A> image ) throws ValueError {
+    List <IImageBlock > segmentImage ( IImage image ) throws ValueError {
         return IRoiBasedEncoder.super.segmentImage(image);
     }
 
@@ -214,7 +214,7 @@ class RoiBasedEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      */
     @Override
     public
-    void onCodecCreated ( ICodec <N, A, G> codec ) {
+    void onCodecCreated ( ICodec <N> codec ) {
         super.onCodecCreated(codec);
     }
 
@@ -225,7 +225,7 @@ class RoiBasedEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      */
     @Override
     public
-    void onPreprocess ( IImageProcessor <N, A, G> imageProcessor, String filename, IImage <A> image ) throws ValueError {
+    void onPreprocess ( IImageProcessor <N> imageProcessor, String filename, IImage image ) throws ValueError {
         super.onPreprocess(imageProcessor, filename, image);
     }
 
@@ -235,7 +235,7 @@ class RoiBasedEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      */
     @Override
     public
-    void onProcess ( IImageProcessor <N, A, G> imageProcessor, IImage <A> inputImage ) {
+    void onProcess ( IImageProcessor <N> imageProcessor, IImage inputImage ) {
         super.onProcess(imageProcessor, inputImage);
     }
 
@@ -245,7 +245,7 @@ class RoiBasedEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      */
     @Override
     public
-    void onPostprocess ( IImageProcessor <N, A, G> imageProcessor, CompressedImage <A> outputImage ) {
+    void onPostprocess ( IImageProcessor <N> imageProcessor, CompressedImage  outputImage ) {
         super.onPostprocess(imageProcessor, outputImage);
     }
 
@@ -254,7 +254,7 @@ class RoiBasedEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ex
      */
     @Override
     public
-    void onCreated ( ICodec <N, A, G> instance ) {
+    void onCreated ( ICodec <N> instance ) {
         super.onCreated(instance);
     }
 }

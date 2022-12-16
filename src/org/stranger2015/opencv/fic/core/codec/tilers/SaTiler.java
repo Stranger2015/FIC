@@ -11,8 +11,8 @@ import org.stranger2015.opencv.utils.BitBuffer;
 import java.util.List;
 
 public
-class SaTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends Tiler <N, A, G> {
+class SaTiler<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends Tiler <N> {
 
     /**
      * @param image
@@ -22,18 +22,18 @@ class SaTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
      * @param builder
      */
     protected
-    SaTiler ( IImage <A> image,
+    SaTiler ( IImage image,
               IIntSize rangeSize,
               IIntSize domainSize,
-              IEncoder <N, A, G> encoder,
-              ITreeNodeBuilder <N, A, G> builder ) {
+              IEncoder <N> encoder,
+              ITreeNodeBuilder <N> builder ) {
 
         super(image, rangeSize, domainSize, encoder, builder);
     }
 
     @Override
     public
-    ITiler <N, A, G> instance () {
+    ITiler <N> instance () {
         return new SaTiler <>(
                 getImage(),
                 getRangeSize(),
@@ -44,7 +44,7 @@ class SaTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
 
     @Override
     public
-    void segmentGeometry ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentGeometry ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
 
     }
 
@@ -55,39 +55,39 @@ class SaTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
      */
     @Override
     public
-    void segmentRectangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentRectangle ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
 
     }
 
     @Override
     public
-    void segmentSquare (TreeNodeBase <N, A, G> node,  IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentSquare (TreeNodeBase <N> node,  IImageBlock  imageBlock ) throws ValueError {
     }
 
     @Override
     public
-    void segmentTriangle (TreeNodeBase <N, A, G> node,  IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentTriangle (TreeNodeBase <N> node,  IImageBlock  imageBlock ) throws ValueError {
     }
 
     @Override
     public
-    void segmentPolygon (TreeNodeBase <N, A, G> node,  IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentPolygon (TreeNodeBase <N> node,  IImageBlock  imageBlock ) throws ValueError {
     }
 
     @Override
     public
-    void segmentQuadrilateral (TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentQuadrilateral (TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
     }
 
     @Override
     public
-    void addLeafNode ( LeafNode <N, A, G> node ) {
+    void addLeafNode ( LeafNode <N> node ) {
 
     }
 
     @Override
     public
-    List <Vertex> generateVerticesSet ( IImageBlock <A> roi, int blockWidth, int blockHeight ) {
+    List <Vertex> generateVerticesSet ( IImageBlock  roi, int blockWidth, int blockHeight ) {
         return List.of();
     }
 
@@ -100,8 +100,8 @@ class SaTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
      */
     @Override
     public
-    List <IImageBlock <A>> generateInitialRangeBlocks (
-            IImageBlock <A> roi,
+    List <IImageBlock > generateInitialRangeBlocks (
+            IImageBlock  roi,
             int blockWidth,
             int blockHeight ) throws ValueError {
 
@@ -119,7 +119,7 @@ class SaTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
 
     @Override
     public
-    List <IImageBlock <A>> generateRangeBlocks ( IImageBlock <A> roi, int blockWidth, int blockHeight )
+    List <IImageBlock > generateRangeBlocks ( IImageBlock  roi, int blockWidth, int blockHeight )
             throws ValueError {
 
         return generateInitialRangeBlocks(roi, blockWidth, blockHeight);

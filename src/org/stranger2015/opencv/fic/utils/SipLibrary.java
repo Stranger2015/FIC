@@ -1,5 +1,6 @@
 package org.stranger2015.opencv.fic.utils;
 
+import org.checkerframework.checker.units.qual.A;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
@@ -68,16 +69,16 @@ import java.util.List;
  * <p>
  * Table 2 Address-based functions in saLib
  *
- * @param <A>
+ * @param
  */
 public
-class SipLibrary<A extends IAddress <A>> extends Library <A> implements IAddressMath <A> {
+class SipLibrary extends Library implements IAddressMath {
 
     public int layerIndex;
     public int layersAmount;
-
     public int pixelCapacity;
     public int pixelAmount;//pixels may or may not occupy the whole cluster of the outermost layer
+
     public int addr;
 
     public int clustersAmount;
@@ -100,7 +101,7 @@ class SipLibrary<A extends IAddress <A>> extends Library <A> implements IAddress
      */
     @SuppressWarnings("unchecked")
     public
-    IAddress <A> plus ( IAddress <A> address1, IAddress <A> address2 ) throws ValueError {
+    IAddress plus ( IAddress address1, IAddress address2 ) throws ValueError {
         int sum = (int) (address1.get() + address2.get());
 
         return new SipAddress <>(sum);
@@ -123,7 +124,7 @@ class SipLibrary<A extends IAddress <A>> extends Library <A> implements IAddress
      */
     @Override
     public
-    IAddress <A> applyTable ( int[][] table ) {
+    IAddress applyTable ( int[][] table ) {
         return null;
     }
 
@@ -134,7 +135,7 @@ class SipLibrary<A extends IAddress <A>> extends Library <A> implements IAddress
      */
     @Override
     public
-    IAddress <A> minus ( IAddress <A> address1, IAddress <A> address2 ) throws ValueError {
+    IAddress minus ( IAddress  address1, IAddress  address2 ) throws ValueError {
         int sum = (int) (address1.get() - address2.get());
 
         return new SipAddress <>(sum);
@@ -147,7 +148,7 @@ class SipLibrary<A extends IAddress <A>> extends Library <A> implements IAddress
      */
     @Override
     public
-    IAddress <A> mult ( IAddress <A> address1, IAddress <A> address2 ) throws ValueError {
+    IAddress  mult ( IAddress  address1, IAddress  address2 ) throws ValueError {
         int times = (int) (address1.get() * address2.get());
 
         return null;
@@ -209,11 +210,11 @@ class SipLibrary<A extends IAddress <A>> extends Library <A> implements IAddress
      * @throws ValueError
      */
     public
-    SipAddress <A> convertCartesianCoordsToSipAddress ( SipTree <?, ?, ?, ?> tree, List <Point> shifts )
+    SipAddress  convertCartesianCoordsToSipAddress ( SipTree <?, ?, ?> tree, List <Point> shifts )
             throws ValueError {
         int addr = 0;
         int sum = 0;
-        SipLayerClusterNode <?, ?, ?, ?> node = (SipLayerClusterNode <?, ?, ?, ?>) tree.getRoot().getChild(0);
+        SipLayerClusterNode <?, ?, ?> node = (SipLayerClusterNode < ?, ?, ?>) tree.getRoot().getChild(0);
         for (Point shift : shifts) {
             int x = (int) shift.getX();
             int y = (int) shift.getY();
@@ -230,7 +231,7 @@ class SipLibrary<A extends IAddress <A>> extends Library <A> implements IAddress
      * @return
      */
     public
-    List <Point> convertSipAddressToCartesianCoords ( SipTree <?, ?, ?, ?> tree, SipAddress <A> sipAddress )
+    List <Point> convertSipAddressToCartesianCoords ( SipTree <?, ?, ?, ?> tree, SipAddress  sipAddress )
             throws ValueError {
         int address = (int) sipAddress.getIndex();
         List <Point> shifts = new ArrayList <>();
@@ -293,7 +294,7 @@ class SipLibrary<A extends IAddress <A>> extends Library <A> implements IAddress
      * @return
      */
     public
-    @NotNull          SipImage <A> convertImageToSipImage ( SipTree <?, ?, ?> tree, @NotNull IImage<A> input )
+    @NotNull          SipImage  convertImageToSipImage ( SipTree <?, ?, ?> tree, @NotNull IImage input )
             throws ValueError {
 
         int addressBase = 0;
@@ -320,15 +321,15 @@ class SipLibrary<A extends IAddress <A>> extends Library <A> implements IAddress
      * @return
      */
     public
-    @NotNull SipImage <A> relocatePixelData ( IImage<A> input, List <Point> pixelShifts ) throws ValueError {
-        SipImage <A> sipImage = new SipImage <>((Mat) input);
+    @NotNull SipImage  relocatePixelData ( IImage input, List <Point> pixelShifts ) throws ValueError {
+        SipImage  sipImage = new SipImage <>((Mat) input);
         List <Scalar> scalars = new ArrayList <>();
         for (int i = 0; i < input.getWidth(); i++) {
             for (int j = 0; j < input.getHeight(); j++) {
                 scalars.add(new Scalar(((Mat) input).get(i, j)));
             }
         }
-        SipImage <A> output = new SipImage <>((Mat) input);
+        SipImage  output = new SipImage <>((Mat) input);
         //            getPixelShiftAddresses().addAll(pixelShifts);
         for (Scalar scalar : scalars) {
             output.putPixel(output.getPixels());
@@ -463,7 +464,7 @@ class SipLibrary<A extends IAddress <A>> extends Library <A> implements IAddress
      * based on square images, no resampling scheme is needed. We need only to
      * convert the lattice of a square image to the new SIP format based on the
      * spiral addressing scheme. The steps are as follows.
-     * For a given image with size M × N , the number of SIP layers λ can be
+     * For a given image with size IImage × N , the number of SIP layers λ can be
      * found by λ = (logM + logN )/log(9); then the length of the SIP image is 9λ.
      * Because the SIP address scheme is base 9, the conversion between the SIP
      * address and a decimal number can be found by (a(n)*a(n−1)...a1) = a(n) × 9^(n−1) + a(n−1) ×
@@ -743,7 +744,7 @@ class SipLibrary<A extends IAddress <A>> extends Library <A> implements IAddress
     }
 
     public
-    IImage <A> convertImageToSipImage ( SipTree<A,?> buildTree ) {
+    IImage convertImageToSipImage ( SipTree<A,?> buildTree ) {
         return null;
     }
 }

@@ -19,7 +19,10 @@ import static org.opencv.highgui.HighGui.imshow;
  *
  */
 public
-interface IImage<A extends IAddress <A>> {
+interface IImage {
+    /**
+     *
+     */
     void initialize ();
 
     /**
@@ -45,7 +48,7 @@ interface IImage<A extends IAddress <A>> {
      */
     static @NotNull
     List <MatOfPoint> polygonListToMatList ( List <Geometry <?>> polygonList ) {
-        List <MatOfPoint> matOfPoints = new ArrayList <>(polygonList.size());
+        List <MatOfPoint> matOfPoints = new ArrayList<> (polygonList.size());
         for (Geometry <?> polygon : polygonList) {
             Point[] apply = null;//apply(polygon);
             MatOfPoint matOfPoint = new MatOfPoint(apply);
@@ -87,13 +90,13 @@ interface IImage<A extends IAddress <A>> {
     /**
      * @param contractivity
      */
-    IImage <A> contract ( int contractivity );
+    IImage  contract ( int contractivity );
 
     /**
      * @param scale
      * @return
      */
-    IImage <A> resize ( int scale );
+    IImage  resize ( int scale );
 
     /**
      * @param rowStart
@@ -119,17 +122,17 @@ interface IImage<A extends IAddress <A>> {
      * @return
      */
 //    @Override
-    IImageBlock <A> subImage ( int rowStart, int rowEnd, int colStart, int colEnd );
+    IImageBlock  subImage ( int rowStart, int rowEnd, int colStart, int colEnd );
 
     /**
      * @return
      */
-    List <IImage <A>> split ();
+    List <IImage> split ();
 
     /**
      * @return
      */
-    IImage <A> merge ( List <IImage <A>> layers, IImage <A> inputImage );//imageblocks to merge
+    IImage  merge ( List <IImage> layers, IImage inputImage );//imageblocks to merge
 
     /**
      *
@@ -153,7 +156,7 @@ interface IImage<A extends IAddress <A>> {
      * @param height
      * @return
      */
-    IImageBlock <A> getSubImage ( int x, int y, int width, int height ) throws ValueError;
+    IImageBlock getSubImage ( int x, int y, int width, int height ) throws ValueError;
 
     /**
      * @param i
@@ -168,12 +171,12 @@ interface IImage<A extends IAddress <A>> {
     /**
      * @return
      */
-    List <ImageTransform <A, ?>> getTransforms () throws ValueError;
+    List <ImageTransform > getTransforms () throws ValueError;
 
     /**
      * @param transforms
      */
-    void setTransforms ( List <ImageTransform <A, ?>> transforms ) throws ValueError;
+    void setTransforms ( List <ImageTransform > transforms ) throws ValueError;
 
     /**
      * @return
@@ -183,7 +186,7 @@ interface IImage<A extends IAddress <A>> {
     /**
      * @return
      */
-    List <IImage <A>> getComponents ();
+    List <IImage > getComponents ();
 
     /**
      * @param addr
@@ -211,80 +214,33 @@ interface IImage<A extends IAddress <A>> {
         return getMat().get(x, y);
     }
 
-//    /**
-//     *
-//     * @return
-//     */
-
-//    int[][] getAddressTable ();
-//
-//    default
-//    int[][] createAddressTable () {
-//
-//        int[][] table = new int[rows()][cols()];
-//
-//        System.out.printf("mat %d x %d", rows(), cols());
-//
-//        final int maxAddress = cols() * rows();
-//
-//        for (int i = 0, addressNo = 0; i < rows(); i++) {
-//            System.out.printf("row: %d\n", i);
-//            for (int j = 0; j < cols() && addressNo < maxAddress; j++, addressNo++) {
-//                System.out.printf("\tcol: %d, address: %d\n", j, addressNo);
-//                table[i][j] = addressNo;
-//            }
-//        }
-//        getLogger()printf("Address table: %s", Arrays.toString(table));
-//
-//        return table;
-//    }
-//
-
     /**
      * @param addr
      */
-    void putPixel ( IAddress <A> address, double[] pixelData ) throws ValueError;
+    default
+    void putPixel ( IAddress  address, double[] pixelData ) throws ValueError {
+       getMat().put(address.getX(), address.getY(), pixelData);
+    }
+
+    /**
+     * @param x
+     * @param y
+     * @param pixelData
+     * @throws ValueError
+     */
+    default
+    void putPixel ( int x, int y, double[] pixelData ) throws ValueError {
+       getMat().put(x, y, pixelData);
+    }
 
     /**
      * @param pixelData
      */
     void putPixels ( double[] pixelData );
 
-    // assuming it's of CV_8UC3 == BGR, 3 byte/pixel
-    // Effectively assuming channels = 3
-//        for (int i=0; i< height; i++)
-//    {
-//         stride is the number of bytes in a row of smallImg
-//        int stride = channels * width;
-//        for (int j=0; j<stride; j+=channels)  {
-//            int b = buff[(i * stride) + j];
-//            int g = buff[(i * stride) + j + 1];
-//            int r = buff[(i * stride) + j + 2];
-//            float[] hsv = new float[3];
-//            Color.RGBtoHSV(r,g,b,hsv);
-//             Do something with the hsv .
-//            System.out.println("hsv: " + hsv[0]);
-//        }
-//    }
-//    ========================================================================================
-//Mat A = Highgui.imread(image_addr); \\"image_addr" is the address of the image
-//    Mat C = A.clone();
-//A.convertTo(A, CvType.CV_64FC3); \\New line added.
-//    int size = (int) (A.total() * A.channels());
-//    double[] temp = new double[size]; \\ use double[] instead of byte[]
-//A.get(0, 0, temp);
-//for (int i = 0; i &lt; size; i++)
-//    temp[i] = (temp[i] / 2);  \\ no more casting required.
-//            C.put(0, 0, temp);
-//====================================================================
-//Mat A = Highgui.imread(image_addr); \\"image_addr" is the address of the image
-//    Mat C = A.clone();
-//    int size = (int) (A.total() * A.channels());
-//    byte[] temp = new byte[size];
-//A.get(0, 0, temp);
-//for (int i = 0; i < size; i++)
-//    temp[i] = (byte) (temp[i] / 2);
-//C.put(0, 0, temp);
+    /**
+     * @return
+     */
     double[] getPixels ();
 
     /**
@@ -303,12 +259,12 @@ interface IImage<A extends IAddress <A>> {
     /**
      * @return
      */
-    IImageBlock <A> getSubImage ( Rectangle rectangle ) throws ValueError;
+    IImageBlock getSubImage ( Rectangle rectangle ) throws ValueError;
 
     /**
      * @return
      */
-    IImageBlock <A> getSubImage () throws ValueError;
+    IImageBlock getSubImage () throws ValueError;
 
     /**
      * @return
@@ -365,17 +321,17 @@ interface IImage<A extends IAddress <A>> {
      *                              from being compared to this object.
      */
 //    @Override
-    int compareTo ( @NotNull IImage <A> other );
+    int compareTo ( @NotNull IImage  other );
 
     /**
      * @param blocks
      */
-    void setRegions ( List <IImageBlock <A>> blocks );
+    void setRegions ( List <IImageBlock > blocks );
 
     /**
      * @return
      */
-    List <IImageBlock <A>> getRegions ();
+    List <IImageBlock > getRegions ();
 
     /**
      * @param row
@@ -383,7 +339,7 @@ interface IImage<A extends IAddress <A>> {
      * @return
      * @throws ValueError
      */
-    IAddress <A> getAddress ( int row, int col ) throws ValueError;
+    IAddress getAddress ( int row, int col ) throws ValueError;
 
     /**
      * @return
@@ -414,6 +370,7 @@ interface IImage<A extends IAddress <A>> {
 
     void setOriginalImageWidth ( int originalImageWidth );
 
-    IIntSize restoreSize ( int h, int originalImageWidth, int originalImageHeight );
+    IIntSize restoreSize ( int w, int h, int originalImageWidth, int originalImageHeight );
 
+    double[] get ( int x, int y, double[] data );
 }

@@ -6,13 +6,13 @@ import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
- * @param <A>
+ * @param 
  
  * @param <G>
  */
 public
-class QuadTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends BinTreeNodeBuilder<N, A, G> {
+class QuadTreeNodeBuilder<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends BinTreeNodeBuilder<N> {
 
     /**
      * @param image
@@ -22,18 +22,18 @@ class QuadTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
      * @param library
      */
     public
-    QuadTreeNodeBuilder ( IImage <A> image,
+    QuadTreeNodeBuilder ( IImage image,
                           IIntSize rangeSize,
                           IIntSize domainSize,
-                          IEncoder <N, A, G> encoder,
-                          Library<A> library ) {
+                          IEncoder <N> encoder,
+                          Library library ) {
 
         super(image, rangeSize, domainSize, encoder, library);
     }
 
     @Override
     public
-    Tree <N, A, G> buildTree ( IImageBlock <A> imageBlock ) throws ValueError {
+    Tree <N> buildTree ( IImageBlock  imageBlock ) throws ValueError {
         return super.buildTree(imageBlock);
     }
 }

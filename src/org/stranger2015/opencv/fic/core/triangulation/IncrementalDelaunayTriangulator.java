@@ -13,7 +13,6 @@ package org.stranger2015.opencv.fic.core.triangulation;
  */
 
 import org.opencv.core.MatOfInt;
-import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.IImageBlock;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
@@ -21,7 +20,6 @@ import org.stranger2015.opencv.fic.core.triangulation.quadedge.LocateFailureExce
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.QuadEdge;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.QuadEdgeSubdivision;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.Collection;
 
@@ -33,9 +31,9 @@ import java.util.Collection;
  * @version 1.0
  */
 public
-class IncrementalDelaunayTriangulator<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
+class IncrementalDelaunayTriangulator<N extends TreeNode <N>>
         implements IDelaunayTriangulator {
-    private final DelaunayTriangulation <N, A, G> subdiv;
+    private final DelaunayTriangulation <N> subdiv;
     private final boolean isUsingTolerance;
 
     /**
@@ -46,7 +44,7 @@ class IncrementalDelaunayTriangulator<N extends TreeNode <N, A, G>, A extends IA
      * @param subdiv
      */
     public
-    IncrementalDelaunayTriangulator ( DelaunayTriangulation<N, A, G> subdiv ) {
+    IncrementalDelaunayTriangulator ( DelaunayTriangulation<N> subdiv ) {
         this.subdiv = subdiv;
         isUsingTolerance = subdiv.getTolerance() > 0.0;
     }
@@ -142,8 +140,8 @@ class IncrementalDelaunayTriangulator<N extends TreeNode <N, A, G>, A extends IA
     }
 
     public
-    IImageBlock <?> getImageBlock () {
-        return (IImageBlock <?>) getImage();
+    IImageBlock getImageBlock () {
+        return (IImageBlock) getImage();
     }
 
     public
@@ -152,7 +150,7 @@ class IncrementalDelaunayTriangulator<N extends TreeNode <N, A, G>, A extends IA
     }
 
     public
-    IImage <?> getImage () {
+    IImage getImage () {
         return null;
     }
 }

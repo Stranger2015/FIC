@@ -1,10 +1,9 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
-import org.stranger2015.opencv.fic.core.IAddress;
+import org.checkerframework.checker.units.qual.A;
+import org.checkerframework.checker.units.qual.C;
 import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.ValueError;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import static org.stranger2015.opencv.fic.core.search.ExhaustiveSearchProcessor.ifsRecordLength;
 import static org.stranger2015.opencv.fic.core.search.ga.GaSearchProcessor.getRandom;
 
 /**
@@ -19,22 +19,21 @@ import static org.stranger2015.opencv.fic.core.search.ga.GaSearchProcessor.getRa
  */
 @SuppressWarnings("unchecked")
 public
-class Population<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer, C extends Chromosome <A, G>>
-        implements Iterable <C> {
+class Population<C extends Chromosome > extends ArrayList<C> {
 
-    protected final List <C> list = new ArrayList <>();
+//    protected final List <C> list = new ArrayList <>();
     public int popSize = 100;
-    protected int chromosomeLength = 31;
+    protected int chromosomeLength = ifsRecordLength;
 
     /**
      * @return
      */
     public
-    IImage <A> getFittest () {
+    IImage getFittest () {
         return fittest;
     }
 
-    protected IImage<A> fittest;
+    protected IImage fittest;
     protected double populationFitness;
 
     /**
@@ -42,7 +41,7 @@ class Population<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      */
     public
     Population ( List <C> list ) {
-        this.list.addAll((Collection <? extends C>) list);
+        this.addAll(list);
     }
 
     /**
@@ -51,7 +50,7 @@ class Population<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      * @param toIndex
      */
     public
-    Population ( List <IImage<A>> list, int fromIndex, int toIndex ) {
+    Population ( List <IImage> list, int fromIndex, int toIndex ) {
         this(list.subList(fromIndex, toIndex));
     }
 
@@ -70,10 +69,10 @@ class Population<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      * @param chromosomeLength
      */
     public
-    Population ( Population <N, A, G, C> population, int chromosomeLength ) {
+    Population ( Population <C> population, int chromosomeLength ) {
         this.chromosomeLength = chromosomeLength;
         popSize = population.size();
-        list.addAll(population.list);
+        addAll(population);
     }
 
     /**
@@ -81,8 +80,18 @@ class Population<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      */
     public
     void init () {
-        IntStream.range(0, list.size()).mapToObj(this::
-                apply2).forEachOrdered(list::add);
+        IntStream.range(0, size()).mapToObj(this::
+                apply2).forEachOrdered(this::addLast);
+    }
+
+    private
+    void addLast ( Object o ) {
+
+
+    }
+
+    public void addLast(C chrom){
+        add(chrom);
     }
 
     /**
@@ -90,7 +99,7 @@ class Population<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      * @return
      */
     public
-  IImage<A> getFittest ( int popIndex ) throws ValueError {
+  IImage getFittest ( int popIndex ) throws ValueError {
 //        populations[];
         return new Individual < A, G, C>(chromosomeLength);
     }
@@ -98,8 +107,8 @@ class Population<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
     /**
      * @return
      */
-    IImage<A>[] getIndividuals () {
-        return list.toArray((IImage<A>[]) new Individual[list.size()]);
+    IImage[] getIndividuals () {
+        return list.toArray((IImage[]) new Individual[list.size()]);
     }
 
     /**
@@ -115,7 +124,7 @@ class Population<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      * @param individual
      */
     public
-    void setIndividual ( int popIndex, IImage<A> individual ) {
+    void setIndividual ( int popIndex, IImage individual ) {
         list.set(popIndex, (C) individual);
     }
 
@@ -193,7 +202,7 @@ class Population<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      * @return
      */
     protected
-    IImage<A> apply ( int i ) throws ValueError {
+    IImage apply ( int i ) throws ValueError {
         return new Individual < A, G, C>(chromosomeLength);
     }
 

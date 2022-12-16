@@ -11,17 +11,17 @@ import java.util.List;
  * @param <N>
  */
 public
-class SipTreeTraverser<N extends TreeNode <N, A, G>, A extends IAddress <A>, M extends IImage<A>,
+class SipTreeTraverser<N extends TreeNode <N>, A extends IAddress , IImage extends IImage,
         G extends BitBuffer>
 
-        extends TreeTraverser <N, A, G> {
+        extends TreeTraverser <N> {
     /**
      * @param tree
      * @param depth
      * @param action
      */
     public
-    SipTreeTraverser ( SipTree <N, A, G> tree, int depth, TreeNodeTask <N, A, G> action ) {
+    SipTreeTraverser ( SipTree <N> tree, int depth, TreeNodeTask <N> action ) {
         super(tree, depth, action);
     }
 
@@ -36,7 +36,7 @@ class SipTreeTraverser<N extends TreeNode <N, A, G>, A extends IAddress <A>, M e
      */
     @Override
     public
-    void traverse ( TreeNode <N, A, G> node, int depth, List <TreeNode<N, A, G>> neighbors, TreeNodeTask <N, A, G> action )
+    void traverse ( TreeNode <N> node, int depth, List <TreeNode<N>> neighbors, TreeNodeTask <N> action )
             throws DepthLimitExceeded {
 
         super.traverse(node, depth, neighbors, action);

@@ -7,12 +7,12 @@ import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  
  */
 public
-class SearchlessCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, M extends IImage<A>, G extends BitBuffer>
-        extends Codec <N, A, G> {
+class SearchlessCodec<N extends TreeNode <N>, A extends IAddress , IImage extends IImage, G extends BitBuffer>
+        extends Codec <N> {
     /**
      * @param scheme
      * @param encodeTask
@@ -20,8 +20,8 @@ class SearchlessCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, M ex
      */
     protected
     SearchlessCodec ( EPartitionScheme scheme,
-                      EncodeTask <N, A, G> encodeTask,
-                      DecodeTask <N, A, G> decodeTask ) {
+                      EncodeTask <N> encodeTask,
+                      DecodeTask <N> decodeTask ) {
 
         super(scheme, encodeTask, decodeTask);
     }
@@ -35,9 +35,9 @@ class SearchlessCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, M ex
 //     */
 ////    @Override
 //    public
-//    ICodec <N, A, G> create ( EPartitionScheme scheme,
-//                                EncodeTask <N, A, G> encodeTask,
-//                                DecodeTask <N, A, G> decodeTask  ) {
+//    ICodec <N> create ( EPartitionScheme scheme,
+//                                EncodeTask <N> encodeTask,
+//                                DecodeTask <N> decodeTask  ) {
 //        return new SearchlessCodec <>(scheme, encodeTask, decodeTask );
 //    }
 
@@ -49,7 +49,7 @@ class SearchlessCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, M ex
      */
 //    @Override
     public
-    IEncoder <N, A, G> getEncoder ( M image, ISearchProcessor <N, A, G> rangeSize, ImageBlockGenerator <N, A, G> domainSize ) {
+    IEncoder <N> getEncoder ( IImage image, ISearchProcessor <N> rangeSize, ImageBlockGenerator <N> domainSize ) {
         return new SearchlessEncoder <>(image, rangeSize, domainSize);
     }
 
@@ -59,7 +59,7 @@ class SearchlessCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, M ex
      */
     @Override
     public
-    IEncoder <N, A, G> getEncoder () {
+    IEncoder <N> getEncoder () {
         return getEncoder(ac);
     }
 
@@ -88,7 +88,7 @@ class SearchlessCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, M ex
      */
     @Override
     public
-    IAddress <A> createAddress ( int address ) throws ValueError {
+    IAddress  createAddress ( int address ) throws ValueError {
         return new DecAddress <>(address);
     }
 }

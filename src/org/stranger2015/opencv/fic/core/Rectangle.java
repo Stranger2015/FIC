@@ -7,7 +7,7 @@ import org.stranger2015.opencv.fic.core.codec.PointAddress;
  */
 public
 class Rectangle extends IntSize implements IRectangle{
-    protected final IAddress <?> address;
+    protected final IAddress address;
 
     /**
      * @param x

@@ -13,12 +13,12 @@ import java.util.List;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class SipTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends SaTiler <N, A, G> {
+class SipTiler<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends SaTiler <N> {
 
     /**
      * @param image
@@ -29,11 +29,11 @@ class SipTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      */
     public
     SipTiler (
-            IImage <A> image,
+            IImage image,
             IIntSize rangeSize,
             IIntSize domainSize,
-            IEncoder <N, A, G> encoder,
-            ITreeNodeBuilder <N, A, G> builder ) {
+            IEncoder <N> encoder,
+            ITreeNodeBuilder <N> builder ) {
 
         super(image, rangeSize, domainSize, encoder, builder);
     }
@@ -43,7 +43,7 @@ class SipTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      */
     @Override
     public
-    void segmentRectangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) {
+    void segmentRectangle ( TreeNodeBase <N> node, IImageBlock  imageBlock ) {
         throw new UnsupportedOperationException("SipTiler#segmentRectangle()");
     }
 
@@ -53,7 +53,7 @@ class SipTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      */
     @Override
     public
-    void segmentSquare ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentSquare ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
         if (imageBlock.getSize().getWidth() <= 1 || imageBlock.getSize().getWidth() != 3) {
             throw new ValueError("SIP Image block size must be equal to 3 x 3");
         }
@@ -78,13 +78,13 @@ class SipTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
 
     @Override
     public
-    void segmentPolygon ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentPolygon ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
 
     }
 
     @Override
     public
-    void segmentQuadrilateral (TreeNodeBase <N, A, G> node,  IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentQuadrilateral (TreeNodeBase <N> node,  IImageBlock  imageBlock ) throws ValueError {
     }
 
     /**
@@ -92,7 +92,7 @@ class SipTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      */
     @Override
     public
-    void addLeafNode ( LeafNode <N, A, G> node ) {
+    void addLeafNode ( LeafNode <N> node ) {
 
     }
 
@@ -104,7 +104,7 @@ class SipTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      */
     @Override
     public
-    List <Vertex> generateVerticesSet ( IImageBlock <A> roi, int blockWidth, int blockHeight ) {
+    List <Vertex> generateVerticesSet ( IImageBlock  roi, int blockWidth, int blockHeight ) {
       return List.of();
     }
 
@@ -117,7 +117,7 @@ class SipTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      */
     @Override
     public
-    List <IImageBlock <A>> generateInitialRangeBlocks ( IImageBlock <A> roi, int blockWidth, int blockHeight )
+    List <IImageBlock > generateInitialRangeBlocks ( IImageBlock  roi, int blockWidth, int blockHeight )
             throws ValueError {
 
         return List.of();
@@ -128,7 +128,7 @@ class SipTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      */
     @Override
     public
-    ITiler <N, A, G> instance () {
+    ITiler <N> instance () {
         return new SipTiler <>(
                 getImage(),
                 getRangeSize(),
@@ -148,7 +148,7 @@ class SipTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
 
     @Override
     public
-    List <IImageBlock <A>> generateRangeBlocks ( IImageBlock <A> roi, int blockWidth, int blockHeight )
+    List <IImageBlock > generateRangeBlocks ( IImageBlock  roi, int blockWidth, int blockHeight )
             throws ValueError {
 
         return List.of();
@@ -161,6 +161,6 @@ class SipTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      */
     @Override
     public
-    void segmentGeometry ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) {
+    void segmentGeometry ( TreeNodeBase <N> node, IImageBlock  imageBlock ) {
     }
 }

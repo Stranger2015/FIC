@@ -39,13 +39,13 @@ class Coordinate implements Comparable <Coordinate>, Cloneable, Serializable {
     public static final int Z = 2;
 
     /**
-     * Standard ordinate index value for, where M is 3.
+     * Standard ordinate index value for, where IImage is 3.
      *
      * <p>This constant assumes XYZM coordinate sequence definition, please check this assumption
      * using {@link ICoordinateSequence#getDimension()} and {@link ICoordinateSequence#getMeasures()}
      * before use.
      */
-    public static final int M = 3;
+    public static final int IImage = 3;
 
     /**
      * The x-ordinate.
@@ -195,10 +195,10 @@ class Coordinate implements Comparable <Coordinate>, Cloneable, Serializable {
     /**
      * Sets the measure value, if supported.
      *
-     * @param m the value to set as M
+     * @param IImage the value to set as M
      */
     public
-    void setM ( double m ) {
+    void setM ( double IImage ) {
         throw new IllegalArgumentException("Invalid ordinate index: " + m);
     }
 

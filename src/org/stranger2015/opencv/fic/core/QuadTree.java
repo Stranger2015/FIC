@@ -10,8 +10,8 @@ import java.util.function.Consumer;
  
  */
 public
-class QuadTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends BinTree <N, A, G> {
+class QuadTree<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends BinTree <N> {
 
     /**
      * @param root
@@ -19,7 +19,7 @@ class QuadTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      * @param action
      */
     public
-    QuadTree ( TreeNode <N, A, G> root, IImageBlock<A> image, TreeNodeTask <N, A, G> action ) {
+    QuadTree ( TreeNode <N> root, IImageBlock image, TreeNodeTask <N> action ) {
         super(root, image, action);
     }
 
@@ -29,12 +29,12 @@ class QuadTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      * @return
      */
 //    protected static
-//    <N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-//    List <IImageBlock<A>> collectDomainBlocks ( List <LeafNode<N, A, G>> leaves, int w, int h ) {
-//        List <IImageBlock<A>> l = new ArrayList <> ();
+//    <N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+//    List <IImageBlock> collectDomainBlocks ( List <LeafNode<N>> leaves, int w, int h ) {
+//        List <IImageBlock> l = new ArrayList <> ();
 //        if (!leaves.isEmpty()) {
-//            for (LeafNode <N, A, G> leaf : leaves) {
-//                IImageBlock<A> image = leaf.getImageBlock();
+//            for (LeafNode <N> leaf : leaves) {
+//                IImageBlock image = leaf.getImageBlock();
 //                if (image.getWidth() == w && image.getHeight() == h) {
 //                    l.add(image);
 //                }
@@ -52,7 +52,7 @@ class QuadTree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends B
      */
 //    @Override
     public
-    TreeNode <N, A, G> nodeInstance ( TreeNodeBase <N, A, G> parent, EDirection quadrant, Rectangle rect )
+    TreeNode <N> nodeInstance ( TreeNodeBase <N> parent, EDirection quadrant, Rectangle rect )
             throws ValueError {
 
         return new QuadTreeNode <>(parent, quadrant, rect);

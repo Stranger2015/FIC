@@ -1,7 +1,5 @@
 package org.stranger2015.opencv.fic.utils;
 
-import org.stranger2015.opencv.fic.core.util.AssertionFailedException;
-
 import static java.lang.String.format;
 
 /**

@@ -1,15 +1,11 @@
 package org.stranger2015.opencv.fic.core.codec.tilers;
 
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.stranger2015.opencv.fic.core.*;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
 import org.stranger2015.opencv.fic.core.codec.IPartitionProcessor;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayList;
 import java.util.Deque;
@@ -20,31 +16,29 @@ import static org.stranger2015.opencv.fic.core.ETilerState.*;
 /**
  * Tiler & ImageBlkGenerator
  *
- * @param <A>
+ * @param
  */
 public
-interface ITiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer> {
+interface ITiler {
     /**
      * @param <N>
-     * @param <A>
+     * @param
      * @param <G>
      * @return
      */
-    @Contract(pure = true)
+//    @Contract(pure = true)
     static
-    <N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-    @NotNull IPartitionProcessor <N, A, G> create ( IEncoder <N, A, G> encoder, ITiler <N, A, G> tiler ) {
-        @NotNull IPartitionProcessor <N, A, G> partitionProcessor = encoder.createPartitionProcessor(tiler);
+    /*@NotNull*/ IPartitionProcessor create ( IEncoder encoder, ITiler tiler ) {
 
-        return partitionProcessor;
+        return encoder.createPartitionProcessor(tiler);
     }
 
     /**
      * @return
      */
     default
-    void tile ( IImageBlock <A> imageBlock ) throws ValueError, DepthLimitExceeded {
-        Tree <N, A, G> tree = getBuilder().buildTree(imageBlock);
+    void tile ( IImageBlock imageBlock ) throws Throwable {
+        Tree <?> tree = getBuilder().buildTree(imageBlock);
         getNodeDeque().push(tree.getRoot());
         getImageBlockDeque().push(imageBlock);
 
@@ -60,7 +54,7 @@ interface ITiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
                 throw new IllegalStateException("Unexpected value: -1");
         }
         while (true) {
-            TreeNodeBase <N, A, G> node = getNodeDeque().pop();
+            TreeNodeBase <?> node = getNodeDeque().pop();
             imageBlock = getImageBlockDeque().pop();
             switch (getState()) {
                 case TILE_SUCCESSORS:
@@ -70,7 +64,7 @@ interface ITiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
                     onSuccessor(node, imageBlock);
                     break;
                 case TILE_LEAF:
-                    onLeaf((LeafNode <N, A, G>) node, imageBlock);
+                    onLeaf((LeafNode <?>) node, imageBlock);
                     break;
                 case TILE_FINISH:
                     onFinish();
@@ -94,18 +88,18 @@ interface ITiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
     /**
      * @return
      */
-    Deque <IImageBlock <A>> getImageBlockDeque ();
+    Deque <IImageBlock> getImageBlockDeque ();
 
     /**
      * @return
      */
-    Deque <TreeNodeBase <N, A, G>> getNodeDeque ();
+    Deque <TreeNodeBase <?>> getNodeDeque ();
 
-   /**
+    /**
      * @param node
      */
     default
-    void onLeaf ( LeafNode <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void onLeaf ( LeafNode <?> node, IImageBlock imageBlock ) throws ValueError {
         node.setImageBlock(imageBlock);
         addRangeBlock(imageBlock);
         addLeaf(node);
@@ -117,12 +111,12 @@ interface ITiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
     /**
      * @param imageBlock
      */
-    void addRangeBlock ( IImageBlock <A> imageBlock );
+    void addRangeBlock ( IImageBlock imageBlock );
 
     /**
      * @param node
      */
-    void addLeaf ( LeafNode <N, A, G> node );
+    void addLeaf ( LeafNode <?> node );
 
     /**
      * @return
@@ -138,14 +132,14 @@ interface ITiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      *
      */
     default
-    void onSuccessors ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
-        List <TreeNodeBase <N, A, G>> successors = getBuilder().getSuccessors();
+    void onSuccessors ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError {
+        List <TreeNodeBase <?>> successors = getBuilder().getSuccessors();
         segmentGeometry(node, imageBlock);
         for (int succIndex = 0; succIndex < successorAmount(); succIndex++) {
             node = successors.get(succIndex);
             getBuilder().add(node);
             if (node.isLeaf()) {
-                getBuilder().addLeafNode((LeafNode <N, A, G>) node);
+                getBuilder().addLeafNode((LeafNode <?>) node);
                 setState(TILE_LEAF);
             }
             else {
@@ -159,11 +153,11 @@ interface ITiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      *
      */
     default
-    void onSuccessor ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) {
+    void onSuccessor ( TreeNodeBase <?> node, IImageBlock imageBlock ) {
         try {
             incrementAndCheckDepth();
         } catch (DepthLimitExceeded e) {
-                       setState(TILE_FINISH);
+            setState(TILE_FINISH);
         }
         getImageBlockDeque().push(imageBlock);
         getNodeDeque().push(node);
@@ -188,14 +182,14 @@ interface ITiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      * @return
      */
     default
-    int compareRangeSize ( @NotNull IIntSize rangeSize, IIntSize minRangeSize ) {
+    int compareRangeSize ( IIntSize rangeSize, IIntSize minRangeSize ) {
         return rangeSize.compareTo(minRangeSize);
     }
 
     /**
      * @param node
      */
-    void addNode ( TreeNodeBase <N, A, G> node );
+    void addNode ( TreeNodeBase <?> node );
 
     /**
      *
@@ -213,7 +207,7 @@ interface ITiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
     /**
      * @return
      */
-    ITreeNodeBuilder <N, A, G> getBuilder ();
+    ITreeNodeBuilder <?> getBuilder ();
 
     /**
      * @return
@@ -232,48 +226,48 @@ interface ITiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      * @param node
      * @param imageBlock
      */
-    void segmentGeometry ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError;
+    void segmentGeometry ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError;
 
     /**
      * @param imageBlock
      * @throws ValueError
      */
-    void segmentRectangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError;
+    void segmentRectangle ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError;
 
     /**
      * @param imageBlock
      * @throws ValueError
      */
-    void segmentSquare ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError;
+    void segmentSquare ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError;
 
     /**
      * @param imageBlock
      * @throws ValueError
      */
-    void segmentTriangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError;
+    void segmentTriangle ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError;
 
     /**
      * @param imageBlock
      * @throws ValueError
      */
-    void segmentPolygon ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError;
+    void segmentPolygon ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError;
 
     /**
      * @param imageBlock
      * @throws ValueError
      */
-    void segmentQuadrilateral ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError;
+    void segmentQuadrilateral ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError;
 
     /**
      * @param node
      */
-    void addLeafNode ( LeafNode <N, A, G> node );
+    void addLeafNode ( LeafNode <?> node );
 
     /**
      * @param roi
      * @return
      */
-    List <Vertex> generateVerticesSet ( IImageBlock <A> roi, int blockWidth, int blockHeight );
+    List <Vertex> generateVerticesSet ( IImageBlock roi, int blockWidth, int blockHeight );
 
     /**
      * @return
@@ -296,16 +290,17 @@ interface ITiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      * @throws ValueError
      */
     default
-    List <IImageBlock <A>> generateRangeBlocks ( IImageBlock <A> roi, int blockWidth, int blockHeight )
+    List <IImageBlock> generateRangeBlocks ( IImageBlock roi, int blockWidth, int blockHeight )
             throws ValueError {
 
         int numOfBlocksPerRow = roi.getWidth() / blockWidth;
         int numOfBlocksPerCol = roi.getHeight() / blockHeight;
 
-        List <IImageBlock <A>> blocks = new ArrayList <>();
+        List <IImageBlock> blocks = new ArrayList <>();
         for (int i = 0; i < numOfBlocksPerRow; i++) {
             for (int j = 0; j < numOfBlocksPerCol; j++) {
-                IImageBlock <A> block = new ImageBlock <>(
+                IImageBlock block = new ImageBlock(
+                        roi,
                         i * blockWidth,
                         j * blockHeight,
                         blockWidth,
@@ -339,17 +334,17 @@ interface ITiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      * @throws ValueError
      */
     default
-    List <IImageBlock <A>> generateDomainBlocks ( IImageBlock <A> roi, int blockWidth, int blockHeight )
+    List <IImageBlock> generateDomainBlocks ( IImageBlock roi, int blockWidth, int blockHeight )
             throws ValueError {
 
         int numOfBlocksPerRow = roi.getWidth() - blockWidth + 1;
         int numOfBlocksPerCol = roi.getHeight() - blockHeight + 1;
 
-        final List <IImageBlock <A>> blocks = new ArrayList <>();
+        final List <IImageBlock> blocks = new ArrayList <>();
         int channels = roi.getChannelsAmount();
         for (int i = 0; i < numOfBlocksPerRow; i++) {
             for (int j = 0; j < numOfBlocksPerCol; j++) {
-                IImageBlock <A> block = new ImageBlock <>(i, j, blockWidth, blockHeight);
+                IImageBlock block = new ImageBlock(roi, i, j, blockWidth, blockHeight);
                 double[] sumOfPixelValues = new double[channels];
                 for (int c = 0; c < channels; c++) {
                     sumOfPixelValues[c] = 0;
@@ -377,6 +372,6 @@ interface ITiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
         return blocks;
     }
 
-    List <IImageBlock <A>> generateInitialRangeBlocks (IImageBlock <A> roi, int blockWidth, int blockHeight )
+    List <IImageBlock> generateInitialRangeBlocks ( IImageBlock roi, int blockWidth, int blockHeight )
             throws ValueError;
 }

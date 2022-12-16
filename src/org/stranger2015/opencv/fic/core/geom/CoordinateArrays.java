@@ -97,13 +97,13 @@ class CoordinateArrays {
         for (Coordinate coordinate : array) {
             if (coordinate != null) {
                 int d = Coordinates.dimension(coordinate);
-                int m = Coordinates.measures(coordinate);
+                int IImage = Coordinates.measures(coordinate);
                 if (maxDimension == -1) {
                     maxDimension = d;
                     maxMeasures = m;
                     continue;
                 }
-                if (d != maxDimension || m != maxMeasures) {
+                if (d != maxDimension || IImage != maxMeasures) {
                     isConsistent = false;
                     maxDimension = Math.max(maxDimension, d);
                     maxMeasures = Math.max(maxMeasures, m);

@@ -9,15 +9,18 @@ import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
- * @param <A>
+ * @param 
  * @param <G>
  */
 public
-class DtIterativeDynamicCacheBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends DelaunayTriangulationBuilder <N, A, G> {
+class DtIterativeDynamicCacheBuilder<N extends TreeNode <N>>
+        extends DelaunayTriangulationBuilder <N> {
+    /**
+     *
+     */
     public
     DtIterativeDynamicCacheBuilder () {
-        super(getClass());
+        super();
     }
 
     @Override

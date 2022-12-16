@@ -1,12 +1,11 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.fic.core.IImageBlock;
 import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.fic.core.search.ga.*;
-import org.stranger2015.opencv.fic.transform.ITransform;
 import org.stranger2015.opencv.fic.utils.GrayScaleImage;
-import org.stranger2015.opencv.utils.BitBuffer;
+
+import java.util.List;
 
 /**
  * 4. GA’s and the IFS Inverse Problem:
@@ -108,11 +107,10 @@ import org.stranger2015.opencv.utils.BitBuffer;
  * return the fittest individual from Pk
  */
 public
-class FicGaSearchProcessor</*T extends Individual <M, A, G, C>*/M extends IImage<M>, A extends IAddress <A>, G extends BitBuffer
-      /*  C extends Chromosome <M,A, G>*/>
+class FicGaSearchProcessor
+        extends GaSearchProcessor 
+        implements ISearchProcessor  {
 
-        extends GaSearchProcessor <A, G>
-        implements ISearchProcessor <A, G> {
     /**
      * @param popSize
      * @param mutationRate
@@ -126,10 +124,10 @@ class FicGaSearchProcessor</*T extends Individual <M, A, G, C>*/M extends IImage
             double mutationRate,
             double crossoverRate,
             int elitismCount,
-            ISelector <A, G> selector,
-            FitnessFunction <A, G> fitnessFunction,
+            ISelector  selector,
+            FitnessFunction  fitnessFunction,
             IMutationOperator <T> mutationOperator,
-            ICrossoverOperator <A, G> crossoverOperator ) {
+            ICrossoverOperator  crossoverOperator ) {
 
         super(
                 popSize,
@@ -208,9 +206,9 @@ class FicGaSearchProcessor</*T extends Individual <M, A, G, C>*/M extends IImage
      */
     @Override
     public
-    GrayScaleImage<A> search () {
+    byte[] search ( IImageBlock imageBlock, List <IImageBlock> rangeBlocks ) {
 
-        return (GrayScaleImage <A>) getBestTransform();
+        return new byte[0];
     }
 
     public

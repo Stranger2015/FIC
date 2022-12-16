@@ -6,10 +6,10 @@ import org.stranger2015.opencv.fic.utils.Point;
 import static org.stranger2015.opencv.fic.core.EAddressKind.ORDINARY;
 
 /**
- * @param <A>
+ * @param
  */
 public
-class DecAddress<A extends IAddress <A>> extends Address <A> {
+class DecAddress<A extends IAddress > extends Address  {
 
     private int addr;
 
@@ -35,7 +35,7 @@ class DecAddress<A extends IAddress <A>> extends Address <A> {
      */
     @Override
     public
-    IAddress <A> applyTable ( int[][] table ) {
+    IAddress  applyTable ( int[][] table ) {
         return null;
     }
 
@@ -46,7 +46,7 @@ class DecAddress<A extends IAddress <A>> extends Address <A> {
      */
     @Override
     public
-    IAddress <A> plus ( IAddress <A> address1, IAddress <A> address2 ) throws ValueError {
+    IAddress  plus ( IAddress  address1, IAddress  address2 ) throws ValueError {
         return null;
     }
 
@@ -68,7 +68,7 @@ class DecAddress<A extends IAddress <A>> extends Address <A> {
      */
     @Override
     public
-    IAddress <A> minus ( IAddress <A> address1, IAddress <A> address2 ) throws ValueError {
+    IAddress  minus ( IAddress  address1, IAddress  address2 ) throws ValueError {
         return null;
     }
 
@@ -79,7 +79,7 @@ class DecAddress<A extends IAddress <A>> extends Address <A> {
      */
     @Override
     public
-    IAddress <A> mult ( IAddress <A> address1, IAddress <A> address2 ) throws ValueError {
+    IAddress  mult ( IAddress  address1, IAddress  address2 ) throws ValueError {
         return null;
     }
 

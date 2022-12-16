@@ -24,8 +24,8 @@ public class CoordinateXY extends Coordinate {
     /** CoordinateXY does not support Z values. */
     public static final int Z = -1;
 
-    /** CoordinateXY does not support M measures. */
-    public static final int M = -1;
+    /** CoordinateXY does not support IImage measures. */
+    public static final int IImage = -1;
 
     /** Default constructor */
     public CoordinateXY() {

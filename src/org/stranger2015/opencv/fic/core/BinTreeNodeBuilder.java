@@ -9,12 +9,12 @@ import java.util.List;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class BinTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends TreeNodeBuilder <N, A, G> {
+class BinTreeNodeBuilder<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends TreeNodeBuilder <N> {
 
     /**
      * @param image
@@ -26,11 +26,11 @@ class BinTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      * @param rangeSize1
      */
     public
-    BinTreeNodeBuilder ( IImage <A> image,
+    BinTreeNodeBuilder ( IImage image,
                          IIntSize rangeSize,
                          IIntSize domainSize,
-                         IEncoder <N, A, G> encoder,
-                         Library <A> library) {
+                         IEncoder <N> encoder,
+                         Library  library) {
 
         super(image, rangeSize, domainSize, encoder, library);
     }
@@ -41,7 +41,7 @@ class BinTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      */
     @Override
     public
-    Tree <N, A, G> buildTree ( IImageBlock <A> imageBlock ) throws ValueError {
+    Tree <N> buildTree ( IImageBlock  imageBlock ) throws ValueError {
         BinTreeNode <N, A,G> root = new BinTreeNode <>(null, imageBlock.getSize().getWidth(), imageBlock.getHeight());
         return new BinTree <>(root,imageBlock,new TreeNodeTask <>(root, codec, image));
     }
@@ -51,7 +51,7 @@ class BinTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      */
     @Override
     public
-    List <TreeNodeBase <N, A, G>> getSuccessors () {
+    List <TreeNodeBase <?>> getSuccessors () {
         return getLastNode().getChildren();
     }
 
@@ -60,7 +60,7 @@ class BinTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      */
     @Override
     public
-    void add ( TreeNodeBase <N, A, G> node ) {
+    void add ( TreeNodeBase <?> node ) {
     }
 
     /**
@@ -68,7 +68,7 @@ class BinTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      */
     @Override
     public
-    void addLeafNode ( LeafNode <N, A, G> node ) {
+    void addLeafNode ( LeafNode <?> node ) {
     }
 
     /**
@@ -76,7 +76,7 @@ class BinTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      */
     @Override
     public
-    TreeNode <N, A, G> getLastNode () {
+    TreeNode <N> getLastNode () {
         return lastNode;
     }
 
@@ -85,7 +85,7 @@ class BinTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      */
     @Override
     public
-    LeafNode <N, A, G> getLastLeafNode () {
+    LeafNode <N> getLastLeafNode () {
         return lastLeafNode;
     }
 
@@ -112,7 +112,7 @@ class BinTreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
      */
     @Override
     public
-    ITreeNodeBuilder <N, A, G> newInstance () {
+    ITreeNodeBuilder <N> newInstance () {
         return new BinTreeNodeBuilder<>();
     }
 }

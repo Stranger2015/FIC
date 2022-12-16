@@ -1,16 +1,15 @@
 package org.stranger2015.opencv.fic.transform;
 
 import org.stranger2015.opencv.fic.core.IAddress;
-import org.stranger2015.opencv.utils.BitBuffer;
+import org.stranger2015.opencv.fic.core.IImage;
 
 /**
  
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class FlopTransform</* M extends IImage <A> */, A extends IAddress <A>, G extends BitBuffer>
-        extends ImageTransform <A, G> {
+class FlopTransform extends ImageTransform {
 
     /**
      * @param image
@@ -18,7 +17,7 @@ class FlopTransform</* M extends IImage <A> */, A extends IAddress <A>, G extend
      * @param address
      */
     public
-    FlopTransform ( M image, EInterpolationType type, IAddress <A> address ) {
+    FlopTransform ( IImage image, EInterpolationType type, IAddress  address ) {
         super(image, type, address);
     }
 
@@ -28,9 +27,9 @@ class FlopTransform</* M extends IImage <A> */, A extends IAddress <A>, G extend
      * @param type
      * @return
      */
-    @Override
+//    @Override
     public
-    M transform ( M inputImage, M transformMatrix, EInterpolationType type ) {
+    IImage transform ( IImage inputImage, IImage transformMatrix, EInterpolationType type ) {
         return null;
     }
 }

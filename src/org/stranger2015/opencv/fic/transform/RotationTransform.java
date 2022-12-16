@@ -9,8 +9,8 @@ import org.stranger2015.opencv.utils.BitBuffer;
  * functor class to rotate an image by the given degrees
  */
 public
-class RotationTransform</*M extends IImage<A>,*/ A extends IAddress <A>, G extends BitBuffer>
-        extends PreserveAlphaTransform <A, G> {
+class RotationTransform
+        extends PreserveAlphaTransform  {
 
     private final double degrees;
     private final double pointX;//int
@@ -20,7 +20,7 @@ class RotationTransform</*M extends IImage<A>,*/ A extends IAddress <A>, G exten
      * @param degrees
      */
     public
-    RotationTransform ( double degrees, IAddress <A> address ) {
+    RotationTransform ( double degrees, IAddress  address ) {
         this(degrees, 0, 0, false, address);
     }
 
@@ -29,7 +29,7 @@ class RotationTransform</*M extends IImage<A>,*/ A extends IAddress <A>, G exten
      * @param preserveAlpha
      */
     public
-    RotationTransform ( double degrees, boolean preserveAlpha, IAddress <A> address ) {
+    RotationTransform ( double degrees, boolean preserveAlpha, IAddress  address ) {
         this(degrees, 0, 0, preserveAlpha, address);
     }
 
@@ -42,7 +42,7 @@ class RotationTransform</*M extends IImage<A>,*/ A extends IAddress <A>, G exten
     RotationTransform ( double degrees,
                         double pointX,
                         double pointY,
-                        IAddress <A> address ) {
+                        IAddress  address ) {
 
         this(degrees, pointX, pointY, false, address);
     }
@@ -58,7 +58,7 @@ class RotationTransform</*M extends IImage<A>,*/ A extends IAddress <A>, G exten
                         double pointX,
                         double pointY,
                         boolean preserveAlpha,
-                        IAddress <A> address ) {
+                        IAddress  address ) {
 
         super(null, preserveAlpha, address);
 

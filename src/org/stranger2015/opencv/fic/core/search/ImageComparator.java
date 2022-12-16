@@ -8,10 +8,10 @@ import org.stranger2015.opencv.fic.core.IImage;
 
 /**
  
- * @param <A>
+ * @param
  */
 public
-class ImageComparator</* M extends IImage <A> */, A extends Address <A>> implements IDistanceator <M, A> {
+class ImageComparator</* IImage extends IImage */, A extends Address > implements IDistanceator <M, A> {
 
     private final double fuzz;
     private final EMetrics metrics;
@@ -50,7 +50,7 @@ class ImageComparator</* M extends IImage <A> */, A extends Address <A>> impleme
      */
     @Override
     public
-    double distance ( final M img1, final M img2 ) {
+    double distance ( final IImage img1, final IImage img2 ) {
         assert (img1 != null) && (img2 != null);
 
         int width = img1.getWidth();

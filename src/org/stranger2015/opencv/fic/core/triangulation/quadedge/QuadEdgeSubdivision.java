@@ -1,14 +1,14 @@
 package org.stranger2015.opencv.fic.core.triangulation.quadedge;
 
-import org.jetbrains.annotations.NotNull;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
 import org.stranger2015.opencv.fic.core.geom.*;
 import org.stranger2015.opencv.fic.core.io.WKTWriter;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.*;
+
+import static org.stranger2015.opencv.fic.core.geom.Triangle.circumcentreDD;
 
 /**
  * A class that contains the {@link QuadEdge}s representing a planar
@@ -35,8 +35,8 @@ import java.util.*;
  * @author Martin Davis
  */
 public
-class QuadEdgeSubdivision<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends TilerLeafNode <N, A, G> {
+class QuadEdgeSubdivision<N extends TreeNode <N>>
+        extends TilerLeafNode <N> {
 
     /**
      * @param parent
@@ -46,10 +46,10 @@ class QuadEdgeSubdivision<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
      * @param startingEdge
      */
     public
-    QuadEdgeSubdivision ( TreeNodeBase <N, A, G> parent,
+    QuadEdgeSubdivision ( TreeNodeBase <N> parent,
                           EDirection quadrant,
                           Rectangle rect,
-                          ITiler <N, A, G> tiler,
+                          ITiler tiler,
                           QuadEdge startingEdge )
             throws ValueError {
 
@@ -65,7 +65,7 @@ class QuadEdgeSubdivision<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
      * @param tiler
      */
     public
-    QuadEdgeSubdivision ( TreeNodeBase <N, A, G> parent, EDirection quadrant, Rectangle rect, ITiler <N, A, G> tiler )
+    QuadEdgeSubdivision ( TreeNodeBase <N> parent, EDirection quadrant, Rectangle rect, ITiler tiler )
             throws ValueError {
 
         super(parent, quadrant, rect, tiler);
@@ -97,9 +97,9 @@ class QuadEdgeSubdivision<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
     private int visitedKey = 0;
     //	private Set quadEdges = new HashSet();
     private final List <QuadEdge> quadEdges = new ArrayList <>();
-    private final QuadEdge startingEdge;
-    private final double tolerance;
-    private final double edgeCoincidenceTolerance;
+    private QuadEdge startingEdge;
+    private double tolerance;
+    private double edgeCoincidenceTolerance;
     private final Vertex[] frameVertex = new Vertex[3];
     private Envelope frameEnv;
     private IQuadEdgeLocator locator = null;
@@ -113,7 +113,8 @@ class QuadEdgeSubdivision<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
      * @param tolerance the tolerance value for determining if two sites are equal
      */
     public
-    QuadEdgeSubdivision ( TreeNodeBase<N,A,G> parent, Envelope env, double tolerance) {
+    QuadEdgeSubdivision ( TreeNodeBase<N> parent, Envelope env, double tolerance) {
+        super(parent);
         // currentSubdiv = this;
         this.tolerance = tolerance;
         edgeCoincidenceTolerance = tolerance / EDGE_COINCIDENCE_TOL_FACTOR;
@@ -141,7 +142,7 @@ class QuadEdgeSubdivision<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
     /**
      * @return
      */
-    private @NotNull
+    private
     QuadEdge initSubdiv () {
         // build initial subdivision from frame
         QuadEdge ea = makeEdge(frameVertex[0], frameVertex[1]);
@@ -671,7 +672,7 @@ class QuadEdgeSubdivision<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
             Coordinate c = triEdges[2].orig().getCoordinate();
 
             // TODO: choose the most accurate circumcentre based on the edges
-            Coordinate cc = TriangleImageBlock.circumcentreDD(a, b, c);
+            Coordinate cc = circumcentreDD(a, b, c);
             Vertex ccVertex = new Vertex(cc);
             // save the circumcentre as the origin for the dual edges originating in this triangle
             for (int i = 0; i < 3; i++) {
@@ -947,7 +948,7 @@ class QuadEdgeSubdivision<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
      * @return a GeometryCollection of Polygons
      */
     public
-    Geometry getVoronoiDiagram ( GeometryFactory geomFact ) {
+    Geometry<?> getVoronoiDiagram ( GeometryFactory geomFact ) {
         var vorCells = getVoronoiCellPolygons(geomFact);
         return geomFact.createGeometryCollection(GeometryFactory.toGeometryArray(vorCells));
     }
@@ -1018,7 +1019,7 @@ class QuadEdgeSubdivision<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
         }
 
         Coordinate[] pts = coordList.toCoordinateArray();
-        Polygon <T> cellPoly = geomFact.createPolygon(geomFact.createLinearRing(pts));
+        Polygon <?> cellPoly = geomFact.createPolygon(geomFact.createLinearRing(pts));
 
         Vertex v = startQE.orig();
         cellPoly.setUserData(v.getCoordinate());

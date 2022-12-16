@@ -9,13 +9,13 @@ import org.stranger2015.opencv.utils.BitBuffer;
 /**
  *
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class TriangularBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends TriangularTiler <N, A, G>
-        implements IBottomUpTiler <N, A, G> {
+class TriangularBottomUpTiler<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends TriangularTiler <N>
+        implements IBottomUpTiler <N> {
 
     /**
      * @param image
@@ -25,11 +25,11 @@ class TriangularBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <
      * @param builder
      */
     public
-    TriangularBottomUpTiler ( IImage <A> image,
+    TriangularBottomUpTiler ( IImage image,
                               IIntSize rangeSize,
                               IIntSize domainSize,
-                              IEncoder <N, A, G> encoder,
-                              ITreeNodeBuilder <N, A, G> builder ) {
+                              IEncoder <N> encoder,
+                              ITreeNodeBuilder <N> builder ) {
 
         super(image, rangeSize, domainSize, encoder, builder);
     }
@@ -39,7 +39,7 @@ class TriangularBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <
      */
     @Override
     public
-    ITiler <N, A, G> instance () {
+    ITiler <N> instance () {
         return new TriangularBottomUpTiler <>(
                 getImage(),
                 getRangeSize(),
@@ -55,7 +55,7 @@ class TriangularBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <
      */
     @Override
     public
-    void segmentGeometry ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentGeometry ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
     }
 
     /**
@@ -65,7 +65,7 @@ class TriangularBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <
      */
     @Override
     public
-    void segmentRectangle (TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentRectangle (TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
     }
 
     /**
@@ -75,7 +75,7 @@ class TriangularBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <
      */
     @Override
     public
-    void segmentPolygon (TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentPolygon (TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
     }
 
     /**
@@ -85,7 +85,7 @@ class TriangularBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <
      */
     @Override
     public
-    void segmentQuadrilateral ( TreeNodeBase <N, A, G> node,IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentQuadrilateral ( TreeNodeBase <N> node,IImageBlock  imageBlock ) throws ValueError {
 
     }
 
@@ -94,7 +94,7 @@ class TriangularBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <
      */
     @Override
     public
-    void addLeafNode ( LeafNode <N, A, G> node ) {
+    void addLeafNode ( LeafNode <N> node ) {
 
     }
 

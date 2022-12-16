@@ -1,7 +1,5 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
-import org.jetbrains.annotations.Contract;
-
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 

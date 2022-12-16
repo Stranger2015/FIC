@@ -2,7 +2,7 @@ package org.stranger2015.opencv.fic.core;
 
 @Deprecated
 public
-interface ITriangularImageBlockPair<A extends IAddress <A>> extends IImageBlock <A> {
+interface ITriangularImageBlockPair<A extends IAddress > extends IImageBlock  {
 
  /**
   * @return
@@ -13,16 +13,16 @@ interface ITriangularImageBlockPair<A extends IAddress <A>> extends IImageBlock 
  /**
   * @return
   */
-IImageBlock<A> getBlock1();
+IImageBlock getBlock1();
 
  /**
   * @return
   */
- IImageBlock<A> getBlock2();
+ IImageBlock getBlock2();
 
  /**
   * @return
   */
-boolean isBlockHomogenous(IImageBlock<A> block);
+boolean isBlockHomogenous(IImageBlock block);
 
 }

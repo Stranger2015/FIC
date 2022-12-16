@@ -88,10 +88,10 @@ class RayCrossingCounter {
         Coordinate p1 = new Coordinate();
         Coordinate p2 = new Coordinate();
         for (int i = 1; i < ring.size(); i++) {
-            //ring.getCoordinate(i, p1); // throws exception if ring contains M ordinate
+            //ring.getCoordinate(i, p1); // throws exception if ring contains IImage ordinate
             p1.x = ring.getOrdinate(i, ICoordinateSequence.X);
             p1.y = ring.getOrdinate(i, ICoordinateSequence.Y);
-            //ring.getCoordinate(i - 1, p2); // throws exception if ring contains M ordinate
+            //ring.getCoordinate(i - 1, p2); // throws exception if ring contains IImage ordinate
             p2.x = ring.getOrdinate(i - 1, ICoordinateSequence.X);
             p2.y = ring.getOrdinate(i - 1, ICoordinateSequence.Y);
             counter.countSegment(p1, p2);

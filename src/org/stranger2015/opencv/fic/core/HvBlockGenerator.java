@@ -8,12 +8,12 @@ import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class HvBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends ImageBlockGenerator <N, A, G> {
+class HvBlockGenerator<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends ImageBlockGenerator <N> {
     /**
      * @param tiler
      * @param scheme
@@ -23,10 +23,10 @@ class HvBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
      * @param domainSize
      */
     public
-    HvBlockGenerator ( IPartitionProcessor <N, A, G> partitionProcessor,
+    HvBlockGenerator ( IPartitionProcessor <N> partitionProcessor,
                        EPartitionScheme scheme,
-                       IEncoder <N, A, G> encoder,
-                       IImage <A> image,
+                       IEncoder <N> encoder,
+                       IImage image,
                        IIntSize rangeSize,
                        IIntSize domainSize ) {
 
@@ -35,10 +35,10 @@ class HvBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
 
     @Override
     public
-    HvBlockGenerator <N, A, G> newInstance ( IPartitionProcessor <N, A, G> partitionProcessor,
+    HvBlockGenerator <N> newInstance ( IPartitionProcessor <N> partitionProcessor,
                                                 EPartitionScheme scheme,
-                                                IEncoder <N, A, G> encoder,
-                                                IImage <A> image,
+                                                IEncoder <N> encoder,
+                                                IImage image,
                                                 IIntSize rangeSize,
                                                 IIntSize domainSize ) {
         return new HvBlockGenerator <>(partitionProcessor, scheme, encoder, image, rangeSize, domainSize);

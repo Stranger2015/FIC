@@ -1,50 +1,46 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.jetbrains.annotations.NotNull;
-import org.stranger2015.opencv.fic.core.*;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.opencv.core.Mat;
+import org.stranger2015.opencv.fic.core.EPartitionScheme;
+import org.stranger2015.opencv.fic.core.FCImageModel;
+import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.fic.core.ValueError;
+import org.stranger2015.opencv.fic.core.io.FractalReader;
 import org.stranger2015.opencv.fic.core.io.FractalWriter;
-import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
-import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
 
 /**
  *
  */
 public abstract
-class Decoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        implements IDecoder <N, A, G> {
+class Decoder implements IDecoder, IConstants {
+    private ICompressedImage compressedImage;
+    private IImage originalImage;
 
     /**
      * @param codec
      */
     @Override
     public
-    void onCodecCreated ( ICodec <N, A, G> codec ) {
+    void onCodecCreated ( ICodec codec ) {
         IDecoder.super.onCodecCreated(codec);
     }
-
-    private final IImage<A> image;
 
     /**
      *
      */
     protected
-    Decoder ( IImage  <A> image ) {
-        this.image = image;
+    Decoder ( IImage image ) {
+        this.originalImage = image;
     }
 
-    @SuppressWarnings("unchecked")
     public static
-    <N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-    IDecoder <N, A, G> create ( @NotNull EPartitionScheme scheme, Class <?>[] paramTypes, Object... params )
+    IDecoder create ( EPartitionScheme scheme, Class <?>[] paramTypes, Object... params )
             throws ReflectiveOperationException {
 
-        return (IDecoder <N, A, G>) Utils.create(
+        return (IDecoder) Utils.create(
                 scheme.getDecoderClassName(),
                 null,
                 paramTypes,
@@ -53,36 +49,23 @@ class Decoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
 
     /**
      *
-     * @return
      */
     public
-    IImage<A> decode ( FCImageModel <N, A, G> fractalModel ) {
-        final Map <Vertex, IImage<A>> simpleModel = new HashMap <>();
+    IImage decode ( String fileName ) throws ValueError, IOException {
+        FractalReader reader=new FractalReader(fileName);
+        FCImageModel model = reader.readModel();
+        for (int i = 0; i < NUMBER_OF_DECODER_ITERATIONS; i++) {
+            for (ImageTransform transform : compressedImage.getTransforms()) {
+int[] transformation= dihedralAffineTransforms[ transform.dihedralAffineTransformIndex];
 
-        int blockWidth = fractalModel.getModel().keySet().iterator().next().getWidth();
-        int blockHeight = fractalModel.getModel().keySet().iterator().next().getHeight();
-
-        int maxWidth = 0;
-        int maxHeight = 0;
-
-        for (IImage<A> domain : fractalModel.getModel().keySet()) {
-            for (ImageTransform <? extends IAddress<A>, G> transform : fractalModel.getModel().get(domain).keySet()) {
-                for (Vertex vertex : fractalModel.getModel().get(domain).get(transform)) {
-                    simpleModel.put(vertex, domain);///fixme
-                    if (maxWidth < vertex.getX()) {
-                        maxWidth = (int) vertex.getX();
-                    }
-                    if (maxHeight < vertex.getY()) {
-                        maxHeight = (int) vertex.getY();
-                    }
-                }
+Mat transformationMatrix = dihedralAffineTransforms[ transform.dihedralAffineTransformIndex];
+                originalImage = transform.transform(
+                        originalImage,
+//                        ;//applyTransformOn(originalImage, range, domainSize)
             }
         }
 
-        int imgWidth = ++maxWidth * blockWidth;
-        int imgHeight = ++maxHeight * blockHeight;
-
-        return image;
+        return originalImage;
     }
 
     /**
@@ -91,12 +74,10 @@ class Decoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
      */
     @Override
     public
-    void saveModel ( String filename, FCImageModel <N, A, G> fractalModel ) {
-        FractalWriter <N, A, G> writer = new FractalWriter <>(
-                new File(filename),
-                fractalModel.getImageInfo());
-        writer.writeModel(fractalModel);
-        writer.close();
+    void saveModel ( String filename, FCImageModel fractalModel ) throws Exception {
+        try (FractalWriter writer = new FractalWriter(filename, fractalModel)) {
+            writer.writeModel(O,fractalModel);
+        }
     }
 
     /**
@@ -112,7 +93,15 @@ class Decoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bi
      * @return
      */
     public
-    IImage<A> getImage () {
-        return image;
+    IImage getImage () {
+        return originalImage;
+    }
+
+    /**
+     * @param compressedImage
+     */
+    public
+    void setCompressedImage ( ICompressedImage compressedImage ) {
+        this.compressedImage = compressedImage;
     }
 }

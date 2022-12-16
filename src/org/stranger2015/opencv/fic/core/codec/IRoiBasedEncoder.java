@@ -10,19 +10,19 @@ import java.util.List;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-interface IRoiBasedEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends IEncoder <N, A, G> {
+interface IRoiBasedEncoder<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends IEncoder <N> {
     /**
      * @param image
      * @param bounds
      * @return
      * @throws ValueError
      */
-    List <IImageBlock <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds )
+    List <IImageBlock > segmentImage ( IImage image, List <Rectangle> bounds )
             throws ValueError;
 
     /**
@@ -31,7 +31,7 @@ interface IRoiBasedEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>,
      * @throws ValueError
      */
     default
-    List <IImageBlock <A>> segmentImage ( IImage <A> image ) throws ValueError {
+    List <IImageBlock > segmentImage ( IImage image ) throws ValueError {
         return segmentImage(image, List.of());
     }
 
@@ -41,7 +41,7 @@ interface IRoiBasedEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>,
      * @param blockHeight
      * @throws ValueError
      */
-    void segmentRegion ( IImageBlock <A> roi, int blockWidth, int blockHeight ) throws ValueError;
+    void segmentRegion ( IImageBlock  roi, int blockWidth, int blockHeight ) throws ValueError;
 
     /**
      * @param image
@@ -49,9 +49,9 @@ interface IRoiBasedEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>,
      */
     @Contract("_ -> param1")
     default
-    IImageBlock <A> iterateRegions ( List <IImageBlock <A>> regions ) throws ValueError {
-        IImageBlock <A> imageBlock = null;
-        for (IImageBlock <A> region : regions) {
+    IImageBlock  iterateRegions ( List <IImageBlock > regions ) throws ValueError {
+        IImageBlock  imageBlock = null;
+        for (IImageBlock  region : regions) {
             imageBlock = iterateRangeBlocks(region, region.getRangeBlocks());
 
         }
@@ -65,18 +65,18 @@ interface IRoiBasedEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>,
      * @throws ValueError
      */
     default
-    List <List <IImageBlock <A>>> handleRegionList ( List <IImageBlock <A>> regions )
+    List <List <IImageBlock >> handleRegionList ( List <IImageBlock > regions )
             throws ValueError {
 
-        List <List <IImageBlock <A>>> list = new ArrayList <>();
-        for (IImageBlock <A> roi : regions) {
-            IImage <A> roiImage = roi;
+        List <List <IImageBlock >> list = new ArrayList <>();
+        for (IImageBlock  roi : regions) {
+            IImage roiImage = roi;
             /*
              * Normalization. Before tiling the image, pass it throw a set of filters.
              * This might improve results, if used wisely.
              */
-            for (IImageFilter <A> filter : getFilters()) {
-                roi = (IImageBlock <A>) filter.filter(roiImage);
+            for (IImageFilter  filter : getFilters()) {
+                roi = (IImageBlock ) filter.filter(roiImage);
             }
 //            list.add(imageBlockGenerator.generateRangeBlocks(
 //                    roi,

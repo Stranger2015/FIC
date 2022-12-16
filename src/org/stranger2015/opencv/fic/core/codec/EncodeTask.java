@@ -1,8 +1,8 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.stranger2015.opencv.fic.core.*;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.utils.BitBuffer;
+import org.stranger2015.opencv.fic.core.EPartitionScheme;
+import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.fic.core.Task;
 
 import java.util.List;
 
@@ -10,10 +10,9 @@ import java.util.List;
  *
  */
 public
-class EncodeTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends Task <N, A, G> {
+class EncodeTask extends Task {
 
-    protected final IEncoder <N, A, G> encoder;
+    protected final IEncoder encoder;
 
     /**
      * @param filename
@@ -22,9 +21,9 @@ class EncodeTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
     public
     EncodeTask ( String filename,
                  EPartitionScheme scheme,
-                 ICodec <N, A, G> codec,
-                 List <Task <N, A, G>> tasks
-               /*  IEncoder <N, A, G> encoder*/ ) {
+                 ICodec codec,
+                 List <Task> tasks
+            /*  IEncoder <N> encoder*/ ) {
 
         super(filename, scheme, codec, tasks);
 
@@ -38,7 +37,7 @@ class EncodeTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
     @SuppressWarnings("unchecked")
     @Override
     protected
-    IImage<A> execute ( String filename ) throws ValueError {
+    IImage execute ( String filename ) throws Exception {
         return encoder.encode(super.execute(filename));
     }
 
@@ -46,7 +45,7 @@ class EncodeTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      * @return
      */
     public
-    IEncoder <N, A, G> getEncoder () {
+    IEncoder getEncoder () {
         return encoder;
     }
 }

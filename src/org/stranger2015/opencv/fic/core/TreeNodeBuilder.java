@@ -5,7 +5,6 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
 import org.stranger2015.opencv.fic.utils.Point;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,37 +12,37 @@ import java.util.Map;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  
  * @param <G>
  */
 public abstract
-class TreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>,  G extends BitBuffer>
-        implements ITreeNodeBuilder <N, A, G> {
+class TreeNodeBuilder<N extends TreeNode <N>>
+        implements ITreeNodeBuilder <N> {
 
     /**
      * maps block coordinate (point(x,y)) to image blk instance
      */
-    protected final Map <Point, IImageBlock <A>> mapBlockCoordToBlock = new DualHashBidiMap <>();
+    protected final Map <Point, IImageBlock > mapBlockCoordToBlock = new DualHashBidiMap <>();
 
-    protected final List <IImageBlock <A>> blockList = new ArrayList <>();
+    protected final List <IImageBlock > blockList = new ArrayList <>();
 
-    public final IImage <A> image;
+    public final IImage image;
     private final IIntSize rangeSize;
     private final IIntSize domainSize;
-    private final IEncoder <N, A, G> encoder;
+    private final IEncoder encoder;
 
-    public final Library <A> library;
+    public final Library  library;
 
-    protected TreeNode <N, A, G> lastNode;
+    protected TreeNode <N> lastNode;
 
     public
-    TreeNodeBase <N, A, G> getLastNodeBase () {
+    TreeNodeBase <N> getLastNodeBase () {
         return lastNodeBase;
     }
 
-    protected TreeNodeBase <N, A, G> lastNodeBase;
-    protected LeafNode <N, A, G> lastLeafNode;
+    protected TreeNodeBase <N> lastNodeBase;
+    protected LeafNode <N> lastLeafNode;
 
     /**
      * @param image
@@ -53,11 +52,11 @@ class TreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>,  G e
      * @param library
      */
     protected
-    TreeNodeBuilder ( IImage <A> image,
+    TreeNodeBuilder ( IImage image,
                       IIntSize rangeSize,
                       IIntSize domainSize,
-                      IEncoder <N, A, G> encoder,
-                      Library <A> library ) {
+                      IEncoder encoder,
+                      Library  library ) {
 
         this.image = image;
         this.rangeSize = rangeSize;
@@ -70,7 +69,7 @@ class TreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>,  G e
      * @return
      */
     public
-    Library <A> getLibrary () {
+    Library  getLibrary () {
         return library;
     }
 
@@ -94,7 +93,7 @@ class TreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>,  G e
      * @return
      */
     public
-    IEncoder <N, A, G> getEncoder () {
+    IEncoder getEncoder () {
         return encoder;
     }
 
@@ -103,5 +102,5 @@ class TreeNodeBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>,  G e
      */
     @Override
     public abstract
-    ITreeNodeBuilder <N, A, G> newInstance ();
+    ITreeNodeBuilder <N> newInstance ();
 }

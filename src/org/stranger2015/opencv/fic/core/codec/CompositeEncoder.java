@@ -6,7 +6,6 @@ import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
 import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.fic.transform.ScaleTransform;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,18 +14,18 @@ import java.util.Set;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class CompositeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends Encoder <N, A, G> {
+class CompositeEncoder
+        extends Encoder{
 
 
     /**
      *
      */
-    protected final List <IEncoder <N, A, G>> pipeline = new ArrayList <>();
+    protected final List <IEncoder> pipeline = new ArrayList <>();
 
     /**
      * @param scheme
@@ -42,16 +41,16 @@ class CompositeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
     @SafeVarargs
     protected
     CompositeEncoder ( EPartitionScheme scheme,
-                       ITreeNodeBuilder <N, A, G> nodeBuilder,
-                       IPartitionProcessor <N, A, G> partitionProcessor,
-                       ISearchProcessor <N, A, G> searchProcessor,
-                       ScaleTransform <A, G> scaleTransform,
-                       ImageBlockGenerator <N, A, G> imageBlockGenerator,
-                       IDistanceator <A> comparator,
-                       Set <ImageTransform <A, G>> imageTransforms,
-                       Set <IImageFilter <A>> imageFilters,
-                       FCImageModel <N, A, G> fractalModel,
-                       IEncoder <N, A, G>... encoders ) {
+                       ITreeNodeBuilder <?> nodeBuilder,
+                       IPartitionProcessor partitionProcessor,
+                       ISearchProcessor searchProcessor,
+                       ScaleTransform  scaleTransform,
+                       ImageBlockGenerator<?> imageBlockGenerator,
+                       IDistanceator  comparator,
+                       Set <ImageTransform> imageTransforms,
+                       Set <IImageFilter > imageFilters,
+                       FCImageModel fractalModel,
+                       IEncoder ... encoders ) {
 
         super(
                 scheme,
@@ -85,18 +84,17 @@ class CompositeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
      */
     @Override
     public
-    IPartitionProcessor <N, A, G> createPartitionProcessor0 ( ITiler <N, A, G> tiler ) {
+    IPartitionProcessor <N> createPartitionProcessor0 ( ITiler <N> tiler ) {
         return getPartitionProcessor().instance(tiler);
     }
 
     /**
      * @param image
-     * @return
      */
     @Override
     public
-    IImage <A> doEncode ( IImage <A> image ) {
-        IImage <A> image1 = image;
+    void doEncode ( IImage image ) {
+        IImage image1 = image;
         for (int i = 0; i < pipeline.size(); i++) {
             image1 = pipeline.get(0).doEncode(image1);
         }
@@ -112,7 +110,7 @@ class CompositeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
      */
     @Override
     public
-    List <IImageBlock <A>> segmentImage ( IImage <A> image, List <Rectangle> bounds ) throws ValueError {
+    List <IImageBlock > segmentImage ( IImage image, List <Rectangle> bounds ) throws ValueError {
         return null;
     }
 
@@ -122,7 +120,7 @@ class CompositeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
      */
     @Override
     public
-    IPartitionProcessor <N, A, G> doCreatePartitionProcessor ( ITiler <N, A, G> tiler ) {
+    IPartitionProcessor <N> doCreatePartitionProcessor ( ITiler <N> tiler ) {
         return createPartitionProcessor0(tiler);
     }
 
@@ -131,7 +129,7 @@ class CompositeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
      */
     @Override
     public
-    void add ( TreeNode <N, A, G> node ) {
+    void add ( TreeNode <N> node ) {
 
     }
 
@@ -140,7 +138,7 @@ class CompositeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
      */
     @Override
     public
-    void addLeafNode ( TreeNode.LeafNode <N, A, G> node ) {
+    void addLeafNode ( TreeNode.LeafNode <N> node ) {
 
     }
 
@@ -149,7 +147,7 @@ class CompositeEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
      */
     @Override
     public
-    void addLeafNode ( TreeNodeBase <N, A, G> node ) {
+    void addLeafNode ( TreeNodeBase <N> node ) {
 
     }
 }

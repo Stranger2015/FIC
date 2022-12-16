@@ -8,16 +8,16 @@ import java.util.List;
 import static java.util.stream.IntStream.iterate;
 
 /**
- * @param <A>
+ * @param
  */
 public
-interface IAddressMath<A extends IAddress <A>> {
+interface IAddressMath {
 
     /**
      * @param table
      * @return
      */
-   IAddress<A> applyTable(int[][] table);
+   IAddress applyTable(int[][] table);
 
     /**
      *
@@ -26,7 +26,7 @@ interface IAddressMath<A extends IAddress <A>> {
      * @return
      */
     default
-    IAddress <A> plus ( IAddress <A> address1, IAddress <A> address2 ) throws ValueError {
+    IAddress  plus ( IAddress  address1, IAddress  address2 ) throws ValueError {
          address1.getPlusTable();
 
         return IAddress.valueOf(-1, inputImage.getWidth(), i2);//fixme
@@ -47,14 +47,14 @@ interface IAddressMath<A extends IAddress <A>> {
      * @param address2
      * @return
      */
-    IAddress <A> minus ( IAddress <A> address1, IAddress <A> address2 ) throws ValueError;
+    IAddress  minus ( IAddress  address1, IAddress  address2 ) throws ValueError;
 
     /**
      * @param address1
      * @param address2
      * @return
      */
-    IAddress <A> mult ( IAddress <A> address1, IAddress <A> address2 ) throws ValueError;
+    IAddress  mult ( IAddress  address1, IAddress  address2 ) throws ValueError;
 
     default
     Point mult ( Point point1, int number ) {

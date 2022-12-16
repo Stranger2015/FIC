@@ -8,20 +8,20 @@ import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class AlterBinTreePartitionProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends BinTreePartitionProcessor <N, A, G> {
+class AlterBinTreePartitionProcessor<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends BinTreePartitionProcessor <N> {
 
     /**
      * @param tiler
      */
     public
-    AlterBinTreePartitionProcessor ( ITiler <N, A, G> tiler,
-                                     ImageBlockGenerator <N, A, G> imageBlockGenerator,
-                                     ITreeNodeBuilder <N, A, G> nodeBuilder ) {
+    AlterBinTreePartitionProcessor ( ITiler <N> tiler,
+                                     ImageBlockGenerator <N> imageBlockGenerator,
+                                     ITreeNodeBuilder <N> nodeBuilder ) {
 
         super(tiler, imageBlockGenerator, nodeBuilder);
     }
@@ -32,9 +32,9 @@ class AlterBinTreePartitionProcessor<N extends TreeNode <N, A, G>, A extends IAd
      */
     @Override
     public
-    IPartitionProcessor <N, A, G> instance ( ITiler <N, A, G> tiler,
-                                             ImageBlockGenerator <N, A, G> imageBlockGenerator,
-                                             ITreeNodeBuilder <N, A, G> nodeBuilder ) {
+    IPartitionProcessor <N> instance ( ITiler <N> tiler,
+                                             ImageBlockGenerator <N> imageBlockGenerator,
+                                             ITreeNodeBuilder <N> nodeBuilder ) {
 
         return new AlterBinTreePartitionProcessor <>(tiler,imageBlockGenerator,nodeBuilder);
     }

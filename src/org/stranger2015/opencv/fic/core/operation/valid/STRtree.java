@@ -116,7 +116,7 @@ class STRtree
      * Creates the parent level for the given child level. First, orders the items
      * by the x-values of the midpoints, and groups them into vertical slices.
      * For each slice, orders the items by the y-values of the midpoints, and
-     * group them into runs of size M (the node capacity). For each run, creates
+     * group them into runs of size IImage (the node capacity). For each run, creates
      * a new (parent) node.
      */
     protected

@@ -3,23 +3,22 @@ package org.stranger2015.opencv.fic.core;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.fic.core.codec.ICodec;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  
  * @param <G>
  */
 public
-class TreeNodeTask<N extends TreeNode <N, A, G>, A extends IAddress <A>,G extends BitBuffer>
-        extends Task <N, A, G> {
+class TreeNodeTask
+        extends Task {
 
-    private final List <LeafNode <N, A, G>> leaves = new ArrayList <>();
-    private final List <TreeNode <N, A, G>> nodes = new ArrayList <>();
+    private final List <LeafNode <?>> leaves = new ArrayList <>();
+    private final List <TreeNode <?>> nodes = new ArrayList <>();
 
     /**
      * @param scheme
@@ -29,14 +28,14 @@ class TreeNodeTask<N extends TreeNode <N, A, G>, A extends IAddress <A>,G extend
     public
     TreeNodeTask (
                    EPartitionScheme scheme,
-                   ICodec <N, A, G> codec,
-                   List <Task <N, A, G>> tasks
+                   ICodec codec,
+                   List <Task> tasks
     ) {
         super(null, scheme, codec, tasks);
     }
 //
 //    public
-//    TreeNodeTask ( EPartitionScheme scheme, List <IImageBlock <A>> domainPool, List <LeafNode<N, A, G>> leaves ) {
+//    TreeNodeTask ( EPartitionScheme scheme, List <IImageBlock > domainPool, List <LeafNode<N>> leaves ) {
 //        super(scheme,domainPool,leaves);
 //    }
 

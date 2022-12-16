@@ -9,14 +9,14 @@ import java.util.List;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  
  * @param <G>
  */
 public
-class MergeImageTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
+class MergeImageTask<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
 
-        extends Task <N, A, G> {
+        extends Task <N> {
 
     /**
      * @param filename
@@ -26,8 +26,8 @@ class MergeImageTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
     public
     MergeImageTask ( String filename,
                      EPartitionScheme scheme,
-                     ICodec <N, A, G> codec,
-                     List <Task <N, A, G>> tasks ) {
+                     ICodec <N> codec,
+                     List <Task <N>> tasks ) {
 
         super(filename, scheme, codec, tasks);
     }
@@ -38,10 +38,10 @@ class MergeImageTask<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
     @SuppressWarnings("unchecked")
     @Override
     public
-    void onPostprocess ( IImageProcessor <N, A, G> processor, CompressedImage <A> outputImage ) {
+    void onPostprocess ( IImageProcessor <N> processor, CompressedImage  outputImage ) {
         super.onPostprocess(processor, outputImage);
 
-        outputImage = (CompressedImage <A>) inputImage.merge(layers, outputImage);
+        outputImage = (CompressedImage ) inputImage.merge(layers, outputImage);
         saveImage(filename, outputImage);
     }
 }

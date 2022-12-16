@@ -64,12 +64,12 @@ interface ICoordinateSequence
     int Z = 2;
 
     /**
-     * Standard ordinate index value for, where M is 3.
+     * Standard ordinate index value for, where IImage is 3.
      *
      * <p>This constant assumes XYZM coordinate sequence definition, please check this assumption
      * using {@link #getDimension()} and {@link #getMeasures()} before use.
      */
-    int M = 3;
+    int IImage = 3;
 
     /**
      * Returns the dimension (number of ordinates in each coordinate) for this sequence.
@@ -207,10 +207,10 @@ interface ICoordinateSequence
     }
 
     /**
-     * Returns ordinate M of the specified coordinate if available.
+     * Returns ordinate IImage of the specified coordinate if available.
      *
      * @param index the coordinate index in the sequence
-     * @return the value of the M ordinate in the index'th coordinate, or Double.NaN if not defined.
+     * @return the value of the IImage ordinate in the index'th coordinate, or Double.NaN if not defined.
      */
     default
     double getM ( int index ) {

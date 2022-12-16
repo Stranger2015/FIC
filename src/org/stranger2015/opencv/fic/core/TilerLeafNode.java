@@ -3,18 +3,17 @@ package org.stranger2015.opencv.fic.core;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class TilerLeafNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends LeafNode <N, A, G> {
+class TilerLeafNode<N extends TreeNode <N>>
+        extends LeafNode <N> {
 
-    public final ITiler <N, A, G> tiler;
+    public final ITiler tiler;
 
     /**
      * @param parent
@@ -23,7 +22,7 @@ class TilerLeafNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exte
      * @param tiler
      */
     public
-    TilerLeafNode ( TreeNodeBase <N, A, G> parent, EDirection quadrant, Rectangle rect, ITiler<N, A, G> tiler)
+    TilerLeafNode ( TreeNodeBase <N> parent, EDirection quadrant, Rectangle rect, ITiler tiler )
             throws ValueError {
 
         super(parent, quadrant, rect);

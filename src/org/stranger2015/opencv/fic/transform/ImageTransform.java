@@ -1,13 +1,20 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
+//import org.jetbrains.annotations.Contract;
+//import org.jetbrains.annotations.NotNull;
+//import org.opencv.core.Mat;
+//import org.opencv.core.Size;
+//import org.opencv.imgproc.Imgproc;
+
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-import org.stranger2015.opencv.fic.core.*;
-import org.stranger2015.opencv.utils.BitBuffer;
+import org.stranger2015.opencv.fic.core.IAddress;
+import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.fic.core.IImageBlock;
+import org.stranger2015.opencv.fic.core.ValueError;
 
+import static org.stranger2015.opencv.fic.core.EAddressKind.ORDINARY;
 import static org.stranger2015.opencv.fic.core.IAddress.valueOf;
 import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
 
@@ -27,9 +34,8 @@ import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
  * [   0    0    1   ]     [  0   0     1  ]
  */
 public
-class ImageTransform<A extends IAddress <A>, G extends BitBuffer>
-        implements ITransform <A, G> {
-
+class ImageTransform implements ITransform {
+    private IImageBlock image;
     private int originalDomainX;
     private int originalDomainY;
 
@@ -39,8 +45,12 @@ class ImageTransform<A extends IAddress <A>, G extends BitBuffer>
      * @param address
      */
     public
-    ImageTransform ( IImage <A> image, EInterpolationType type, IAddress <A> address ) {
-        this(image, type, address, 0, 1.0, -1);
+    ImageTransform ( IImage image,
+                     EInterpolationType type,
+                     IAddress address ) {
+        this(address, 0, 1.0, -1);
+        this.image = (IImageBlock) image;
+        this.type = type;
     }
 
     /**
@@ -48,16 +58,103 @@ class ImageTransform<A extends IAddress <A>, G extends BitBuffer>
      */
     public
     ImageTransform () throws ValueError {
-        address = valueOf(0, EAddressKind.ORDINARY);//TODO squiral == SIP
+        address = valueOf(0, ORDINARY);//TODO squiral == SIP
         outputImage = null;
         type = BILINEAR;
+        image = null;
+    }
+
+    /**
+     * @param image
+     * @param brightnessOffset
+     * @param contrastScale
+     * @param dihedralAffineTransformIndex
+     */
+//    @Contract(pure = true)
+    public
+    ImageTransform ( IAddress address,
+                     int brightnessOffset,
+                     double contrastScale,
+                     int dihedralAffineTransformIndex
+    ) {
+        this.address = address;
+        this.brightnessOffset = brightnessOffset;
+        this.contrastScale = contrastScale;
+        this.dihedralAffineTransformIndex = dihedralAffineTransformIndex;
+    }
+
+    /**
+     * @param image
+     * @param type
+     * @param address
+     * @param brightnessOffset
+     * @param contrastScale
+     * @param dihedralAffineTransformerIndex
+     * @throws ValueError
+     */
+//    @Contract(pure = true)
+    public
+    ImageTransform ( IImageBlock image,
+                     EInterpolationType type,
+                     IAddress address,
+                     int brightnessOffset,
+                     double contrastScale,
+                     int dihedralAffineTransformerIndex ) throws ValueError {
+        this(
+                address,
+                brightnessOffset,
+                contrastScale,
+                dihedralAffineTransformerIndex
+        );
+
+        this.image = image;
+        this.type = type;
+    }
+
+    /**
+     * @param x
+     * @param y
+     * @param brightnessOfs
+     * @param contrastScale
+     * @param dAti
+     * @return
+     */
+//    @Contract("_, _, _, _, _ -> new")
+    public static// @NotNull
+    ImageTransform create ( IAddress address, int brightnessOfs, double contrastScale, int dAti ) throws ValueError {
+       /* @NotNull*/
+
+        return new AffineTransform(
+                 null,
+                 BILINEAR,
+                 address,
+                 brightnessOfs,
+                 contrastScale,
+                 dAti
+         ) {
+         };
+    }
+
+    /**
+     * @param x
+     * @param y
+     * @param brightnessOfs
+     * @param contrastScale
+     * @param dAti
+     * @return
+     */
+    public static
+    ImageTransform create ( int x, int stride, int y, int brightnessOfs, double contrastScale, int dAti )
+            throws ValueError {
+
+        return create(IAddress.valueOf(x, stride, y), brightnessOfs, contrastScale, dAti);
     }
 
     /**
      * @param address
      */
     public
-    void setAddress ( @NotNull IAddress <A> address ) {
+    void setAddress ( IAddress address ) {
         this.address = address;
     }
 
@@ -93,84 +190,83 @@ class ImageTransform<A extends IAddress <A>, G extends BitBuffer>
         return originalDomainY;
     }
 
+    public
+    IImageBlock getImage () {
+        return image;
+    }
+
     /**
      *
      */
-    enum Masks  {
-        ADDRESS_MASK(0b1111_1111_1111_1111_0000_0000_0000_0000),
-        BRIGHTNESS_OFFSET_MASK(0b0000_0000_0000_0000_1111_1000_0000_0000),
-        CONTRAST_SCALE_MASK(0b0000_0000_0000_0000_0000_0111_1111_0000),
-        DIHEDRAL_TRANSFORM_MASK(0b0000_0000_0000_0000_0000_0000_0000_1110),
+    public
+    enum Masks {
+        X_MASK(/*------------------->*/0b1111_1111_0000_0000_0000_0000_0000_0000, 0, 8),
+        Y_MASK(/*------------------->*/0b0000_0000_1111_1111_0000_0000_0000_0000, 8, 8),
+        BRIGHTNESS_OFS_MASK(/*------>*/0b0000_0000_0000_0000_1111_1000_0000_0000, 16, 5),
+        CONTRAST_SCALE_MASK(/*------>*/0b0000_0000_0000_0000_0000_0111_1111_0000, 21, 7),
+        DIHEDRAL_TRANSFORM_MASK(/*-->*/0b0000_0000_0000_0000_0000_0000_0000_1110, 28, 3),
         ;
-
+        private final int shift;
+        private final int length;
         private final int mask;
 
         /**
+         * @param i
+         * @param i1
          * @param mask
+         * @param shift
+         * @param length
          */
-        @Contract(pure = true)
-        Masks ( int mask ) {
+//        @Contract(pure = true)
+        Masks ( int mask, int shift, int length ) {
             this.mask = mask;
+            this.shift = shift;
+            this.length = length;
         }
 
         /**
          * @return
          */
-        @Contract(pure = true)
+//        @Contract(pure = true)
         public
         int getMask () {
             return mask;
         }
+
+        public
+        int getShift () {
+            return shift;
+        }
+
+        public
+        int getLength () {
+            return length;
+        }
     }
 
-    protected final IImage <A> outputImage;
+    protected IImage outputImage;
+    protected EInterpolationType type;
 
-    protected final EInterpolationType type;
-
-    protected IAddress <A> address;//16 bits        >>> 16
+    protected IAddress address;//16 bits        >>> 16
     public int brightnessOffset;//5 bits             >>> 11
     public double contrastScale; //0..255, 7 bits   >>> 4
     public int dihedralAffineTransformIndex;//8 matrices, 3 bits >>> 1
 
     /**
      * @param image
-     * @param brightnessOffset
-     * @param contrastScale
-     * @param dihedralAffineTransformIndex
-     */
-//    @SuppressWarnings("unchecked")
-    public
-    ImageTransform ( IImage <A> image,
-                     EInterpolationType type,
-                     IAddress <A> address,
-                     int brightnessOffset,
-                     double contrastScale,
-                     int dihedralAffineTransformIndex
-    ) {
-        this.type = type;
-        this.address = address;
-        this.brightnessOffset = brightnessOffset;
-        this.contrastScale = contrastScale;
-        this.dihedralAffineTransformIndex = dihedralAffineTransformIndex;
-
-        outputImage = new CompressedImage <>(image);
-    }
-
-    /**
-     * @param image
      * @param address
-     * @param <A>
+     * @param
      * @param <G>
      * @return
      */
-    @Contract("_, _ -> new")
+//    @Contract("_, _ -> new")
     @SuppressWarnings("unchecked")
     public static
-    <A extends IAddress <A>, G extends BitBuffer>
-    @NotNull ImageTransform <A, G> create ( IImage <A> image, IAddress <A> address ) {
-        return new NoneTransform <>(
+//    @NotNull
+    ImageTransform create ( IImage image, IAddress address ) throws ValueError {
+        return new NoneTransform(
                 image,
-                null,
+                BILINEAR,
                 address,
                 0,
                 1,
@@ -185,9 +281,9 @@ class ImageTransform<A extends IAddress <A>, G extends BitBuffer>
      */
     @Override
     public
-    IImage <A> transform ( IImage <A> inputImage,
-                           Mat transformMatrix,
-                           EInterpolationType type ) {
+    IImage transform ( IImage inputImage,
+                       Mat transformMatrix,
+                       EInterpolationType type ) {
 
         return ITransform.super.transform(inputImage, transformMatrix, type);
     }
@@ -196,7 +292,7 @@ class ImageTransform<A extends IAddress <A>, G extends BitBuffer>
      * @return
      */
     public
-    IImage <A> getOutputImage () {
+    IImage getOutputImage () {
         return outputImage;
     }
 
@@ -206,10 +302,9 @@ class ImageTransform<A extends IAddress <A>, G extends BitBuffer>
      * @param interpolationType
      * @return
      */
-//    @SuppressWarnings("unchecked")
     @Override
     public final
-    IImage <A> warpAffine ( IImage <A> inputImage, Mat transformMatrix, EInterpolationType interpolationType ) {
+    IImage warpAffine ( IImage inputImage, Mat transformMatrix, EInterpolationType interpolationType ) {
         Imgproc.warpAffine(
                 inputImage.getMat(),
                 outputImage.getMat(),
@@ -224,34 +319,7 @@ class ImageTransform<A extends IAddress <A>, G extends BitBuffer>
      */
     @Override
     public
-    IAddress <A> getAddress () {
+    IAddress getAddress () {
         return address;
-    }
-
-    /**
-     * @param transform
-     */
-    @Override
-    public final
-    void writeBits ( G bb, ImageTransform <A, G> transform ) {
-        bb.writeBits(transform.dihedralAffineTransformIndex, 3);
-        bb.writeBits((long) transform.contrastScale * 255, 7);
-        bb.writeBits(transform.brightnessOffset, 5);
-        bb.writeBits(transform.address.getIndex(), 16);
-    }
-
-    /**
-     * @param bb
-     * @return
-     */
-    @Override
-    public final
-    ImageTransform <A, G> readBits ( G bb ) throws ValueError {
-        address.newInstance((int) bb.readBits(16));
-        brightnessOffset = (int) bb.readBits(5);
-        contrastScale = bb.readBits(7) / 255.0;
-        dihedralAffineTransformIndex = (int) bb.readBits(3);
-
-        return this;
     }
 }

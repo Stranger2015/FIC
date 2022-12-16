@@ -6,20 +6,20 @@ import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  
  * @param <G>
  */
 public
-class SipbVrCodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends SipCodec<N, A, G> {
+class SipbVrCodec<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends SipCodec<N> {
 
     /**
      * @param scheme
      * @param action
      */
     public
-    SipbVrCodec ( EPartitionScheme scheme, EncodeTask<N, A, G> action ) {
+    SipbVrCodec ( EPartitionScheme scheme, EncodeTask<N> action ) {
         super(scheme, action);
     }
 }

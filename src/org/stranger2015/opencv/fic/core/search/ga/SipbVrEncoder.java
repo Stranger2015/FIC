@@ -11,13 +11,13 @@ import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  
  * @param <G>
  */
 public
-class SipbVrEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends SipEncoder<N, A, G> {
+class SipbVrEncoder
+        extends SipEncoder {
 
     /**
      * @param inputImage
@@ -25,7 +25,7 @@ class SipbVrEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exte
      * @param domainSize
      */
     public
-    SipbVrEncoder ( IImage<A> inputImage, IIntSize rangeSize, IIntSize domainSize ) {
+    SipbVrEncoder ( IImage inputImage, IIntSize rangeSize, IIntSize domainSize ) {
         super(inputImage, rangeSize, domainSize);
     }
 
@@ -34,8 +34,8 @@ class SipbVrEncoder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exte
      */
     @Override
     public
-    ITiler <N, A, G> createPartition0 () {
-        return new SipTiler <>(
+    ITiler createPartition0 () {
+        return new SipTiler(
                 getImage(),
                 rangeSize,
                 domainSize,

@@ -2,21 +2,19 @@ package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.NotNull;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
 
 public
-interface ITree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer> {
+interface ITree<N extends TreeNode <N>> {
     @SuppressWarnings("unchecked")
     static
-    <N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-    @NotNull Tree <N,A,G> create ( Class <?> clazz, TreeNode <N, A, G> node, IImageBlock <A> imageBlock ) {
-        @NotNull Tree <N, A, G> result;
+    <N extends TreeNode <N>>
+    @NotNull Tree < N> create ( Class <?> clazz, TreeNode <N> node, IImageBlock  imageBlock ) {
+        @NotNull Tree <N> result;
         int rc = 0;
         try {
-            Tree <N, A, G> tree = (Tree <N, A, G>) clazz.getDeclaredConstructor()
-                    .newInstance(node, imageBlock);
+            Tree <N> tree = (Tree <N>) clazz.getDeclaredConstructor().newInstance(node, imageBlock);
 
             tree.initialize(node, imageBlock);
             result = tree;
@@ -36,11 +34,11 @@ interface ITree<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      * @return
      * @throws ValueError
      */
-    TreeNode <N, A, G> nodeInstance ( TreeNodeBase <N, A, G> parent, EDirection quadrant, IIntSize rect )
+    TreeNode <N> nodeInstance ( TreeNodeBase <N> parent, EDirection quadrant, IIntSize rect )
             throws ValueError;
 
     /**
      * @return
      */
-    List <TreeNode <N, A, G>> getNodes ();
+    List <TreeNode <N>> getNodes ();
 }

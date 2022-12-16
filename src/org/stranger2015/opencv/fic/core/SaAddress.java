@@ -1,12 +1,11 @@
  package org.stranger2015.opencv.fic.core;
 
-import org.stranger2015.opencv.fic.core.codec.EAddressKind;
-import org.stranger2015.opencv.fic.core.IAddress;
-import org.stranger2015.opencv.fic.utils.Point;
+ import org.stranger2015.opencv.fic.utils.Point;
 
-import static org.stranger2015.opencv.fic.core.codec.EAddressKind.*;
+ import static org.stranger2015.opencv.fic.core.EAddressKind.SPIRAL;
 
-/**
+
+ /**
  * sa addresses
  * 0,        1,      2,       3,      4,      5,      6
  * <p>
@@ -20,7 +19,7 @@ import static org.stranger2015.opencv.fic.core.codec.EAddressKind.*;
  * {  1,  0 } 6
  */
 public
-class SaAddress<A extends IAddress <A>> extends Address <A> {
+class SaAddress extends Address  {
 
     public final static int radix = 7;
 
@@ -48,7 +47,7 @@ class SaAddress<A extends IAddress <A>> extends Address <A> {
      * @param number
      */
     public
-    SaAddress ( long number ) {
+    SaAddress ( int number ) {
         super(number);
     }
 
@@ -60,18 +59,9 @@ class SaAddress<A extends IAddress <A>> extends Address <A> {
         super(0);
     }
 
-    /**
-     * @param x
-     * @param y
-     */
-    public
-    SaAddress ( int x, int y ) {
-        this((long) x * y);//x+rowStride
-    }
-
     public
     SaAddress ( int row, int stride, int col ) {
-        super(row, stride, col);
+        super(row);
     }
 
     /**
@@ -112,7 +102,7 @@ class SaAddress<A extends IAddress <A>> extends Address <A> {
      */
     @Override
     public
-    IAddress <A> newInstance ( long address, int offset ) throws ValueError {
+    IAddress  newInstance ( long address, int offset ) throws ValueError {
         return super.newInstance(address, offset);
     }
 
@@ -122,7 +112,7 @@ class SaAddress<A extends IAddress <A>> extends Address <A> {
      */
     @Override
     public
-    IAddress <A> applyTable ( int[][] table ) {
+    IAddress  applyTable ( int[][] table ) {
         return null;
     }
 

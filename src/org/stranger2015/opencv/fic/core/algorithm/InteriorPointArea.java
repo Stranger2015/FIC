@@ -319,7 +319,7 @@ public class InteriorPointArea {
             // Assert: segDX is non-zero, due to previous equality test
             double segDX = x1 - x0;
             double segDY = p1.getY() - p0.getY();
-            double m = segDY / segDX;
+            double IImage = segDY / segDX;
 
             return x0 + ((Y - p0.getY()) / m);
         }
@@ -377,7 +377,7 @@ public class InteriorPointArea {
       DD segDX = DD.valueOf(x1).selfSubtract(x0);
       // Assert: segDX is non-zero, due to previous equality test
       DD segDY = DD.valueOf(p1.getY()).selfSubtract(p0.getY());
-      DD m = segDY.divide(segDX);
+      DD IImage = segDY.divide(segDX);
       DD dy = DD.valueOf(Y).selfSubtract(p0.getY());
       DD dx = dy.divide(m);
       DD xInt = DD.valueOf(x0).selfAdd(dx);

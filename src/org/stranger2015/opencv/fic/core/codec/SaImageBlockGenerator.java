@@ -8,8 +8,8 @@ import org.stranger2015.opencv.utils.BitBuffer;
  *
  */
 public
-class SaImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends ImageBlockGenerator <N, A, G> {
+class SaImageBlockGenerator<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends ImageBlockGenerator <N> {
 
     /**
      * @param tiler
@@ -20,10 +20,10 @@ class SaImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>
      * @param domainSize
      */
     public
-    SaImageBlockGenerator ( IPartitionProcessor <N, A, G> partitionProcessor,
+    SaImageBlockGenerator ( IPartitionProcessor <N> partitionProcessor,
                             EPartitionScheme scheme,
-                            IEncoder <N, A, G> encoder,
-                            IImage <A> image,
+                            IEncoder <N> encoder,
+                            IImage image,
                             IIntSize rangeSize,
                             IIntSize domainSize ) {
 
@@ -41,10 +41,10 @@ class SaImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>
      */
     @Override
     public
-    HvBlockGenerator <N, A, G> newInstance ( IPartitionProcessor <N, A, G> partitionProcessor,
+    HvBlockGenerator <N> newInstance ( IPartitionProcessor <N> partitionProcessor,
                                                 EPartitionScheme scheme,
-                                                IEncoder <N, A, G> encoder,
-                                                IImage <A> image,
+                                                IEncoder <N> encoder,
+                                                IImage image,
                                                 IIntSize rangeSize,
                                                 IIntSize domainSize ) {
         return new SaImageBlockGenerator <>(

@@ -2,15 +2,14 @@ package org.stranger2015.opencv.fic.core.codec;
 
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-interface ITreeNodeBuilderFactory<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer> {
+interface ITreeNodeBuilderFactory<N extends TreeNode <N>> {
 
     /**
      * @param image
@@ -22,13 +21,16 @@ interface ITreeNodeBuilderFactory<N extends TreeNode <N, A, G>, A extends IAddre
      * @return
      */
     default
-    ITreeNodeBuilder <N, A, G> createBuilder ( IImageBlock <A> image,
-                                               EPartitionScheme scheme,
-                                               IIntSize rangeSize,
-                                               IIntSize domainSize,
-                                               IEncoder <N, A, G> encoder,
-                                               Library <A> library ) {
-        ITreeNodeBuilder <N, A, G> result = null;
+    ITreeNodeBuilder <N> createBuilder (
+            IImageBlock image,
+            EPartitionScheme scheme,
+            IIntSize rangeSize,
+            IIntSize domainSize,
+            IEncoder encoder,
+            Library library
+    ) {
+
+        ITreeNodeBuilder <N> result = null;
         switch (scheme) {
             case FIXED_SIZE:
                 break;
@@ -38,8 +40,8 @@ interface ITreeNodeBuilderFactory<N extends TreeNode <N, A, G>, A extends IAddre
                         rangeSize,
                         domainSize,
                         encoder,
-                        library, domainSize1);
-                break;
+                        library);
+            break;
             case DCT:
                 break;
             case CONST_SIZE_DOMAIN_POOL:
@@ -63,12 +65,12 @@ interface ITreeNodeBuilderFactory<N extends TreeNode <N, A, G>, A extends IAddre
             case TRIANGULAR:
                 break;
             case SPLIT_AND_MERGE_0:
-                result = new BushTreeNodeBuilder <>(
-                        image,
-                        rangeSize,
-                        domainSize,
-                        encoder,
-                        library);
+//                result = new BushTreeNodeBuilder <>(
+//                        image,
+//                        rangeSize,
+//                        domainSize,
+//                        encoder,
+//                        library);
                 break;
             case SPLIT_AND_MERGE_1:
                 break;
@@ -97,6 +99,7 @@ interface ITreeNodeBuilderFactory<N extends TreeNode <N, A, G>, A extends IAddre
             default:
                 throw new IllegalStateException("Unexpected value: " + scheme);
         }
+
         return result;
     }
 }

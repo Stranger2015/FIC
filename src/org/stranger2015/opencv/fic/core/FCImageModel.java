@@ -1,17 +1,9 @@
 package org.stranger2015.opencv.fic.core;
 
-import ar.com.hjg.pngj.ImageInfo;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfInt;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.core.codec.ICompressedImage;
-import org.stranger2015.opencv.fic.transform.ImageTransform;
-import org.stranger2015.opencv.fic.utils.GrayScaleImage;
-import org.stranger2015.opencv.fic.utils.Point;
 import org.stranger2015.opencv.utils.BitBuffer;
 
-import java.util.*;
-import java.util.Map.Entry;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * a fractal model represents the compressed form of the image.<br />
@@ -43,64 +35,24 @@ import java.util.Map.Entry;
  * @see Compressor
  */
 public
-class FCImageModel<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        implements ICompressedImage<A> {
-
-    private final Map <IImageBlock<A>, Map <ImageTransform <A, G>, Set <Point>>> model;
+class FCImageModel extends IntSize  {
+    public static final String LABEL = "FCIF\r\n";
     private ImageInfo imageInfo;
-
-    private final MatOfInt mat = new MatOfInt();
-
-//    private int originalImageWidth;
-//    private int originalImageHeight;
-//    private IIntSize size;
-    private List <ImageTransform <A, ?>> transforms;
-    private final IImage <A> image;
+    private byte[] ifsRecords;
+    transient private List <IImageBlock> rangeBlocks;
+    transient private List <IImageBlock> domainBlocks;
+    private IIntSize size;
+    private BitBuffer bitBuffer;
 
     /**
      * @param simpleModel
+     * @param bb
      */
     public
-     FCImageModel ( IImage<A> image, Map <Point, Entry <IImageBlock<A>, ImageTransform <A, G>>> simpleModel )
-            throws ValueError {
-        this.image = image;
-        model = new HashMap <>();
-        analyze(simpleModel);
-    }
+    FCImageModel (byte[] ifsRecords ) throws ValueError, IOException {
+        super(null);
 
-    /**
-     * for each point, extract the appropriate domain and transform.
-     * if the domain is new to the model, add it and create a map for
-     * the transform and the range points.
-     * finally, add the point.
-     */
-//    @SuppressWarnings({"unchecked"})
-    private
-    void analyze ( Map <Point, Entry <IImageBlock<A>, ImageTransform <A, G>>> simpleModel ) throws ValueError {
-        for (Point point : simpleModel.keySet()) {
-            IImageBlock<A> domain = new ImageBlock <>((Mat) simpleModel.get(point).getKey());
-            ImageTransform <A, G> transform = simpleModel.get(point).getValue();
-            if (!model.containsKey(domain)) {
-                model.put(domain, new HashMap <>());
-                model.get(domain).put(transform, new HashSet <>());
-            }
-            else if (!model.get(domain).containsKey(transform)) {
-                /*
-                 * if the domain is not new, but the transform is new,
-                 * add the transform and create a map for the range points
-                 */
-                model.get(domain).put(transform, new HashSet <>());
-            }
-            model.get(domain).get(transform).add(point);
-        }
-    }
-
-    /**
-     * @return
-     */
-    public
-    Map <IImageBlock<A>, Map <ImageTransform<A, G>, Set <Point>>> getModel () {
-        return model;
+        setIfsRecords(ifsRecords);
     }
 
     /**
@@ -122,49 +74,14 @@ class FCImageModel<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
     /**
      * @return
      */
-    @SuppressWarnings("unchecked")
     public
-    IImage<A> toImage () {
-        return  new GrayScaleImage <A>(mat);
+    String dump () {
+        return "";
     }
 
     /**
-     * @return
+     *
      */
-    public
-    int getOriginalImageWidth () {
-        return image.getOriginalImageWidth();
-    }
-
-    /**
-     * @param originalImageWidth
-     */
-    public
-    void setOriginalImageWidth ( int originalImageWidth ) {
-        image.setOriginalImageWidth(originalImageWidth) ;
-    }
-
-    /**
-     * @return
-     */
-    public
-    int getOriginalImageHeight () {
-        return image.getOriginalImageHeight();
-    }
-
-    /**
-     * @param originalImageHeight
-     */
-    public
-    void setOriginalImageHeight ( int originalImageHeight ) {
-        image.setOriginalImageWidth( originalImageHeight);
-    }
-
-    public
-    boolean dump () {
-        return false;
-    }
-
     public
     void release () {
 
@@ -173,28 +90,135 @@ class FCImageModel<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
     /**
      * @return
      */
-    @Override
+//    @Override
     public
-    List <IImageBlock <A>> getRangeBlocks () {
-        return null;
+    List <IImageBlock> getRangeBlocks () {
+        return rangeBlocks;
     }
 
     /**
      * @return
      */
-    @Override
-    public
-    List <IImageBlock <A>> getDomainBlocks () {
-        return null;
+//    @Override
+//    public
+    List <IImageBlock> getDomainBlocks () {
+        return domainBlocks;
     }
 
     /**
      * @return
      */
-    @Override
+//    @Override
     public
     IIntSize getOriginalSize () {
-        return image.getSize();
+        return null;
+    }
+
+//    /**
+//     * @return
+//     */
+//    @Override
+//    public
+//    List <ImageTransform> getTransforms () throws ValueError {
+//        return null;
+//    }
+//
+//    /**
+//     * @param transforms
+//     */
+//    @Override
+//    public
+//    void setTransforms ( List <ImageTransform> transforms ) {
+//
+//    }
+
+//    /**
+//     * @return
+//     */
+//    @Override
+//    public
+//    IImage toImage () {
+//        return null;
+//    }
+
+    /**
+     * @param rangeBlocks
+     */
+    public
+    void setRangeBlocks ( List <IImageBlock> rangeBlocks ) {
+        this.rangeBlocks = rangeBlocks;
+    }
+
+    /**
+     * @param domainBlocks
+     */
+    public
+    void setDomainBlocks ( List <IImageBlock> domainBlocks ) {
+        this.domainBlocks = domainBlocks;
+    }
+
+    /**
+     * @return
+     */
+//    @Override
+    public
+    IIntSize getSize () {
+        return size;
+    }
+
+//    /**
+//     * @param w
+//     * @param h
+//     * @param originalImageWidth
+//     * @param originalImageHeight
+//     * @return
+//     */
+//    @Override
+//    public
+//    IIntSize restoreSize ( int w, int h, int o//{
+//        return null;
+//    }
+
+    /**
+     * @return
+     */
+    public
+    byte[] getIfsRecords () {
+        return ifsRecords;
+    }
+
+    /**
+     * @param ifsRecords
+     */
+    public
+    void setIfsRecords ( byte[] ifsRecords ) {
+        this.ifsRecords = ifsRecords;
+    }
+
+    /**
+     * @return
+     */
+    public
+    BitBuffer getBitBuffer () {
+        return bitBuffer;
+    }
+
+    /**
+     *
+     */
+    @Override
+    public
+    int getOriginalImageWidth () {
+        return originalImageWidth;
+    }
+
+    /**
+     *
+     */
+    @Override
+    public
+    int getOriginalImageHeight () {
+        return originalImageHeight;
     }
 
     /**
@@ -202,16 +226,42 @@ class FCImageModel<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exten
      */
     @Override
     public
-    List <ImageTransform <A, ?>> getTransforms () {
-        return transforms;
+    int getWidth () {
+        return width;
     }
 
     /**
-     * @param transforms
+     * @return
      */
     @Override
     public
-    void setTransforms ( List <ImageTransform <A, ?>> transforms ) {
-        this.transforms=transforms;
+    int getHeight () {
+        return height;
+    }
+
+    /**
+     * @param o
+     * @return
+     */
+    @Override
+    public
+    int compareTo ( IIntSize o ) {
+        return 0;
+    }
+
+    /**
+     * @param bitBuffer
+     */
+    public
+    void setBitBuffer ( BitBuffer bitBuffer ) {
+        this.bitBuffer = bitBuffer;
+    }
+
+    /**
+     * @param size
+     */
+    public
+    void setSize ( IIntSize size ) {
+        this.size = size;
     }
 }

@@ -3,29 +3,30 @@ package org.stranger2015.opencv.fic.transform;
 import org.opencv.core.Mat;
 import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.utils.BitBuffer;
+import org.stranger2015.opencv.fic.core.IImageBlock;
+import org.stranger2015.opencv.fic.core.ValueError;
 
 /**
  * The 'None' transform -- makes no change to the given image.
  * This is useful to traverse the transforms without special casing
  * the comparison with the normal (non-transformed) image.
  */
-public class NoneTransform<A extends IAddress <A>, G extends BitBuffer>
-        extends ImageTransform<A, G> {
+public
+class NoneTransform extends ImageTransform {
 
     /**
      * @param image
      */
     public
-    NoneTransform ( IImage<A> image,
+    NoneTransform ( IImage image,
                     EInterpolationType type,
-                    IAddress <A> address,
+                    IAddress address,
                     int brightnessOffset,
                     double contrastScale,
-                    int dihedralAffineTransformerIndex ) {
+                    int dihedralAffineTransformerIndex ) throws ValueError {
 
         super(
-                image,
+                (IImageBlock) image,
                 type,
                 address,
                 brightnessOffset,
@@ -39,16 +40,10 @@ public class NoneTransform<A extends IAddress <A>, G extends BitBuffer>
      * @param type
      * @return
      */
-    @SuppressWarnings({ "rawtype"})
+    @SuppressWarnings({"rawtype"})
     @Override
     public
-    IImage<A> transform ( IImage<A> inputImage, Mat transformMatrix, EInterpolationType type ) {
-        return warpAffine(inputImage, transformMatrix,type);
+    IImage transform ( IImage inputImage, Mat transformMatrix, EInterpolationType type ) {
+        return warpAffine(inputImage, transformMatrix, type);
     }
-
-//    @Override
-//    public
-//    IImage <A> warpAffine ( IImage <A> inputImage, Mat transformMatrix, EInterpolationType interpolationType ) {
-//        return null;
-//    }
 }

@@ -11,7 +11,7 @@ import org.stranger2015.opencv.fic.core.geom.Geometry;
  * Computes the distance between the facets (segments and vertices) 
  * of two {@link Geometry}s
  * using a Branch-and-Bound algorithm.
- * The Branch-and-Bound algorithm operates over a 
+ * The Branch-and-Bound algorithm operates over a
  * traversal of R-trees built
  * on the target and the query geometries.
  * <p>
@@ -102,7 +102,7 @@ public class IndexedFacetDistance
     }
 
     /**
-     * Computes the distance from the base geometry to 
+     * Computes the distance from the base geometry to
      * the given geometry.
      *
      * @param g the geometry to compute the distance to

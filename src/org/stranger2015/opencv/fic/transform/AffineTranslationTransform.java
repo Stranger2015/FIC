@@ -2,21 +2,20 @@ package org.stranger2015.opencv.fic.transform;
 
 import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.utils.BitBuffer;
 
-import static org.stranger2015.opencv.fic.transform.EInterpolationType.*;
+import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
 
 /**
  
  */
 public
-class AffineTranslationTransform</*M extends IImage<A>,*/ A extends IAddress <A>, G extends BitBuffer>
-        extends AffineTransform <A, G> {
+class AffineTranslationTransform
+        extends AffineTransform  {
     /**
      *
      */
     public
-    AffineTranslationTransform ( M image, Address <A> address ) {
+    AffineTranslationTransform ( IImage image, Address  address ) {
         super(image, BILINEAR, address);
     }
 
@@ -29,7 +28,7 @@ class AffineTranslationTransform</*M extends IImage<A>,*/ A extends IAddress <A>
 //    @SuppressWarnings("unchecked")
 //    @Override
 //    public
-//    M warpAffine ( M src, M transformMatrix, EInterpolationType interpolationType, Address <A> address ) {
+//    IImage warpAffine ( IImage src, IImage transformMatrix, EInterpolationType interpolationType, Address  address ) {
 //
 //        //Creating an empty matrix to store the result
 ////                Mat dst = new Mat();
@@ -45,11 +44,11 @@ class AffineTranslationTransform</*M extends IImage<A>,*/ A extends IAddress <A>
 //        MatOfPoint2f ma2 = new MatOfPoint2f(p4, p5, p6);
 //
 //        // Creating the transformation matrix
-//        M transformMatrix1 = (M) getAffineTransform(ma1, ma2);
+//        IImage transformMatrix1 = (M) getAffineTransform(ma1, ma2);
 //
 //        // Creating object of the class Size
 //        Size size = new Size(src.cols(), src.cols());
-//        M out = (M) new Image(src);
+//        IImage out = (M) new Image(src);
 //        // Applying Wrap Affine
 //        Imgproc.warpAffine((Mat) src, (Mat) out, (Mat) transformMatrix1, size);
 //

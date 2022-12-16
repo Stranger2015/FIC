@@ -11,15 +11,15 @@ import org.stranger2015.opencv.utils.BitBuffer;
  
  */
 public
-interface IImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends IProcessor <N, A, G> {
+interface IImageProcessor
+        extends IProcessor  {
 
-    FCImageModel <N, A, G> postprocess ( FCImageModel <N, A, G> outputImage );
+    IImage  postprocess ( IImage outputImage );
 
     /**
      * @return
      */
-    IImage<A> getImage ();
+    IImage getImage ();
 
     /**
      * @return
@@ -29,7 +29,7 @@ interface IImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
     /**
      * @return
      */
-    ICodec <N, A, G> getCodec ();
+    ICodec  getCodec ();
 
     /**
      * @param filename
@@ -38,7 +38,7 @@ interface IImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
      */
     @Override
     default
-    IImage<A> preprocess ( String filename, IImage<A> inputImage ) throws ValueError {
+    IImage preprocess ( String filename, IImage inputImage ) throws ValueError {
         if (filename != null && inputImage == null) {
             inputImage = preprocess(filename);
         }
@@ -51,14 +51,14 @@ interface IImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
      * @return
      */
     default
-    IImage<A> preprocess ( IImage<A> inputImage ) throws ValueError {
+    IImage preprocess ( IImage inputImage ) throws ValueError {
         IntSize size = adjustSize(
                 inputImage.getAddress(0,0).radix(),
                 inputImage.getWidth(),
                 inputImage.getHeight()
         );
         //image or block or roi
-        IImage<A> destImage = new Image <>(inputImage.getMat());
+        IImage destImage = new Image <>(inputImage.getMat());
         Imgproc.resize(
                 inputImage.getMat(),
                 destImage.getMat(),
@@ -75,5 +75,5 @@ interface IImageProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, 
      * @return
      */
     @Override
-    IImage<A> preprocess ( String filename );
+    IImage preprocess ( String filename );
 }

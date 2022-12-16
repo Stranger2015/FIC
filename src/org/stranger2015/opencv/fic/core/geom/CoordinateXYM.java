@@ -24,12 +24,12 @@ public class CoordinateXYM extends Coordinate {
     public static final int Z = -1;
 
     /**
-     * Standard ordinate index value for M in XYM sequences.
+     * Standard ordinate index value for IImage in XYM sequences.
      *
      * <p>This constant assumes XYM coordinate sequence definition.  Check this assumption using
      * {@link ICoordinateSequence#getDimension()} and {@link ICoordinateSequence#getMeasures()} before use.
      */
-    public static final int M = 2;
+    public static final int IImage = 2;
 
     /** Default constructor */
     public CoordinateXYM() {
@@ -42,7 +42,7 @@ public class CoordinateXYM extends Coordinate {
      *
      * @param x the X ordinate
      * @param y the Y ordinate
-     * @param m the M measure value
+     * @param IImage the IImage measure value
      */
     public CoordinateXYM(double x, double y, double m) {
         super(x, y, Coordinate.NULL_ORDINATE);
@@ -56,7 +56,7 @@ public class CoordinateXYM extends Coordinate {
      */
     public CoordinateXYM( Coordinate coord) {
         super(coord.x,coord.y);
-        m = getM();
+        IImage = getM();
     }
 
     /**
@@ -66,7 +66,7 @@ public class CoordinateXYM extends Coordinate {
      */
     public CoordinateXYM( CoordinateXYM coord) {
         super(coord.x,coord.y);
-        m = coord.m;
+        IImage = coord.m;
     }
 
     /**
@@ -120,7 +120,7 @@ public class CoordinateXYM extends Coordinate {
         x = other.x;
         y = other.y;
         z = other.getZ();
-        m = other.getM();
+        IImage = other.getM();
     }
 
     @Override
@@ -147,7 +147,7 @@ public class CoordinateXYM extends Coordinate {
                 y = value;
                 break;
             case M:
-                m = value;
+                IImage = value;
                 break;
             default:
                 throw new IllegalArgumentException("Invalid ordinate index: " + ordinateIndex);

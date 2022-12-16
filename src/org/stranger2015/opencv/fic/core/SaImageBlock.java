@@ -3,10 +3,10 @@ package org.stranger2015.opencv.fic.core;
 import org.opencv.core.Mat;
 
 /**
- * @param <A>
+ * @param
  */
 public
-class SaImageBlock<A extends IAddress <A>> extends ImageBlock {
+class SaImageBlock<A extends IAddress > extends ImageBlock {
     /**
      * @param image
      * @param x
@@ -15,7 +15,7 @@ class SaImageBlock<A extends IAddress <A>> extends ImageBlock {
      * @param h
      */
     public
-    SaImageBlock ( IImage <A> image, int x, int y, int w, int h ) throws ValueError {
+    SaImageBlock ( IImage image, int x, int y, int w, int h ) throws ValueError {
         super(image, x, y, w, h);
     }
 

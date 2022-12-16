@@ -1,27 +1,20 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
-import org.jetbrains.annotations.NotNull;
-import org.stranger2015.opencv.fic.core.Address;
+import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.ValueError;
-import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.transform.EInterpolationType;
-import org.stranger2015.opencv.fic.transform.ImageTransform;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 
 /**
- 
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class BinChromosome</*M extends IImage<A>,*/ A extends IAddress <A>, G extends BitBuffer>
+class BinChromosome extends Chromosome {
 
-        extends Chromosome <A, G> {
-
-    protected G genes;
-    protected Address <A> address;
+    protected C genes;
+    protected IAddress address;
 
     /**
      * @param image
@@ -29,10 +22,10 @@ class BinChromosome</*M extends IImage<A>,*/ A extends IAddress <A>, G extends B
      * @param address
      */
     public
-    BinChromosome ( M image, EInterpolationType type, BitBuffer genes, IAddress <A> address ) {
+    BinChromosome ( IImage image, EInterpolationType type, IAddress address ) {
         super(image, type, address);
 
-        this.genes = (G) genes;
+//        this.genes = ( ) genes;
     }
 
     /**
@@ -44,13 +37,12 @@ class BinChromosome</*M extends IImage<A>,*/ A extends IAddress <A>, G extends B
      * @param dihedralAffineTransformIndex
      */
     public
-    BinChromosome ( M image,
+    BinChromosome ( IImage image,
                     EInterpolationType type,
-                    IAddress <A> address,
+                    IAddress address,
                     int brightnessOffset,
                     double contrastScale,
                     int dihedralAffineTransformIndex ) {
-
         super(
                 image,
                 type,
@@ -61,16 +53,16 @@ class BinChromosome</*M extends IImage<A>,*/ A extends IAddress <A>, G extends B
     }
 
     public
-    BinChromosome ( @NotNull BitBuffer allocate ) throws ValueError {
+    BinChromosome () throws ValueError {
         super();
-        genes= (G) allocate;
+        genes = (C) allocate;
     }
 
     /**
      * Get the genes as a string
      */
     @Override
-    G getGenesAsG () {
+    Chromosome getGenesAsG () {
         return genes;
     }
 
@@ -80,7 +72,7 @@ class BinChromosome</*M extends IImage<A>,*/ A extends IAddress <A>, G extends B
      * @param chromosome
      */
     @Override
-    void copyChromGenes ( Chromosome <A, G> chromosome ) {
+    void copyChromGenes ( Chromosome chromosome ) {
 
     }
 
@@ -90,7 +82,7 @@ class BinChromosome</*M extends IImage<A>,*/ A extends IAddress <A>, G extends B
      * @param chromosome
      */
     @Override
-    int getNumGenesInCommon ( Chromosome <A, G> chromosome ) {
+    int getNumGenesInCommon ( Chromosome chromosome ) {
         return 0;
     }
 
@@ -99,7 +91,7 @@ class BinChromosome</*M extends IImage<A>,*/ A extends IAddress <A>, G extends B
      */
     @Override
     public
-    IAddress <A> getAddress () {
+    IAddress getAddress () {
         return address;
     }
 }

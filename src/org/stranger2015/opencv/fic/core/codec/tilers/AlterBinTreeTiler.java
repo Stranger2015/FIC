@@ -1,21 +1,17 @@
 package org.stranger2015.opencv.fic.core.codec.tilers;
 
 import org.stranger2015.opencv.fic.core.*;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
-import org.stranger2015.opencv.fic.core.codec.IImageBlock;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public abstract
-class AlterBinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends BinTreeTiler <N, A, G> {
+class AlterBinTreeTiler      extends BinTreeTiler{
 
     /**
      * @param image
@@ -25,11 +21,11 @@ class AlterBinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G 
      * @param builder
      */
     protected
-    AlterBinTreeTiler ( IImage <A> image,
+    AlterBinTreeTiler ( IImage image,
                         IIntSize rangeSize,
                         IIntSize domainSize,
-                        IEncoder <N, A, G> encoder,
-                        ITreeNodeBuilder <N, A, G> builder ) {
+                        IEncoder encoder,
+                        ITreeNodeBuilder <?> builder ) {
 
         super(image, rangeSize, domainSize, encoder, builder);
     }
@@ -39,7 +35,7 @@ class AlterBinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G 
      */
     @Override
     public abstract
-    ITiler <N, A, G> instance ();
+    ITiler instance ();
 
     /**
      * @param roi
@@ -50,7 +46,7 @@ class AlterBinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G 
      */
     @Override
     public
-    List <IImageBlock <A>> generateRangeBlocks ( IImageBlock <A> roi, int blockWidth, int blockHeight )
+    List <IImageBlock > generateRangeBlocks ( IImageBlock  roi, int blockWidth, int blockHeight )
             throws ValueError {
 
         return generateInitialRangeBlocks(roi, blockWidth, blockHeight);
@@ -64,7 +60,7 @@ class AlterBinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G 
      */
     @Override
     public
-    List <IImageBlock <A>> generateInitialRangeBlocks ( IImageBlock <A> roi, int blockWidth, int blockHeight ) {
+    List <IImageBlock > generateInitialRangeBlocks ( IImageBlock  roi, int blockWidth, int blockHeight ) {
         return List.of(roi);
     }
 
@@ -75,7 +71,7 @@ class AlterBinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G 
      */
     @Override
     public
-    void segmentSquare ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentSquare ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
         super.segmentSquare(node, imageBlock);
     }
 
@@ -86,7 +82,7 @@ class AlterBinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G 
      */
     @Override
     public
-    void segmentRectangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentRectangle ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
         if ((imageBlock.getWidth() / imageBlock.getHeight()) == 2 ||
                 (imageBlock.getHeight() / imageBlock.getWidth()) == 2
         ) {
@@ -97,8 +93,8 @@ class AlterBinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G 
 
     //
 //public
-//class AlterBinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-//        extends AlterBinTreeTiler <N, A, G> {
+//class AlterBinTreeTiler<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+//        extends AlterBinTreeTiler <N> {
 //
 //    /**
 //     * @param image
@@ -108,24 +104,24 @@ class AlterBinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G 
 //     * @param builder
 //     */
 //    protected
-//    AlterBinTreeTiler ( IImage <A> image,
+//    AlterBinTreeTiler ( IImage image,
 //                        IIntSize rangeSize,
 //                        IIntSize domainSize,
-//                        IEncoder <N, A, G> encoder,
-//                        ITreeNodeBuilder <N, A, G> builder ) {
+//                        IEncoder <N> encoder,
+//                        ITreeNodeBuilder <N> builder ) {
 //
 //        super(image, rangeSize, domainSize, encoder, builder);
 //    }
 //
 //    @Override
 //    protected
-//    void doTile ( IIntSize minRangeSize, Deque <IImageBlock <A>> queue ) throws ValueError {
+//    void doTile ( IIntSize minRangeSize, Deque <IImageBlock > queue ) throws ValueError {
 //        super.doTile(minRangeSize, queue);
 //    }
 //
 //    @Override
 //    public
-//    void segmentSquare ( IImageBlock <A> imageBlock ) throws ValueError {
+//    void segmentSquare ( IImageBlock  imageBlock ) throws ValueError {
 //        int x = imageBlock.getX();
 //        int y = imageBlock.getY();
 //        int w = imageBlock.getWidth();
@@ -151,7 +147,7 @@ class AlterBinTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G 
 //    @Override
 //    @Contract(value = "_, _ -> new")
 //    public
-//    void segmentRectangle ( IImageBlock <A> imageBlock )
+//    void segmentRectangle ( IImageBlock  imageBlock )
 //            throws ValueError {
 //
 //        int x = imageBlock.getX();

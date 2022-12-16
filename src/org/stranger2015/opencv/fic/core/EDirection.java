@@ -7,7 +7,6 @@ import java.util.EnumSet;
  */
 public
 enum EDirection implements ISideDirection, ICornerDirection {
-
     NORTH("N", 0, ESideDirection.NORTH),
     EAST("E", 1, ESideDirection.EAST),
     SOUTH("S", 2, ESideDirection.SOUTH),

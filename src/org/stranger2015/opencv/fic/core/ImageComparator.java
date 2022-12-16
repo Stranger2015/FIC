@@ -7,8 +7,8 @@ import org.stranger2015.opencv.fic.core.search.EMetrics;
  * an image comparator returns the distance between two images
  */
 public
-class ImageComparator<A extends IAddress <A>>
-        implements IDistanceator<A> {
+class ImageComparator<A extends IAddress >
+        implements IDistanceator {
 
     private final double fuzz;
     private final EMetrics metrics;
@@ -50,7 +50,7 @@ class ImageComparator<A extends IAddress <A>>
      */
     @Override
     public
-    double distance ( final IImage<A> img1, final IImage<A> img2 ) {
+    double distance ( final IImage img1, final IImage img2 ) {
         assert (img1 != null) && (img2 != null);
 
         int width = img1.getWidth();

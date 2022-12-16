@@ -12,22 +12,22 @@ import java.util.List;
 
 /**
  * @param <N> \
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class FicConfig<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
+class FicConfig<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
         extends Config {
-    public IDistanceator <A> distanceator;
+    public IDistanceator  distanceator;
 
-    public ICodec <N, A, G> codec;
+    public ICodec <N> codec;
     private File input;
     private EtvColorSpace colorSpace;
     private EPartitionScheme partitionScheme;
     private File output;
-    private FCImageModel <N, A, G> fractalModel;
+    private FCImageModel <N> fractalModel;
     private ECommands command;
-    private List <Task <N, A, G>> tasks;
+    private List <Task <N>> tasks;
 
     /**
      * @param args
@@ -73,7 +73,7 @@ class FicConfig<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      * @return
      */
     public
-    FCImageModel <N, A, G> getFractalModel () {
+    FCImageModel <N> getFractalModel () {
         return fractalModel;
     }
 
@@ -113,7 +113,7 @@ class FicConfig<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      * @param fractalModel
      */
     public
-    void setFractalModel ( FCImageModel <N, A, G> fractalModel ) {
+    void setFractalModel ( FCImageModel <N> fractalModel ) {
         this.fractalModel = fractalModel;
     }
 
@@ -137,7 +137,7 @@ class FicConfig<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      * @return
      */
     public
-    List <Task <N, A, G>> tasks () {
+    List <Task <N>> tasks () {
         return tasks;
     }
 
@@ -145,7 +145,7 @@ class FicConfig<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
      * @param tasks
      */
     public
-    void setTasks ( List <Task <N, A, G>> tasks ) {
+    void setTasks ( List <Task <N>> tasks ) {
         this.tasks = tasks;
     }
 }

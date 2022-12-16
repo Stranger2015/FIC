@@ -9,13 +9,13 @@ import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class QuadTreeBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends QuadTreeTiler <N, A, G>
-        implements IBottomUpTiler <N, A, G> {
+class QuadTreeBottomUpTiler
+        extends QuadTreeTiler
+        implements IBottomUpTiler {
 
     /**
      * @param image
@@ -25,11 +25,11 @@ class QuadTreeBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>
      * @param builder
      */
     public
-    QuadTreeBottomUpTiler ( IImage <A> image,
+    QuadTreeBottomUpTiler ( IImage image,
                             IIntSize rangeSize,
                             IIntSize domainSize,
-                            IEncoder <N, A, G> encoder,
-                            ITreeNodeBuilder <N, A, G> builder ) {
+                            IEncoder encoder,
+                            ITreeNodeBuilder <?> builder ) {
 
         super(image, rangeSize, domainSize, encoder, builder);
     }
@@ -39,8 +39,8 @@ class QuadTreeBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>
      */
     @Override
     public
-    ITiler <N, A, G> instance () {
-        return new QuadTreeBottomUpTiler <>(
+    ITiler instance () {
+        return new QuadTreeBottomUpTiler(
                 getImage(),
                 getRangeSize(),
                 getDomainSize(),
@@ -54,7 +54,7 @@ class QuadTreeBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>
      */
     @Override
     public
-    void onLeaf ( LeafNode <N, A, G> leafNode, IImageBlock <A> imageBlock) {
+    void onLeaf ( LeafNode <?> leafNode, IImageBlock  imageBlock) throws ValueError {
         super.onLeaf(leafNode, imageBlock);
     }
 
@@ -63,7 +63,7 @@ class QuadTreeBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>
      */
     @Override
     public
-    void onSuccessors ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) {
+    void onSuccessors ( TreeNodeBase <?> node, IImageBlock  imageBlock ) {
         super.onSuccessors(node, imageBlock);
     }
 
@@ -73,7 +73,7 @@ class QuadTreeBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>
      */
     @Override
     public
-    void onSuccessor ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) {
+    void onSuccessor ( TreeNodeBase <?> node, IImageBlock  imageBlock ) {
         super.onSuccessor(node, imageBlock);
     }
 
@@ -83,7 +83,7 @@ class QuadTreeBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>
      */
     @Override
     public
-    void segmentPolygon (TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentPolygon (TreeNodeBase <?> node, IImageBlock  imageBlock ) throws ValueError {
 
     }
 
@@ -93,7 +93,7 @@ class QuadTreeBottomUpTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>
      */
     @Override
     public
-    void segmentQuadrilateral (TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentQuadrilateral (TreeNodeBase <?> node, IImageBlock  imageBlock ) throws ValueError {
 
     }
 }

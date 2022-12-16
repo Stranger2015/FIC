@@ -1,20 +1,16 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
-import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.utils.BitBuffer;
-
 public
-interface ISelector</* M extends IImage <A> */, A extends IAddress <A>, G extends BitBuffer/* C extends Chromosome < M,A, G>*/> {
+interface ISelector<C extends Chromosome>{
     /**
      * @return
      */
-    M selectFirst ();
+    C selectFirst ();
 
     /**
      * @return
      */
-    M selectSecond ();
+    C selectSecond ();
 
     /**
      * @return

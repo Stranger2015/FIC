@@ -2,14 +2,13 @@ package org.stranger2015.opencv.fic.core;
 
 import org.opencv.core.MatOfInt;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
- * @param <A>
+ * @param 
  */
 public
-interface ILeaf<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer> {
+interface ILeaf<N extends TreeNode <N>> {
 
     /**
      * @return
@@ -24,12 +23,12 @@ interface ILeaf<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
     /**
      * @return
      */
-    IAddress <A> getAddress ();
+    IAddress  getAddress ();
 
     /**
      * @return
      */
-    IImageBlock <A> getImageBlock ();
+    IImageBlock  getImageBlock ();
 
     /**
      * @return
@@ -39,7 +38,7 @@ interface ILeaf<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends 
     /**
      * @return
      */
-    IImage <A> getImage ();
+    IImage getImage ();
 
     /**
      * @return

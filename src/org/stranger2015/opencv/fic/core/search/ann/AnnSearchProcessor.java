@@ -1,25 +1,30 @@
 package org.stranger2015.opencv.fic.core.search.ann;
 
-import org.stranger2015.opencv.fic.core.IAddress;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.search.SearchProcessor;
-import org.stranger2015.opencv.utils.BitBuffer;
+import org.stranger2015.opencv.fic.transform.ITransform;
 
 /**
  
- * @param <A>
+ * @param
  * @param <G>
  */
 public abstract
-class AnnSearchProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-
-        extends SearchProcessor <N, A, G> {
+class AnnSearchProcessor
+        extends SearchProcessor {
+    /**
+     *
+     */
+    @Override
+    public
+    ITransform searchForBestTransform () {
+        return null;
+    }
 //    /**
 //     *
 //     */
 //    @Override
 //    public
-//    ITransform <A, G> searchForBestTransform () {
+//    ITransform  searchForBestTransform () {
 //        return null;
 //    }
 
@@ -28,7 +33,7 @@ class AnnSearchProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G
 //     */
 //    @Override
 //    public
-//    M search () {
+//    IImage search () {
 //        return null;
 //    }
 

@@ -1,18 +1,16 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.opencv.core.Rect;
-
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.utils.Point;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
- * @param <A>
+ * @param 
  */
 public
-class TriangleTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends TreeNode <N, A, G> {
+class TriangleTreeNode<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends TreeNode <N> {
     /**
      * @param parent
      * @param quadrant
@@ -20,7 +18,7 @@ class TriangleTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
      * @throws ValueError
      */
     public
-    TriangleTreeNode ( TreeNodeBase<N, A, G> parent, EDirection quadrant,IIntSize boundingBox ) throws ValueError {
+    TriangleTreeNode ( TreeNodeBase<N> parent, EDirection quadrant,IIntSize boundingBox ) throws ValueError {
         super(parent, boundingBox);
     }
 
@@ -29,13 +27,13 @@ class TriangleTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
      * @throws ValueError
      */
     public
-    TriangleTreeNode ( TreeNodeBase <N, A, G> parent, IIntSize boundingBox ) throws ValueError {
+    TriangleTreeNode ( TreeNodeBase <N> parent, IIntSize boundingBox ) throws ValueError {
         super(parent, null, boundingBox);
     }
 
     @Override
     public
-    TreeNode <N, A, G> createChild ( int addr ) throws ValueError {
+    TreeNode <N> createChild ( int addr ) throws ValueError {
         return null;
     }
 
@@ -47,13 +45,13 @@ class TriangleTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
      */
     @Override
     public
-    TreeNodeBase <N, A, G> createChild ( IImageBlock <A> imageBlock, IAddress <A> address ) throws ValueError {
+    TreeNodeBase <N> createChild ( IImageBlock  imageBlock, IAddress  address ) throws ValueError {
         return null;
     }
 
     @Override
     public
-    TreeNodeBase <N, A, G> createNode ( TreeNodeBase <N, A, G> parent, IImageBlock <A> imageBlock, IAddress <A> address ) throws ValueError {
+    TreeNodeBase <N> createNode ( TreeNodeBase <N> parent, IImageBlock  imageBlock, IAddress  address ) throws ValueError {
         return null;
     }
 
@@ -64,7 +62,7 @@ class TriangleTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
      */
     @Override
     public
-    TreeNodeBase <N, A, G> createNode ( TreeNodeBase <N, A, G> parent, IAddress <A> address ) throws ValueError {
+    TreeNodeBase <?> createNode ( TreeNodeBase <?> parent, IAddress  address ) throws ValueError {
         return null;
     }
 
@@ -80,14 +78,14 @@ class TriangleTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
      */
 //    @Override
     public
-    TreeNode <N, A, G> createChild ( Point point, int layerIndex, int clusteIndex, int x, int y, int address )
+    TreeNode <N> createChild ( Point point, int layerIndex, int clusteIndex, int x, int y, int address )
             throws ValueError {
         return null;
     }
 
 //    @Override
     public
-    TreeNode <N, A, G> createChild ( int layerIndex, int clusteIndex, int address )
+    TreeNode <N> createChild ( int layerIndex, int clusteIndex, int address )
             throws ValueError {
         return null;
     }
@@ -99,7 +97,7 @@ class TriangleTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
      */
 //    @Override
     public
-    TreeNode <N, A, G> createChild ( EDirection quadrant, IIntSize boundingBox ) throws ValueError {
+    TreeNode <N> createChild ( EDirection quadrant, IIntSize boundingBox ) throws ValueError {
         return new TriangleTreeNode <N,A,G>(quadrant, boundingBox);
     }
 
@@ -110,13 +108,13 @@ class TriangleTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
      */
 //    @Override
     public
-    TreeNode <N, A, G> createNode ( TreeNode <N, A, G> parent, IIntSize boundingBox ) throws ValueError {
+    TreeNode <N> createNode ( TreeNode <N> parent, IIntSize boundingBox ) throws ValueError {
         return new TriangleTreeNode <>(parent, boundingBox);
     }
 
 //    public
-//    class TriangleLeafNode<N extends LeafNode <N, A, G>, A extends IAddress <A>, M extends IImage<A>>
-//            extends LeafNode <N, A, G> {
+//    class TriangleLeafNode<N extends LeafNode <N>, A extends IAddress , IImage extends IImage>
+//            extends LeafNode <N> {
 //
 //        /**
 //         * @param parent
@@ -124,7 +122,7 @@ class TriangleTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
 //         * @param rect
 //         */
 //        protected
-//        TriangleLeafNode ( TreeNode <N, A, G> parent, M image, Rect rect ) {
+//        TriangleLeafNode ( TreeNode <N> parent, IImage image, Rect rect ) {
 //            super(parent, point, image, rect);
 //        }
 //
@@ -138,7 +136,7 @@ class TriangleTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
 //         */
 //        @Override
 //        public
-//        TreeNode <N, A, G> createChild ( Point point, int layerIndex, int clusterIndex, Address <A> address ) throws ValueError {
+//        TreeNode <N> createChild ( Point point, int layerIndex, int clusterIndex, Address  address ) throws ValueError {
 //            return null;
 //        }
 //
@@ -154,7 +152,7 @@ class TriangleTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
 //         */
 //        @Override
 //        public
-//        TreeNode <N, A, G> createChild ( Point point, int layerIndex, int clusterIndex, int x, int y, int address )
+//        TreeNode <N> createChild ( Point point, int layerIndex, int clusterIndex, int x, int y, int address )
 //                throws ValueError {
 //
 //            return null;
@@ -169,7 +167,7 @@ class TriangleTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
 //         */
 ////        @Override
 //        public
-//        TreeNode <N, A, G> createChild ( int layerIndex, int clusterIndex, int address ) throws ValueError {
+//        TreeNode <N> createChild ( int layerIndex, int clusterIndex, int address ) throws ValueError {
 //            return null;
 //        }
 //
@@ -196,7 +194,7 @@ class TriangleTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
 //         */
 //        @Override
 //        public
-//        M getMat () {
+//        IImage getMat () {
 //            return null;
 //        }
 //
@@ -205,7 +203,7 @@ class TriangleTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
 //         */
 //        @Override
 //        public
-//        M getImage () {
+//        IImage getImage () {
 //            return null;
 //        }
 //
@@ -225,7 +223,7 @@ class TriangleTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
 //         */
 //        @Override
 //        public
-//        TreeNodeBase <N, A, G> createNode ( TreeNode <N, A, G> parent, Rect boundingBox ) throws ValueError {
+//        TreeNodeBase <N> createNode ( TreeNode <N> parent, Rect boundingBox ) throws ValueError {
 //            return null;
 //        }
 //
@@ -238,7 +236,7 @@ class TriangleTreeNode<N extends TreeNode <N, A, G>, A extends IAddress <A>, G e
 //         */
 //        @Override
 //        public
-//        TreeNode <N, A, G> createNode ( TreeNode <N, A, G> parent, M image, Rect boundingBox ) throws ValueError {
+//        TreeNode <N> createNode ( TreeNode <N> parent, IImage image, Rect boundingBox ) throws ValueError {
 //            return null;
 //        }
 //    }

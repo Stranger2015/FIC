@@ -11,7 +11,8 @@ import java.util.List;
  *
  */
 public
-class SipImage<A extends IAddress <A>> extends Image <A> {
+class SipImage extends Image {
+    private double[] pixels;
 
 //    protected int[] pixels;
 
@@ -20,8 +21,8 @@ class SipImage<A extends IAddress <A>> extends Image <A> {
      * @param pixels
      */
     public
-    SipImage ( IImage <A> input/*, int[] pixels*/ ) {
-        super(input.getMat(),/*, pixel*/roi);
+    SipImage ( IImage input/*, int[] pixels*/ ) {
+        super(input.getMat()/*, pixel*/);
 
 //        this.pixels = pixels;
     }
@@ -30,9 +31,9 @@ class SipImage<A extends IAddress <A>> extends Image <A> {
      * @param row
      * @return
      */
-    @Override
+//    @Override
     public
-    int[] get ( int row ) {
+    double[] get ( int row ) {
         return pixels;//fixme
     }
 
@@ -40,10 +41,10 @@ class SipImage<A extends IAddress <A>> extends Image <A> {
      * @param address
      * @return
      */
-    @Override
+//    @Override
     public
-    int[] getPixels ( IAddress <A> address ) {
-        return new int[0];
+    double[] getPixels ( IAddress address ) {
+        return new double[0];
     }
 
     /**
@@ -54,37 +55,37 @@ class SipImage<A extends IAddress <A>> extends Image <A> {
     @Override
     public
     double[] pixelValues ( int addr, int i ) {
-        return 0;
+        return new double[0];
     }
 
     @Override
     public
-    void put ( int x, int i ) {
-
+    double[] put ( int x, int y, double[] value ) {
+return value;
     }
 
     @Override
     public
-    int getMeanPixelValue () {
-        return 0;
+    double[] getMeanPixelValue () {
+        return meanPixelValue;
     }
 
     @Override
     public
-    IImageBlock <A> getSubImage ( Rectangle rectangle ) throws ValueError {
+    IImageBlock getSubImage ( Rectangle rectangle ) throws ValueError {
         return null;
     }
 
     @Override
     public
-    IImageBlock <A> getSubImage () {
+    IImageBlock getSubImage () {
         return null;
     }
 
     @Override
     public
-    void setMeanPixelValue ( int meanPixelValue ) {
-
+    void setMeanPixelValue ( double[] meanPixelValue ) {
+this.meanPixelValue = meanPixelValue;
     }
 
     /**
@@ -93,8 +94,8 @@ class SipImage<A extends IAddress <A>> extends Image <A> {
      */
     @Override
     public
-    SipImage <A> createInputImage ( IImage <A> image ) throws ValueError {
-        return new SipImage <>(image.getMat());
+    SipImage createInputImage ( IImage image ) throws ValueError {
+        return new SipImage (image.getMat());
     }
 
     /**
@@ -103,7 +104,7 @@ class SipImage<A extends IAddress <A>> extends Image <A> {
      */
 //    @Override
     public
-    CompressedSipImage <A> createOutputImage ( IImage <A> image ) {
+    CompressedSipImage createOutputImage ( IImage image ) {
         return new CompressedSipImage <>(image);
     }
 
@@ -167,7 +168,7 @@ class SipImage<A extends IAddress <A>> extends Image <A> {
      */
     @Override
     public
-    void setSample ( IAddress <A> address, int b, int s ) {
+    void setSample ( IAddress address, int b, int s ) {
 
     }
 
@@ -186,7 +187,7 @@ class SipImage<A extends IAddress <A>> extends Image <A> {
      */
     @Override
     public
-    int getSample ( IAddress <A> address, int b ) {
+    int getSample ( IAddress address, int b ) {
         return 0;
     }
 //
@@ -195,7 +196,7 @@ class SipImage<A extends IAddress <A>> extends Image <A> {
 //     */
 //    @Override
 //    public
-//    List <ImageBlock <A>> getRangeBlocks () {
+//    List <ImageBlock > getRangeBlocks () {
 //        return null;
 //    }
 //
@@ -204,7 +205,7 @@ class SipImage<A extends IAddress <A>> extends Image <A> {
 //     */
 //    @Override
 //    public
-//    List <ImageBlock <A>> getDomainBlocks () {
+//    List <ImageBlock > getDomainBlocks () {
 //        return null;
 //    }
 //
@@ -213,7 +214,7 @@ class SipImage<A extends IAddress <A>> extends Image <A> {
 //     */
 //    @Override
 //    public
-//    List <ImageBlock <A>> getCodebookBlocks () {
+//    List <ImageBlock > getCodebookBlocks () {
 //        return null;
 //    }
 //
@@ -229,7 +230,7 @@ class SipImage<A extends IAddress <A>> extends Image <A> {
 
     @Override
     public
-    void setAddress ( IAddress <A> address ) {
+    void setAddress ( IAddress address ) {
 
     }
 
@@ -273,7 +274,7 @@ class SipImage<A extends IAddress <A>> extends Image <A> {
 
     @Override
     public
-    List<IImage <A>> getComponents () {
+    List <IImage> getComponents () {
         return List.of();
     }
 
@@ -318,7 +319,7 @@ class SipImage<A extends IAddress <A>> extends Image <A> {
      */
     @Override
     public
-    int compareTo ( @NotNull IImage <A> o ) {
+    int compareTo ( @NotNull IImage o ) {
         return 0;
     }
 
@@ -329,4 +330,5 @@ class SipImage<A extends IAddress <A>> extends Image <A> {
     public
     Coordinate getCentroid () {
         return null;
-    }}
+    }
+}

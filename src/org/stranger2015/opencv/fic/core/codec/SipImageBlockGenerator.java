@@ -11,8 +11,8 @@ import org.stranger2015.opencv.utils.BitBuffer;
  *
  */
 public
-class SipImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends SquareImageBlockGenerator <N, A, G> {
+class SipImageBlockGenerator<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+        extends SquareImageBlockGenerator <N> {
 
     /**
      * @param scheme
@@ -20,10 +20,10 @@ class SipImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A
      * @param domainSize
      */
     public
-    SipImageBlockGenerator ( IPartitionProcessor <N, A, G> partitionProcessor,
+    SipImageBlockGenerator ( IPartitionProcessor <N> partitionProcessor,
                              EPartitionScheme scheme,
-                             IEncoder <N, A, G> encoder,
-                             IImage <A> image,
+                             IEncoder <N> encoder,
+                             IImage image,
                              IIntSize rangeSize,
                              IIntSize domainSize ) {
         super(partitionProcessor, scheme, encoder, image, rangeSize, domainSize);
@@ -40,11 +40,11 @@ class SipImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A
      */
     @Override
     public
-    ImageBlockGenerator <N, A, G> newInstance (
-            IPartitionProcessor <N, A, G> partitionProcessor,
+    ImageBlockGenerator <N> newInstance (
+            IPartitionProcessor <N> partitionProcessor,
             EPartitionScheme scheme,
-            IEncoder <N, A, G> encoder,
-            IImage <A> image,
+            IEncoder <N> encoder,
+            IImage image,
             IIntSize rangeSize,
             IIntSize domainSize ) {
 

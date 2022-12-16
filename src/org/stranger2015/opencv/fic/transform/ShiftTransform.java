@@ -2,7 +2,6 @@ package org.stranger2015.opencv.fic.transform;
 
 import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
 
@@ -10,8 +9,8 @@ import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
  
  */
 public abstract
-class ShiftTransform<A extends IAddress <A>, G extends BitBuffer>
-        extends ImageTransform<A, G>{
+class ShiftTransform
+        extends ImageTransform{
 
     private final float intensity;
     private final int channelAxis;
@@ -23,7 +22,7 @@ class ShiftTransform<A extends IAddress <A>, G extends BitBuffer>
      * @param address
      */
     protected
-    ShiftTransform ( IImage <A> image, float intensity, int channelAxis, IAddress <A> address) {
+    ShiftTransform ( IImage image, float intensity, int channelAxis, IAddress  address) {
         super(image, BILINEAR, address);
 
         this.intensity = intensity;

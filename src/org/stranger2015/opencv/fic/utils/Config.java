@@ -20,17 +20,17 @@ import org.stranger2015.opencv.utils.BitBuffer;
  */
 @SuppressWarnings(value = {"rawtypes"})
 public
-class Config<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer> {
+class Config<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer> {
 
     private Commands command;
 
-    private final Options <N, A, G> options;
+    private final Options <N> options;
     private final JCommander parser;
 
     private EtvColorSpace colorSpace;
 
-//    private IEncoder <N, A, G> encoder;
-//    private IDecoder <N, A, G> decoder;
+//    private IEncoder <N> encoder;
+//    private IDecoder <N> decoder;
 
     /**
      * given args, configuration parses them
@@ -125,7 +125,7 @@ class Config<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bit
      * @return
      */
     public
-    ScaleTransform <A, G> domainScale () {
+    ScaleTransform  domainScale () {
         return options.domainScale;
     }
 
@@ -133,7 +133,7 @@ class Config<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bit
      * @return
      */
     public
-    IPartitionProcessor <N, A, G> tiler () {
+    IPartitionProcessor <N> tiler () {
         return options.partitionProcessor;
     }
 
@@ -218,7 +218,7 @@ class Config<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bit
 //     * @return
 //     */
 //    public
-//    IEncoder <N, A, G> encoder () {
+//    IEncoder <N> encoder () {
 //        return encoder;
 //    }
 
@@ -232,7 +232,7 @@ class Config<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends Bit
 //    }
 //
 //    public
-//    M image () {
+//    IImage image () {
 //        return null;//image;
 //    }
 }

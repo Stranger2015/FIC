@@ -1,25 +1,20 @@
 package org.stranger2015.opencv.fic.core.codec.tilers;
 
-import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.IImageBlock;
 import org.stranger2015.opencv.fic.core.TreeNodeBase;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.ValueError;
-import org.stranger2015.opencv.fic.core.codec.IImageBlock;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-interface ITopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends ITiler <N, A, G> {
+interface ITopDownTiler extends ITiler {
 
     /**
      * @param roi
@@ -29,7 +24,7 @@ interface ITopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G 
      */
     @Override
     default
-    List <Vertex> generateVerticesSet ( IImageBlock <A> roi, int blockWidth, int blockHeight ) {
+    List <Vertex> generateVerticesSet ( IImageBlock  roi, int blockWidth, int blockHeight ) {
         if (roi.getWidth() != blockWidth || roi.getHeight() != blockHeight) {
             throw new IllegalStateException("roi.size(s) != blockSize(s)");
         }
@@ -58,18 +53,18 @@ interface ITopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G 
      * @throws ValueError
      */
     default
-    List <IImageBlock <A>> generateInitialRangeBlocks ( IImageBlock <A> roi,
+    List <IImageBlock > generateInitialRangeBlocks ( IImageBlock  roi,
                                                         int blockWidth,
                                                         int blockHeight ) throws ValueError {
 
         List <Vertex> vertices = generateVerticesSet(roi, blockWidth, blockHeight);
-        List <IImageBlock <A>> rangeBlocks = new ArrayList <>(vertices.size());
+        List <IImageBlock > rangeBlocks = new ArrayList <>(vertices.size());
         double[] pixels = roi.getPixels();
 
         for (Vertex vertex : vertices) {
             int x = (int) vertex.getX();
             int y = (int) vertex.getY();
-            IImageBlock <A> rangeBlock = roi.getSubImage(x, y, blockWidth, blockHeight);
+            IImageBlock  rangeBlock = roi.getSubImage(x, y, blockWidth, blockHeight);
             rangeBlock.put(x, y, pixels);
             rangeBlocks.add(rangeBlock);
 
@@ -99,10 +94,10 @@ interface ITopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G 
      */
     default
     @Override
-    List <IImageBlock <A>> generateRangeBlocks ( IImageBlock <A> roi, int blockWidth, int blockHeight )
+    List <IImageBlock > generateRangeBlocks ( IImageBlock  roi, int blockWidth, int blockHeight )
             throws ValueError {
 
-        List <IImageBlock <A>> rangeBlocks = generateInitialRangeBlocks(roi, blockWidth, blockHeight);
+        List <IImageBlock > rangeBlocks = generateInitialRangeBlocks(roi, blockWidth, blockHeight);
         if (roi.isSquare()) {
             // segmentSquare(roi);
         }
@@ -116,9 +111,9 @@ interface ITopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G 
      */
     @Override
     default
-    void segmentRectangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
-        IImageBlock <A> r1;
-        IImageBlock <A> r2;
+    void segmentRectangle ( TreeNodeBase <?> node, IImageBlock  imageBlock ) throws ValueError {
+        IImageBlock  r1;
+        IImageBlock  r2;
 
         int w = imageBlock.getWidth();
         int h = imageBlock.getHeight();
@@ -152,7 +147,7 @@ interface ITopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G 
          * @throws ValueError
          */
     @Override
-    void segmentSquare ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError;
+    void segmentSquare ( TreeNodeBase <?> node, IImageBlock  imageBlock ) throws ValueError;
 
     /**
      * @param node
@@ -160,7 +155,7 @@ interface ITopDownTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G 
      * @throws ValueError
      */
     @Override
-    void segmentPolygon ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError;
+    void segmentPolygon ( TreeNodeBase <?> node, IImageBlock  imageBlock ) throws ValueError;
 
     /**
      * @return

@@ -1,15 +1,15 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
+import org.checkerframework.checker.units.qual.A;
+import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.Contract;
-import org.stranger2015.opencv.fic.core.IAddress;
-import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.fic.core.IImageBlock;
 import org.stranger2015.opencv.fic.core.search.SearchProcessor;
 import org.stranger2015.opencv.fic.transform.ITransform;
-import org.stranger2015.opencv.fic.utils.GrayScaleImage;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.io.PrintStream;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.IntStream;
 
 /**
@@ -87,9 +87,8 @@ import java.util.stream.IntStream;
  */
 
 public abstract
-class GaSearchProcessor<M  extends IImage <A>, A extends IAddress <A>, G extends BitBuffer
-        /*C extends Chromosome <A, G, C>*/>
-        extends SearchProcessor <M,A, G> {
+class GaSearchProcessor
+        extends SearchProcessor {
 
     protected final int popSize;
     protected final double mutationRate;
@@ -100,10 +99,10 @@ class GaSearchProcessor<M  extends IImage <A>, A extends IAddress <A>, G extends
      * A new property we've introduced is the size of the population used for
      * tournament selection in crossover.
      */
-    protected final ISelector <M,A, G> selector;
-    protected final IMutationOperator<M,A,G>  mutationOperator;
-    protected final ICrossoverOperator <A, G> crossoverOperator;
-    protected final FitnessFunction <A, G> fitnessFunction;
+    protected final ISelector  selector;
+    protected final IMutationOperator  mutationOperator;
+    protected final ICrossoverOperator  crossoverOperator;
+    protected final FitnessFunction  fitnessFunction;
 
     /**
      * @param popSize
@@ -118,10 +117,10 @@ class GaSearchProcessor<M  extends IImage <A>, A extends IAddress <A>, G extends
                   double mutationRate,
                   double crossoverRate,
                   int elitismCount,
-                  ISelector < A, G> selector,
-                  FitnessFunction <T, A, G, C> fitnessFunction,
-                  IMutationOperator <T> mutationOperator,
-                  ICrossoverOperator <T, A, G, C> crossoverOperator ) {
+                  ISelector selector,
+                  FitnessFunction fitnessFunction,
+                  IMutationOperator mutationOperator,
+                  ICrossoverOperator crossoverOperator ) {
 
         this.popSize = popSize;
         this.mutationRate = mutationRate;
@@ -459,10 +458,10 @@ class GaSearchProcessor<M  extends IImage <A>, A extends IAddress <A>, G extends
                   double crossoverRate,
                   int popSize,
                   int elitismCount,
-                  ISelector <T, A, G, C> selector,
-                  FitnessFunction <T, A, G, C> fitnessFunction,
-                  IMutationOperator <T> mutationOperator,
-                  ICrossoverOperator <T, A, G, C> crossoverOperator,
+                  ISelector selector,
+                  FitnessFunction fitnessFunction,
+                  IMutationOperator mutationOperator,
+                  ICrossoverOperator crossoverOperator,
                   int maxGenerations,
                   int numPrelimRuns,
                   int maxPrelimGenerations,
@@ -610,7 +609,7 @@ class GaSearchProcessor<M  extends IImage <A>, A extends IAddress <A>, G extends
      * @return Chromosome<G>
      */
     public
-    Chromosome <T, A, G> getFittestChromosome () {
+    Chromosome  getFittestChromosome () {
         return this.chromosomes[bestFitnessChromIndex];
     }
 
@@ -652,7 +651,7 @@ class GaSearchProcessor<M  extends IImage <A>, A extends IAddress <A>, G extends
      * @return the best found image transformation          //number of generations
      */
     public
-    ITransform <T, A, G> evolve () {
+    ITransform  evolve () {
         int iGen;
         int iPrelimChrom;
         int iPrelimChromToUsePerRun;
@@ -736,8 +735,7 @@ class GaSearchProcessor<M  extends IImage <A>, A extends IAddress <A>, G extends
         addChromosomesToLog(iGen, 10); //display Chromosomes to system.out
 
         computeFitnessRankings();
-        System.out.println("Best Chromosome<G> Found: ");
-        System.out.printf("%s Fitness= %f",
+        System.out.printf("Best Chromosome Found: \n%s Fitness= %f",
                 this.chromosomes[this.bestFitnessChromIndex].getGenesAsG(),
                 this.chromosomes[this.bestFitnessChromIndex].fitness);
 
@@ -914,8 +912,8 @@ class GaSearchProcessor<M  extends IImage <A>, A extends IAddress <A>, G extends
      * @return
      */
     public
-    Population <T, A, G, C> generateRandomPopulation () {
-        Population <T, A, G, C> population = new Population <>(popSize, 31);
+    Population generateRandomPopulation () {
+        Population population = new Population <>(popSize, 31);
 
         return null;//TODO
     }
@@ -925,13 +923,13 @@ class GaSearchProcessor<M  extends IImage <A>, A extends IAddress <A>, G extends
      */
     @Override
     public
-    GrayScaleImage<A> search () {
-        return (T) evolve();
+    byte[] search ( IImageBlock imageBlock, List <IImageBlock> rangeBlocks ) {
+        return new byte[0];
     }
 
     @Override
     public
     double evaluate () {
-        return (double) fitnessFunction.apply(populations[popIndex]);
+        return (double) fitnessFunction.apply(populations[popIndex].getFittest());
     }
 }

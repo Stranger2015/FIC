@@ -6,18 +6,17 @@ import org.stranger2015.opencv.fic.core.codec.BinTreeImageBlockGenerator;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
 import org.stranger2015.opencv.fic.core.codec.IPartitionProcessor;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class DelaunayImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends BinTreeImageBlockGenerator <N, A, G> {
+class DelaunayImageBlockGenerator<N extends TreeNode <N>>
+        extends BinTreeImageBlockGenerator <N> {
 
     /**
      * @param partitionProcessor
@@ -28,10 +27,10 @@ class DelaunayImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddre
      * @param domainSize
      */
     public
-    DelaunayImageBlockGenerator ( IPartitionProcessor <N, A, G> partitionProcessor,
+    DelaunayImageBlockGenerator ( IPartitionProcessor partitionProcessor,
                                   EPartitionScheme scheme,
-                                  IEncoder <N, A, G> encoder,
-                                  IImage <A> image,
+                                  IEncoder encoder,
+                                  IImage image,
                                   IIntSize rangeSize,
                                   IIntSize domainSize ) {
 
@@ -47,7 +46,7 @@ class DelaunayImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddre
      */
     @Override
     public
-    List <IImageBlock <A>> generateRangeBlocks ( IImageBlock <A> roi, int rangeSize, int domainSize )
+    List <IImageBlock > generateRangeBlocks ( IImageBlock  roi, int rangeSize, int domainSize )
             throws ValueError {
 
         return super.generateRangeBlocks(roi, rangeSize, domainSize);
@@ -61,7 +60,7 @@ class DelaunayImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddre
      */
     @Override
     public
-    List <IImageBlock <A>> createCodebookBlocks ( IImageBlock <A> roi, List <IImageBlock <A>> domainBlock )
+    List <IImageBlock > createCodebookBlocks ( IImageBlock  roi, List <IImageBlock > domainBlock )
             throws ValueError {
 
         return super.createCodebookBlocks(roi, domainBlock);
@@ -75,7 +74,7 @@ class DelaunayImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddre
      */
     @Override
     public
-    List <Vertex> generateVerticesSet ( IImageBlock <A> roi, int blockWidth, int blockHeight ) {
+    List <Vertex> generateVerticesSet ( IImageBlock  roi, int blockWidth, int blockHeight ) {
         return super.generateVerticesSet(roi, blockWidth, blockHeight);
     }
 
@@ -88,7 +87,7 @@ class DelaunayImageBlockGenerator<N extends TreeNode <N, A, G>, A extends IAddre
      */
     @Override
     protected
-    List <IImageBlock <A>> generateInitialRangeBlocks ( IImageBlock <A> roi,
+    List <IImageBlock > generateInitialRangeBlocks ( IImageBlock  roi,
                                                         int blockWidth,
                                                         int blockHeight )
             throws ValueError {

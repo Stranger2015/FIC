@@ -2,15 +2,14 @@ package org.stranger2015.opencv.fic.transform;
 
 import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.utils.BitBuffer;
+import org.stranger2015.opencv.fic.core.IImageBlock;
+import org.stranger2015.opencv.fic.core.ValueError;
 
 /**
- * @param <A>
- * @param <G>
+ * @param
  */
 public abstract
-class AffineTransform< A extends IAddress <A>, G extends BitBuffer>
-        extends ImageTransform <A, G> {
+class AffineTransform extends ImageTransform {
 
     private final EInterpolationType type;
 
@@ -18,10 +17,36 @@ class AffineTransform< A extends IAddress <A>, G extends BitBuffer>
      * @param image
      */
     protected
-    AffineTransform ( IImage <A> image, EInterpolationType type , IAddress<A> address) {
+    AffineTransform ( IImage image, EInterpolationType type , IAddress address) {
         super(image, type, address);
 
         this.type = type;
+    }
+
+    /**
+     * @param image
+     * @param type
+     * @param address
+     * @param brightnessOffset
+     * @param contrastScale
+     * @param dihedralAffineTransformerIndex
+     * @throws ValueError
+     */
+    public
+    AffineTransform ( IImageBlock image,
+                      EInterpolationType type,
+                      IAddress address,
+                      int brightnessOffset,
+                      double contrastScale,
+                      int dihedralAffineTransformerIndex ) throws ValueError {
+        super(
+                image,
+                type,
+                address,
+                brightnessOffset,
+                contrastScale,
+                dihedralAffineTransformerIndex);
+        this.type = EInterpolationType.BILINEAR;
     }
 
     /**

@@ -1,25 +1,22 @@
 package org.stranger2015.opencv.fic.transform;
 
-import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.IAddress;
-import org.stranger2015.opencv.utils.BitBuffer;
+import org.stranger2015.opencv.fic.core.IImage;
 
-import static org.stranger2015.opencv.fic.transform.EInterpolationType.*;
+import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
 
 /**
- 
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-class DctTransform<A extends IAddress <A>, G extends BitBuffer>
-        extends ImageTransform <A, G> {
+class DctTransform extends ImageTransform {
 
     /**
      * @param image
      */
     protected
-    DctTransform ( IImage<A> image, IAddress <A> address ) {
+    DctTransform ( IImage image, IAddress address ) {
         super(image, BILINEAR, address);
     }
 }

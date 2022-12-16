@@ -3,19 +3,17 @@ package org.stranger2015.opencv.fic.transform;
 import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.Image;
-import org.stranger2015.opencv.utils.BitBuffer;
 
-import static org.stranger2015.opencv.fic.transform.EInterpolationType.*;
+import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
 import static org.stranger2015.opencv.fic.transform.IfsTransform.SYM.*;
 
 /**
- 
+ *
  */
 public
-class IfsTransform</*M extends IImage<A>,*/ A extends IAddress <A>, G extends BitBuffer>
-        extends ImageTransform <A, G> {
+class IfsTransform extends ImageTransform {
 
-    private final static int[] ia = new int[0];
+    private final static double[] data = new double[0];
 
     /**
      * @param inputImage
@@ -23,9 +21,10 @@ class IfsTransform</*M extends IImage<A>,*/ A extends IAddress <A>, G extends Bi
      * @param type
      * @return
      */
-    @Override
+    @Deprecated
+//    @Override
     public
-    M transform ( M inputImage, M transformMatrix, EInterpolationType type ) {
+    IImage transform ( IImage inputImage, IImage transformMatrix, EInterpolationType type ) {
         return null;
     }
 
@@ -56,15 +55,15 @@ class IfsTransform</*M extends IImage<A>,*/ A extends IAddress <A>, G extends Bi
      * @param offset
      */
     public
-    IfsTransform (M image,
-            int fromX,
+    IfsTransform ( IImage image,
+                   int fromX,
                    int fromY,
                    int toX,
                    int toY,
                    int size,
                    SYM symmetry,
                    double scale,
-                   int offset , Address<A> address) {
+                   int offset, Address address ) {
 
         super(image, BILINEAR, address);
 
@@ -86,21 +85,24 @@ class IfsTransform</*M extends IImage<A>,*/ A extends IAddress <A>, G extends Bi
      * @return
      */
     public
-    M downSample ( M src, int startX, int startY, int targetSize ) {
-        IImage<A> out = new Image<>(src, roi1, address, -1, w, h);
-        //        PixelValue* dest = new PixelValue[targetSize * targetSize];
-//        int srcWidth = src.width();
+    IImage downSample ( IImage src, int startX, int startY, int targetSize ) {
+        IImage out = new Image(src, address, targetSize);
         int destX = 0;
-        int[] destY = 0;
+        int destY = 0;
 
         for (int y = startY; y < startY + targetSize * 2; y += 2) {
             for (int x = startX; x < startX + targetSize * 2; x += 2) {
                 // Perform simple 2x2 average
-               int pixel = (src.get(x, y, ia) +
-                                src.get(x + 1, y, ia) +
-                                src.get(x, y + 1, ia) +
-                                src.get(x + 1, y + 1, ia)) / 4;
-                out.putPixel(destX, destY, pixel);
+                int channels = src.getChannelsAmount();
+                double[] pixel = new double[channels];
+                for (int c = 0; c < channels; c++) {
+                    pixel[c] = src.get(x, y, data)[c] +
+                            src.get(x + 1, y, data)[c] +
+                            src.get(x, y + 1, data)[c] +
+                            src.get(x + 1, y + 1, data)[c] / 4;
+                }
+
+                out.getMat().put(destX, destY, pixel);
                 destX++;
             }
             destY++;

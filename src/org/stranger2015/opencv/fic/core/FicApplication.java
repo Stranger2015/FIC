@@ -44,18 +44,18 @@ import java.util.logging.Logger;
  * TODO: FUTURE: intelligent tilers - HV/Quadtree partitioning
  */
 public
-class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
+class FicApplication<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
         implements Runnable,
                    Consumer <String> {
 
     protected final Logger logger = Logger.getLogger(String.valueOf(getClass()));
 
     private final Consumer <String> action = this;
-    private final FicConfig <N, A, G> config;
+    private final FicConfig <N> config;
     private EtvColorSpace colorSpace;
-    private ITreeNodeBuilder <N, A, G> nodeBuilder;
-    private final Set <ImageTransform <A, G>> transforms = new HashSet <>();
-    private final List <Task <N, A, G>> tasks = new ArrayList <>();
+    private ITreeNodeBuilder <N> nodeBuilder;
+    private final Set <ImageTransform> transforms = new HashSet <>();
+    private final List <Task <N>> tasks = new ArrayList <>();
 
     /**
      * @return
@@ -77,7 +77,7 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      * @param nodeBuilder
      */
     public
-    void setNodeBuilder ( ITreeNodeBuilder <N, A, G> nodeBuilder ) {
+    void setNodeBuilder ( ITreeNodeBuilder <N> nodeBuilder ) {
         this.nodeBuilder = nodeBuilder;
     }
 
@@ -85,7 +85,7 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      * @return
      */
     public
-    List <Task <N, A, G>> getTasks () {
+    List <Task <N>> getTasks () {
         return tasks;
     }
 
@@ -104,7 +104,7 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      * @param colorSpace
      */
     public
-    FicApplication ( FicConfig <N, A, G> config ) {
+    FicApplication ( FicConfig <N> config ) {
         this.config = config;
     }
 
@@ -114,8 +114,8 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @SuppressWarnings({"unchecked"})
     public
-    IImage <A> readImage ( File input ) {
-        return (IImage <A>) Imgcodecs.imread(input.getAbsolutePath());
+    IImage readImage ( File input ) {
+        return (IImage ) Imgcodecs.imread(input.getAbsolutePath());
     }
 
     /**
@@ -123,15 +123,15 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      * @return
      */
     public
-    FCImageModel <N, A, G> compress ( IImage <A> image, String encoderClassName ) throws Exception {
+    FCImageModel <N> compress ( IImage image, String encoderClassName ) throws Exception {
 
-        return (FCImageModel <N, A, G>) readImage(config.getInput());
+        return (FCImageModel <N>) readImage(config.getInput());
     }
 
     /**
      * @param fractalModel
      */
-    void decompress ( FCImageModel <N, A, G> fractalModel ) {
+    void decompress ( FCImageModel <N> fractalModel ) {
         fractalModel.getModel();
     }
 
@@ -196,19 +196,19 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
     public
     void accept ( String filename ) {
         try {
-            Options <N, A, G> options = new Options <>();
+            Options <N> options = new Options <>();
 
-            ICodec <N, A, G> codec = (ICodec <N, A, G>) Utils.invoke(
+            ICodec <N> codec = (ICodec <N>) Utils.invoke(
                     config.partitionScheme(),
                     Class.forName(config.partitionScheme().getCodecClassName()).getConstructor());
 
-            EncodeTask <N, A, G> encodeTask = new EncodeTask <>(
+            EncodeTask <N> encodeTask = new EncodeTask <>(
                     filename,
                     config.partitionScheme(),
                     codec,
                     List.of()
             );
-            DecodeTask <N, A, G> decodeTask = new DecodeTask <>(
+            DecodeTask <N> decodeTask = new DecodeTask <>(
                     filename,
                     config.partitionScheme(),
                     codec,
@@ -218,7 +218,7 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
             codec.addTask(encodeTask);
             codec.addTask(decodeTask);
 
-            IEncoder <N, A, G> encoder = Encoder.create(
+            IEncoder <N> encoder = Encoder.create(
                     filename,
                     config.partitionScheme(),
                     config.tasks(),
@@ -246,7 +246,7 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Contract(value = " -> new", pure = true)
     private
-    Set <IImageFilter <A>> imageFilter () {
+    Set <IImageFilter > imageFilter () {
         return new HashSet <>();
     }
 
@@ -255,17 +255,17 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Contract(value = " -> new", pure = true)
     private @NotNull
-    Set <ImageTransform <A, G>> imageTransform () {
+    Set <ImageTransform> imageTransform () {
         return new HashSet <>();
     }
 
     private
-    IDistanceator <A> distanceator () {
+    IDistanceator  distanceator () {
         return config.distanceator;
     }
 
     private
-    ImageBlockGenerator <N, A, G> imageBlockGenerator () {
+    ImageBlockGenerator <N> imageBlockGenerator () {
         return newInstance();
     }
 
@@ -274,27 +274,27 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Contract(pure = true)
     private @Nullable
-    ScaleTransform <A, G> scaleTransform () {
+    ScaleTransform  scaleTransform () {
         return null;
     }
 
 //    private
-//    ISearchProcessor <N, A, G> searchProcessor () {
+//    ISearchProcessor <N> searchProcessor () {
 //        return Options.searchProcessor;
 //    }
 
     private
-    IPartitionProcessor <N, A, G> partitionProcessor () {
+    IPartitionProcessor <N> partitionProcessor () {
         return null;
     }
 
     private
-    ITreeNodeBuilder <N, A, G> nodeBuilder () {
+    ITreeNodeBuilder <N> nodeBuilder () {
         return nodeBuilder;
     }
 
     private
-    FCImageModel <N, A, G> fractalModel () {
+    FCImageModel <N> fractalModel () {
         return fractalModel;
     }
 
@@ -303,12 +303,12 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
      */
     @Contract(pure = true)
     private
-    Set <ImageTransform <A, G>> createTransforms () {
+    Set <ImageTransform> createTransforms () {
         return transforms;
     }
 
     public final
-    ITreeNodeBuilder <N, A, G> getNodeBuilder () {
+    ITreeNodeBuilder <N> getNodeBuilder () {
         return nodeBuilder;
     }
 
@@ -334,7 +334,7 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
 //     * @param fractalModel
 //     */
 //    public
-//    void setFractalModel ( FCImageModel <N, A, G> fractalModel ) {
+//    void setFractalModel ( FCImageModel <N> fractalModel ) {
 //        this.fractalModel = fractalModel;
 //    }
 //
@@ -342,7 +342,7 @@ class FicApplication<N extends TreeNode <N, A, G>, A extends IAddress <A>, G ext
 //     * @param transforms
 //     */
 //    public
-//    void setTransforms ( Set <ImageTransform <A, G>> transforms ) {
+//    void setTransforms ( Set <ImageTransform> transforms ) {
 //        this.transforms = transforms;
 //    }
 //

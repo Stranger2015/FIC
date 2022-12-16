@@ -4,18 +4,16 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
 import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.Task;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.ValueError;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  */
 public
-interface ICodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
+interface ICodec
         extends Runnable {
 
     /**
@@ -30,12 +28,12 @@ interface ICodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
     /**
      * @return
      */
-    IEncoder <N, A, G> getEncoder ();
+    IEncoder getEncoder ();
 
     /**
      * @return
      */
-    IDecoder <N, A, G> getDecoder ();
+    IDecoder getDecoder ();
 
     /**
      * @return
@@ -47,10 +45,10 @@ interface ICodec<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends
      * @return
      * @throws ValueError
      */
-    IAddress <A> createAddress ( int address ) throws ValueError;
+    IAddress createAddress ( int address ) throws ValueError;
 
     /**
      * @param task
      */
-    void addTask ( Task <N, A, G> task );
+    void addTask ( Task task );
 }

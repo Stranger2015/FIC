@@ -1,20 +1,18 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.stranger2015.opencv.fic.core.*;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
 
 /**
  * @param <N>
- * @param <A>
+ * @param
  * @param <G>
  */
 public
-interface IPartitionProcessor<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer> {
+interface IPartitionProcessor {
 
     /**
      * @return
@@ -24,14 +22,14 @@ interface IPartitionProcessor<N extends TreeNode <N, A, G>, A extends IAddress <
     /**
      * @return
      */
-    IPartitionProcessor <N, A, G> instance ( ITiler <N, A, G> tiler,
-                                             ImageBlockGenerator <N, A, G> imageBlockGenerator,
-                                             ITreeNodeBuilder <N, A, G> nodeBuilder );
+    IPartitionProcessor instance ( ITiler tiler,
+                                   ImageBlockGenerator <?> imageBlockGenerator,
+                                   ITreeNodeBuilder <?> nodeBuilder );
 
     /**
      * @return
      */
-    ITiler <N, A, G> getTiler ();
+    ITiler getTiler ();
 
     /**
      * @param roi
@@ -40,7 +38,7 @@ interface IPartitionProcessor<N extends TreeNode <N, A, G>, A extends IAddress <
      * @return
      */
     default
-    List <Vertex> generateVerticesSet (IImageBlock <A> roi, int blockWidth, int blockHeight ) {
+    List <Vertex> generateVerticesSet ( IImageBlock roi, int blockWidth, int blockHeight ) {
         return getTiler().generateVerticesSet(roi, blockWidth, blockHeight);
     }
 
@@ -52,7 +50,7 @@ interface IPartitionProcessor<N extends TreeNode <N, A, G>, A extends IAddress <
      * @throws ValueError
      */
     default
-    List <IImageBlock <A>> generateInitialRangeBlocks ( IImageBlock <A> roi, int blockWidth, int blockHeight )
+    List <IImageBlock> generateInitialRangeBlocks ( IImageBlock roi, int blockWidth, int blockHeight )
             throws ValueError {
 
         return getTiler().generateInitialRangeBlocks(roi, blockWidth, blockHeight);
@@ -66,10 +64,10 @@ interface IPartitionProcessor<N extends TreeNode <N, A, G>, A extends IAddress <
      * @throws ValueError
      */ //move to tiler
     default
-    List <IImageBlock <A>> generateRangeBlocks ( IImageBlock <A> roi, int blockWidth, int blockHeight )
+    List <IImageBlock> generateRangeBlocks ( IImageBlock roi, int blockWidth, int blockHeight )
             throws ValueError {
 
-        return getTiler().generateRangeBlocks(roi,blockWidth,blockHeight);
+        return getTiler().generateRangeBlocks(roi, blockWidth, blockHeight);
     }
 
 
@@ -81,12 +79,11 @@ interface IPartitionProcessor<N extends TreeNode <N, A, G>, A extends IAddress <
      * @throws ValueError
      */
     default
-    List <IImageBlock <A>> generateDomainBlocks ( IImageBlock <A> roi, int blockWidth, int blockHeight )
+    List <IImageBlock> generateDomainBlocks ( List <IImageBlock> roi, IIntSize blockWidth, IIntSize blockHeight )
             throws ValueError {
+
         return getTiler().generateDomainBlocks(roi, blockWidth, blockHeight);
     }
-
-//    List<IImageBlock<A>> generateRegions ( IImage <A> image, List<Rectangle> rectangles );
 
     /**
      * @param image
@@ -94,7 +91,7 @@ interface IPartitionProcessor<N extends TreeNode <N, A, G>, A extends IAddress <
      * @return
      */
     default
-    void partition ( IImageBlock <A> imageBlock )
+    void partition ( IImageBlock imageBlock )
             throws ValueError, DepthLimitExceeded {
 
         doPartition(imageBlock);
@@ -108,7 +105,7 @@ interface IPartitionProcessor<N extends TreeNode <N, A, G>, A extends IAddress <
      * @throws ValueError
      */
     default
-    void doPartition ( IImageBlock <A> imageBlock ) throws ValueError, DepthLimitExceeded {
+    void doPartition ( IImageBlock imageBlock ) throws ValueError, DepthLimitExceeded {
         getTiler().tile(imageBlock);
     }
 

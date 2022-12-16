@@ -1,17 +1,12 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
-import org.stranger2015.opencv.fic.core.Address;
-import org.stranger2015.opencv.utils.BitBuffer;
-
 /**
  * @param <T>
  * @param <G>
  * @param <C>
  */
 public
-class ElitismSelector<T extends Individual <T, A, G, C>, A extends IAddress <A>, G extends BitBuffer,
-        C extends Chromosome <T, A, G>>
-        extends Selector <T, A, G, C> {
+class ElitismSelector<C extends Chromosome> extends Selector<C> {
     /**
      * @param type
      */
@@ -25,7 +20,7 @@ class ElitismSelector<T extends Individual <T, A, G, C>, A extends IAddress <A>,
      */
     @Override
     public
-    T selectFirst () {
+    C selectFirst () {
         return null;
     }
 
@@ -34,7 +29,7 @@ class ElitismSelector<T extends Individual <T, A, G, C>, A extends IAddress <A>,
      */
     @Override
     public
-    T selectSecond () {
+    C selectSecond () {
         return null;
     }
 }

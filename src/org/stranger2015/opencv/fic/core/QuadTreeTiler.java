@@ -1,19 +1,16 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
 import org.stranger2015.opencv.fic.core.codec.tilers.BinTreeTiler;
 import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
- * @param <A>
+ * @param 
  * @param <G>
  */
 public abstract
-class QuadTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer>
-        extends BinTreeTiler <N, A, G> {
+class QuadTreeTiler extends BinTreeTiler {
 
        /**
      * @param image
@@ -24,11 +21,11 @@ class QuadTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exte
      */
     protected
     QuadTreeTiler (
-            IImage <A> image,
+            IImage image,
             IIntSize rangeSize,
             IIntSize domainSize,
-            IEncoder <N, A, G> encoder,
-            ITreeNodeBuilder <N, A, G> builder ) {
+            IEncoder encoder,
+            ITreeNodeBuilder <?> builder ) {
 
         super(image, rangeSize, domainSize, encoder, builder);
     }
@@ -38,7 +35,7 @@ class QuadTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exte
      */
     @Override
     public abstract
-    ITiler <N, A, G> instance ();
+    ITiler instance ();
 
 
     /**
@@ -46,7 +43,7 @@ class QuadTreeTiler<N extends TreeNode <N, A, G>, A extends IAddress <A>, G exte
      */
     @Override
     public
-    void segmentRectangle ( TreeNodeBase <N, A, G> node, IImageBlock <A> imageBlock ) throws ValueError {
+    void segmentRectangle ( TreeNodeBase <?> node, IImageBlock  imageBlock ) throws ValueError {
         throw new UnsupportedOperationException("QuadTreeTiler#segmentRectangle()");
     }
 

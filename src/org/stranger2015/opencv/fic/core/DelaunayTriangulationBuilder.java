@@ -19,7 +19,6 @@ import org.stranger2015.opencv.fic.core.triangulation.DelaunayTriangulation;
 import org.stranger2015.opencv.fic.core.triangulation.IncrementalDelaunayTriangulator;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.QuadEdgeSubdivision;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,10 +35,13 @@ import static org.stranger2015.opencv.fic.core.geom.CoordinateArrays.Bidirection
  * @author Martin Davis
  */
 public
-class DelaunayTriangulationBuilder<N extends TreeNode <N, A, G>, A extends IAddress <A>, G extends BitBuffer> {
+class DelaunayTriangulationBuilder<N extends TreeNode <N>> {
 
     private final Class <? extends DelaunayTriangularTopDownTiler> clazz;
 
+    /**
+     * @param clazz
+     */
     public
     DelaunayTriangulationBuilder ( Class <? extends DelaunayTriangularTopDownTiler> clazz ) {
         this.clazz = clazz;
@@ -53,13 +55,16 @@ class DelaunayTriangulationBuilder<N extends TreeNode <N, A, G>, A extends IAddr
      */
     public static
     CoordinateList extractUniqueCoordinates ( Geometry<?> geom ) {
+        CoordinateList result;
         if (geom == null) {
-            return new CoordinateList();
+            result = new CoordinateList();
+        }
+        else {
+            Coordinate[] coords = geom.getCoordinates();
+            result = unique(coords);
         }
 
-        Coordinate[] coords = geom.getCoordinates();
-
-        return unique(coords);
+        return result;
     }
 
     public static
@@ -104,16 +109,8 @@ class DelaunayTriangulationBuilder<N extends TreeNode <N, A, G>, A extends IAddr
 
     private Collection <Coordinate> siteCoords;
     private double tolerance = 0.0;
-    private DelaunayTriangulation <N, A, G> subdiv = new DelaunayTriangulation <>(
-            new Envelope(), tolerance);
-
-//    /**
-//     * Creates a new triangulation builder.
-//     */
-//    public
-//    DelaunayTriangulationBuilder ( Class <? extends DelaunayTriangularTopDownTiler> clazz ) {
-//        this.clazz = clazz;
-//    }
+    private DelaunayTriangulation <N> subdiv = new DelaunayTriangulation <>(
+          null,  new Envelope(), tolerance, null  );
 
     /**
      * Sets the sites (vertices) which will be triangulated.
@@ -159,8 +156,8 @@ class DelaunayTriangulationBuilder<N extends TreeNode <N, A, G>, A extends IAddr
         if (subdiv == null) {
             Envelope siteEnv = envelope(siteCoords);
             List <Vertex> vertices = toVertices(siteCoords);
-            subdiv = new DelaunayTriangulation <>(siteEnv, tolerance);
-            IncrementalDelaunayTriangulator <N, A, G> triangulator = new IncrementalDelaunayTriangulator <>(subdiv);
+            subdiv = new DelaunayTriangulation <>(null, siteEnv, tolerance, null);
+            IncrementalDelaunayTriangulator<?> triangulator = new IncrementalDelaunayTriangulator <>(subdiv);
             triangulator.insertSites(vertices);
         }
     }
@@ -206,8 +203,13 @@ class DelaunayTriangulationBuilder<N extends TreeNode <N, A, G>, A extends IAddr
     List <Triangle <?>> getTriangles( CoordinateList coordinates){
         return subdiv.getTriangles(coordinates);
     }
+
+    public
+    Class <? extends DelaunayTriangularTopDownTiler> getClazz () {
+        return clazz;
+    }
 //    public
-//    Class <? extends TriangularTiler <N, A, G>> getClazz () {
+//    Class <? extends TriangularTiler <N>> getClazz () {
 //        return clazz;
 //    }
 }
