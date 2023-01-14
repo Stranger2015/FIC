@@ -1,5 +1,6 @@
 package org.stranger2015.opencv.fic.core.codec.tilers;
 
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stranger2015.opencv.fic.core.*;
@@ -8,6 +9,7 @@ import org.stranger2015.opencv.fic.core.codec.ESplitKind;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
 
+import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -15,37 +17,32 @@ import java.util.List;
 
 import static org.stranger2015.opencv.fic.core.codec.ESplitKind.VERTICAL;
 
-/*
- * fractal tiler todo
- */
-
 /**
- * @param
+ * fractal tiler
  */
 public abstract
 class Tiler implements ITiler {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    Logger getLogger () {
+        return logger;
+    }
+
+
     public static final int MAX_DEPTH = 32;
 
     protected final IImage image;
-
     protected final Deque <IImageBlock> imageBlockDeque = new ArrayDeque <>();
 
-    public final static IIntSize[] minRangeSizes = {
-            new IntSize(4, 4),
-            new IntSize(8, 8),
-            new IntSize(16, 16),
-            };
+    public IIntSize currentRangeSize;
 
-    public final static IIntSize[] minDomainSizes = {
-            new IntSize(8, 8),
-            new IntSize(16, 16),
-            new IntSize(32, 32),
-            };
-
-    public IIntSize rangeSize;
-    public IIntSize domainSize;
+    public IIntSize currentDomainSize;
 
     protected final IEncoder encoder;
 
@@ -57,10 +54,9 @@ class Tiler implements ITiler {
 
     protected ETilerState state;
 
+    protected Pool <IImageBlock> rangeBlocks; //new Pool <>(minRangeSize);
 
-    protected final List <IImageBlock> rangeBlocks = new ArrayList <>();
-
-    protected final List <IImageBlock> domainBlocks = new ArrayList <>();
+    protected Pool <IImageBlock> domainBlocks; //new Pool <>(minDomainSize);
 
     protected final List <LeafNode <?>> leaves = new ArrayList <>();
 
@@ -119,8 +115,8 @@ class Tiler implements ITiler {
             ITreeNodeBuilder <?> builder ) {
 
         this.image = image;
-        this.rangeSize = rangeSize;
-        this.domainSize = domainSize;
+        this.currentRangeSize = rangeSize;
+        this.currentDomainSize = domainSize;
         this.encoder = encoder;
         this.builder = builder;
     }
@@ -169,44 +165,32 @@ class Tiler implements ITiler {
      * @param image
      * @return
      */
-//    @Contract(pure = true)
+    @Contract(pure = true)
     protected
     ESplitKind chooseDirection ( IImage image ) {
         return VERTICAL;
     }
 
-    /**
-     * @return
-     */
     @Override
     public
-    IIntSize getMinRangeSize () {
-        return getMinRangeSize(0);
+    Pool <IImageBlock> generateRangeBlocks ( IImageBlock roi, int blockWidth, int blockHeight ) throws ValueError {
+        return ITiler.super.generateRangeBlocks(roi, blockWidth, blockHeight);
     }
 
     /**
      * @param i
      * @return
      */
-//    @Contract(pure = true)
-    private
-    IIntSize getMinRangeSize ( int i ) {
-        return minRangeSizes[i];
-    }
 
-    /**
-     * @return
-     */
-    @Override
     public
-    IIntSize getMinDomainSize () {
-        return getMinDomainSize(0);
+    IIntSize getMinRangeSize () {
+        return minRangeSize;
     }
 
     /**
      * @return
      */
-//    @Contract(pure = true)
+    @Contract(pure = true)
     @Override
     public final
     Deque <IImageBlock> getImageBlockDeque () {
@@ -263,10 +247,10 @@ class Tiler implements ITiler {
      * @param i
      * @return
      */
-//    @Contract(pure = true)
-    protected
-    IIntSize getMinDomainSize ( int i ) {
-        return minDomainSizes[i];
+    @Contract(pure = true)
+    public
+    IIntSize getMinDomainSize () {
+        return minDomainSize;
     }
 
     /**
@@ -327,8 +311,8 @@ class Tiler implements ITiler {
      */
     @Override
     public final
-    IIntSize getDomainSize () {
-        return domainSize;
+    IIntSize getCurrentDomainSize () {
+        return currentDomainSize;
     }
 
     /**
@@ -336,8 +320,8 @@ class Tiler implements ITiler {
      */
     @Override
     public final
-    IIntSize getRangeSize () {
-        return rangeSize;
+    IIntSize getCurrentRangeSize () {
+        return currentRangeSize;
     }
 
     /**
@@ -362,6 +346,63 @@ class Tiler implements ITiler {
     }
 
     /**
+     * @param block
+     * @return
+     */
+    @Override
+    public
+    ClassificationScheme createQuadrants ( ImageBlockInfo blockInfo, IImageBlock imageBlock ) throws ValueError {
+        return new ClassificationScheme(blockInfo, imageBlock);
+    }
+
+    /**
+     * @param roi
+     * @param blockWidth
+     * @param blockHeight
+     * @return
+     * @throws ValueError
+     */
+    @Override
+    public
+    Pool <IImageBlock> generateInitialRangeBlocks (
+            IImageBlock roi,
+            int blockWidth,
+            int blockHeight ) throws ValueError, IOException {
+
+        Pool <IImageBlock> rangeBlocks = new Pool <>(minRangeSizes);
+
+        int w = roi.getSize().getWidth();
+        int h = roi.getSize().getHeight();
+
+        int numBlocksPerWidth = w / blockWidth + 1;
+        int numBlocksPerHeight = h / blockHeight + 1;
+        int level1 = 1;
+        int channels = roi.getChannelsAmount();
+        for (int ch = 0; ch < channels; ch++) {
+            for (int i = 0, x = 0; i < numBlocksPerWidth; i++, x += blockWidth) {
+                for (int j = 0, y = 0; j < numBlocksPerHeight; j++, y += blockHeight) {
+                    IImageBlock block = roi.getSubImage(x, y, blockWidth, blockHeight);
+                    ClassificationScheme quadrants = new ClassificationScheme(new ImageBlockInfo(colorType, block), block);
+
+                    rangeBlocks.add(block);
+                }
+            }
+        }
+
+        return rangeBlocks;
+    }
+
+//    public
+//    void iteratePixels ( IImage image, Consumer <double[]> action ) {
+//        for (int i = 0; i < image.getWidth(); i++) {
+//            for (int j = 0; j < image.getHeight(); j++) {
+//
+//            }
+//        }
+//    }
+//
+
+    /**
      * @param imageBlock
      * @throws ValueError
      */
@@ -373,24 +414,15 @@ class Tiler implements ITiler {
     /**
      * @return
      */
-    @Override
     public
-    Logger getLogger () {
-        return logger;
-    }
-
-    /**
-     * @return
-     */
-    public
-    List <IImageBlock> getRangeBlocks () {
+    Pool <IImageBlock> getRangeBlocks () {
         return rangeBlocks;
     }
 
     /**
      * @return
      */
-    List <IImageBlock> getDomainBlocks () {
+    Pool <IImageBlock> getDomainBlocks () {
         return domainBlocks;
     }
 }

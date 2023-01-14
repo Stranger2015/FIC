@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import static java.util.stream.IntStream.range;
 import static org.stranger2015.opencv.fic.core.EPartitionScheme.SIP;
 
 /**
@@ -116,7 +115,7 @@ class Task implements Function <String, IImage>,
         SipLibrary sipLib = new SipLibrary();
         SipTreeNodeBuilder <?> builder = new SipTreeNodeBuilder <>(image);
 
-        return sipLib.convertImageToSipImage(builder.buildTree(new SipImageBlock <>(image.getMat())));
+        return sipLib.convertImageToSipImage((SipTree <?, ?>) builder.buildTree(new SipImageBlock (image.getMat())));
     }
 
     /**
@@ -155,28 +154,9 @@ class Task implements Function <String, IImage>,
         return null;
     }
 
-    /**
-     * @param filename
-     * @return
-     */
-    protected
-    IImage execute ( String filename ) throws Exception {
-        IImage image = null;
-        for (Task task : tasks) {
-            image = task.execute(filename);
-        }
-        //todo pre-, post-??
-        int bound = getImageProcessorListeners().size();
-        for (int i = 0; i < bound; i++) {
-            getImageProcessorListeners().get(i).onPreprocess(processor, filename, null);
-            getImageProcessorListeners().get(i).onProcess(processor, inputImage);
-            getImageProcessorListeners().get(i).onPostprocess(processor, outputImage);
-        }
-
-        range(0, getCodecListeners().size())
-                .forEach(j -> getCodecListeners().get(j).onCreated(codec));
-
-        return image;
+    private
+    IImage execute ( String filename ) {
+        return null;
     }
 
     /**
@@ -185,7 +165,7 @@ class Task implements Function <String, IImage>,
     @Override
     public
     void onPreprocess ( IImageProcessor processor, String filename, IImage image ) throws ValueError {
-        logger.info("On preprocessing \n");
+        logger.info("On preprocessing...\n");
     }
 
     /**
@@ -194,7 +174,7 @@ class Task implements Function <String, IImage>,
     @Override
     public
     void onProcess ( IImageProcessor processor, IImage inputImage ) {
-        logger.info("On processing \n");
+        logger.info("On processing... \n");
     }
 
     /**
@@ -202,9 +182,7 @@ class Task implements Function <String, IImage>,
      */
     @Override
     public
-    void onPostprocess ( IImageProcessor processor, ICompressedImage outputImage ) {
-        logger.info("On postprocessing \n");
-
+    void onPostprocess ( IImageProcessor processor, IImage image, List <IImage> outputImages ) {
     }
 
     /**
@@ -215,4 +193,8 @@ class Task implements Function <String, IImage>,
     void onCreated ( ICodec codec ) {
         logger.info(String.format("On codec created '%s'\n", codec));
     }
+
+    @SuppressWarnings("unchecked")
+    public abstract
+    void onPreprocess ( IImageProcessor processor, String filename ) throws ValueError;
 }

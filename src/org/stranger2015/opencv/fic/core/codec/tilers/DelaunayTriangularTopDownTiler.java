@@ -69,8 +69,8 @@ class DelaunayTriangularTopDownTiler
     ITiler <N> instance () {
         return new DelaunayTriangularTopDownTiler <>(
                 getImage(),
-                getRangeSize(),
-                getDomainSize(),
+                getCurrentRangeSize(),
+                this.getCurrentDomainSize(),
                 getEncoder(),
                 getBuilder()
         );

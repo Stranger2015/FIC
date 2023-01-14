@@ -1,12 +1,10 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.stranger2015.opencv.fic.core.*;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.fic.transform.ScaleTransform;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +15,7 @@ import java.util.Set;
  
  */
 public
-class SipEncoder
-        extends SaEncoder{
+class SipEncoder extends SaEncoder{
 
     /**
      *
@@ -34,62 +31,43 @@ class SipEncoder
      */
     public
     SipEncoder (
+            String fileName,
             EPartitionScheme scheme,
-            ITreeNodeBuilder <N> nodeBuilder,
-            IPartitionProcessor<N,A,G> partitionProcessor,
-            ISearchProcessor <N> searchProcessor,
-            ScaleTransform  scaleTransform,
-            ImageBlockGenerator <N> imageBlockGenerator,
-            IDistanceator  comparator,
-            Set <ImageTransform> transforms,
-            Set <IImageFilter > filters,
-            FCImageModel <N> fractalModel
-    ) {
+            ICodec codec,
+            List <Task> tasks,
+            EtvColorSpace colorSpace,
+            ITreeNodeBuilder <?> nodeBuilder,
+            IPartitionProcessor partitionProcessor,
+            ISearchProcessor searchProcessor,
+            ScaleTransform scaleTransform,
+            ImageBlockGenerator <?> imageBlockGenerator,
+            IDistanceator comparator,
+            Set <ImageTransform> imageTransforms,
+            Set <IImageFilter> imageFilters,
+            FCImageModel fractalModel ) {
+
         super(
+                fileName,
                 scheme,
+                codec,
+                tasks,
+                colorSpace,
                 nodeBuilder,
                 partitionProcessor,
                 searchProcessor,
                 scaleTransform,
                 imageBlockGenerator,
                 comparator,
-                transforms,
-                filters,
+                imageTransforms,
+                imageFilters,
                 fractalModel
         );
     }
 
-    public
-    SipEncoder ( IImage image, IIntSize rangeSize, IIntSize domainSize ) {
-        super(
-                image,
-                rangeSize,
-                domainSize
-        );
-    }
-
-//    public
-//    ImageBlockGenerator <N> createBlockGenerator ( ITiler<N> tiler,
-//                                                            EPartitionScheme scheme,
-//                                                            IEncoder <N> encoder,
-//                                                            IImage image,
-//                                                            IIntSize rangeSize,
-//                                                            IIntSize domainSize
-//    ) {
-//        return new SipImageBlockGenerator <>(
-//                tiler,
-//                scheme,
-//                encoder,
-//                image,
-//                rangeSize,
-//                domainSize
-//        );
-//    }
-
     /**
      * @return
      */
-//    @Override
+    @Override
     public
     int getImageSizeBase () {
         return 9;
@@ -100,7 +78,7 @@ class SipEncoder
      * @param transform
      * @return
      */
-//    @Override
+    @Override
     public
     IImage randomTransform ( IImage image, ImageTransform transform ) {
         return image;//todo
@@ -163,19 +141,18 @@ class SipEncoder
      * @return
      */
 //    @Override
-    public
+  public
     List <ImageTransform> compress ( IImage image, int sourceSize, int destinationSize, int step ) {
         return new ArrayList <>();
     }
 
     /**
      * @param image
-     * @return
      */
-//    @Override
+    @Override
     public
-    IImage encode ( IImage image ) throws ValueError {
-        return super.encode(image);
+    void encode ( IImage image ) throws Exception {
+        super.encode(image);
     }
 
     /**
@@ -187,9 +164,9 @@ class SipEncoder
 //    @Override
     public
     ImageBlockGenerator <?> createBlockGenerator (
-            IPartitionProcessor <N> partitionProcessor,
+            IPartitionProcessor partitionProcessor,
             EPartitionScheme scheme,
-            IEncoder <N> encoder,
+            IEncoder encoder,
             IImage image,
             IIntSize rangeSize,
             IIntSize domainSize

@@ -2,7 +2,7 @@ package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.stranger2015.org.enumus.Hierarchy;
+import org.stranger2015.opencv.fic.core.enumus.Hierarchy;
 
 /**
  *

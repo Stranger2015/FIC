@@ -2,19 +2,15 @@ package org.stranger2015.opencv.fic.core;
 
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.ICodec;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
- 
  */
 public
-interface IImageProcessor
-        extends IProcessor  {
+interface IImageProcessor extends IProcessor {
 
-    IImage  postprocess ( IImage outputImage );
+    IImage postprocess ( IImage outputImage );
 
     /**
      * @return
@@ -29,7 +25,7 @@ interface IImageProcessor
     /**
      * @return
      */
-    ICodec  getCodec ();
+    ICodec getCodec ();
 
     /**
      * @param filename
@@ -53,12 +49,12 @@ interface IImageProcessor
     default
     IImage preprocess ( IImage inputImage ) throws ValueError {
         IntSize size = adjustSize(
-                inputImage.getAddress(0,0).radix(),
+                inputImage.getAddress(0, 0).radix(),
                 inputImage.getWidth(),
                 inputImage.getHeight()
         );
         //image or block or roi
-        IImage destImage = new Image <>(inputImage.getMat());
+        IImage destImage = new Image(inputImage.getMat(),0,0, inputImage.get(0,0, new double[0]));//fixme
         Imgproc.resize(
                 inputImage.getMat(),
                 destImage.getMat(),

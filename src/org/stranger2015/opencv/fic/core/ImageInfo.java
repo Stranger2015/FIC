@@ -2,6 +2,8 @@ package org.stranger2015.opencv.fic.core;
 
 import org.stranger2015.opencv.fic.core.codec.EtvColorSpace;
 
+import java.util.List;
+
 /**
  *
  */
@@ -15,6 +17,7 @@ class ImageInfo extends IntSize {
      * @param originalImageWidth
      * @param originalImageHeight
      * @param originalColorSpace
+     * @param rangeBlocks
      */
     public
     ImageInfo ( int width,
@@ -22,7 +25,7 @@ class ImageInfo extends IntSize {
                 int originalImageWidth,
                 int originalImageHeight,
                 EtvColorSpace originalColorSpace
-    ) {
+                ) {
         super(width, height, originalImageWidth, originalImageHeight);
 
         this.originalColorSpace = originalColorSpace;
@@ -32,10 +35,17 @@ class ImageInfo extends IntSize {
      * @param width
      * @param height
      * @param originalColorSpace
+     * @param rangeBlocks
+     * @param domainBlocks
      */
     public
-    ImageInfo ( int width, int height, EtvColorSpace originalColorSpace ) {
+    ImageInfo ( int width,
+                int height,
+                EtvColorSpace originalColorSpace,
+               ) {
+
         super(width, height);
+
         this.originalColorSpace = originalColorSpace;
     }
 
@@ -54,4 +64,5 @@ class ImageInfo extends IntSize {
     EtvColorSpace getOriginalColorSpace () {
         return originalColorSpace;
     }
+
 }

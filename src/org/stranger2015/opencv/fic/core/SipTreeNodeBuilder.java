@@ -1,6 +1,6 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.apache.commons.collections4.bidimap.DualHashBidiMap;
+//import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.jetbrains.annotations.NotNull;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
@@ -22,7 +22,6 @@ import static org.stranger2015.opencv.fic.core.SipTreeNode.SipLayerClusterNode.b
  */
 public
 class SipTreeNodeBuilder<N extends TreeNode <N>
-
         extends TreeNodeBuilder <N> {
 
     protected SipLibrary  sipLibrary;
@@ -38,7 +37,7 @@ class SipTreeNodeBuilder<N extends TreeNode <N>
      */
     public
     SipTreeNodeBuilder ( IImage image ) {
-        super(image, new SipLibrary <>());
+        super(image, new SipLibrary ());
         sipLibrary = (SipLibrary ) this.getLibrary();
     }
 
@@ -46,7 +45,7 @@ class SipTreeNodeBuilder<N extends TreeNode <N>
     SipTreeNodeBuilder ( IImageBlock  image,
                          IIntSize rangeSize,
                          IIntSize domainSize,
-                         IEncoder <N> encoder,
+                         IEncoder encoder,
                          Library  library ) {
 
         super(image, rangeSize, domainSize, encoder, library);
@@ -59,7 +58,7 @@ class SipTreeNodeBuilder<N extends TreeNode <N>
     @Override
     @SuppressWarnings("unchecked")
     public
-    SipTree <N> buildTree ( IImageBlock  imageBlock ) {
+    SipTree <T, T1> buildTree ( IImageBlock  imageBlock ) {
 //        SipTreeNode <N> root = new SipTreeNode <>(
 //                null,
 //                imageBlock,
@@ -69,7 +68,7 @@ class SipTreeNodeBuilder<N extends TreeNode <N>
 //        tree.getNodes().addAll(buildMpfr(root));
 
 
-        SipTree <N> tree
+        SipTree <T, T1> tree
                 = null;
         return tree;
     }
@@ -151,7 +150,7 @@ class SipTreeNodeBuilder<N extends TreeNode <N>
     @SuppressWarnings("unchecked")
     private
     List <TreeNode <N>> buildLayers ( SipTreeNode <N> root ) throws ValueError {
-        blocks.addAll((Collection <? extends ImageBlock <?>>) splitSipImageToBlocks((SipImage ) imageBlock));
+        blocks.addAll((Collection <? extends ImageBlock >) splitSipImageToBlocks((SipImage ) imageBlock));
 //        int sideSize = 0;
         sipLibrary.layersAmount = sipLibrary.calcLayersAmount(sideSize);
         int startAddress = 0;
@@ -209,10 +208,10 @@ class SipTreeNodeBuilder<N extends TreeNode <N>
             List <IImageBlock > domainPool = new ArrayList <>();
             List <N> leaves = new ArrayList <>();
             List <Point> shifts = sipLibrary.derivePixelShifts(
-                    new SipTree <N>(
+                    new SipTree <>(
                             parent,
                             blocks,
-                            new TreeNode Task <N>(null, domainPool, leaves)),
+                            new TreeNodeTask (null, domainPool, leaves)),
                     ccs,
                     sipLibrary.pixelCapacity,
                     startAddress,

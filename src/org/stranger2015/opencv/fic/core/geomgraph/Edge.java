@@ -1,24 +1,18 @@
 package org.stranger2015.opencv.fic.core.geomgraph;
 
-import org.locationtech.jts.geom.Position;
-import org.locationtech.jts.geomgraph.Depth;
-import org.locationtech.jts.geomgraph.GraphComponent;
-import org.locationtech.jts.geomgraph.Label;
+import org.stranger2015.opencv.fic.core.geom.*;
 import org.stranger2015.opencv.fic.core.algorithm.LineIntersector;
-import org.stranger2015.opencv.fic.core.geom.Coordinate;
-import org.stranger2015.opencv.fic.core.geom.Envelope;
-import org.stranger2015.opencv.fic.core.geom.IntersectionMatrix;
 import org.stranger2015.opencv.fic.core.geomgraph.index.MonotoneChainEdge;
 
 import java.io.PrintStream;
+
+import static org.stranger2015.opencv.fic.core.geom.Position.*;
 
 
 /**
  * @version 1.7
  */
-public class Edge
-        extends GraphComponent
-{
+public class Edge extends GraphComponent {
 
     /**
      * Updates an IM from the label for an edge.
@@ -26,30 +20,37 @@ public class Edge
      * @param label Label defining position
      * @param im intersection matrix
      */
-    public static void updateIM( Label label, IntersectionMatrix im)
-    {
-        im.setAtLeastIfValid(label.getLocation(0, Position.ON), label.getLocation(1, Position.ON), 1);
+    public static void updateIM( Label label, IntersectionMatrix im) {
+        im.setAtLeastIfValid(
+                label.getLocation(0, ON),
+                label.getLocation(1, ON),
+                1);
         if (label.isArea()) {
-            im.setAtLeastIfValid(label.getLocation(0, Position.LEFT),  label.getLocation(1, Position.LEFT),   2);
-            im.setAtLeastIfValid(label.getLocation(0, Position.RIGHT), label.getLocation(1, Position.RIGHT),  2);
+            im.setAtLeastIfValid(
+                    label.getLocation(0, LEFT),
+                    label.getLocation(1, LEFT),
+                    2);
+            im.setAtLeastIfValid(
+                    label.getLocation(0, RIGHT),
+                    label.getLocation(1, RIGHT),
+                    2);
         }
     }
 
-    Coordinate[] pts;
+    public Coordinate[] pts;
     private Envelope env;
     EdgeIntersectionList eiList = new EdgeIntersectionList(this);
     private String name;
     private MonotoneChainEdge mce;
     private boolean isIsolated = true;
-    private Depth depth = new Depth();
+    private final Depth depth = new Depth();
     private int depthDelta = 0;   // the change in area depth from the R to L side of this edge
 
-    public Edge(Coordinate[] pts, Label label)
-    {
+    public Edge(Coordinate[] pts, Label label) {
         this.pts = pts;
         this.label = label;
     }
-    public Edge( Coordinate[] pts, Label label )
+    public Edge( Coordinate[] pts)
     {
         this(pts, null);
     }
@@ -77,6 +78,17 @@ public class Edge
     @Override
     protected
     void computeIM ( org.locationtech.jts.geom.IntersectionMatrix im ) {
+
+    }
+
+    /**
+     * Compute the contribution to an IM for this component.
+     *
+     * @param im Intersection matrix
+     */
+    @Override
+    protected
+    void computeIM ( org.stranger2015.jts.geom.IntersectionMatrix im ) {
 
     }
 
@@ -127,13 +139,12 @@ public class Edge
     {
         if (! label.isArea()) return false;
         if (pts.length != 3) return false;
-        if (pts[0].equals(pts[2]) ) return true;
-        return false;
+        return pts[0].equals(pts[2]);
     }
     public
     Edge getCollapsedEdge()
     {
-        Coordinate newPts[] = new Coordinate[2];
+        Coordinate[] newPts = new Coordinate[2];
         newPts[0] = pts[0];
         newPts[1] = pts[1];
         Edge newe = new Edge(newPts, Label.toLineLabel(label));
@@ -204,7 +215,7 @@ public class Edge
      * Update the IM with the contribution for this component.
      * A component only contributes if it has a labelling for both parent geometries
      */
-    public void computeIM(IntersectionMatrix im)
+    public void computeIM( org.stranger2015.opencv.fic.core.geom.IntersectionMatrix1 im)
     {
         updateIM(label, im);
     }

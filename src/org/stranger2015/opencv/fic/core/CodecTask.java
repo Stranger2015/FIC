@@ -1,8 +1,6 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.*;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
 
@@ -10,11 +8,10 @@ import java.util.List;
  *
  */
 public
-class CodecTask<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
-        extends BidiTask <N> {
+class CodecTask extends BidiTask {
 
-    private/* final*/ IEncoder <N> encoder;
-    private /*final*/ IDecoder <N> decoder;
+    private/* final*/ IEncoder encoder;
+    private /*final*/ IDecoder decoder;
 
     /**
      * @param encoder
@@ -25,10 +22,10 @@ class CodecTask<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer
     public
     CodecTask ( String fn,
                 EPartitionScheme scheme,
-            ICodec<N> codec,
-                IEncoder <N> encoder,
-                IDecoder <N> decoder,
-                Task <N>... tasks ) {
+                ICodec codec,
+                IEncoder encoder,
+                IDecoder decoder,
+                Task... tasks ) {
 
         this(fn, scheme, codec, encoder, decoder, List.of(tasks));
     }
@@ -41,11 +38,10 @@ class CodecTask<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer
     public
     CodecTask ( String fn,
                 EPartitionScheme scheme,
-                ICodec<N> codec,
-
-                IEncoder <N> encoder,
-                IDecoder <N> decoder,
-                List <Task <N>> tasks ) {
+                ICodec codec,
+                IEncoder encoder,
+                IDecoder decoder,
+                List <Task> tasks ) {
 
         super(fn, scheme, codec, tasks);
 
@@ -59,14 +55,14 @@ class CodecTask<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer
     public
     CodecTask ( String fn,
                 EPartitionScheme scheme,
-                ICodec<N> codec,
-                List <Task <N>> tasks) {
+                ICodec codec,
+                List <Task> tasks ) {
         super(
                 fn,
                 scheme,
                 codec,
-                new EncodeTask <>(fn, scheme, codec, tasks/*, encoder*/),
-                new DecodeTask <>(fn, scheme, codec, tasks/*, decoder*/)
+                new EncodeTask(fn, scheme, codec, tasks/*, encoder*/),
+                new DecodeTask(fn, scheme, codec, tasks/*, decoder*/)
         );
     }/**/
 
@@ -74,7 +70,7 @@ class CodecTask<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer
      * @return
      */
     public
-    IEncoder <N> getEncoder () {
+    IEncoder getEncoder () {
         return encoder;
     }
 
@@ -82,7 +78,7 @@ class CodecTask<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer
      * @return
      */
     public
-    IDecoder <N> getDecoder () {
+    IDecoder getDecoder () {
         return decoder;
     }
 
@@ -206,10 +202,9 @@ class CodecTask<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer
      * @param <G>
      */
     public static
-    class ColorspaceConversionTask<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
-            extends BidiTask <N> {
+    class ColorspaceConversionTask extends BidiTask {
 
-        protected final EtvColorSpace colorSpace;
+        protected  EtvColorSpace colorSpace;
 
         /**
          * @param filename
@@ -219,26 +214,14 @@ class CodecTask<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer
         public
         ColorspaceConversionTask ( String filename,
                                    EPartitionScheme scheme,
-                                   ICodec <N> codec,
+                                   ICodec codec,
                                    EtvColorSpace colorSpace
         ) {
             this(
                     filename,
-                    scheme,
                     codec,
                     colorSpace,
-                    List.of(new FromRgbToTvColorspaceConversionTask <>(
-                                    filename,
-                                    scheme,
-                                    codec,
-                                    colorSpace,
-                                    List.of()),
-                            new FromTvToRgbColorspaceConversionTask <>(
-                                    filename,
-                                    scheme,
-                                    codec,
-                                    colorSpace,
-                                    List.of())
+                    List.of(
                     )
             );
         }
@@ -253,25 +236,14 @@ class CodecTask<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer
         public
         ColorspaceConversionTask ( String fileName,
                                    EPartitionScheme scheme,
-                                   ICodec <N> codec,
+                                   ICodec codec,
                                    EtvColorSpace colorSpace,
-                                   List <Task <N>> tasks
+                                   List <Task> tasks
         ) {
             super(fileName, scheme, codec, tasks);
 
             this.colorSpace = colorSpace;
         }
 
-        /**
-         * @param filename
-         * @return
-         */
-        @Override
-        protected
-        IImage execute ( String filename ) throws ValueError {
-            IImage image = super.execute(filename);
-    //getTask();
-            return image;
-        }
     }
 }

@@ -1,16 +1,14 @@
 package org.stranger2015.opencv.fic.core;
 
-//import org.jetbrains.annotations.Contract;
-//import org.jetbrains.annotations.NotNull;
-
-import org.opencv.core.Mat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.fic.core.codec.*;
 import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
-import org.stranger2015.opencv.fic.core.io.FractalReader;
+import org.stranger2015.opencv.fic.core.codec.tilers.Pool;
+import org.stranger2015.opencv.fic.core.io.FractalWriter;
+import org.stranger2015.opencv.fic.core.search.EMetrics;
 import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
@@ -23,18 +21,14 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-import static java.util.stream.IntStream.range;
-import static org.opencv.core.Core.flip;
-import static org.opencv.core.Core.reduce;
 import static org.stranger2015.opencv.fic.core.codec.ESplitKind.VERTICAL;
+import static org.stranger2015.opencv.fic.core.codec.tilers.Pool.incUsageCount;
 
 /**
  *
  */
 public abstract
-class Encoder extends ImageProcessor
-        implements IEncoder {
-
+class Encoder extends ImageProcessor implements IEncoder {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final List <Class <ITiler>> allowableSubtilers = new ArrayList <>();
@@ -64,12 +58,21 @@ class Encoder extends ImageProcessor
     protected IImage inputImage;
     protected CompressedImage outputImage;
 
-    List <IImageBlock> rangeBlocks;
-    List <IImageBlock> domainBlocks;
+    protected Pool <IImageBlock> rangeBlocks;
+    protected Pool <IImageBlock> domainBlocks;
 
     protected IIntSize rangeSize;
 
     protected IIntSize domainSize;
+
+    protected double threshold = 0.2;
+
+    protected int currRangeIdx;
+    protected int currDomainIdx;
+    /**
+     *
+     */
+    private EMetrics eMetrics;
 
     /**
      *
@@ -89,8 +92,8 @@ class Encoder extends ImageProcessor
             IDistanceator comparator,
             Set <ImageTransform> imageTransforms,
             Set <IImageFilter> imageFilters,
-            FCImageModel fractalModel
-    ) {
+            FCImageModel fractalModel ) {
+
         super(fileName, scheme, codec, tasks, colorSpace);
 
         this.nodeBuilder = nodeBuilder;
@@ -109,7 +112,8 @@ class Encoder extends ImageProcessor
                 this,
                 inputImage,
                 rangeSize,
-                domainSize);
+                domainSize
+        );
 
         tilerClass = partitionProcessor.getTiler().getClass();
     }
@@ -137,8 +141,6 @@ class Encoder extends ImageProcessor
      */
     @SuppressWarnings("unchecked")
     public static
-
-    /*@NotNull*/
     IEncoder create (
             String fileName,
             EPartitionScheme scheme,
@@ -211,6 +213,18 @@ class Encoder extends ImageProcessor
         return allowableSubtilers;
     }
 
+    public abstract
+    IImageBlock randomTransform ( IImageBlock image, ImageTransform transform );
+
+    /**
+     * @param image
+     * @param transform
+     * @return
+     */
+    @Override
+    public abstract
+    IImageBlock applyAffineTransform ( IImageBlock image, AffineTransform transform );
+
     /**
      * @param tilerClass
      */
@@ -225,7 +239,19 @@ class Encoder extends ImageProcessor
      */
     @Override
     public
-    Class <? extends ITiler> getTilerClass () {
+    EMetrics getMetrics () {
+        return eMetrics;
+    }
+
+    public abstract
+    void addLeafNode ( TreeNodeBase <?> node );
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    Class <?> getTilerClass () {
         return tilerClass;
     }
 
@@ -315,9 +341,18 @@ class Encoder extends ImageProcessor
     @SuppressWarnings("unchecked")
     @Override
     public
-    FCImageModel loadModel ( String filename ) throws ValueError, IOException {
-        return new FractalReader(filename).readModel();
+    void saveModel ( String filename, FCImageModel model ) throws Exception {
+        new FractalWriter(filename, model).writeModel();
     }
+
+    public abstract
+    IPartitionProcessor createPartitionProcessor0 ( ITiler tiler );
+
+    public abstract
+    IImageBlock flipAxis ( IImageBlock image, int axis ) throws ValueError;
+
+    public abstract
+    List <IImageBlock> segmentImage ( IImage image, List <Rectangle> bounds ) throws ValueError;
 
     /**
      * @param node
@@ -370,8 +405,7 @@ class Encoder extends ImageProcessor
      */
     @Override
     public
-    void segmentImage ( IImageBlock roi, int blockWidth, int blockHeight )
-            throws ValueError {
+    void segmentImage ( IImageBlock roi, int blockWidth, int blockHeight ) throws ValueError, IOException {
 
         rangeBlocks = imageBlockGenerator.generateRangeBlocks(
                 roi,
@@ -381,9 +415,37 @@ class Encoder extends ImageProcessor
 
         domainBlocks = imageBlockGenerator.generateDomainBlocks(
                 roi,
-                blockWidth,
-                blockHeight
+                blockWidth * 2,
+                blockHeight * 2
         );
+
+        partitionProcessor.classify(rangeBlocks, domainBlocks);
+    }
+
+    /**
+     * @param tiler
+     * @param imageBlockGenerator
+     * @param nodeBuilder
+     * @return
+     */
+    public abstract
+    IPartitionProcessor doCreatePartitionProcessor ( ITiler tiler,
+                                                     ImageBlockGenerator <?> imageBlockGenerator,
+                                                     ITreeNodeBuilder <?> nodeBuilder );
+
+    /**
+     * @param rangeBlock
+     * @param domainBlocks
+     * @return
+     */
+    @Override
+    public
+    IImageBlock selectDomainBlock ( IImageBlock rangeBlock, Pool <IImageBlock> domainBlocks ) {
+        List <IImageBlock> fp = domainBlocks.getFilteredPool(rangeBlock);
+        IImageBlock block = fp.get(currDomainIdx++);
+        incUsageCount(fp, block);
+
+        return block;
     }
 
     /**
@@ -391,7 +453,7 @@ class Encoder extends ImageProcessor
      */
     @Override
     public
-    List <IImageBlock> getRangeBlocks () {
+    Pool <IImageBlock> getRangeBlocks () {
         return rangeBlocks;
     }
 
@@ -400,20 +462,22 @@ class Encoder extends ImageProcessor
      */
     @Override
     public
-    List <IImageBlock> getDomainBlocks () {
+    Pool <IImageBlock> getDomainBlocks () {
         return domainBlocks;
     }
 
     /**
-     *
+     * @return
      */
     @Override
     public
-    void doEncode ( IImage image ) throws Exception {
+    IImage doEncode ( IImage image ) throws Exception {
         IImageBlock imageBlock = image.getSubImage();
         segmentImage(imageBlock, rangeSize.getWidth(), rangeSize.getHeight());
         byte[] bytes = searchProcessor.search(imageBlock, rangeBlocks);
         fractalModel = new FCImageModel(bytes);
+
+        return image;
     }
 
     /**
@@ -467,25 +531,14 @@ class Encoder extends ImageProcessor
     }
 
     /**
-     * x = np.asarray(x).swapaxes (axis, 0);
-     * x = x[::-1, ...]
-     * x = x.swapaxes(0, axis);
-     *
      * @param image
-     * @param axis
+     * @param bounds
      * @return
+     * @throws ValueError
      */
-    public
-    IImage flipAxis ( IImage image, int axis ) {
-        Mat dest = new Mat();
-        flip(image.getMat(), dest, axis);
-
-        return new Image(
-                dest,
-                image.getSize(),
-                image.getOriginalImageWidth(),
-                image.getOriginalImageHeight());
-    }
+    public abstract
+    List <IImageBlock> segmentImage ( IImageBlock image, List <Rectangle> bounds )
+            throws ValueError;
 
     /**
      * @param image
@@ -494,62 +547,8 @@ class Encoder extends ImageProcessor
      */
     @Override
     public
-    IImage randomTransform ( IImage image, ImageTransform transform ) {
+    IImageBlock applyTransform ( IImageBlock image, ImageTransform transform ) {
         return image;
-    }
-
-    /**
-     * @param image
-     * @param transform
-     * @return
-     */
-    @Override
-    public
-    IImage applyTransform ( IImage image, ImageTransform transform ) {
-        return image;
-    }
-
-    /**
-     * @param image
-     * @param transform
-     * @return
-     */
-    @Override
-    public
-    IImage applyAffineTransform ( IImage image, AffineTransform transform ) {
-        return image;
-    }
-
-    /**
-     * @param image
-     * @param sourceSize
-     * @param destinationSize
-     * @param step
-     * @return
-     */
-    @Override
-    public
-    List <IImageBlock> generateAllTransformedBlocks ( IImage image,
-                                                      int sourceSize,
-                                                      int destinationSize,
-                                                      int step ) throws ValueError {
-
-        final List <IImageBlock> transformedBlocks = new ArrayList <>();
-        //Extract the source block and reduce it to the shape of a destination block
-        range(0, image.getWidth() - sourceSize / step + 1)
-                .flatMap(i -> range(0, image.getHeight() - sourceSize / step + 1))
-                .mapToObj(j -> new Mat())
-                .forEachOrdered(dest -> reduce(image.getMat(), dest, -1, -1, -1));
-//        for k in range((img.shape[0] - source_size) // step + 1):
-//        for l in range((img.shape[1] - source_size) // step + 1):
-//
-//                S = reduce(img[k*step:k*step+source_size,l*step:l*step+source_size], factor)
-//            # Generate all possible transformed blocks
-//        for direction, angle in candidates:
-
-//        transformedBlocks.add(n(k, l, direction, angle, applyTransformation(S, direction, angle));
-
-        return transformedBlocks;
     }
 
     /**
@@ -584,18 +583,43 @@ class Encoder extends ImageProcessor
     public
     IImage postprocess ( IImage outputImage ) {
         return null;
-    }//fixme
+    }
 
     /**
      * @return
      */
+    @Override
     public
     IImage getImage () {
         return inputImage;
     }
 
+    /**
+     * @param fractalModel
+     */
     public
     void setFractalModel ( FCImageModel fractalModel ) {
         this.fractalModel = fractalModel;
     }
+
+    /**
+     * @param eMetrics
+     */
+    @Override
+    public
+    void setEMetrics ( EMetrics eMetrics ) {
+        this.eMetrics = eMetrics;
+    }
+
+    /**
+     * @return
+     */
+    public abstract
+    IImage getInput ();
+
+    /**
+     * @return
+     */
+    public abstract
+    IImage getOutput ();
 }

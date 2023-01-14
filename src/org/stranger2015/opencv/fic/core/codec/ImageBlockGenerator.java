@@ -1,11 +1,9 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.codec.tilers.Pool;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
 
@@ -17,10 +15,10 @@ import java.util.List;
 public abstract
 class ImageBlockGenerator<N extends TreeNode <N>> {
 
-    protected IPartitionProcessor <N> partitionProcessor;
+    protected IPartitionProcessor partitionProcessor;
 
     protected final EPartitionScheme scheme;
-    protected final IEncoder <N> encoder;
+    protected final IEncoder encoder;
     protected final IImage image;
 
     protected IIntSize rangeSize;
@@ -35,12 +33,11 @@ class ImageBlockGenerator<N extends TreeNode <N>> {
      * @param rangeSize
      * @param domainSize
      */
-    @Contract(pure = true)
     protected
     ImageBlockGenerator (
-            IPartitionProcessor <N> partitionProcessor,
+            IPartitionProcessor partitionProcessor,
             EPartitionScheme scheme,
-            IEncoder <N> encoder,
+            IEncoder encoder,
             IImage image,
             IIntSize rangeSize,
             IIntSize domainSize
@@ -64,10 +61,10 @@ class ImageBlockGenerator<N extends TreeNode <N>> {
      * @return
      */
     public abstract
-    ImageBlockGenerator <?> newInstance (
-            IPartitionProcessor <N> partitionProcessor,
+    ImageBlockGenerator <N> newInstance (
+            IPartitionProcessor partitionProcessor,
             EPartitionScheme scheme,
-            IEncoder <N> encoder,
+            IEncoder encoder,
             IImage image,
             IIntSize rangeSize,
             IIntSize domainSize
@@ -78,7 +75,7 @@ class ImageBlockGenerator<N extends TreeNode <N>> {
      * @return
      */
     public
-    List <Vertex> generateVerticesSet ( IImageBlock  roi, int blockWidth, int blockHeight ) {
+    List <Vertex> generateVerticesSet ( IImageBlock roi, int blockWidth, int blockHeight ) {
         return partitionProcessor.generateVerticesSet(roi, blockWidth, blockHeight);
     }
 
@@ -89,7 +86,7 @@ class ImageBlockGenerator<N extends TreeNode <N>> {
      * @return
      */
     public
-    List <IImageBlock > generateRangeBlocks ( IImageBlock  roi, int rangeSize, int domainSize )
+    Pool <IImageBlock> generateRangeBlocks ( IImageBlock roi, int rangeSize, int domainSize )
             throws ValueError {
 
         return partitionProcessor.generateRangeBlocks(roi, rangeSize, domainSize);
@@ -103,7 +100,7 @@ class ImageBlockGenerator<N extends TreeNode <N>> {
      * @throws ValueError
      */
     protected
-    List <IImageBlock > generateInitialRangeBlocks ( IImageBlock  roi, int blockWidth, int blockHeight )
+    List <IImageBlock> generateInitialRangeBlocks ( IImageBlock roi, int blockWidth, int blockHeight )
             throws ValueError {
 
         return partitionProcessor.generateInitialRangeBlocks(roi, blockWidth, blockHeight);
@@ -119,12 +116,12 @@ class ImageBlockGenerator<N extends TreeNode <N>> {
      * @return
      */
     public
-    ImageBlockGenerator <N> create ( IPartitionProcessor <N> partitionProcessor,
-                                           EPartitionScheme scheme,
-                                           IEncoder <N> encoder,
-                                           IImage image,
-                                           IIntSize rangeSize,
-                                           IIntSize domainSize ) {
+    ImageBlockGenerator <N> create ( IPartitionProcessor partitionProcessor,
+                                     EPartitionScheme scheme,
+                                     IEncoder encoder,
+                                     IImage image,
+                                     IIntSize rangeSize,
+                                     IIntSize domainSize ) {
         return newInstance(
                 partitionProcessor,
                 scheme,
@@ -141,11 +138,11 @@ class ImageBlockGenerator<N extends TreeNode <N>> {
      * @return
      */
     public
-    IImageBlock  mergeBlocks ( @NotNull IImageBlock  roi,
-                                  List <IImageBlock > blocks,
-                                  List <IImageBlock > blocksToMerge ) {
+    IImageBlock mergeBlocks ( IImageBlock roi,
+                              List <IImageBlock> blocks,
+                              List <IImageBlock> blocksToMerge ) {
 
-        return (IImageBlock ) roi.merge(blocks, blocksToMerge);
+        return roi.merge(blocks, blocksToMerge);
     }
 
     /**
@@ -156,7 +153,7 @@ class ImageBlockGenerator<N extends TreeNode <N>> {
      * @throws ValueError
      */
     public
-    List <IImageBlock > generateDomainBlocks ( IImageBlock  roi, int blockWidth, int blockHeight)
+    Pool <IImageBlock> generateDomainBlocks ( IImageBlock roi, int blockWidth, int blockHeight )
             throws ValueError {
 
         return partitionProcessor.generateDomainBlocks(roi, blockWidth, blockHeight);
@@ -168,8 +165,7 @@ class ImageBlockGenerator<N extends TreeNode <N>> {
      * @return
      */
     public
-    List <IImageBlock > createCodebookBlocks (IImageBlock  roi,
-                                                 List <IImageBlock > domainBlocks ) throws ValueError {
+    Pool <IImageBlock> createCodebookBlocks ( IImageBlock roi, Pool <IImageBlock> domainBlocks ) throws ValueError {
         return domainBlocks;
     }
 }

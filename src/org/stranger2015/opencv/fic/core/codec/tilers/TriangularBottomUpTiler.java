@@ -42,8 +42,8 @@ class TriangularBottomUpTiler<N extends TreeNode <N>, A extends IAddress , G ext
     ITiler <N> instance () {
         return new TriangularBottomUpTiler <>(
                 getImage(),
-                getRangeSize(),
-                getDomainSize(),
+                getCurrentRangeSize(),
+                this.getCurrentDomainSize(),
                 getEncoder(),
                 getBuilder());
     }

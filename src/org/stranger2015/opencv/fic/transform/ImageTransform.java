@@ -6,6 +6,8 @@ package org.stranger2015.opencv.fic.transform;
 //import org.opencv.core.Size;
 //import org.opencv.imgproc.Imgproc;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -35,6 +37,13 @@ import static org.stranger2015.opencv.fic.transform.EInterpolationType.BILINEAR;
  */
 public
 class ImageTransform implements ITransform {
+    /*
+    def flip(img, direction):
+    return img[::direction,:]
+
+    def apply_transformation(img, direction, angle, contrast=1.0, brightness=0.0):
+        return contrast*rotate(flip(img, direction), angle) + brightness
+        */
     private IImageBlock image;
     private int originalDomainX;
     private int originalDomainY;
@@ -119,8 +128,8 @@ class ImageTransform implements ITransform {
      * @param dAti
      * @return
      */
-//    @Contract("_, _, _, _, _ -> new")
-    public static// @NotNull
+    @Contract(value = "_, _, _, _, _ -> new")
+    public static @NotNull
     ImageTransform create ( IAddress address, int brightnessOfs, double contrastScale, int dAti ) throws ValueError {
        /* @NotNull*/
 
@@ -259,10 +268,10 @@ class ImageTransform implements ITransform {
      * @param <G>
      * @return
      */
-//    @Contract("_, _ -> new")
+@Contract("_, _ -> new")
     @SuppressWarnings("unchecked")
     public static
-//    @NotNull
+    @NotNull
     ImageTransform create ( IImage image, IAddress address ) throws ValueError {
         return new NoneTransform(
                 image,
@@ -312,6 +321,30 @@ class ImageTransform implements ITransform {
                 new Size(1, 1));//fixme
 
         return outputImage;
+    }
+
+    /**
+     * @param inputImage
+     * @param transformMatrix
+     * @param interpolationType
+     * @return
+     */
+    @Override
+    public
+    IImage warpDihedral ( IImage inputImage, Mat transformMatrix, EInterpolationType interpolationType ) {
+        return null;
+    }
+
+    /**
+     * @param inputImage
+     * @param transformMatrixArray
+     * @param interpolationType
+     * @return
+     */
+    @Override
+    public
+    IImage warpDihedral ( IImage inputImage, int[] transformMatrixArray, EInterpolationType interpolationType ) {
+        return null;
     }
 
     /**

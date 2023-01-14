@@ -24,7 +24,7 @@ interface ITopDownTiler extends ITiler {
      */
     @Override
     default
-    List <Vertex> generateVerticesSet ( IImageBlock  roi, int blockWidth, int blockHeight ) {
+    List <Vertex> generateVerticesSet ( IImageBlock roi, int blockWidth, int blockHeight ) {
         if (roi.getWidth() != blockWidth || roi.getHeight() != blockHeight) {
             throw new IllegalStateException("roi.size(s) != blockSize(s)");
         }
@@ -53,18 +53,19 @@ interface ITopDownTiler extends ITiler {
      * @throws ValueError
      */
     default
-    List <IImageBlock > generateInitialRangeBlocks ( IImageBlock  roi,
-                                                        int blockWidth,
-                                                        int blockHeight ) throws ValueError {
+    Pool <IImageBlock> generateInitialRangeBlocks (
+            IImageBlock roi,
+            int blockWidth,
+            int blockHeight ) throws ValueError {
 
         List <Vertex> vertices = generateVerticesSet(roi, blockWidth, blockHeight);
-        List <IImageBlock > rangeBlocks = new ArrayList <>(vertices.size());
+        Pool <IImageBlock> rangeBlocks = new Pool<>(vertices.size());
         double[] pixels = roi.getPixels();
 
         for (Vertex vertex : vertices) {
             int x = (int) vertex.getX();
             int y = (int) vertex.getY();
-            IImageBlock  rangeBlock = roi.getSubImage(x, y, blockWidth, blockHeight);
+            IImageBlock rangeBlock = roi.getSubImage(x, y, blockWidth, blockHeight);
             rangeBlock.put(x, y, pixels);
             rangeBlocks.add(rangeBlock);
 
@@ -94,10 +95,10 @@ interface ITopDownTiler extends ITiler {
      */
     default
     @Override
-    List <IImageBlock > generateRangeBlocks ( IImageBlock  roi, int blockWidth, int blockHeight )
+    Pool <IImageBlock> generateRangeBlocks ( IImageBlock roi, int blockWidth, int blockHeight )
             throws ValueError {
 
-        List <IImageBlock > rangeBlocks = generateInitialRangeBlocks(roi, blockWidth, blockHeight);
+        List <IImageBlock> rangeBlocks = generateInitialRangeBlocks(roi, blockWidth, blockHeight);
         if (roi.isSquare()) {
             // segmentSquare(roi);
         }
@@ -111,9 +112,9 @@ interface ITopDownTiler extends ITiler {
      */
     @Override
     default
-    void segmentRectangle ( TreeNodeBase <?> node, IImageBlock  imageBlock ) throws ValueError {
-        IImageBlock  r1;
-        IImageBlock  r2;
+    void segmentRectangle ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError {
+        IImageBlock r1;
+        IImageBlock r2;
 
         int w = imageBlock.getWidth();
         int h = imageBlock.getHeight();
@@ -142,12 +143,12 @@ interface ITopDownTiler extends ITiler {
         getNodeDeque().push(node.createNode(node, r2.getAddress(r2.getX(), r2.getY())));
     }
 
-        /**
-         * @param imageBlock
-         * @throws ValueError
-         */
+    /**
+     * @param imageBlock
+     * @throws ValueError
+     */
     @Override
-    void segmentSquare ( TreeNodeBase <?> node, IImageBlock  imageBlock ) throws ValueError;
+    void segmentSquare ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError;
 
     /**
      * @param node
@@ -155,7 +156,7 @@ interface ITopDownTiler extends ITiler {
      * @throws ValueError
      */
     @Override
-    void segmentPolygon ( TreeNodeBase <?> node, IImageBlock  imageBlock ) throws ValueError;
+    void segmentPolygon ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError;
 
     /**
      * @return

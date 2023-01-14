@@ -3,15 +3,13 @@ package org.stranger2015.opencv.fic.core.codec.tilers;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
 
-import java.util.List;
-
 /**
  * @param <N>
  * @param
  * @param <G>
  */
 public abstract
-class AlterBinTreeTiler      extends BinTreeTiler{
+class AlterBinTreeTiler extends BinTreeTiler {
 
     /**
      * @param image
@@ -46,7 +44,7 @@ class AlterBinTreeTiler      extends BinTreeTiler{
      */
     @Override
     public
-    List <IImageBlock > generateRangeBlocks ( IImageBlock  roi, int blockWidth, int blockHeight )
+    Pool <IImageBlock> generateRangeBlocks ( IImageBlock roi, int blockWidth, int blockHeight )
             throws ValueError {
 
         return generateInitialRangeBlocks(roi, blockWidth, blockHeight);
@@ -60,8 +58,8 @@ class AlterBinTreeTiler      extends BinTreeTiler{
      */
     @Override
     public
-    List <IImageBlock > generateInitialRangeBlocks ( IImageBlock  roi, int blockWidth, int blockHeight ) {
-        return List.of(roi);
+    Pool <IImageBlock> generateInitialRangeBlocks ( IImageBlock roi, int blockWidth, int blockHeight ) throws ValueError {
+        return super.generateInitialRangeBlocks(roi, blockWidth, blockHeight);
     }
 
     /**
@@ -71,7 +69,7 @@ class AlterBinTreeTiler      extends BinTreeTiler{
      */
     @Override
     public
-    void segmentSquare ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
+    void segmentSquare ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError {
         super.segmentSquare(node, imageBlock);
     }
 
@@ -82,7 +80,7 @@ class AlterBinTreeTiler      extends BinTreeTiler{
      */
     @Override
     public
-    void segmentRectangle ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
+    void segmentRectangle ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError {
         if ((imageBlock.getWidth() / imageBlock.getHeight()) == 2 ||
                 (imageBlock.getHeight() / imageBlock.getWidth()) == 2
         ) {

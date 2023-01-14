@@ -19,12 +19,21 @@ class FractalIOBase {
     protected FCImageModel fractalModel;
 
     /**
-     * @param fractalModel
+     *
      */
     protected
-    FractalIOBase ( String fileName, FCImageModel fractalModel ) {
-        this.fractalModel = fractalModel;
+    FractalIOBase ( String fileName ) {
         this.fileName = fileName;
+    }
+
+    /**
+     * @param fileName
+     * @param fractalModel
+     */
+    public
+    FractalIOBase ( String fileName, FCImageModel fractalModel ) {
+        this.fileName = fileName;
+        this.fractalModel = fractalModel;
     }
 
     /**

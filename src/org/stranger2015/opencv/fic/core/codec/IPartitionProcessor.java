@@ -1,10 +1,16 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.stranger2015.opencv.fic.core.*;
+import org.stranger2015.opencv.fic.core.codec.classifiers.IClassifiable;
+import org.stranger2015.opencv.fic.core.codec.classifiers.IClassifier;
 import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
+import org.stranger2015.opencv.fic.core.codec.tilers.ImageBlockInfo;
+import org.stranger2015.opencv.fic.core.codec.tilers.Pool;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @param <N>
@@ -12,7 +18,17 @@ import java.util.List;
  * @param <G>
  */
 public
-interface IPartitionProcessor {
+interface IPartitionProcessor extends IProcessor {
+
+    /**
+     * @param classifier
+     */
+    void setClassifier ( IClassifier classifier );
+
+    /**
+     * @return
+     */
+    IClassifier getClassifier ();
 
     /**
      * @return
@@ -50,8 +66,8 @@ interface IPartitionProcessor {
      * @throws ValueError
      */
     default
-    List <IImageBlock> generateInitialRangeBlocks ( IImageBlock roi, int blockWidth, int blockHeight )
-            throws ValueError {
+    Pool <IImageBlock> generateInitialRangeBlocks ( IImageBlock roi, int blockWidth, int blockHeight )
+            throws ValueError, IOException {
 
         return getTiler().generateInitialRangeBlocks(roi, blockWidth, blockHeight);
     }
@@ -62,14 +78,13 @@ interface IPartitionProcessor {
      * @param blockHeight
      * @return
      * @throws ValueError
-     */ //move to tiler
+     */
     default
-    List <IImageBlock> generateRangeBlocks ( IImageBlock roi, int blockWidth, int blockHeight )
-            throws ValueError {
+    Pool<IImageBlock> generateRangeBlocks ( IImageBlock roi, int blockWidth, int blockHeight )
+            throws ValueError, IOException {
 
         return getTiler().generateRangeBlocks(roi, blockWidth, blockHeight);
     }
-
 
     /**
      * @param roi
@@ -79,10 +94,10 @@ interface IPartitionProcessor {
      * @throws ValueError
      */
     default
-    List <IImageBlock> generateDomainBlocks ( List <IImageBlock> roi, IIntSize blockWidth, IIntSize blockHeight )
-            throws ValueError {
+    Pool <IImageBlock> generateDomainBlocks ( IImageBlock roi, int blockWidth, int blockHeight, IImage.EColorType colorType )
+            throws ValueError, IOException {
 
-        return getTiler().generateDomainBlocks(roi, blockWidth, blockHeight);
+        return getTiler().generateDomainBlocks(roi, blockWidth, blockHeight, colorType);
     }
 
     /**
@@ -92,7 +107,7 @@ interface IPartitionProcessor {
      */
     default
     void partition ( IImageBlock imageBlock )
-            throws ValueError, DepthLimitExceeded {
+            throws Throwable {
 
         doPartition(imageBlock);
     }
@@ -105,17 +120,31 @@ interface IPartitionProcessor {
      * @throws ValueError
      */
     default
-    void doPartition ( IImageBlock imageBlock ) throws ValueError, DepthLimitExceeded {
+    void doPartition ( IImageBlock imageBlock ) throws Throwable {
         getTiler().tile(imageBlock);
     }
 
+    /**
+     * @return
+     */
     default
     IIntSize getRangeSize () {
-        return getTiler().getRangeSize();
+        return getTiler().getCurrentRangeSize();
     }
 
+    /**
+     * @return
+     */
     default
     IIntSize getDomainSize () {
-        return getTiler().getDomainSize();
+        return getTiler().getCurrentDomainSize();
     }
+
+    /**
+     * @param imageBlocks
+     * @param domainBlocks
+     */
+    void classify ( Pool <IImageBlock> imageBlocks, Pool <IImageBlock> domainBlocks ) throws IOException;
+
+    Set <IClassifiable> classify ( Pool <IImageBlock> rangeBlocks, Pool <IImageBlock> domainBlocks, ImageBlockInfo[] level2Classes ) throws IOException;
 }

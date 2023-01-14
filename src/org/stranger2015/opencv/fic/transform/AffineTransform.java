@@ -1,5 +1,6 @@
 package org.stranger2015.opencv.fic.transform;
 
+import org.opencv.core.Mat;
 import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.IImageBlock;
@@ -56,4 +57,14 @@ class AffineTransform extends ImageTransform {
     EInterpolationType getType () {
         return type;
     }
+
+    public abstract
+    IImageBlock transform ( IImageBlock inputImage,
+                            Mat transformMatrix,
+                            EInterpolationType type );
+
+    public abstract
+    IImageBlock warpDihedral ( IImageBlock inputImage,
+                               int[] transformMatrixArray,
+                               EInterpolationType interpolationType ) throws ValueError;
 }

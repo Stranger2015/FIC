@@ -12,7 +12,6 @@ package org.stranger2015.opencv.fic.core.geomgraph.index;
  * http://www.eclipse.org/org/documents/edl-v10.php.
  */
 
-import org.locationtech.jts.util.IntArrayList;
 import org.stranger2015.opencv.fic.core.geom.Coordinate;
 import org.stranger2015.opencv.fic.core.geom.Quadrant;
 import org.stranger2015.opencv.fic.core.geomgraph.Edge;
@@ -137,20 +136,23 @@ public class EdgeIntersectionList
         boolean useIntPt1 = ei1.dist > 0.0 || ! ei1.coord.equals2D(lastSegStartPt);
         if (! useIntPt1) {
             npts--;
+        }
         Coordinate[] pts = new Coordinate[npts];
         int ipt = 0;
         pts[ipt++] = new Coordinate(ei0.coord);
         for (int i = ei0.segmentIndex + 1; i <= ei1.segmentIndex; i++) {
             pts[ipt++] = edge.pts[i];
         }
-        if (useIntPt1) pts[ipt] = ei1.coord;
+        if (useIntPt1) {
+            pts[ipt] = ei1.coord;
+        }
         return new Edge(pts, new Label(edge.getLabel()));
     }
 
     public void print(PrintStream out)
     {
         out.println("Intersections:");
-        for (Iterator<EdgeIntersectionList> it = iterator(); it.hasNext(); ) {
+        for (Iterator it = iterator(); it.hasNext(); ) {
             EdgeIntersection ei = (EdgeIntersection) it.next();
             ei.print(out);
         }
@@ -200,7 +202,7 @@ public class MonotoneChainIndexer {
     {
         // find the startpoint (and endpoints) of all monotone chains in this edge
         int start = 0;
-        IntArrayList startIndexList = new IntArrayList(pts.length / 2);
+        var startIndexList = new IntArrayList(pts.length / 2);
         // use heuristic to size initial array
         //startIndexList.ensureCapacity(pts.length / 4);
         startIndexList.add(start);

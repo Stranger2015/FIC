@@ -2,10 +2,8 @@ package org.stranger2015.opencv.fic.core;
 
 import org.kohsuke.args4j.Config;
 import org.stranger2015.opencv.fic.core.FicApplication.ECommands;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.EtvColorSpace;
 import org.stranger2015.opencv.fic.core.codec.ICodec;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.io.File;
 import java.util.List;
@@ -16,19 +14,18 @@ import java.util.List;
  * @param <G>
  */
 public
-class FicConfig<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
-        extends Config {
-    public IDistanceator  distanceator;
+class FicConfig extends Config {
+    public IDistanceator distanceator;
 
-    public ICodec <N> codec;
+    public ICodec codec;
     private File input;
     private EtvColorSpace colorSpace;
     private EPartitionScheme partitionScheme;
     private File output;
-    private FCImageModel <N> fractalModel;
+    private FCImageModel fractalModel;
     private ECommands command;
-    private List <Task <N>> tasks;
-
+    private List <Task> tasks;
+//todo fuzz
     /**
      * @param args
      */
@@ -73,7 +70,7 @@ class FicConfig<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer
      * @return
      */
     public
-    FCImageModel <N> getFractalModel () {
+    FCImageModel getFractalModel () {
         return fractalModel;
     }
 
@@ -113,7 +110,7 @@ class FicConfig<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer
      * @param fractalModel
      */
     public
-    void setFractalModel ( FCImageModel <N> fractalModel ) {
+    void setFractalModel ( FCImageModel fractalModel ) {
         this.fractalModel = fractalModel;
     }
 
@@ -137,7 +134,7 @@ class FicConfig<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer
      * @return
      */
     public
-    List <Task <N>> tasks () {
+    List <Task> tasks () {
         return tasks;
     }
 
@@ -145,7 +142,7 @@ class FicConfig<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer
      * @param tasks
      */
     public
-    void setTasks ( List <Task <N>> tasks ) {
+    void setTasks ( List <Task> tasks ) {
         this.tasks = tasks;
     }
 }

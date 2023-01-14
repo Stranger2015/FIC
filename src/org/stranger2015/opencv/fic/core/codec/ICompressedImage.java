@@ -1,5 +1,6 @@
 package org.stranger2015.opencv.fic.core.codec;
 
+import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.IImageBlock;
 import org.stranger2015.opencv.fic.core.IIntSize;
 import org.stranger2015.opencv.fic.core.ValueError;
@@ -11,7 +12,7 @@ import java.util.List;
  *
  */
 public
-interface ICompressedImage {
+interface ICompressedImage extends IImage {
 
     /**
      * @return

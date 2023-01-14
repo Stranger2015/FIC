@@ -4,7 +4,6 @@ import org.stranger2015.opencv.fic.core.codec.DecodeTask;
 import org.stranger2015.opencv.fic.core.codec.EncodeTask;
 import org.stranger2015.opencv.fic.core.codec.ICodec;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static org.stranger2015.opencv.fic.core.EPartitionScheme.FIXED_SIZE;
@@ -17,20 +16,6 @@ class BidiTask extends Task {
 
     protected Task task;
     protected Task inverseTask;
-
-    /**
-     * @param filename
-     * @param scheme
-     * @param tasks
-     */
-    @SafeVarargs
-    BidiTask ( String filename,
-               EPartitionScheme scheme,
-               ICodec codec,
-               Task... tasks ) {
-
-        this(filename, scheme, codec, Arrays.asList(tasks));
-    }
 
     /**
      * @param filename
@@ -77,12 +62,14 @@ class BidiTask extends Task {
      * @param decodeTask
      */
     public
-    BidiTask ( String filename,
+    BidiTask (
+            String filename,
+EPartitionScheme scheme,
                ICodec codec,
                EncodeTask encodeTask,
                DecodeTask decodeTask ) {
 
-        this(filename, FIXED_SIZE, codec, encodeTask, decodeTask);
+        this(filename, FIXED_SIZE, codec,List.of( encodeTask, decodeTask)) ;
     }
 
 
@@ -102,13 +89,6 @@ class BidiTask extends Task {
         return inverseTask;
     }
 
-    /**
-     * @param filename
-     * @return
-     */
-    @Override
-    protected
-    IImage execute ( String filename ) throws Exception {
-        return super.execute(filename);
-    }
+    public abstract
+    void onPostprocess ( IImageProcessor processor, CompressedImage outputImage );
 }

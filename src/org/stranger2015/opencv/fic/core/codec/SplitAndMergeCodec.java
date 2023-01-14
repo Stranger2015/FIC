@@ -20,7 +20,7 @@ class SplitAndMergeCodec<N extends TreeNode <N>, A extends IAddress , G extends 
 //     * @param params
 //     */
 //    protected
-//    SplitAndMergeCodec ( EPartitionScheme scheme, Class <?>[] paramTypes, Object... params ) {
+//    SplitAndMergeCodec ( EPartitionScheme scheme, ImageBlockClassifier <?>[] paramTypes, Object... params ) {
 //        super(scheme, paramTypes, params);
 //    }
 

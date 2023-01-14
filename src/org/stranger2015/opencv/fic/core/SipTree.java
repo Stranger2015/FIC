@@ -1,15 +1,11 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.codec.SaTree;
 import org.stranger2015.opencv.fic.utils.Point;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
 import java.util.Map;
-
-import static java.util.Map.*;
 
 /**
  * @param <N>
@@ -17,8 +13,8 @@ import static java.util.Map.*;
  * @param
  */
 public
-class SipTree<N extends TreeNode <N>>
-        extends SaTree <N> {
+class SipTree<T, T1>
+        extends SaTree <TreeNode> {
 
     /**
      * @param parent
@@ -27,15 +23,15 @@ class SipTree<N extends TreeNode <N>>
      */
     @SuppressWarnings("unchecked")
     public
-    SipTree ( TreeNode <N> parent,
+    SipTree ( TreeNode <TreeNode> parent,
               Map<Point, SipImageBlock> blocks,
-              TreeNodeTask <N> action ) {
+              TreeNodeTask <TreeNode> action ) {
 
         super(parent, Map. <Object, Object>of(), action);
     }
 
     public
-    SipTree ( TreeNode <N> root, IImageBlock  imageBlock ) {
+    SipTree ( TreeNode <TreeNode> root, IImageBlock  imageBlock ) {
         super(root,imageBlock);
     }
 
@@ -44,7 +40,7 @@ class SipTree<N extends TreeNode <N>>
      */
     @Override
     public
-    List <TreeNode<N>> getNodes () {
+    List <TreeNode<TreeNode>> getNodes () {
         return super.getNodes();
     }
 
@@ -54,7 +50,7 @@ class SipTree<N extends TreeNode <N>>
      * @param action
      */
     public
-    SipTree ( TreeNode <N> root, IImage image, TreeNodeTask <N> action ) {
+    SipTree ( TreeNode <TreeNode> root, IImage image, TreeNodeTask <TreeNode> action ) {
         super(root, image, action);
     }
 
@@ -64,10 +60,10 @@ class SipTree<N extends TreeNode <N>>
      */
     @SuppressWarnings("unchecked")
     public
-    N findNode ( Point shift ) {
-        for (N n = this.getRoot().getChild(0); n != null; n = n.getChild(0)) {
+    TreeNode findNode ( Point shift ) {
+        for (TreeNode n = this.getRoot().getChild(0); n != null; n = n.getChild(0)) {
            if(n.isLeaf()){
-               if (((ILeaf<N>) n).getX() == shift.getX() && ((ILeaf<N>) n).getY() == shift.getY()) {
+               if (((ILeaf<TreeNode>) n).getX() == shift.getX() && ((ILeaf<TreeNode>) n).getY() == shift.getY()) {
                  return n;
                }
            }

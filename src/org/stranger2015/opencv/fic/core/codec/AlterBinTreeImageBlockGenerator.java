@@ -2,9 +2,7 @@ package org.stranger2015.opencv.fic.core.codec;
 
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.utils.BitBuffer;
-
-import java.util.List;
+import org.stranger2015.opencv.fic.core.codec.tilers.Pool;
 
 /**
  * @param <N>
@@ -42,7 +40,7 @@ class AlterBinTreeImageBlockGenerator<N extends TreeNode <N>>
      */
     @Override
     public
-    List <IImageBlock > generateRangeBlocks ( IImageBlock  roi,
+    Pool <IImageBlock> generateRangeBlocks ( IImageBlock  roi,
                                                  int rangeSize,
                                                  int domainSize ) throws ValueError {
 

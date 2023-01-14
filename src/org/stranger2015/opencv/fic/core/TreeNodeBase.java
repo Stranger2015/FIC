@@ -274,7 +274,7 @@ class TreeNodeBase<N extends TreeNode <N>> {
      * @return
      */
     public abstract
-    TreeNodeBase <?> createNode ( TreeNodeBase <?> parent, IAddress  address )
+    TreeNodeBase <N> createNode ( TreeNodeBase <N> parent, IAddress  address )
             throws ValueError;
 
     /**
@@ -611,7 +611,7 @@ class TreeNodeBase<N extends TreeNode <N>> {
              */
             @Override
             public
-            TreeNodeBase <?> createNode ( TreeNodeBase <?> parent, IAddress  address ) throws ValueError {
+            TreeNodeBase <N> createNode ( TreeNodeBase <N> parent, IAddress  address ) throws ValueError {
                 return null;
             }
 

@@ -4,7 +4,6 @@ import org.opencv.core.Rect;
 
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.utils.Point;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
@@ -75,7 +74,7 @@ class RLTreeNode<N extends TreeNode <N>> extends TreeNode <N> {
 
     @Override
     public
-    TreeNodeBase <?> createNode ( TreeNodeBase <?> parent, IAddress  address ) throws ValueError {
+    TreeNodeBase <N> createNode ( TreeNodeBase <N> parent, IAddress  address ) throws ValueError {
         return null;
     }
 

@@ -6,7 +6,7 @@ import org.opencv.core.Mat;
  * @param
  */
 public
-class SaImageBlock<A extends IAddress > extends ImageBlock {
+class SaImageBlock extends ImageBlock {
     /**
      * @param image
      * @param x
@@ -21,6 +21,6 @@ class SaImageBlock<A extends IAddress > extends ImageBlock {
 
     public
     SaImageBlock ( Mat submat ) {
-        super(submat, geometry);
+        super(submat);
     }
 }

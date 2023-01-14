@@ -1,9 +1,10 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.stranger2015.opencv.fic.core.*;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.IImageBlock;
+import org.stranger2015.opencv.fic.core.ITreeNodeBuilder;
+import org.stranger2015.opencv.fic.core.ValueError;
 import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
-import org.stranger2015.opencv.utils.BitBuffer;
+import org.stranger2015.opencv.fic.core.codec.tilers.Pool;
 
 import java.util.List;
 
@@ -13,14 +14,19 @@ import java.util.List;
  * @param <G>
  */
 public
-class DelaunayPartitionProcessor<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
-        extends PartitionProcessor <N> {
+class DelaunayPartitionProcessor
+        extends PartitionProcessor {
 
     /**
      * @param tiler
+     * @param nodeBuilder
      */
     public
-    DelaunayPartitionProcessor ( ITiler <N> tiler, ImageBlockGenerator<N,A,G> imageBlockGenerator) {
+    DelaunayPartitionProcessor (
+            ITiler tiler,
+                                 ImageBlockGenerator <?> imageBlockGenerator,
+                                 ITreeNodeBuilder <?> nodeBuilder ) {
+
         super(tiler, imageBlockGenerator);
     }
 
@@ -35,31 +41,47 @@ class DelaunayPartitionProcessor<N extends TreeNode <N>, A extends IAddress , G 
 
     /**
      * @param tiler
+     * @param imageBlockGenerator
+     * @param nodeBuilder
      * @return
      */
     @Override
     public
-    IPartitionProcessor <N> instance ( ITiler <N> tiler ) {
-        return new DelaunayPartitionProcessor<>(tiler);
+    IPartitionProcessor instance ( ITiler tiler,
+                                   ImageBlockGenerator <?> imageBlockGenerator,
+                                   ITreeNodeBuilder <?> nodeBuilder ) {
+
+        return new DelaunayPartitionProcessor(tiler, imageBlockGenerator, nodeBuilder);
     }
 
+    /**
+     * @param roi
+     * @param blockWidth
+     * @param blockHeight
+     * @return
+     * @throws ValueError
+     */
     @Override
     public
-    List <IImageBlock > generateRangeBlocks ( IImageBlock  roi, int blockWidth, int blockHeight )
+    List <IImageBlock> generateRangeBlocks ( IImageBlock roi, int blockWidth, int blockHeight )
             throws ValueError {
-
         return super.generateRangeBlocks(roi, blockWidth, blockHeight);
     }
 
+    /**
+     * @param rangeBlock
+     * @param blockWidth
+     * @param blockHeight
+     * @return
+     * @throws ValueError
+     */
     @Override
     public
-    List <IImageBlock > generateDomainBlocks ( List <IImageBlock > rangeBlocks, IIntSize rangeSize, IIntSize domainSize ) {
-        return super.generateDomainBlocks(rangeBlocks,rangeSize,domainSize );
-    }
+    Pool <IImageBlock> generateDomainBlocks (
+            IImageBlock rangeBlock,
+            int blockWidth,
+            int blockHeight ) throws ValueError {
 
-    @Override
-    public
-    List <IImageBlock > generateRegions ( IImage image, List <Rectangle> rectangles ) {
-        return null;
+        return super.generateDomainBlocks(rangeBlock, blockWidth, blockHeight);
     }
 }

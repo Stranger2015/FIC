@@ -1,6 +1,5 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Size;
 
 /**
@@ -32,7 +31,7 @@ interface IIntSize {
      * @param o
      * @return
      */
-    int compareTo ( @NotNull IIntSize o );
+    int compareTo (IIntSize o );
 
     /**
      * @return

@@ -1,25 +1,19 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
+import org.stranger2015.opencv.fic.core.codec.tilers.Pool;
 import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
-import org.stranger2015.opencv.utils.BitBuffer;
+import org.stranger2015.opencv.fic.transform.ScaleTransform;
 
 import java.util.List;
+import java.util.Set;
 
-/**
- * @param <N>
- * @param
- 
- */
 public
-class SearchlessEncoder<N extends TreeNode <N>, A extends IAddress , IImage extends IImage,
-        G extends BitBuffer>
-
-        extends Encoder <N> {
+class SearchlessEncoder extends Encoder {
 
     /**
      * @param inputImage
@@ -27,17 +21,50 @@ class SearchlessEncoder<N extends TreeNode <N>, A extends IAddress , IImage exte
      * @param domainSize
      */
     public
-    SearchlessEncoder ( IImage inputImage,
-                        ISearchProcessor <N> rangeSize,
-                        ImageBlockGenerator <N> domainSize ) {
-        super(inputImage,
-                rangeSize,
-                rangeSize,
-                domainSize,
-                transforms,
+    SearchlessEncoder (
+            String fileName,
+            EPartitionScheme scheme,
+            ICodec codec,
+            List <Task> tasks,
+            EtvColorSpace colorSpace,
+            ITreeNodeBuilder <?> nodeBuilder,
+            IPartitionProcessor partitionProcessor,
+            ISearchProcessor searchProcessor,
+            ScaleTransform scaleTransform,
+            ImageBlockGenerator <?> imageBlockGenerator,
+            IDistanceator comparator,
+            Set <ImageTransform> imageTransforms,
+            Set <IImageFilter> imageFilters,
+            FCImageModel fractalModel
+    ) {
+        super(
+                fileName,
+                scheme,
+                codec,
+                tasks,
+                colorSpace,
+                nodeBuilder,
+                partitionProcessor,
+                searchProcessor,
+                scaleTransform,
+                imageBlockGenerator,
                 comparator,
-                filters,
-                fractalModel);
+                imageTransforms,
+                imageFilters,
+                fractalModel,
+                encoders);
+
+        outputImage = new CompressedImage(inputImage);
+        this.imageBlockGenerator = imageBlockGenerator.create(
+                partitionProcessor,
+                scheme,
+                this,
+                inputImage,
+                rangeSize,
+                domainSize
+        );
+
+        tilerClass = partitionProcessor.getTiler().getClass();
     }
 
     /**
@@ -49,83 +76,73 @@ class SearchlessEncoder<N extends TreeNode <N>, A extends IAddress , IImage exte
      */
 //    @Override
     protected
-    ImageBlockGenerator <N> createBlockGenerator ( IEncoder <N> encoder,
-                                                            IImage image,
-                                                            Size rangeSize,
-                                                            Size domainSize ) {
+    ImageBlockGenerator <?> createBlockGenerator ( IEncoder encoder,
+                                                   IImage image,
+                                                   IIntSize rangeSize,
+                                                   IIntSize domainSize ) {
         return new SquareImageBlockGenerator <>(
-                new RectangularTiler <N>(8),
-                encoder,
-                image,
-                rangeSize,
-                domainSize);
+//                this.imageBlockGenerator = imageBlockGenerator.create(
+//                        partitionProcessor,
+//                        scheme,
+//                        this,
+//                        inputImage,
+//                        rangeSize,
+//                        domainSize)
+        );
     }
 
     @Override
     public
-    IImage randomTransform ( IImage image, ImageTransform transform ) {
+    IImageBlock randomTransform ( IImageBlock image, ImageTransform transform ) {
         return null;//todo
     }
 
     @Override
     public
-    IImage applyTransform ( IImage image, ImageTransform transform ) {
+    IImageBlock applyTransform ( IImageBlock image, ImageTransform transform ) {
         return null;//todo
+    }
+
+    /**
+     * @param tiler
+     * @return
+     */
+    @Override
+    public
+    IPartitionProcessor doCreatePartitionProcessor ( ITiler tiler ) {
+        return null;
+    }
+
+    /**
+     * @param filename
+     * @return
+     */
+    @Override
+    public
+    FCImageModel loadModel ( String filename ) throws Exception {
+        return null;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    IImageBlock selectDomainBlock ( IImageBlock rangeBlock, Pool <IImageBlock> domainBlocks ) {
+        return null;
     }
 
     @Override
     public
-    IImage applyAffineTransform ( IImage image, AffineTransform  transform ) {
+    IImageBlock applyAffineTransform ( IImageBlock image, AffineTransform transform ) {
         return null;//todo
     }
 //
 //    @Override
 //    public
-//    List <ImageTransform <M, A, G>> compress ( IImage image, int sourceSize, int destinationSize, int step ) {
+//    List<IImageBlock> generateAllTransformedBlocks ( IImage image, int sourceSize, int destinationSize, int step ) {
 //        return null;//todo
 //    }
-
-    @Override
-    public
-    List<IImageBlock> generateAllTransformedBlocks ( IImage image, int sourceSize, int destinationSize, int step ) {
-        return null;//todo//todo
-    }
-
-    /**
-     *
-     */
-    @Override
-    public
-    void onPreprocess () {
-
-    }
-
-    /**
-     *
-     */
-    @Override
-    public
-    void onProcess () {
-
-    }
-
-    /**
-     *
-     */
-    @Override
-    public
-    void onPostprocess () {
-
-    }
-
-    /**
-     *
-     */
-    @Override
-    public
-    void onCompress () {
-
-    }
 
     /**
      * @param image
@@ -135,7 +152,7 @@ class SearchlessEncoder<N extends TreeNode <N>, A extends IAddress , IImage exte
      */
     @Override
     public
-    List <IImageBlock > segmentImage ( IImage image, List <Rectangle> bounds ) throws ValueError {
+    List <IImageBlock> segmentImage ( IImage image, List <Rectangle> bounds ) throws ValueError {
         return null;
     }
 
@@ -144,7 +161,7 @@ class SearchlessEncoder<N extends TreeNode <N>, A extends IAddress , IImage exte
      */
     @Override
     public
-    void add ( TreeNode <N> node ) {
+    void add ( TreeNode <?> node ) {
 
     }
 
@@ -153,49 +170,13 @@ class SearchlessEncoder<N extends TreeNode <N>, A extends IAddress , IImage exte
      */
     @Override
     public
-    void addLeafNode ( TreeNode.LeafNode <N> node ) {
+    void addLeafNode ( TreeNode.LeafNode <?> node ) {
 
     }
 
-    @Override
+    //    @Override
     public
-    void addLeafNode ( TreeNode <N> node ) {
+    void addLeafNode ( TreeNode <?> node ) {
 
-    }
-
-    /**
-     * @return
-     */
-    @Override
-    public
-    IPipeline <IImage , IImage> getLinkedObject () {
-        return null;
-    }
-
-    /**
-     * @param link
-     */
-    @Override
-    public
-    void setNext ( ISingleLinked <IPipeline <IImage , IImage>> link ) {
-
-    }
-
-    @Override
-    public
-    ISingleLinked <IPipeline <IImage , IImage>> getNext () {
-        return null;
-    }
-
-    @Override
-    public
-    IImage getInput () {
-        return null;
-    }
-
-    @Override
-    public
-    IImage getOutput () {
-        return null;
     }
 }

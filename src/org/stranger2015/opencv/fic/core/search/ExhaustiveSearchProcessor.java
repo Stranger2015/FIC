@@ -2,13 +2,15 @@ package org.stranger2015.opencv.fic.core.search;
 
 //import org.jetbrains.annotations.Contract;
 
-import org.stranger2015.opencv.fic.core.*;
+import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.fic.core.IImageBlock;
+import org.stranger2015.opencv.fic.core.IntSize;
+import org.stranger2015.opencv.fic.core.ValueError;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
+import org.stranger2015.opencv.fic.core.codec.tilers.Pool;
 import org.stranger2015.opencv.fic.transform.ITransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.utils.BitBuffer;
-
-import java.util.List;
 
 import static java.lang.Math.ceil;
 import static org.stranger2015.opencv.fic.core.codec.IConstants.MAX_PIXEL_CHANNEL_VALUE;
@@ -65,95 +67,109 @@ class ExhaustiveSearchProcessor extends SearchProcessor {
      */
     @Override
     public
-    byte[] search ( IImageBlock imageBlock, List <IImageBlock> rangeBlocks ) {
+    byte[] search ( IImageBlock imageBlock, Pool <IImageBlock> rangeBlocks ) throws ValueError {
         bitBuffer = BitBuffer.allocate((int) ceil(rangeBlocks.size() * ifsRecordLength / 8.0));
         int channels = imageBlock.getChannelsAmount();
-        int[] minDistance = new int[channels];
 
-        rangeBlocks.forEach(rangeBlock -> {
-            for (int c = 0; c < channels; c++) {
-                minDistance[c] = 0;
-            }
-            ImageTransform bestTransform = null;
-            try {
-                bestTransform = ImageTransform.create(imageBlock, rangeBlock.getAddress(0, 0));
-            } catch (ValueError e) {
-                throw new RuntimeException(e);
-            }
-            ImageTransform finalBestTransform = bestTransform;
-            encoder.getDomainBlocks().forEach(domainBlock -> {
+//        IImageBlock bestImageBlock = encoder.selectBest();
+        for (IImageBlock rangeBlock : rangeBlocks) {
+            ImageTransform bestTransform = ImageTransform.create(imageBlock, rangeBlock.getAddress(0, 0));
+            for (IImageBlock domainBlock : encoder.getDomainBlocks()) {
                 double[] alpha = new double[channels];
-                double[] newPixelValue = new double[channels];
-                int c = 0;
-                for (; c < channels; c++) {
-                    alpha[c] = 0;
+                int ch = 0;
+                for (; ch < channels; ch++) {
+                    alpha[ch] = 0;
                     for (int i = 0; i < domainBlock.getWidth(); i++) {
                         for (int j = 0; j < domainBlock.getHeight(); j++) {
-                            alpha[c] += (domainBlock.pixelValues(i, j)[c] - domainBlock.getMeanPixelValue()[c])
-                                    * (rangeBlock.pixelValues(i, j)[c] - rangeBlock.getMeanPixelValue()[c]);
+                            alpha[ch] += (domainBlock.pixelValues(i, j)[ch] - domainBlock.getMeanPixelValue()[ch])
+                                    * (rangeBlock.pixelValues(i, j)[ch] - rangeBlock.getMeanPixelValue()[ch]);
                         }
                     }
-                    double contrast = alpha[c] / domainBlock.getBeta();
-                    int brightness = (int) (rangeBlock.getMeanPixelValue()[c] -
-                            contrast * domainBlock.getMeanPixelValue()[c]
+                    double contrast = alpha[ch] / domainBlock.getBeta();
+                    int brightness = (int) (rangeBlock.getMeanPixelValue()[ch] -
+                            contrast * domainBlock.getMeanPixelValue()[ch]
                     );
-
-                    for (int indx = 0; indx < 8; indx++) {
-                        IImageBlock transformedDomainBlock = null;
-                        try {
-                            transformedDomainBlock = new ImageBlock(
-                                    domainBlock,
-                                    domainBlock.getX(),
-                                    domainBlock.getY(),
-                                    domainBlock.getWidth(),
-                                    domainBlock.getHeight()
-                            );
-                        } catch (ValueError e) {
-                            throw new RuntimeException(e);
-                        }
-
-                        for (int x = 0; x < domainBlock.getWidth(); x++) {
-                            for (int y = 0; y < domainBlock.getHeight(); y++) {
-                                int newX = x * dihedralAffineTransforms[indx][0] +
-                                        y * dihedralAffineTransforms[indx][1];
-
-                                int newY = x * dihedralAffineTransforms[indx][2] +
-                                        y * dihedralAffineTransforms[indx][3];
-
-                                if (newX < 0) {
-                                    newX += domainBlock.getWidth();
-                                }
-                                if (newY < 0) {
-                                    newY += domainBlock.getHeight();
-                                }
-                                newPixelValue[c] = (contrast * domainBlock.pixelValues(x, y)[c] + brightness);
-                                if (newPixelValue[c] < MAX_PIXEL_CHANNEL_VALUE && newPixelValue[c] >= 0) {
-                                    transformedDomainBlock.pixelValues(newX, newY)[c] = newPixelValue[c];
-                                }
-                                else {
-                                    transformedDomainBlock.pixelValues(newX, newY)[c] = MAX_PIXEL_CHANNEL_VALUE / 2;
-                                }
-                            }
-                        }
-                        int[] distance = getDistance(rangeBlock, transformedDomainBlock);
-
-                        if ((distance[c] < minDistance[c]) && (distance[c] != 0)) {
-                            minDistance[c] = distance[c];
-
-                            finalBestTransform.dihedralAffineTransformIndex = indx;
-                            finalBestTransform.setOriginalDomainX(domainBlock.getX());
-                            finalBestTransform.setOriginalDomainY(domainBlock.getY());
-                            finalBestTransform.brightnessOffset = brightness;
-                            finalBestTransform.contrastScale = contrast;
-                        }
-                    }
+                    bestTransform = selectBestTransform(rangeBlock, domainBlock, brightness, contrast, bestTransform, ch);
                 }
-            });
+            }
 
-            writeIfsCode(bitBuffer, finalBestTransform);
-        });
+            writeIfsCode(bitBuffer, bestTransform);
+        }
 
         return bitBuffer.getBytes().array();
+    }
+
+    /**
+     * @param rangeBlock
+     * @param domainBlock
+     * @param brightness
+     * @param contrast
+     * @param bestTransform
+     * @param ch1
+     * @throws ValueError
+     */
+    protected
+    ImageTransform selectBestTransform (
+            IImageBlock rangeBlock,
+            IImageBlock domainBlock,
+            int brightness,
+            double contrast,
+            ImageTransform bestTransform,
+            int ch1
+    ) throws ValueError {
+
+        int channels = domainBlock.getChannelsAmount();
+        double[] newPixelValue = new double[channels];
+        double[] minDistance = new double[channels];
+        for (int ch = 0; ch < channels; ch++) {
+            minDistance[ch] = 0;
+        }
+        for (int index = 0; index < 8; index++) {
+            IImageBlock transformedDomainBlock = domainBlock.getSubImage(
+                    domainBlock.getX(),
+                    domainBlock.getY(),
+                    domainBlock.getWidth(),
+                    domainBlock.getHeight()
+            );
+            for (int x = 0; x < domainBlock.getWidth(); x++) {
+                for (int y = 0; y < domainBlock.getHeight(); y++) {
+                    int newX = x * dihedralAffineTransforms[index][0] +
+                            y * dihedralAffineTransforms[index][1];
+
+                    int newY = x * dihedralAffineTransforms[index][2] +
+                            y * dihedralAffineTransforms[index][3];
+
+                    if (newX < 0) {
+                        newX += domainBlock.getWidth();
+                    }
+                    if (newY < 0) {
+                        newY += domainBlock.getHeight();
+                    }
+                    newPixelValue[ch1] = (contrast * domainBlock.pixelValues(x, y)[ch1] + brightness);
+                    if (newPixelValue[ch1] < MAX_PIXEL_CHANNEL_VALUE && newPixelValue[ch1] >= 0) {
+                        transformedDomainBlock.pixelValues(newX, newY)[ch1] = newPixelValue[ch1];
+                    }
+                    else {
+                        transformedDomainBlock.pixelValues(newX, newY)[ch1] = MAX_PIXEL_CHANNEL_VALUE / 2;
+                    }
+                }
+            }
+            double[] distance = getDistance(rangeBlock, transformedDomainBlock);
+
+            if ((distance[ch1] < minDistance[ch1]) && (distance[ch1] != 0)) {
+                minDistance[ch1] = distance[ch1];
+
+                bestTransform.dihedralAffineTransformIndex = index;
+                bestTransform.setOriginalDomainX(domainBlock.getX());
+                bestTransform.setOriginalDomainY(domainBlock.getY());
+                bestTransform.brightnessOffset = brightness;
+                bestTransform.contrastScale = contrast;
+
+                domainBlock.incUsageCount();
+            }
+        }
+
+        return bestTransform;
     }
 
     /**
@@ -170,22 +186,32 @@ class ExhaustiveSearchProcessor extends SearchProcessor {
      * @param domain
      * @return
      */
-    int[] getDistance ( IImageBlock rangeBlock, IImageBlock domainBlock ) {
+    double[] getDistance ( IImageBlock rangeBlock, IImageBlock domainBlock ) {
+        double[] distance = this.getMetrics().distance(
+                rangeBlock.pixelValues(rangeBlock.getX(), rangeBlock.getY()),
+                domainBlock.pixelValues(domainBlock.getX(), domainBlock.getY())//,
+//fuzz
+        );
+/*
+  distance += metric.distance(img1pixels[pixelrow * width + pixelcol],
+                                            img2pixels[pixelrow * width + pixelcol],
+                                            fuzz);
+ */
         int channels = rangeBlock.getChannelsAmount();
         double[] error = new double[channels];
-        int[] dist = new int[channels];
-        for (int c = 0; c < channels; c++) {
-            error[c] = 0;
+//        double[] dist = new double[channels];
+        for (int ch = 0; ch < channels; ch++) {
+            error[ch] = 0;
             for (int i = 0; i < rangeBlock.getWidth(); i++) {
                 for (int j = 0; j < rangeBlock.getHeight(); j++) {
-                    error[c] += Math.pow(rangeBlock.pixelValues(i, j)[c] - domainBlock.pixelValues(i, j)[c], 2);
+                    error[ch] += Math.pow(rangeBlock.pixelValues(i, j)[ch] - domainBlock.pixelValues(i, j)[ch], 2);
                 }
             }
-            error[c] /= rangeBlock.getWidth() * rangeBlock.getHeight();
-            dist[c] = (int) error[c];
+            error[ch] /= rangeBlock.getWidth() * rangeBlock.getHeight();
+//            dist[ch] = (int) error[ch];
         }
 
-        return dist;
+        return error;// dist;
     }
 
     /**

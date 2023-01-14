@@ -5,6 +5,7 @@ import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.fic.core.codec.tilers.BinTreeTiler;
 import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
+import org.stranger2015.opencv.fic.core.codec.tilers.Pool;
 import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  * @param <N>
@@ -66,8 +68,8 @@ class BinTreeEncoder extends Encoder {
                 comparator,
                 imageTransforms,
                 imageFilters,
-                fractalModel
-        );
+                fractalModel,
+                encoders);
     }
 
     /**
@@ -144,7 +146,7 @@ class BinTreeEncoder extends Encoder {
      */
     @Override
     public
-    Class <? extends ITiler> getTilerClass () {
+    Class <?> getTilerClass () {
         return BinTreeTiler.class;
     }
 
@@ -153,7 +155,7 @@ class BinTreeEncoder extends Encoder {
      */
     @Override
     public
-    List <IImageBlock> getRangeBlocks () {
+    Pool <IImageBlock> getRangeBlocks () {
         return super.getRangeBlocks();
     }
 
@@ -162,7 +164,7 @@ class BinTreeEncoder extends Encoder {
      */
     @Override
     public
-    List <IImageBlock> getDomainBlocks () {
+    Pool <IImageBlock> getDomainBlocks () {
         return super.getDomainBlocks();
     }
 
@@ -196,11 +198,13 @@ class BinTreeEncoder extends Encoder {
 
     /**
      * @param image
+     * @return
      */
     @Override
     public
-    void doEncode ( IImage image ) throws Exception {
+    IImage doEncode ( IImage image ) throws Exception {
         process(image);
+        return image;
     }
 
     /**
@@ -234,8 +238,17 @@ class BinTreeEncoder extends Encoder {
      */
     @Override
     public
-    int[] getDistance ( IImageBlock range, IImageBlock domain ) {
+    double[] getDistance ( IImageBlock range, IImageBlock domain ) {
         return super.getDistance(range, domain);
+    }
+
+    /**
+     * @param tilerClass
+     */
+    @Override
+    public
+    void addAllowableSubtiler ( Class <ITiler> tilerClass ) {
+        super.addAllowableSubtiler(tilerClass);
     }
 
     /**
@@ -258,7 +271,7 @@ class BinTreeEncoder extends Encoder {
      */
     @Override
     public
-    IImage flipAxis ( IImage image, int axis ) {
+    IImageBlock flipAxis ( IImageBlock image, int axis ) throws ValueError {
         return super.flipAxis(image, axis);
     }
 
@@ -269,8 +282,8 @@ class BinTreeEncoder extends Encoder {
      */
     @Override
     public
-    IImage randomTransform ( IImage image, ImageTransform transform ) {
-        return super.randomTransform(image, transform);
+    IImageBlock applyTransform ( IImageBlock image, ImageTransform transform ) {
+        return super.applyTransform(      image, transform);
     }
 
     /**
@@ -280,37 +293,8 @@ class BinTreeEncoder extends Encoder {
      */
     @Override
     public
-    IImage applyTransform ( IImage image, ImageTransform transform ) {
-        return super.applyTransform(image, transform);
-    }
-
-    /**
-     * @param image
-     * @param transform
-     * @return
-     */
-    @Override
-    public
-    IImage applyAffineTransform ( IImage image, AffineTransform transform ) {
-        return super.applyAffineTransform(image, transform);
-    }
-
-    /**
-     * @param image
-     * @param sourceSize
-     * @param destinationSize
-     * @param step
-     * @return
-     */
-    @Override
-    public
-    List <IImageBlock> generateAllTransformedBlocks (
-            IImage image,
-            int sourceSize,
-            int destinationSize,
-            int step ) throws ValueError {
-
-        return List.of(image.getSubImage());
+    IImageBlock applyAffineTransform ( IImageBlock image, AffineTransform transform ) {
+        return image;
     }
 
     /**
@@ -380,12 +364,13 @@ class BinTreeEncoder extends Encoder {
 
     /**
      * @param imageProcessor
-     * @param outputImage
+     * @param image
+     * @param outputImages
      */
 //    @Override
     public
-    void onPostprocess ( IImageProcessor imageProcessor, ICompressedImage outputImage ) {
-        super.onPostprocess(imageProcessor, outputImage);
+    void onPostprocess ( IImageProcessor imageProcessor, IImage image, List <IImage> outputImages ) {
+        super.onPostprocess(imageProcessor, image, outputImages);
     }
 
     /**
@@ -652,7 +637,7 @@ class BinTreeEncoder extends Encoder {
      *         }
      *     }
      * }</pre>
-     * @jls 12.6 Finalization of Class Instances
+     * @jls 12.6 Finalization of ImageBlockClassifier Instances
      * @see WeakReference
      * @see PhantomReference
      * @deprecated The finalization mechanism is inherently problematic.
@@ -685,5 +670,23 @@ class BinTreeEncoder extends Encoder {
     public
     IImage postprocess ( IImage outputImage ) {
         return null;
+    }
+
+    /**
+     * Returns a composed function that first applies this function to
+     * its input, and then applies the {@code after} function to the result.
+     * If evaluation of either function throws an exception, it is relayed to
+     * the caller of the composed function.
+     *
+     * @param after the function to apply after this function is applied
+     * @return a composed function that first applies this function and then
+     * applies the {@code after} function
+     * @throws NullPointerException if after is null
+     * @see #compose(Function)
+     */
+    @Override
+    public
+    <V> Function <String, V> andThen ( Function <? super IImage, ? extends V> after ) {
+        return super.andThen(after);
     }
 }

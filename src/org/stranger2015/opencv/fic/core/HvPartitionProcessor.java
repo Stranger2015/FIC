@@ -31,6 +31,7 @@ class HvPartitionProcessor
         return 1;//todo
     }
 
+
     /**
      * @param tiler
      * @param imageBlockGenerator
@@ -41,7 +42,7 @@ class HvPartitionProcessor
     public
     IPartitionProcessor instance ( ITiler tiler,
                                    ImageBlockGenerator <?> imageBlockGenerator,
-                                   ITreeNodeBuilder nodeBuilder ) {
+                                   ITreeNodeBuilder<?> nodeBuilder ) {
         return null;
     }
 

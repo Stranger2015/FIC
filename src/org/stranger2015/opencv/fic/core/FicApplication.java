@@ -1,6 +1,6 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.jetbrains.annotations.Contract;
+import  org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kohsuke.args4j.CmdLineException;
@@ -20,7 +20,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * Command line utility to compress an image using
@@ -44,18 +46,18 @@ import java.util.logging.Logger;
  * TODO: FUTURE: intelligent tilers - HV/Quadtree partitioning
  */
 public
-class FicApplication<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+class FicApplication<N extends TreeNode <N>>
         implements Runnable,
                    Consumer <String> {
 
-    protected final Logger logger = Logger.getLogger(String.valueOf(getClass()));
+    protected final Logger logger = LoggerFactory.getLogger(String.valueOf(getClass()));
 
     private final Consumer <String> action = this;
-    private final FicConfig <N> config;
+    private final FicConfig config;
     private EtvColorSpace colorSpace;
     private ITreeNodeBuilder <N> nodeBuilder;
     private final Set <ImageTransform> transforms = new HashSet <>();
-    private final List <Task <N>> tasks = new ArrayList <>();
+    private final List <Task> tasks = new ArrayList <>();
 
     /**
      * @return
@@ -104,7 +106,7 @@ class FicApplication<N extends TreeNode <N>, A extends IAddress , G extends BitB
      * @param colorSpace
      */
     public
-    FicApplication ( FicConfig <N> config ) {
+    FicApplication ( FicConfig config ) {
         this.config = config;
     }
 
@@ -137,7 +139,7 @@ class FicApplication<N extends TreeNode <N>, A extends IAddress , G extends BitB
 
     public static
     void main ( String[] args ) throws ClassNotFoundException, NoSuchMethodException {
-        FicConfig <?, ?, ?> configuration = new FicConfig <>(args);
+        FicConfig configuration = new FicConfig(args);
         Runnable fic = new FicApplication <>(configuration);
 
         CmdLineParser parser = new CmdLineParser(fic);
@@ -326,56 +328,7 @@ class FicApplication<N extends TreeNode <N>, A extends IAddress , G extends BitB
      * @return
      */
     public
-    FicConfig <?, ?, ?> getConfig () {
+    FicConfig getConfig () {
         return config;
     }
-//
-//    /**
-//     * @param fractalModel
-//     */
-//    public
-//    void setFractalModel ( FCImageModel <N> fractalModel ) {
-//        this.fractalModel = fractalModel;
-//    }
-//
-//    /**
-//     * @param transforms
-//     */
-//    public
-//    void setTransforms ( Set <ImageTransform> transforms ) {
-//        this.transforms = transforms;
-//    }
-//
-//    /**
-//     * @return
-//     */
-//    public
-//    IIntSize getRangeSize () {
-//        return rangeSize;
-//    }
-//
-//    /**
-//     * @param rangeSize
-//     */
-//    public
-//    void setRangeSize ( IIntSize rangeSize ) {
-//        this.rangeSize = rangeSize;
-//    }
-//
-//    /**
-//     * @return
-//     */
-//    public
-//    IIntSize getDomainSize () {
-//        return domainSize;
-//    }
-//
-//    /**
-//     * @param domainSize
-//     */
-//    public
-//    void setDomainSize ( IIntSize domainSize ) {
-//        this.domainSize = domainSize;
-//    }
-//
 }

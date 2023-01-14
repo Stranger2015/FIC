@@ -1,9 +1,6 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.codec.ICodec;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
 
@@ -14,10 +11,7 @@ import java.util.List;
  * @param <G>
  */
 public
-class SplitImageTask<N extends TreeNode <N>, A extends IAddress , /* IImage extends IImage */,
-        G extends BitBuffer>
-
-        extends Task <N> {
+class SplitImageTask extends Task {
 
     /**
      * @param filename
@@ -27,8 +21,8 @@ class SplitImageTask<N extends TreeNode <N>, A extends IAddress , /* IImage exte
     public
     SplitImageTask ( String filename,
                      EPartitionScheme scheme,
-                     ICodec <N> codec,
-                     List <Task <N>> tasks ) {
+                     ICodec codec,
+                     List <Task> tasks ) {
 
         super(filename, scheme, codec, tasks);
     }
@@ -39,11 +33,11 @@ class SplitImageTask<N extends TreeNode <N>, A extends IAddress , /* IImage exte
     @SuppressWarnings("unchecked")
     @Override
     public
-    void onPreprocess ( IImageProcessor <N> processor, String filename ) {
-
-        super.onPreprocess(processor, filename);
-
-        inputImage = loadImage(filename);
+    void onPreprocess ( IImageProcessor processor, String filename ) throws ValueError {
+                inputImage = loadImage(filename);
         layers = inputImage.split();
+        for (int i = 0; i < layers.size(); i++) {
+            super.onPreprocess(processor, filename, layers.get(i));
+        }
     }
 }

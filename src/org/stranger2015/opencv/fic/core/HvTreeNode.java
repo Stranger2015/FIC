@@ -145,7 +145,7 @@ public class HvTreeNode<N extends TreeNode <N>, A extends IAddress , G extends B
      */
     @Override
     public
-    TreeNodeBase <?> createNode ( TreeNodeBase <?> parent, IAddress  address ) throws ValueError {
+    TreeNodeBase <N> createNode ( TreeNodeBase <N> parent, IAddress  address ) throws ValueError {
         return null;
     }
 

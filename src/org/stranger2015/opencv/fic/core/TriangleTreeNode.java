@@ -62,7 +62,7 @@ class TriangleTreeNode<N extends TreeNode <N>, A extends IAddress , G extends Bi
      */
     @Override
     public
-    TreeNodeBase <?> createNode ( TreeNodeBase <?> parent, IAddress  address ) throws ValueError {
+    TreeNodeBase <N> createNode ( TreeNodeBase <N> parent, IAddress  address ) throws ValueError {
         return null;
     }
 

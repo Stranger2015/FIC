@@ -1,11 +1,11 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
 import org.stranger2015.opencv.fic.core.codec.tilers.IBottomUpTiler;
 import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
-import org.stranger2015.opencv.utils.BitBuffer;
+import org.stranger2015.opencv.fic.core.codec.tilers.ImageBlockInfo;
+import org.stranger2015.opencv.fic.core.codec.tilers.ClassificationScheme;
 
 /**
  * @param <N>
@@ -13,9 +13,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
  * @param <G>
  */
 public
-class QuadTreeBottomUpTiler
-        extends QuadTreeTiler
-        implements IBottomUpTiler {
+class QuadTreeBottomUpTiler extends QuadTreeTiler implements IBottomUpTiler {
 
     /**
      * @param image
@@ -42,8 +40,8 @@ class QuadTreeBottomUpTiler
     ITiler instance () {
         return new QuadTreeBottomUpTiler(
                 getImage(),
-                getRangeSize(),
-                getDomainSize(),
+                getCurrentRangeSize(),
+                this.getCurrentDomainSize(),
                 getEncoder(),
                 getBuilder()
         );
@@ -95,5 +93,16 @@ class QuadTreeBottomUpTiler
     public
     void segmentQuadrilateral (TreeNodeBase <?> node, IImageBlock  imageBlock ) throws ValueError {
 
+    }
+
+    /**
+     * @param block
+     * @return
+     * @throws ValueError
+     */
+    @Override
+    public
+    ClassificationScheme createQuadrants ( ImageBlockInfo block ) throws ValueError {
+        return null;
     }
 }

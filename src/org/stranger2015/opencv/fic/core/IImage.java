@@ -1,11 +1,13 @@
 package org.stranger2015.opencv.fic.core;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+import org.stranger2015.opencv.fic.core.geom.Coordinate;
 import org.stranger2015.opencv.fic.core.geom.Geometry;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 
@@ -19,11 +21,13 @@ import static org.opencv.highgui.HighGui.imshow;
  *
  */
 public
-interface IImage {
+interface IImage extends IChannel {
     /**
      *
      */
     void initialize ();
+
+    EColorType getColorType();
 
     /**
      * @return
@@ -48,7 +52,7 @@ interface IImage {
      */
     static @NotNull
     List <MatOfPoint> polygonListToMatList ( List <Geometry <?>> polygonList ) {
-        List <MatOfPoint> matOfPoints = new ArrayList<> (polygonList.size());
+        List <MatOfPoint> matOfPoints = new ArrayList <>(polygonList.size());
         for (Geometry <?> polygon : polygonList) {
             Point[] apply = null;//apply(polygon);
             MatOfPoint matOfPoint = new MatOfPoint(apply);
@@ -90,13 +94,13 @@ interface IImage {
     /**
      * @param contractivity
      */
-    IImage  contract ( int contractivity );
+    IImage contract ( int contractivity );
 
     /**
      * @param scale
      * @return
      */
-    IImage  resize ( int scale );
+    IImage resize ( int scale );
 
     /**
      * @param rowStart
@@ -107,32 +111,29 @@ interface IImage {
      */
     Mat submat ( int rowStart, int rowEnd, int colStart, int colEnd );
 
+    Coordinate[] getCoordinates ();
+
+    Coordinate getCentroid ();
+
+    int getBoundaryDimension ();
+
     /**
      * @param n
      * @return
      */
-//    @Override
     int plus ( int... n );
 
     /**
-     * @param rowStart
-     * @param rowEnd
-     * @param colStart
-     * @param colEnd
+     * @param layers
+     * @param inputImage
      * @return
      */
-//    @Override
-    IImageBlock  subImage ( int rowStart, int rowEnd, int colStart, int colEnd );
+    Mat merge ( List <Mat> channels, Mat inputImage );
 
     /**
      * @return
      */
-    List <IImage> split ();
-
-    /**
-     * @return
-     */
-    IImage  merge ( List <IImage> layers, IImage inputImage );//imageblocks to merge
+    List <Mat> split ( Mat m, List <Mat> mv );
 
     /**
      *
@@ -162,21 +163,22 @@ interface IImage {
      * @param i
      * @param i1
      * @param sideSize
+     * @param height
      * @param img1pixels
      * @param i2
      * @param i3
      */
-    void getRGB ( int i, int i1, int sideSize, double[] img1pixels, int i2, int i3 );
+    void getRGB ( int i, int i1, int sideSize, int height, double[] img1pixels, int i2, int i3 );
 
     /**
      * @return
      */
-    List <ImageTransform > getTransforms () throws ValueError;
+    List <ImageTransform> getTransforms () throws ValueError;
 
     /**
      * @param transforms
      */
-    void setTransforms ( List <ImageTransform > transforms ) throws ValueError;
+    void setTransforms ( List <ImageTransform> transforms ) throws ValueError;
 
     /**
      * @return
@@ -186,7 +188,7 @@ interface IImage {
     /**
      * @return
      */
-    List <IImage > getComponents ();
+    List <IImage> getComponents ();
 
     /**
      * @param addr
@@ -196,21 +198,6 @@ interface IImage {
      */
     default
     double[] getPixel ( int x, int y ) {
-//        int channels=getMat().channels();
-//        int stride=getMat().width()*channels;
-//        for (int i=0; i< getMat().height(); i++) {
-//         stride is the number of bytes in a row of smallImg
-//        for (int j=0; j<stride; j+=channels)        {
-//            int b = buff[(i * stride) + j];
-//            int g = buff[(i * stride) + j + 1];
-//            int r = buff[(i * stride) + j + 2];
-//            float[] hsv = new float[3];
-//            Color.RGBtoHSB(r,g,b,hsv);
-        // Do something with the hsv.
-//            System.out.println("hsv: " + hsv[0]);
-//        }
-//    }
-
         return getMat().get(x, y);
     }
 
@@ -218,8 +205,8 @@ interface IImage {
      * @param addr
      */
     default
-    void putPixel ( IAddress  address, double[] pixelData ) throws ValueError {
-       getMat().put(address.getX(), address.getY(), pixelData);
+    void putPixel ( IAddress address, double[] pixelData ) throws ValueError {
+        getMat().put(address.getX(), address.getY(), pixelData);
     }
 
     /**
@@ -230,7 +217,7 @@ interface IImage {
      */
     default
     void putPixel ( int x, int y, double[] pixelData ) throws ValueError {
-       getMat().put(x, y, pixelData);
+        getMat().put(x, y, pixelData);
     }
 
     /**
@@ -246,7 +233,7 @@ interface IImage {
     /**
      * @return
      */
-    double[] getMeanPixelValue ();
+    double getMeanPixelValue ();
 
     /**
      * @return
@@ -279,7 +266,7 @@ interface IImage {
     /**
      * @param meanPixelValue
      */
-    void setMeanPixelValue ( double[] meanPixelValue );
+    void setMeanPixelValue ( double meanPixelValue );
 
     /**
      * Compares this object with the specified object for order.  Returns a
@@ -321,17 +308,17 @@ interface IImage {
      *                              from being compared to this object.
      */
 //    @Override
-    int compareTo ( @NotNull IImage  other );
+    int compareTo ( @NotNull IImage other );
 
     /**
      * @param blocks
      */
-    void setRegions ( List <IImageBlock > blocks );
+    void setRegions ( List <IImageBlock> blocks );
 
     /**
      * @return
      */
-    List <IImageBlock > getRegions ();
+    List <IImageBlock> getRegions ();
 
     /**
      * @param row
@@ -356,7 +343,9 @@ interface IImage {
      * @param y
      * @return
      */
-    double[] pixelValues ( int x, int y );
+    double pixelValues ( int x, int y );
+
+    double getPixelValuesLayer ( int x, int y, int c );
 
     /**
      * @param x
@@ -364,13 +353,48 @@ interface IImage {
      * @param ch
      * @return
      */
-    double getPixelValuesLayer ( int x, int y, int c );
+//    double getPixelValuesLayer ( int x, int y, int c );
 
-    void setMeanPixelValuesLayer ( int c, double v );
+//    void setMeanPixelValuesLayer ( int c, double v );
 
     void setOriginalImageWidth ( int originalImageWidth );
 
     IIntSize restoreSize ( int w, int h, int originalImageWidth, int originalImageHeight );
 
-    double[] get ( int x, int y, double[] data );
+    int get ( int x, int y, double[] data );
+
+    List <IChannel> getChannels ();
+
+    void setMeanPixelValues ( double v );
+    /**
+     *
+     */
+    enum EColorType {
+        BINARY(0),
+        GRAYSCALE(1),
+        GRAYSCALE_WITH_ALPHA(4),
+        INDEXED_COLOR(3),
+        TRUE_COLOR(2),
+        TRUE_COLOR_WITH_ALPHA(6);
+
+        private final int cType;
+
+        /**
+         * @param cType
+         */
+        @Contract(pure = true)
+        EColorType ( int cType ) {
+            this.cType = cType;
+        }
+
+        /**
+         * @return
+         */
+//        @Contract(pure = true)
+        public
+        int getCType () {
+            return cType;
+        }
+
+    }
 }

@@ -1,6 +1,5 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.checkerframework.checker.units.qual.A;
 import org.stranger2015.opencv.fic.core.codec.*;
 
 /**
@@ -19,9 +18,9 @@ class HvCodec extends Codec {
     public
     HvCodec ( EPartitionScheme scheme,
               EncodeTask  encodeTask,
-              DecodeTask <N> decodeTask ) {
+              DecodeTask  decodeTask ) {
 
-        super(scheme, encodeTask, decodeTask);
+        super(scheme, encodeTask.getEncoder(), decodeTask.getDecoder());
     }
 
     /**
@@ -31,11 +30,11 @@ class HvCodec extends Codec {
      * @return
      */
     public
-    ICodec <N> create ( EPartitionScheme scheme,
-                              EncodeTask <N> encodeTask,
-                              DecodeTask <N> decodeTask ) {
+    ICodec create ( EPartitionScheme scheme,
+                              EncodeTask encodeTask,
+                              DecodeTask decodeTask ) {
 
-        return new HvCodec <>(scheme, encodeTask, decodeTask);
+        return new HvCodec(scheme, encodeTask, decodeTask);
     }
 
     /**
@@ -46,8 +45,8 @@ class HvCodec extends Codec {
      */
 //    @Override
     public
-    IEncoder <N> getEncoder ( IImage image, IIntSize rangeSize, IIntSize domainSize ) {
-        return new HvEncoder <N>(image, rangeSize, domainSize);
+    IEncoder getEncoder ( IImage image, IIntSize rangeSize, IIntSize domainSize ) {
+        return new HvEncoder(image, rangeSize, domainSize);
     }
 
     /**
@@ -55,7 +54,7 @@ class HvCodec extends Codec {
      */
     @Override
     public
-    IEncoder<N, A,M,G>  getEncoder () {
+    IEncoder  getEncoder () {
         return null;
     }
 
@@ -64,7 +63,7 @@ class HvCodec extends Codec {
      */
     @Override
     public
-    IDecoder <M, A> getDecoder () {
+    IDecoder getDecoder () {
         return null;
     }
 
@@ -85,6 +84,6 @@ class HvCodec extends Codec {
     @Override
     public
     IAddress  createAddress ( int address ) throws ValueError {
-        return new DecAddress <>(address);
+        return new DecAddress(address);
     }
 }

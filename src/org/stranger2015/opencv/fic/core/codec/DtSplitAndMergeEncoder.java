@@ -150,22 +150,24 @@ class DtSplitAndMergeEncoder extends BinTreeEncoder {
 
     /**
      * @param image
+     * @return
      * @throws ValueError
      */
     @Override
     public
-    void doEncode ( IImage image ) throws Exception {
+    IImage doEncode ( IImage image ) throws Exception {
         List <IImageBlock> rangeBlocks = partitionProcessor.generateRangeBlocks(
-                (IImageBlock) image,
+                image.getSubImage(),
                 image.getWidth(),
                 image.getHeight());
 
         List <IImageBlock> domainBlocks = partitionProcessor.generateDomainBlocks(//fixme
-                rangeBlocks,
-                partitionProcessor.getRangeSize(),
-                partitionProcessor.getDomainSize());
+                image.getSubImage(),
+                partitionProcessor.getDomainSize().getWidth(),
+                partitionProcessor.getDomainSize().getHeight());
 
         super.doEncode(image);
+        return image;
     }
 
     /**
@@ -173,7 +175,7 @@ class DtSplitAndMergeEncoder extends BinTreeEncoder {
      */
     @Override
     public
-    void addAllowableSubtiler ( Class <ITiler> tilerClass ) {
+    void addAllowableSubtiler (Class <ITiler> tilerClass ) {
 
     }
 

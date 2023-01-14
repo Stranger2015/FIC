@@ -36,8 +36,7 @@ class NormalizeImageShapeTask<N extends TreeNode <N>, A extends IAddress , G ext
      * @param filename
      * @return
      */
-    @Override
-    protected
+    private
     IImage execute ( String filename ) throws ValueError {
         IImage image = super.execute(filename);
 

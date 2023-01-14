@@ -12,10 +12,9 @@ package org.stranger2015.opencv.fic.core.geomgraph;
  * http://www.eclipse.org/org/documents/edl-v10.php.
  */
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.IntersectionMatrix;
-import org.locationtech.jts.geomgraph.Label;
-import org.locationtech.jts.util.Assert;
+import org.stranger2015.opencv.fic.core.geom.Coordinate;
+import org.stranger2015.opencv.fic.core.geom.IntersectionMatrix;
+import org.stranger2015.opencv.fic.utils.Assert;
 
 /**
  * A GraphComponent is the parent class for the objects'
@@ -59,13 +58,14 @@ abstract public class GraphComponent {
     /**
      * @return a coordinate in this component (or null, if there are none)
      */
-    abstract public Coordinate getCoordinate();
+    abstract public
+    Coordinate getCoordinate();
     /**
      * Compute the contribution to an IM for this component.
      *
      * @param im Intersection matrix
      */
-    abstract protected void computeIM(IntersectionMatrix im);
+    abstract protected void computeIM( IntersectionMatrix im);
     /**
      * An isolated component is one that does not intersect or touch any other
      * component.  This is the case if the label has valid locations for
@@ -79,8 +79,7 @@ abstract public class GraphComponent {
      * A component only contributes if it has a labelling for both parent geometries
      * @param im Intersection matrix
      */
-    public void updateIM(IntersectionMatrix im)
-    {
+    public void updateIM(IntersectionMatrix im){
         Assert.isTrue(label.getGeometryCount() >= 2, "found partial label");
         computeIM(im);
     }

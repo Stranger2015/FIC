@@ -16,7 +16,7 @@ class TreeFactory<N extends TreeNode <N,A,M,G>, A extends Address, IImage extend
     }
 
 //   Tree<N,M,A> createTree(String clazzName) throws ReflectiveOperationException {
-//       Class<?> clazz= Class.forName(clazzName);
+//       ImageBlockClassifier<?> clazz= ImageBlockClassifier.forName(clazzName);
 //       Constructor <?> ctor = clazz.getDeclaredConstructor();
 //       Tree<N,M,A> tree= (Tree <N, M, A>) ctor.newInstance();
 //

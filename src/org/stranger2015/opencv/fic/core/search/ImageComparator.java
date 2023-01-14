@@ -4,14 +4,14 @@ import org.jetbrains.annotations.Contract;
 import org.stranger2015.opencv.fic.core.Address;
 import org.stranger2015.opencv.fic.core.IDistanceator;
 import org.stranger2015.opencv.fic.core.IImage;
-
+import org.stranger2015.opencv.fic.core.IImageBlock;
 
 /**
  
  * @param
  */
 public
-class ImageComparator</* IImage extends IImage */, A extends Address > implements IDistanceator <M, A> {
+class ImageComparator implements IDistanceator {
 
     private final double fuzz;
     private final EMetrics metrics;
@@ -50,20 +50,23 @@ class ImageComparator</* IImage extends IImage */, A extends Address > implement
      */
     @Override
     public
-    double distance ( final IImage img1, final IImage img2 ) {
+    double distance ( final IImageBlock img1, final IImageBlock img2 ) {
         assert (img1 != null) && (img2 != null);
 
         int width = img1.getWidth();
         int height = img1.getHeight();
         int area = width * height;
 
-        int[] img1pixels = new int[area];
-        int[] img2pixels = new int[area];
+        int     channels=img1.getChannelsAmount();
+        double[] distance=new double[channels];
+        for (int ch = 0; ch < channels; ch++) {
+            distance[ch]=0;
+        }
+        double[] img1pixels = new double[area];
+        double[] img2pixels = new double[area];
 
         img1.getRGB(0, 0, width, height, img1pixels, 0, 0);
         img2.getRGB(0, 0, width, height, img2pixels, 0, 0);
-
-        double distance = 0;
 
         for (int pixelRow = 0; pixelRow < height; pixelRow++) {
             for (int pixelCol = 0; pixelCol < width; pixelCol++) {
@@ -76,5 +79,19 @@ class ImageComparator</* IImage extends IImage */, A extends Address > implement
         }
 
         return distance;
+    }
+
+    /**
+     * Distance between two given objects
+     *
+     * @param image1
+     * @param image2
+     * @return the distance as defined by a metric between the objects
+     * @see EMetrics
+     */
+    @Override
+    public
+    double distance ( IImage image1, IImage image2 ) {
+        return 0;
     }
 }

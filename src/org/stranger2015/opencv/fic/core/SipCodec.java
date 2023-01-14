@@ -33,8 +33,8 @@ class SipCodec    extends Codec {
      */
 //    @Override
     public
-    IEncoder <N> getEncoder ( IImage image, IIntSize rangeSize, IIntSize domainSize ) {
-        return new SipEncoder <>(image, rangeSize, domainSize);
+    IEncoder getEncoder ( IImage image, IIntSize rangeSize, IIntSize domainSize ) {
+        return new SipEncoder(image, rangeSize, domainSize);
     }
 
     /**
@@ -42,7 +42,7 @@ class SipCodec    extends Codec {
      */
     @Override
     public
-    IEncoder <N> getEncoder () {
+    IEncoder getEncoder () {
         return null;
     }
 
@@ -51,7 +51,7 @@ class SipCodec    extends Codec {
      */
     @Override
     public
-    IDecoder <N,A,G> getDecoder () {
+    IDecoder getDecoder () {
         return null ;
     }
 

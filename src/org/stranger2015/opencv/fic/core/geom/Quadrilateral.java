@@ -1,12 +1,14 @@
 package org.stranger2015.opencv.fic.core.geom;
 
-import org.locationtech.jts.geom.GeometryComponentFilter;
 
+/**
+ * @param <T>
+ */
 public
 class Quadrilateral<T extends Quadrilateral<T>> extends Geometry<T> implements IPolygonal{
     public
     Quadrilateral () {
-        super(factory);
+        super();
     }
 
     @Override

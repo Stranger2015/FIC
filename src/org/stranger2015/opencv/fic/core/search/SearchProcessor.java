@@ -1,9 +1,9 @@
 package org.stranger2015.opencv.fic.core.search;
 
 import org.stranger2015.opencv.fic.core.IImageBlock;
+import org.stranger2015.opencv.fic.core.ValueError;
+import org.stranger2015.opencv.fic.core.codec.tilers.Pool;
 import org.stranger2015.opencv.fic.transform.ITransform;
-
-import java.util.List;
 
 /**
  
@@ -14,6 +14,8 @@ public abstract
 class SearchProcessor implements ISearchProcessor {
 
     protected ITransform bestTransform;
+
+    private EMetrics metrics;
 
     /**
      *
@@ -27,7 +29,7 @@ class SearchProcessor implements ISearchProcessor {
      */
     @Override
     public abstract
-    byte[] search ( IImageBlock imageBlock, List <IImageBlock> rangeBlocks );
+    byte[] search ( IImageBlock imageBlock, Pool <IImageBlock> rangeBlocks ) throws ValueError;
 
     /**
      * @return
@@ -52,5 +54,14 @@ class SearchProcessor implements ISearchProcessor {
     public
     ITransform getBestTransform () {
         return bestTransform;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    EMetrics getMetrics () {
+        return metrics;
     }
 }

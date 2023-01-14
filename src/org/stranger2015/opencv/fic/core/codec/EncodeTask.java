@@ -35,8 +35,7 @@ class EncodeTask extends Task {
      * @return
      */
     @SuppressWarnings("unchecked")
-    @Override
-    protected
+    private
     IImage execute ( String filename ) throws Exception {
         return encoder.encode(super.execute(filename));
     }

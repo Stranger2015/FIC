@@ -3,6 +3,7 @@ package org.stranger2015.opencv.fic.core;
 import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,10 +36,11 @@ import java.util.List;
  * @see Compressor
  */
 public
-class FCImageModel extends IntSize  {
+class FCImageModel extends IntSize {
     public static final String LABEL = "FCIF\r\n";
     private ImageInfo imageInfo;
     private byte[] ifsRecords;
+    private final List <IChannel> layers = new ArrayList <>();
     transient private List <IImageBlock> rangeBlocks;
     transient private List <IImageBlock> domainBlocks;
     private IIntSize size;
@@ -49,7 +51,7 @@ class FCImageModel extends IntSize  {
      * @param bb
      */
     public
-    FCImageModel (byte[] ifsRecords ) throws ValueError, IOException {
+    FCImageModel ( byte[] ifsRecords ) throws ValueError, IOException {
         super(null);
 
         setIfsRecords(ifsRecords);
@@ -87,59 +89,32 @@ class FCImageModel extends IntSize  {
 
     }
 
-    /**
-     * @return
-     */
-//    @Override
-    public
-    List <IImageBlock> getRangeBlocks () {
-        return rangeBlocks;
-    }
-
-    /**
-     * @return
-     */
+//    /**
+//     * @return
+//     */
 //    @Override
 //    public
-    List <IImageBlock> getDomainBlocks () {
-        return domainBlocks;
-    }
+//    List <IImageBlock> getRangeBlocks () {
+//        return rangeBlocks;
+//    }
+//
+//    /**
+//     * @return
+//     */
+//    @Override
+//    public
+//    List <IImageBlock> getDomainBlocks () {
+//        return domainBlocks;
+//    }
 
     /**
      * @return
      */
-//    @Override
+    @Override
     public
     IIntSize getOriginalSize () {
         return null;
     }
-
-//    /**
-//     * @return
-//     */
-//    @Override
-//    public
-//    List <ImageTransform> getTransforms () throws ValueError {
-//        return null;
-//    }
-//
-//    /**
-//     * @param transforms
-//     */
-//    @Override
-//    public
-//    void setTransforms ( List <ImageTransform> transforms ) {
-//
-//    }
-
-//    /**
-//     * @return
-//     */
-//    @Override
-//    public
-//    IImage toImage () {
-//        return null;
-//    }
 
     /**
      * @param rangeBlocks
@@ -160,24 +135,11 @@ class FCImageModel extends IntSize  {
     /**
      * @return
      */
-//    @Override
+    @Override
     public
     IIntSize getSize () {
         return size;
     }
-
-//    /**
-//     * @param w
-//     * @param h
-//     * @param originalImageWidth
-//     * @param originalImageHeight
-//     * @return
-//     */
-//    @Override
-//    public
-//    IIntSize restoreSize ( int w, int h, int o//{
-//        return null;
-//    }
 
     /**
      * @return
@@ -263,5 +225,10 @@ class FCImageModel extends IntSize  {
     public
     void setSize ( IIntSize size ) {
         this.size = size;
+    }
+
+    public
+    List <IChannel> getLayers () {
+        return layers;
     }
 }

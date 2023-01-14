@@ -113,8 +113,8 @@ class DelaunayTriangularBottomUpTiler
     ITiler instance () {
         return new DelaunayTriangularBottomUpTiler(
                 getImage(),
-                getRangeSize(),
-                getDomainSize(),
+                getCurrentRangeSize(),
+                this.getCurrentDomainSize(),
                 getEncoder(),
                 getBuilder());
     }

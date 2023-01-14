@@ -1,28 +1,43 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.ICodec;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
 
 /**
- * @param <N>
- * @param
- 
- * @param <G>
+ *
  */
-@Deprecated
 public
-class SplitMergeImageTask<N extends TreeNode <N>, A extends IAddress , /* IImage extends IImage */,
-        G extends BitBuffer>
-
-        extends BidiTask <N> {
+class SplitMergeImageTask extends BidiTask {
     /**
      * @param fn
      * @param scheme //     * @param tasks
      */
-    SplitMergeImageTask ( String fn, EPartitionScheme scheme, ICodec <N> codec ) {
-        super(fn, scheme, codec, List.of());
+    SplitMergeImageTask ( String fn, EPartitionScheme scheme, ICodec codec ) {
+        super(fn, scheme, codec, List.of(
+                new ColorToGrayScaleImageTask(fn, scheme, codec, List.of()),
+                new GrayScaleToColorImageTask(fn, scheme, codec, List.of())
+        ));
+    }
+
+    /**
+     * @param processor
+     * @param outputImage
+     */
+    @Override
+    public
+    void onPostprocess ( IImageProcessor processor, CompressedImage outputImage ) {
+
+    }
+
+    /**
+     * @param processor
+     * @param filename
+     * @throws ValueError
+     */
+    @Override
+    public
+    void onPreprocess ( IImageProcessor processor, String filename ) throws ValueError {
+
     }
 }

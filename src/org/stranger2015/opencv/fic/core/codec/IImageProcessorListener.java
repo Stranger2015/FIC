@@ -2,7 +2,11 @@ package org.stranger2015.opencv.fic.core.codec;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stranger2015.opencv.fic.core.*;
+import org.stranger2015.opencv.fic.core.IImage;
+import org.stranger2015.opencv.fic.core.IImageProcessor;
+import org.stranger2015.opencv.fic.core.ValueError;
+
+import java.util.List;
 
 /**
  *
@@ -15,10 +19,8 @@ interface IImageProcessorListener {
      *
      */
     default
-    void onPreprocess ( IImageProcessor imageProcessor, String filename, IImage image )
-            throws ValueError {
-
-        logger.info("On preprocessing \n");
+    void onPreprocess ( IImageProcessor imageProcessor, String filename, IImage image ) throws ValueError {
+        logger.info("On preprocessing... \n");
     }
 
     /**
@@ -33,7 +35,7 @@ interface IImageProcessorListener {
      *
      */
     default
-    void onPostprocess ( IImageProcessor processor, ICompressedImage outputImage ) {
-        logger.info("On postprocessing \n");
+    void onPostprocess ( IImageProcessor processor, IImage image, List<IImage> outputImages ) {
+        logger.info("On postprocessing... \n");
     }
 }

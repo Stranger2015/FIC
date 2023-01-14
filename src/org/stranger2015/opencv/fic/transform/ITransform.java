@@ -1,6 +1,7 @@
 package org.stranger2015.opencv.fic.transform;
 
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfDouble;
 import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.codec.IConstants;
@@ -36,7 +37,28 @@ interface ITransform extends IConstants {
                         EInterpolationType interpolationType );
 
     /**
+     * @param inputImage
+     * @return
+     */
+    IImage warpDihedral( IImage inputImage,
+                        Mat transformMatrix,
+                        EInterpolationType interpolationType );
+
+    /**
+     * @param inputImage
+     * @return
+     */
+    IImage warpDihedral( IImage inputImage,
+                         int[] transformMatrixArray,
+                         EInterpolationType interpolationType ){
+
+        return warpDihedral(inputImage, new MatOfDouble(transformMatrixArray), interpolationType);
+    }
+
+    /**
      * @return
      */
     IAddress getAddress () throws InstantiationException, IllegalAccessException;
+
+
 }

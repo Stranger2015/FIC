@@ -24,7 +24,6 @@
     </orderEntry>
     <orderEntry type="library" exported="" name="fic" level="project" />
     <orderEntry type="library" name="locationtech.jts.core" level="project" />
-    <orderEntry type="module" module-name="enumus" />
     <orderEntry type="library" exported="" name="slf4j" level="project" />
     <orderEntry type="library" exported="" name="GAlib" level="project" />
     <orderEntry type="library" exported="" name="commons-compress-1.21-bin" level="project" />

@@ -4,24 +4,17 @@ import org.slf4j.Logger;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
-import org.stranger2015.opencv.fic.core.codec.IImageBlock;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
 
 /**
  * @param <N>
  * @param
- 
  * @param <G>
  */
 public
-class HvTiler<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
-        extends Tiler <N> {
-
-//    private final RectangularTiler <N> rectangularTiler;
-
+class HvTiler extends Tiler {
     public
     HvTiler ( IImage image, int width, int height ) {
         super(image, width, height);
@@ -29,7 +22,7 @@ class HvTiler<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
 
     @Override
     public
-    void addLeaf ( LeafNode <N> node ) {
+    void addLeaf ( LeafNode <?> node ) {
 
     }
 
@@ -41,14 +34,8 @@ class HvTiler<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
 
     @Override
     public
-    ITiler <N> instance () {
+    ITiler instance () {
         return null;
-    }
-
-    @Override
-    public
-    void segmentGeometry ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
-        List.of();
     }
 
     /**
@@ -58,14 +45,29 @@ class HvTiler<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
      */
     @Override
     public
-    void segmentRectangle ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
+    void segmentGeometry ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError {
 
     }
 
+    /**
+     * @param node
+     * @param imageBlock
+     * @throws ValueError
+     */
     @Override
     public
-    void segmentRectangle ( IImageBlock  imageBlock ) throws ValueError {
-        return null;
+    void segmentRectangle ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError {
+
+    }
+
+    /**
+     * @param node
+     * @param imageBlock
+     * @throws ValueError
+     */
+//    @Override
+    public
+    void segmentRectangle ( IImageBlock imageBlock ) throws ValueError {
     }
 
 
@@ -75,8 +77,8 @@ class HvTiler<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
      */
 //    @Override
     public
-    List <IImageBlock > tile ( IImage image ) throws ValueError, MinimalRangeSizeReached {
-    //    return rectangularTiler.tile(image, null, queue);//TODO;
+    List <IImageBlock> tile ( IImage image ) throws ValueError, MinimalRangeSizeReached {
+        //    return rectangularTiler.tile(image, null, queue);//TODO;
         return null;
     }
 
@@ -87,7 +89,6 @@ class HvTiler<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
     public
     HvTiler ( IImage image, IIntSize rangeSize, IIntSize domainSize, int rows, int cols ) {
         super(image, rangeSize, domainSize, rows, cols);
-//        rectangularTiler = new RectangularTiler <>(image, rangeSize, domainSize);
     }
 
     /**
@@ -96,36 +97,33 @@ class HvTiler<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
      * @param domainSize
      */
     public
-    HvTiler (IImage  image, IIntSize rangeSize, IIntSize domainSize ) {
+    HvTiler ( IImage image, IIntSize rangeSize, IIntSize domainSize ) {
         this(image, rangeSize, domainSize, 0, 0);
     }
 
-//    @Override
+    //    @Override
     public
-    void segmentPolygon ( IImageBlock  imageBlock ) throws ValueError {
-        return null;
+    void segmentPolygon ( IImageBlock imageBlock ) throws ValueError {
     }
 
-//    @Override
+    //    @Override
     public
-    void segmentQuadrilateral ( IImageBlock  imageBlock ) throws ValueError {
-        return null;
+    void segmentQuadrilateral ( IImageBlock imageBlock ) throws ValueError {
     }
 
-    @Override
     public
-    void addLeafNode ( TreeNode <N> node ) {
+    void addLeafNode ( TreeNode <?> node ) {
 
     }
 
     @Override
     public
-    List <Vertex> generateVerticesSet ( IImageBlock  roi, int blockWidth, int blockHeight ) {
+    List <Vertex> generateVerticesSet ( IImageBlock roi, int blockWidth, int blockHeight ) {
         return null;
     }
 
-    private
-    List <IImageBlock > generateInitialRangeBlocks ( IImageBlock  roi, int blockWidth, int blockHeight )
+    public
+    Pool <IImageBlock> generateInitialRangeBlocks ( IImageBlock roi, int blockWidth, int blockHeight )
             throws ValueError {
 
         return null;

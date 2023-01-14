@@ -1,6 +1,5 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.opencv.core.Mat;
 import org.stranger2015.opencv.fic.utils.Point;
 
 import static org.stranger2015.opencv.fic.core.EAddressKind.ORDINARY;
@@ -9,7 +8,7 @@ import static org.stranger2015.opencv.fic.core.EAddressKind.ORDINARY;
  * @param
  */
 public
-class DecAddress<A extends IAddress > extends Address  {
+class DecAddress extends Address  {
 
     private int addr;
 
@@ -20,13 +19,14 @@ class DecAddress<A extends IAddress > extends Address  {
      */
     public
     DecAddress ( int row, int stride, int col ) throws ValueError {
+        super(row);//fixme
         addr=stride*row + col;
     }
 
 
     public
     DecAddress ( int segment, int offset ) {
-        super(segment, offset);
+        super(segment);
     }
 
     /**

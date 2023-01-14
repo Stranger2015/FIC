@@ -22,7 +22,7 @@ class SipImage extends Image {
      */
     public
     SipImage ( IImage input/*, int[] pixels*/ ) {
-        super(input.getMat()/*, pixel*/);
+        super(input.getMat(),/*, pixel*/rows, cols, pixels);
 
 //        this.pixels = pixels;
     }
@@ -54,19 +54,19 @@ class SipImage extends Image {
      */
     @Override
     public
-    double[] pixelValues ( int addr, int i ) {
+    double pixelValues ( int addr, int i ) {
         return new double[0];
     }
 
     @Override
     public
-    double[] put ( int x, int y, double[] value ) {
+    int put ( int x, int y, double[] value ) {
 return value;
     }
 
     @Override
     public
-    double[] getMeanPixelValue () {
+    double getMeanPixelValue () {
         return meanPixelValue;
     }
 
@@ -84,7 +84,7 @@ return value;
 
     @Override
     public
-    void setMeanPixelValue ( double[] meanPixelValue ) {
+    void setMeanPixelValue ( double meanPixelValue ) {
 this.meanPixelValue = meanPixelValue;
     }
 
@@ -124,7 +124,7 @@ this.meanPixelValue = meanPixelValue;
      */
     public
     SipImage ( Mat imread ) {
-        super(imread, roi);
+        super(imread, roi, colorType);
     }
 
     /**
@@ -268,7 +268,7 @@ this.meanPixelValue = meanPixelValue;
      */
     @Override
     public
-    int[] getPixels () {
+    double[] getPixels () {
         return pixels;
     }
 

@@ -2,7 +2,9 @@ package org.stranger2015.opencv.fic.core.codec;
 
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
+import org.stranger2015.opencv.fic.core.codec.tilers.Pool;
 import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.fic.transform.ScaleTransform;
@@ -18,9 +20,7 @@ import java.util.Set;
  * @param <G>
  */
 public
-class CompositeEncoder
-        extends Encoder{
-
+class CompositeEncoder extends Encoder {
 
     /**
      *
@@ -40,20 +40,28 @@ class CompositeEncoder
      */
     @SafeVarargs
     protected
-    CompositeEncoder ( EPartitionScheme scheme,
-                       ITreeNodeBuilder <?> nodeBuilder,
-                       IPartitionProcessor partitionProcessor,
-                       ISearchProcessor searchProcessor,
-                       ScaleTransform  scaleTransform,
-                       ImageBlockGenerator<?> imageBlockGenerator,
-                       IDistanceator  comparator,
-                       Set <ImageTransform> imageTransforms,
-                       Set <IImageFilter > imageFilters,
-                       FCImageModel fractalModel,
-                       IEncoder ... encoders ) {
+    CompositeEncoder (
+            String fileName,
+            EPartitionScheme scheme,
+            ICodec codec,
+            List <Task> tasks,
+            EtvColorSpace colorSpace,
+            ITreeNodeBuilder <?> nodeBuilder,
+            IPartitionProcessor partitionProcessor,
+            ISearchProcessor searchProcessor,
+            ScaleTransform scaleTransform,
+            ImageBlockGenerator <?> imageBlockGenerator,
+            IDistanceator comparator,
+            Set <ImageTransform> imageTransforms,
+            Set <IImageFilter> imageFilters,
+            FCImageModel fractalModel,
+            IEncoder... encoders ) {
 
-        super(
+        super(fileName,
                 scheme,
+                codec,
+                tasks,
+                colorSpace,
                 nodeBuilder,
                 partitionProcessor,
                 searchProcessor,
@@ -62,7 +70,8 @@ class CompositeEncoder
                 comparator,
                 imageTransforms,
                 imageFilters,
-                fractalModel
+                fractalModel,
+                encoders
         );
 
         pipeline.addAll(Arrays.asList(encoders));
@@ -73,33 +82,58 @@ class CompositeEncoder
      */
     @Override
     public
-    void initialize () throws ReflectiveOperationException, Exception {
+    void initialize () throws Exception {
 
     }
 
     /**
-     *
      * @param tiler
      * @return
      */
     @Override
     public
-    IPartitionProcessor <N> createPartitionProcessor0 ( ITiler <N> tiler ) {
-        return getPartitionProcessor().instance(tiler);
+    IPartitionProcessor createPartitionProcessor0 ( ITiler tiler,
+                                                    ImageBlockGenerator <?> imageBlockGenerator,
+                                                    ITreeNodeBuilder <?> nodeBuilder ) {
+
+        return getPartitionProcessor().instance(tiler, imageBlockGenerator, nodeBuilder);
     }
 
     /**
      * @param image
+     * @return
      */
     @Override
     public
-    void doEncode ( IImage image ) {
-        IImage image1 = image;
-        for (int i = 0; i < pipeline.size(); i++) {
-            image1 = pipeline.get(0).doEncode(image1);
+    IImage doEncode ( IImage image ) throws Exception {
+        for (IEncoder encoder : pipeline) {
+            image = encoder.doEncode(image);
         }
 
-        return image1;
+        return image;
+    }
+//
+//    /**
+//     * @param image
+//     * @param transform
+//     * @return
+//     */
+//    @Override
+//    public
+//    IImageBlock randomTransform ( IImageBlock image, ImageTransform transform ) {
+//
+//        return null;
+//    }
+//
+    /**
+     * @param image
+     * @param transform
+     * @return
+     */
+    @Override
+    public
+    IImageBlock applyTransform ( IImageBlock image, ImageTransform transform ) {
+        return null;
     }
 
     /**
@@ -110,7 +144,7 @@ class CompositeEncoder
      */
     @Override
     public
-    List <IImageBlock > segmentImage ( IImage image, List <Rectangle> bounds ) throws ValueError {
+    List <IImageBlock> segmentImage ( IImage image, List <Rectangle> bounds ) throws ValueError {
         return null;
     }
 
@@ -120,8 +154,29 @@ class CompositeEncoder
      */
     @Override
     public
-    IPartitionProcessor <N> doCreatePartitionProcessor ( ITiler <N> tiler ) {
-        return createPartitionProcessor0(tiler);
+    IPartitionProcessor doCreatePartitionProcessor ( ITiler tiler,
+                                                     ImageBlockGenerator <?> imageBlockGenerator,
+                                                     ITreeNodeBuilder <?> nodeBuilder ) {
+        return createPartitionProcessor0(tiler, imageBlockGenerator, nodeBuilder);
+    }
+
+    /**
+     * @param filename
+     * @return
+     */
+    @Override
+    public
+    FCImageModel loadModel ( String filename ) throws Exception {
+        return fractalModel;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    IImageBlock selectDomainBlock ( IImageBlock rangeBlock, Pool <IImageBlock> domainBlocks, IIntSize size) {
+        return null;
     }
 
     /**
@@ -129,7 +184,7 @@ class CompositeEncoder
      */
     @Override
     public
-    void add ( TreeNode <N> node ) {
+    void add ( TreeNode <?> node ) {
 
     }
 
@@ -138,16 +193,16 @@ class CompositeEncoder
      */
     @Override
     public
-    void addLeafNode ( TreeNode.LeafNode <N> node ) {
+    void addLeafNode ( LeafNode <?> node ) {
 
     }
 
     /**
      * @param node
      */
-    @Override
+//    @Override
     public
-    void addLeafNode ( TreeNodeBase <N> node ) {
+    void addLeafNode ( TreeNodeBase <?> node ) {
 
     }
 }

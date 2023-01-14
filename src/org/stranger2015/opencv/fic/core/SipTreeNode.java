@@ -14,8 +14,8 @@ import java.util.List;
  * @param
  */
 public
-class SipTreeNode<N extends TreeNode <N>, A extends IAddress , /* IImage extends IImage */, G extends BitBuffer>
-        extends SaTreeNode <N> {
+class SipTreeNode<N extends TreeNode <N>>
+        extends SaTreeNode{
 
     protected final List <SipImageBlock > blocks = new ArrayList <>();
 

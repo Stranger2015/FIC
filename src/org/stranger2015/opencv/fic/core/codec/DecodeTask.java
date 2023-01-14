@@ -41,8 +41,7 @@ class DecodeTask extends Task {
      * @param filename
      * @return
      */
-    @Override
-    protected
+    private
     IImage execute ( String filename ) throws Exception {
         IImage image = super.execute(filename);
         FCImageModel fm = codec.getEncoder().getMOdel();

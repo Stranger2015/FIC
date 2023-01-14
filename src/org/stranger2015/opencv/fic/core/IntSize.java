@@ -14,10 +14,22 @@ class IntSize implements IIntSize {
 
     public final int width;
     public final int height;
+    private IIntSize originalSize;
 
     public
     IntSize ( Mat mat) {
         this(mat.width(), mat.height());
+    }
+
+
+    public
+    IIntSize getOriginalSize () {
+        return originalSize;
+    }
+
+    public
+    IIntSize getSize () {//todo
+        return null;
     }
 
     /**

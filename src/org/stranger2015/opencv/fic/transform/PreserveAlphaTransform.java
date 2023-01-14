@@ -10,8 +10,7 @@ import org.stranger2015.opencv.fic.core.IImage;
  * @param <G>
  */
 public
-class PreserveAlphaTransform
-        extends ImageTransform {
+class PreserveAlphaTransform extends ImageTransform {
 
     private final boolean preserveAlpha;
 

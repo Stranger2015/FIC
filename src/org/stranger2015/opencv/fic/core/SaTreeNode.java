@@ -11,7 +11,7 @@ import org.stranger2015.opencv.utils.BitBuffer;
  */
 @SuppressWarnings("unchecked")
 public
-class SaTreeNode<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+class SaTreeNode<N extends TreeNode <N>>
         extends TreeNode <N> {
 
     protected int layerIndex;
@@ -24,7 +24,7 @@ class SaTreeNode<N extends TreeNode <N>, A extends IAddress , G extends BitBuffe
      */
     public
     SaTreeNode ( TreeNodeBase <N> parent, EDirection hexant, IIntSize boundingBox ) throws ValueError {
-        super(parent,hexant, boundingBox);
+        super(parent,hexant, (Rectangle) boundingBox);
     }
 
     /**
@@ -34,7 +34,7 @@ class SaTreeNode<N extends TreeNode <N>, A extends IAddress , G extends BitBuffe
      */
     public
     SaTreeNode ( TreeNodeBase <N> parent, IIntSize boundingBox ) throws ValueError {
-        super(parent, null, boundingBox);
+        super(parent, null, (Rectangle) boundingBox);
     }
 
     /**
@@ -47,14 +47,7 @@ class SaTreeNode<N extends TreeNode <N>, A extends IAddress , G extends BitBuffe
         super(parent, image, boundingBox);
     }
 
-    //    /**
-//     *
-//     */
-//    public
-//    SaTreeNode () {
-//    }
-//
-    @Override
+//    @Override
     public
     TreeNode <N> createChild ( int addr ) throws ValueError {
         return null;
@@ -80,7 +73,7 @@ class SaTreeNode<N extends TreeNode <N>, A extends IAddress , G extends BitBuffe
 
     @Override
     public
-    TreeNodeBase <?> createNode ( TreeNodeBase <?> parent, IAddress  address ) throws ValueError {
+    TreeNodeBase <N> createNode ( TreeNodeBase <N> parent, IAddress  address ) throws ValueError {
         return null;
     }
 

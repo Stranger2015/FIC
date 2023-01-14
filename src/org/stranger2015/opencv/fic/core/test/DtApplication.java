@@ -1,27 +1,27 @@
 package org.stranger2015.opencv.fic.core.test;
 
 import org.opencv.osgi.OpenCVNativeLoader;
+import org.stranger2015.opencv.fic.Config;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.*;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
-import org.stranger2015.opencv.fic.utils.Config;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.io.File;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public
-class DtApplication<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+class DtApplication<N extends TreeNode <N>>
         implements Runnable, Consumer <String> {
 
-    protected final Logger logger = Logger.getLogger(String.valueOf(getClass()));
+    protected final Logger logger = LoggerFactory.getLogger(String.valueOf(getClass()));
 
-    private final Config <N> config;
+    private final FicConfig config;
     private final EtvColorSpace colorSpace;
     private final EPartitionScheme scheme;
     private final Consumer <String> action = this;
@@ -29,17 +29,17 @@ class DtApplication<N extends TreeNode <N>, A extends IAddress , G extends BitBu
     private final File input;
     private final File output;
 
-    private final FCImageModel <N> fractalModel;
+    private final FCImageModel fractalModel;
     private final Set <ImageTransform> transforms = new HashSet <>();
 
     private final IIntSize rangeSize;
     private final IIntSize domainSize;
 
-    private ImageProcessor <N> processor;
+    private ImageProcessor processor;
 
 
     public
-    DtApplication ( Config <N> config, FCImageModel <N> fractalModel, IIntSize rangeSize, IIntSize domainSize ) {
+    DtApplication ( Config config, FCImageModel fractalModel, IIntSize rangeSize, IIntSize domainSize ) {
         this.config = config;
         colorSpace = config.colorSpace();
         scheme = config.partitionScheme();
@@ -127,7 +127,7 @@ class DtApplication<N extends TreeNode <N>, A extends IAddress , G extends BitBu
      * @return
      */
     public
-    Config <N> getConfig () {
+    FicConfig getConfig () {
         return config;
     }
 
@@ -177,5 +177,10 @@ class DtApplication<N extends TreeNode <N>, A extends IAddress , G extends BitBu
     public
     IIntSize getDomainSize () {
         return domainSize;
+    }
+
+    public
+    Set <ImageTransform> getTransforms () {
+        return transforms;
     }
 }

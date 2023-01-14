@@ -1,13 +1,9 @@
 package org.stranger2015.opencv.fic.core.codec.tilers;
 
-import org.jetbrains.annotations.Contract;
 import org.stranger2015.opencv.fic.core.*;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.ESplitKind;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
-import org.stranger2015.opencv.fic.core.codec.IImageBlock;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
 
@@ -32,7 +28,8 @@ class BinTreeTiler extends Tiler {
                    IEncoder encoder,
                    ITreeNodeBuilder <?> builder ) {
 
-        super(image,
+        super(
+                image,
                 rangeSize,
                 domainSize,
                 encoder,
@@ -65,9 +62,9 @@ class BinTreeTiler extends Tiler {
      */
     @Override
     public
-    List <IImageBlock > generateRangeBlocks ( IImageBlock  roi,
-                                                 int blockWidth,
-                                                 int blockHeight ) throws ValueError {
+    Pool <IImageBlock> generateRangeBlocks ( IImageBlock roi,
+                                             int blockWidth,
+                                             int blockHeight ) throws ValueError {
         return List.of(roi.getSubImage());
     }
 
@@ -78,13 +75,12 @@ class BinTreeTiler extends Tiler {
      */
     @Override
     public
-    void segmentGeometry ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
-
+    void segmentGeometry ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError {
     }
 
     @Override
     public
-    void segmentQuadrilateral ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
+    void segmentQuadrilateral ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError {
         super.segmentQuadrilateral(node, imageBlock);
     }
 
@@ -94,15 +90,15 @@ class BinTreeTiler extends Tiler {
      */
     @Override
     public
-    void segmentSquare ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
+    void segmentSquare ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError {
         int x = imageBlock.getX();
         int y = imageBlock.getY();
 
         int w = imageBlock.getWidth();
         int h = imageBlock.getHeight();
 
-        IImageBlock  r1;
-        IImageBlock  r2;
+        IImageBlock r1;
+        IImageBlock r2;
 
         ESplitKind dir = chooseDirection(imageBlock);
 
@@ -130,9 +126,8 @@ class BinTreeTiler extends Tiler {
      * @throws ValueError
      */
     @Override
-    @Contract(value = "_, _ -> new")
     public
-    void segmentRectangle ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
+    void segmentRectangle ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError {
         ESplitKind dir = chooseDirection(imageBlock);
 
         doSegmentRectangle(node, imageBlock, dir);
@@ -145,7 +140,7 @@ class BinTreeTiler extends Tiler {
      * @throws ValueError
      */
     protected
-    void doSegmentRectangle ( TreeNodeBase <N> node, IImageBlock  imageBlock, ESplitKind dir )
+    void doSegmentRectangle ( TreeNodeBase <?> node, IImageBlock imageBlock, ESplitKind dir )
             throws ValueError {
 
         int x1 = imageBlock.getX();
@@ -154,8 +149,8 @@ class BinTreeTiler extends Tiler {
         int w = imageBlock.getWidth();
         int h = imageBlock.getHeight();
 
-        IImageBlock  r1;
-        IImageBlock  r2;
+        IImageBlock r1;
+        IImageBlock r2;
         if (dir == VERTICAL) {
             r1 = imageBlock.getSubImage(x1, y1, w / 2, h);
             r2 = imageBlock.getSubImage(x1 + w / 2, y1, w / 2, h);
@@ -180,7 +175,7 @@ class BinTreeTiler extends Tiler {
      */
     @Override
     public
-    void segmentTriangle ( TreeNodeBase <N> node, IImageBlock  imageBlock ) {
+    void segmentTriangle ( TreeNodeBase <?> node, IImageBlock imageBlock ) {
         throw new UnsupportedOperationException();
     }
 
@@ -190,8 +185,7 @@ class BinTreeTiler extends Tiler {
      */
     @Override
     public
-    void segmentPolygon ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
-
+    void segmentPolygon ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError {
     }
 
     /**
@@ -202,7 +196,7 @@ class BinTreeTiler extends Tiler {
      */
     @Override
     public
-    List <Vertex> generateVerticesSet ( IImageBlock  roi, int blockWidth, int blockHeight ) {
+    List <Vertex> generateVerticesSet ( IImageBlock roi, int blockWidth, int blockHeight ) {
         return List.of(new Vertex[0]);
     }
 
@@ -214,9 +208,9 @@ class BinTreeTiler extends Tiler {
      * @throws ValueError
      */
     public
-    List <IImageBlock > generateInitialRangeBlocks ( IImageBlock  roi, int blockWidth, int blockHeight )
+    Pool <IImageBlock> generateInitialRangeBlocks ( IImageBlock roi, int blockWidth, int blockHeight )
             throws ValueError {
 
-        return List.of(roi.getSubImage());
+        return super.generateInitialRangeBlocks(roi, blockWidth, blockHeight);
     }
 }

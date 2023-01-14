@@ -4,12 +4,12 @@ import org.checkerframework.checker.units.qual.A;
 import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.Contract;
 import org.stranger2015.opencv.fic.core.IImageBlock;
+import org.stranger2015.opencv.fic.core.codec.tilers.Pool;
 import org.stranger2015.opencv.fic.core.search.SearchProcessor;
 import org.stranger2015.opencv.fic.transform.ITransform;
 
 import java.io.PrintStream;
 import java.util.Date;
-import java.util.List;
 import java.util.stream.IntStream;
 
 /**
@@ -923,7 +923,7 @@ class GaSearchProcessor
      */
     @Override
     public
-    byte[] search ( IImageBlock imageBlock, List <IImageBlock> rangeBlocks ) {
+    byte[] search ( IImageBlock imageBlock, Pool <IImageBlock> rangeBlocks ) {
         return new byte[0];
     }
 

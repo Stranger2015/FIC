@@ -1,11 +1,9 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.stranger2015.opencv.fic.core.IImageBlock;
+import org.stranger2015.opencv.fic.core.codec.tilers.Pool;
 import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.fic.core.search.ga.*;
-import org.stranger2015.opencv.fic.utils.GrayScaleImage;
-
-import java.util.List;
 
 /**
  * 4. GA’s and the IFS Inverse Problem:
@@ -126,7 +124,7 @@ class FicGaSearchProcessor
             int elitismCount,
             ISelector  selector,
             FitnessFunction  fitnessFunction,
-            IMutationOperator <T> mutationOperator,
+            IMutationOperator  mutationOperator,
             ICrossoverOperator  crossoverOperator ) {
 
         super(
@@ -206,7 +204,7 @@ class FicGaSearchProcessor
      */
     @Override
     public
-    byte[] search ( IImageBlock imageBlock, List <IImageBlock> rangeBlocks ) {
+    byte[] search ( IImageBlock imageBlock, Pool <IImageBlock> rangeBlocks ) {
 
         return new byte[0];
     }

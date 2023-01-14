@@ -2,10 +2,9 @@ package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.CodecTask.ColorspaceConversionTask;
 import org.stranger2015.opencv.fic.core.codec.EtvColorSpace;
 import org.stranger2015.opencv.fic.core.codec.ICodec;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
 
@@ -13,8 +12,8 @@ import java.util.List;
  *
  */
 public
-class FromRgbToTvColorspaceConversionTask<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
-        extends CodecTask.ColorspaceConversionTask <N> {
+class FromRgbToTvColorspaceConversionTask
+        extends ColorspaceConversionTask {
 
     /**
      * @param imageFilename
@@ -25,9 +24,9 @@ class FromRgbToTvColorspaceConversionTask<N extends TreeNode <N>, A extends IAdd
     public
     FromRgbToTvColorspaceConversionTask ( String imageFilename,
                                           EPartitionScheme scheme,
-                                          ICodec <N> codec,
+                                          ICodec  codec,
                                           EtvColorSpace colorSpace,
-                                          List <Task <N>> tasks ) {
+                                          List <Task> tasks ) {
 
         super(imageFilename, scheme, codec, colorSpace, tasks);
     }
@@ -134,25 +133,6 @@ class FromRgbToTvColorspaceConversionTask<N extends TreeNode <N>, A extends IAdd
         yPrPb[2] = (float) (0.500 * r - 0.418 * g - 0.081 * b);
 
         return yPrPb;
-    }
-
-    /**
-     * @param filename
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    protected
-    IImage execute ( String filename ) throws ValueError {
-        IImage  imageSrc = super.execute(filename);
-
-        IImage  imageDst = new Image <>(imageSrc, -1, -0, 0, List.of());
-        double[] pixels = imageSrc.getPixels();
-        for (int i=0   ;i< pixels.length; i++) {//todo;
-
-        }
-
-        return imageDst;
     }
 
     /*

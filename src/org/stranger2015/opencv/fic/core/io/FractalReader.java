@@ -2,7 +2,6 @@ package org.stranger2015.opencv.fic.core.io;
 
 import org.stranger2015.opencv.fic.core.FCImageModel;
 import org.stranger2015.opencv.fic.core.ImageInfo;
-import org.stranger2015.opencv.fic.core.ValueError;
 import org.stranger2015.opencv.fic.core.codec.EtvColorSpace;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.utils.BitBuffer;
@@ -52,15 +51,15 @@ class FractalReader extends FractalIOBase {
      *                               reading.
      */
     public
-    FractalReader ( String fileName, FCImageModel model ) throws IOException, ValueError {
-        super(fileName, model);
+    FractalReader ( String fileName ) throws Exception {
+        super(fileName);
     }
 
     /**
      * @return
      */
     public
-    FCImageModel readModel ( String fileName ) throws Exception {
+    FCImageModel readModel ( ) throws Exception {
         InputStream fis;
         try (InputStream is = new GZIPInputStream(fis = newInputStream(Path.of(fileName)))) {
             readLabel(fis);
@@ -144,7 +143,7 @@ class FractalReader extends FractalIOBase {
 
         EtvColorSpace origColorSpace = EtvColorSpace.values()[readInt(is)];
 
-        return new ImageInfo(w, h, origW, origH, origColorSpace);
+        return new ImageInfo(w, h, origW, origH, origColorSpace, rangeBlocks);
     }
 
     /**

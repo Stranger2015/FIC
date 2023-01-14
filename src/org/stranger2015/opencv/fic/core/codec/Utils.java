@@ -2,12 +2,10 @@ package org.stranger2015.opencv.fic.core.codec;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
 import org.stranger2015.opencv.fic.core.EPartitionScheme;
 import org.stranger2015.opencv.fic.utils.Point;
 
 import java.lang.reflect.Constructor;
-import java.util.List;
 
 /**
  * useful generic utility tools
@@ -41,26 +39,26 @@ class Utils {
         return (int) (point.getX() * width + point.getY());
     }
 
-    /**
-     * @param className
-     * @param listeners
-     * @param parameterTypes
-     * @param parameters
-     * @return
-     * @throws ReflectiveOperationException
-     */
-    public static @NotNull
-    Object create ( String className,
-//                    List<IListener<?>> listeners,
-                    @Unmodifiable List <IListener <?>> listeners, Class <?>[] parameterTypes,
-                    Object[] parameters )
-            throws ReflectiveOperationException {
-
-        Class <?> clazz = Class.forName(className);
-        Constructor <?> ctor = clazz.getConstructor(parameterTypes);
-
-        return ctor.newInstance(parameters);
-    }
+//    /**
+//     * @param className
+//     * @param listeners
+//     * @param parameterTypes
+//     * @param parameters
+//     * @return
+//     * @throws ReflectiveOperationException
+//     */
+//    public static @NotNull
+//    Object create ( String className,
+//                    @Unmodifiable List <IListener <?>> listeners,
+//                    ImageBlockClassifier[] parameterTypes,
+//                    Object[] parameters )
+//            throws ReflectiveOperationException {
+//
+//       Class <?> clazz = ImageBlockClassifier.class.forName(className);
+//       Constructor <?> ctor = clazz.getConstructor(parameterTypes);
+//
+//        return ctor.newInstance(parameters);
+//    }
 
     /**
      * @param runnable

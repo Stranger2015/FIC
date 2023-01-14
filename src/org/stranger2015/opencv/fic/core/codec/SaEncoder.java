@@ -2,14 +2,15 @@ package org.stranger2015.opencv.fic.core.codec;
 
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
 import org.stranger2015.opencv.fic.core.codec.tilers.SaTiler;
 import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.fic.transform.ScaleTransform;
-import org.stranger2015.opencv.utils.BitBuffer;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -18,11 +19,16 @@ import java.util.Set;
  */
 public
 class SaEncoder extends Encoder {
+    private static final Set <ImageTransform> imageTransforms = new HashSet <>();
 
 //    private List <IImageBlock > rangePool;
 
     public
-    SaEncoder ( EPartitionScheme scheme,
+    SaEncoder ( String fileName,
+                EPartitionScheme scheme,
+                ICodec codec,
+                List <Task> tasks,
+                EtvColorSpace colorSpace,
                 ITreeNodeBuilder <?> nodeBuilder,
                 IPartitionProcessor partitionProcessor,
                 ISearchProcessor searchProcessor,
@@ -34,7 +40,11 @@ class SaEncoder extends Encoder {
                 FCImageModel fractalModel
     ) {
         super(
+                fileName,
                 scheme,
+                codec,
+                tasks,
+                colorSpace,
                 nodeBuilder,
                 partitionProcessor,
                 searchProcessor,
@@ -43,13 +53,13 @@ class SaEncoder extends Encoder {
                 comparator,
                 transforms,
                 filters,
-                fractalModel
-        );
+                fractalModel,
+                encoders);
     }
 
-    @Override
+//    @Override
     public
-    IPartitionProcessor <N> createPartitionProcessor0 ( ITiler <N> tiler ) {
+    IPartitionProcessor createPartitionProcessor0 ( ITiler tiler ) {
         return null;
     }
 
@@ -65,8 +75,8 @@ class SaEncoder extends Encoder {
      */
 //    @Override
     public
-    IImage encode ( IImageimage ) throws ValueError {
-        return super.encode(image);
+    void encode ( IImage image) throws Exception {
+        super.encode(image);
     }
 
     /**
@@ -86,10 +96,10 @@ class SaEncoder extends Encoder {
     }
 
     public
-    ImageBlockGenerator <N> createBlockGenerator (
-            IPartitionProcessor <N> partitionProcessor,
+    ImageBlockGenerator <?> createBlockGenerator (
+            IPartitionProcessor partitionProcessor,
             EPartitionScheme scheme,
-            IEncoder <N> encoder,
+            IEncoder encoder,
             IImage image,
             IntSize rangeSize,
             IntSize domainSize
@@ -101,7 +111,8 @@ class SaEncoder extends Encoder {
                 encoder,
                 image,
                 rangeSize,
-                domainSize);
+                domainSize
+        );
     }
 
     /**
@@ -132,24 +143,20 @@ class SaEncoder extends Encoder {
     }
 
     /**
-     * @return
+     * @throws ReflectiveOperationException
+     * @throws Exception
      */
-//    @Override
-//    public
-//    List <IImageBlock > getRangeBlocks () {
-//        imageBlockGenerator.generateRangeBlocks(roi, rangeSize, domainSize);
-//    }
-
     @Override
     public
-    void initialize () throws ReflectiveOperationException, Exception {
+    void initialize () throws Exception {
         
     }
 
     @Override
     public
-    void doEncode ( IImage image ) {
-        return null;
+    IImage doEncode ( IImage image ) {
+
+        return image;
     }
 
     /**
@@ -158,7 +165,7 @@ class SaEncoder extends Encoder {
      * @return
      * @throws ValueError
      */
-    @Override
+//    @Override
     public
     List <IImageBlock > segmentImage ( IImage image, List <Rectangle> bounds ) throws ValueError {
         return null;
@@ -169,8 +176,13 @@ class SaEncoder extends Encoder {
      */
 //    @Override
     public
-    ITiler <N> createPartition0 () {
-        return new SaTiler<>();
+    ITiler createPartition0 () {
+        return new SaTiler(
+                inputImage,
+                rangeSize,
+                domainSize,
+                this,
+                nodeBuilder);
     }
 
     /**
@@ -178,7 +190,7 @@ class SaEncoder extends Encoder {
      */
     @Override
     public
-    IPartitionProcessor <N> getPartitionProcessor () {
+    IPartitionProcessor getPartitionProcessor () {
         return null;
     }
 
@@ -187,7 +199,7 @@ class SaEncoder extends Encoder {
      */
     @Override
     public
-    FCImageModel <N> getMOdel () {
+    FCImageModel getModel () {
         return null;
     }
 
@@ -197,7 +209,7 @@ class SaEncoder extends Encoder {
      */
     @Override
     public
-    FCImageModel <N> loadModel ( String filename ) {
+    FCImageModel saveModel ( String filename ) {
         return null;
     }
 
@@ -206,7 +218,7 @@ class SaEncoder extends Encoder {
      */
     @Override
     public
-    void add ( TreeNode <N> node ) {
+    void add ( TreeNode <?> node ) {
 
     }
 
@@ -215,13 +227,12 @@ class SaEncoder extends Encoder {
      */
     @Override
     public
-    void addLeafNode ( TreeNode.LeafNode <N> node ) {
+    void addLeafNode ( LeafNode <?> node ) {
 
     }
 
-    @Override
     public
-    void addLeafNode ( TreeNodeBase <N> node ) {
+    void addLeafNode ( TreeNodeBase <?> node ) {
 
     }
 
@@ -230,7 +241,7 @@ class SaEncoder extends Encoder {
      */
 //    @Override
     public
-    void addLeafNode ( TreeNode <N> node ) {
+    void addLeafNode ( TreeNode <?> node ) {
 
     }
 
@@ -269,7 +280,7 @@ class SaEncoder extends Encoder {
 
     @Override
     public
-    IPartitionProcessor <N> doCreatePartitionProcessor ( ITiler <N> tiler ) {
+    IPartitionProcessor doCreatePartitionProcessor ( ITiler tiler ) {
         return null;
     }
 
@@ -297,42 +308,5 @@ class SaEncoder extends Encoder {
 //    @Override
     public
     void onPostprocess () {
-
     }
-
-    /**
-     * @return
-     */
-//    @Override
-//    public
-//    IPipeline <IImage , IImage> getLinkedObject () {
-//        return null;
-//    }
-//
-//    /**
-//     * @param link
-//     */
-//    @Override
-//    public
-//    void setNext ( ISingleLinked <IPipeline <IImage , IImage>> link ) {
-//
-//    }
-
-//    @Override
-//    public
-//    ISingleLinked <IPipeline <IImage , IImage>> getNext () {
-//        return null;
-//    }
-//
-//    @Override
-//    public
-//    IImage getInput () {
-//        return null;
-//    }
-//
-//    @Override
-//    public
-//    IImage getOutput () {
-//        return null;
-//    }
 }

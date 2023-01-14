@@ -12,14 +12,15 @@ package org.stranger2015.opencv.fic.core.geomgraph.index;
  * http://www.eclipse.org/org/documents/edl-v10.php.
  */
 
-import org.locationtech.jts.algorithm.LineIntersector;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.IntersectionMatrix;
-import org.locationtech.jts.geomgraph.Depth;
-import org.locationtech.jts.geomgraph.Label;
+import org.stranger2015.opencv.fic.core.algorithm.LineIntersector;
+import org.stranger2015.opencv.fic.core.geom.Coordinate;
+import org.stranger2015.opencv.fic.core.geom.Envelope;
+import org.stranger2015.opencv.fic.core.geom.IntersectionMatrix;
+import org.stranger2015.opencv.fic.core.geomgraph.Depth;
+import org.stranger2015.opencv.fic.core.geomgraph.Label;
 import org.stranger2015.opencv.fic.core.geom.Position;
 import org.stranger2015.opencv.fic.core.geomgraph.EdgeIntersection;
+import org.stranger2015.opencv.fic.core.geomgraph.GraphComponent;
 
 import java.io.PrintStream;
 import java.util.stream.IntStream;
@@ -29,8 +30,7 @@ import java.util.stream.IntStream;
  * @version 1.7
  */
 public
-class Edge
-        extends GraphComponent {
+class Edge extends GraphComponent {
 
     /**
      * Updates an IM from the label for an edge.
@@ -41,10 +41,19 @@ class Edge
      */
     public static
     void updateIM ( Label label, IntersectionMatrix im ) {
-        im.setAtLeastIfValid(label.getLocation(0, Position.ON), label.getLocation(1, Position.ON), 1);
+        im.setAtLeastIfValid(
+                label.getLocation(0, Position.ON),
+                label.getLocation(1, Position.ON),
+                1);
         if (label.isArea()) {
-            im.setAtLeastIfValid(label.getLocation(0, Position.LEFT), label.getLocation(1, Position.LEFT), 2);
-            im.setAtLeastIfValid(label.getLocation(0, Position.RIGHT), label.getLocation(1, Position.RIGHT), 2);
+            im.setAtLeastIfValid(
+                    label.getLocation(0, Position.LEFT),
+                    label.getLocation(1, Position.LEFT),
+                    2);
+            im.setAtLeastIfValid(
+                    label.getLocation(0, Position.RIGHT),
+                    label.getLocation(1, Position.RIGHT),
+                    2);
         }
     }
 
@@ -161,11 +170,11 @@ class Edge
     }
 
     public
-    org.locationtech.jts.geomgraph.Edge getCollapsedEdge () {
+  Edge getCollapsedEdge () {
         Coordinate[] newPts = new Coordinate[2];
         newPts[0] = pts[0];
         newPts[1] = pts[1];
-        org.locationtech.jts.geomgraph.Edge newe = new org.locationtech.jts.geomgraph.Edge(newPts, Label.toLineLabel(label));
+      Edge newe = new Edge(newPts, Label.toLineLabel(label));
         return newe;
     }
 
@@ -250,8 +259,8 @@ class Edge
      */
     public
     boolean equals ( Object o ) {
-        if (!(o instanceof org.locationtech.jts.geomgraph.Edge)) return false;
-        org.locationtech.jts.geomgraph.Edge e = (org.locationtech.jts.geomgraph.Edge) o;
+        if (!(o instanceof Edge)) return false;
+      Edge e = (Edge) o;
 
         if (pts.length != e.pts.length) return false;
 
@@ -299,20 +308,23 @@ class Edge
      * @return true if the coordinate sequences of the Edges are identical
      */
     public
-    boolean isPointwiseEqual ( org.locationtech.jts.geomgraph.Edge e ) {
-        if (pts.length != e.pts.length) return false;
+    boolean isPointwiseEqual ( Edge e ) {
+        if (pts.length != e.pts.length) {
+            return false;
+        }
 
         for (int i = 0; i < pts.length; i++) {
             if (!pts[i].equals2D(e.pts[i])) {
                 return false;
             }
         }
+
         return true;
     }
 
     public
     String toString () {
-        StringBuilder builder = new StringBuilder();
+        var builder = new StringBuilder();
         builder.append("edge ").append(name).append(": ");
         builder.append("LINESTRING (");
         IntStream.range(0, pts.length).forEachOrdered(i -> {

@@ -2,6 +2,7 @@ package org.stranger2015.opencv.fic.core;
 
 import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.codec.Codec;
+import org.stranger2015.opencv.fic.core.codec.EncodeTask;
 import org.stranger2015.opencv.fic.core.codec.IDecoder;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
 
@@ -18,11 +19,8 @@ class DctCodec extends Codec {
      * @param params
      */
     protected
-    DctCodec ( EPartitionScheme scheme,
-               Class <?>[] paramTypes,
-               Object... params ) {
-
-        super(scheme, paramTypes, params);
+    DctCodec ( EPartitionScheme scheme, EncodeTask action ) {
+        super(scheme, action);
     }
 
     /**

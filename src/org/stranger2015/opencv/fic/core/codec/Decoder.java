@@ -1,15 +1,13 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.opencv.core.Mat;
 import org.stranger2015.opencv.fic.core.EPartitionScheme;
 import org.stranger2015.opencv.fic.core.FCImageModel;
 import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.fic.core.ValueError;
+import org.stranger2015.opencv.fic.core.codec.classifiers.ImageBlockClassifier;
 import org.stranger2015.opencv.fic.core.io.FractalReader;
 import org.stranger2015.opencv.fic.core.io.FractalWriter;
+import org.stranger2015.opencv.fic.transform.EInterpolationType;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
-
-import java.io.IOException;
 
 /**
  *
@@ -36,8 +34,15 @@ class Decoder implements IDecoder, IConstants {
         this.originalImage = image;
     }
 
+    /**
+     * @param scheme
+     * @param paramTypes
+     * @param params
+     * @return
+     * @throws ReflectiveOperationException
+     */
     public static
-    IDecoder create ( EPartitionScheme scheme, Class <?>[] paramTypes, Object... params )
+    IDecoder create ( EPartitionScheme scheme, ImageBlockClassifier[] paramTypes, Object... params )
             throws ReflectiveOperationException {
 
         return (IDecoder) Utils.create(
@@ -51,18 +56,20 @@ class Decoder implements IDecoder, IConstants {
      *
      */
     public
-    IImage decode ( String fileName ) throws ValueError, IOException {
-        FractalReader reader=new FractalReader(fileName);
+    IImage decode ( String fileName ) throws Exception {
+        FractalReader reader = new FractalReader(fileName);
         FCImageModel model = reader.readModel();
         for (int i = 0; i < NUMBER_OF_DECODER_ITERATIONS; i++) {
             for (ImageTransform transform : compressedImage.getTransforms()) {
-int[] transformation= dihedralAffineTransforms[ transform.dihedralAffineTransformIndex];
+//                int[] transformation = dihedralAffineTransforms[transform.dihedralAffineTransformIndex];
 
-Mat transformationMatrix = dihedralAffineTransforms[ transform.dihedralAffineTransformIndex];
+//                dihedralAffineTransformMatrices =
                 originalImage = transform.transform(
                         originalImage,
-//                        ;//applyTransformOn(originalImage, range, domainSize)
-            }
+                        dihedralAffineTransformMatrices[0],
+                        EInterpolationType.BILINEAR
+                        );
+            };
         }
 
         return originalImage;
@@ -75,9 +82,8 @@ Mat transformationMatrix = dihedralAffineTransforms[ transform.dihedralAffineTra
     @Override
     public
     void saveModel ( String filename, FCImageModel fractalModel ) throws Exception {
-        try (FractalWriter writer = new FractalWriter(filename, fractalModel)) {
-            writer.writeModel(O,fractalModel);
-        }
+        FractalWriter writer = new FractalWriter(filename, fractalModel);
+        writer.writeModel();
     }
 
     /**

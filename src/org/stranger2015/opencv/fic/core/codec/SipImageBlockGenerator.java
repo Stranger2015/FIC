@@ -1,17 +1,15 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.stranger2015.opencv.fic.core.EPartitionScheme;
-import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.IImage;
 import org.stranger2015.opencv.fic.core.IIntSize;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  *
  */
 public
-class SipImageBlockGenerator<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+class SipImageBlockGenerator<N extends TreeNode <N>>
         extends SquareImageBlockGenerator <N> {
 
     /**
@@ -20,12 +18,13 @@ class SipImageBlockGenerator<N extends TreeNode <N>, A extends IAddress , G exte
      * @param domainSize
      */
     public
-    SipImageBlockGenerator ( IPartitionProcessor <N> partitionProcessor,
+    SipImageBlockGenerator ( IPartitionProcessor partitionProcessor,
                              EPartitionScheme scheme,
-                             IEncoder <N> encoder,
+                             IEncoder encoder,
                              IImage image,
                              IIntSize rangeSize,
                              IIntSize domainSize ) {
+
         super(partitionProcessor, scheme, encoder, image, rangeSize, domainSize);
     }
 
@@ -41,9 +40,9 @@ class SipImageBlockGenerator<N extends TreeNode <N>, A extends IAddress , G exte
     @Override
     public
     ImageBlockGenerator <N> newInstance (
-            IPartitionProcessor <N> partitionProcessor,
+            IPartitionProcessor partitionProcessor,
             EPartitionScheme scheme,
-            IEncoder <N> encoder,
+            IEncoder encoder,
             IImage image,
             IIntSize rangeSize,
             IIntSize domainSize ) {

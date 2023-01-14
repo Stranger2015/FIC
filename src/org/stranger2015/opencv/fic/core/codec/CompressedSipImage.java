@@ -22,7 +22,7 @@ class CompressedSipImage extends CompressedImage  {
      */
     public
     CompressedSipImage ( IImage input ) {
-        super(null, input);
+        super( input);
     }
 
     /**

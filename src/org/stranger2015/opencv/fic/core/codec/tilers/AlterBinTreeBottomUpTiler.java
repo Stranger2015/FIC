@@ -1,9 +1,7 @@
 package org.stranger2015.opencv.fic.core.codec.tilers;
 
 import org.stranger2015.opencv.fic.core.*;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
 
@@ -13,9 +11,9 @@ import java.util.List;
  * @param <G>
  */
 public
-class AlterBinTreeBottomUpTiler<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
-        extends AlterBinTreeTiler <N>
-        implements IBottomUpTiler <N> {
+class AlterBinTreeBottomUpTiler
+        extends AlterBinTreeTiler
+        implements IBottomUpTiler {
 
     /**
      * @param image
@@ -28,8 +26,8 @@ class AlterBinTreeBottomUpTiler<N extends TreeNode <N>, A extends IAddress , G e
     AlterBinTreeBottomUpTiler ( IImage image,
                                 IIntSize rangeSize,
                                 IIntSize domainSize,
-                                IEncoder <N> encoder,
-                                ITreeNodeBuilder <N> builder ) {
+                                IEncoder encoder,
+                                ITreeNodeBuilder<?> builder ) {
 
         super(image, rangeSize, domainSize, encoder, builder);
     }
@@ -39,11 +37,11 @@ class AlterBinTreeBottomUpTiler<N extends TreeNode <N>, A extends IAddress , G e
      */
     @Override
     public
-    ITiler <N> instance () {
-        return new AlterBinTreeBottomUpTiler <>(
+    ITiler instance () {
+        return new AlterBinTreeBottomUpTiler(
                 getImage(),
-                getDomainSize(),
-                getDomainSize(),
+                this.getCurrentDomainSize(),
+                this.getCurrentDomainSize(),
                 getEncoder(),
                 getBuilder()
         );
@@ -56,7 +54,7 @@ class AlterBinTreeBottomUpTiler<N extends TreeNode <N>, A extends IAddress , G e
      */
     @Override
     public
-    void segmentGeometry ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
+    void segmentGeometry ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError {
         List.of(imageBlock);
     }
 
@@ -66,7 +64,18 @@ class AlterBinTreeBottomUpTiler<N extends TreeNode <N>, A extends IAddress , G e
      */
     @Override
     public
-    void segmentPolygon (TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
+    void segmentPolygon ( TreeNodeBase <?> node, IImageBlock imageBlock ) throws ValueError {
         List.of(imageBlock);
+    }
+
+    /**
+     * @param block
+     * @return
+     * @throws ValueError
+     */
+    @Override
+    public
+    ClassificationScheme createQuadrants ( ImageBlockInfo block ) throws ValueError {
+        return null;
     }
 }

@@ -1,7 +1,6 @@
 package org.stranger2015.opencv.fic.core;
 
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.codec.ICodec;
 import org.stranger2015.opencv.utils.BitBuffer;
 
@@ -39,7 +38,7 @@ class MergeImageTask<N extends TreeNode <N>, A extends IAddress , G extends BitB
     @Override
     public
     void onPostprocess ( IImageProcessor <N> processor, CompressedImage  outputImage ) {
-        super.onPostprocess(processor, outputImage);
+        super.onPostprocess(processor, , outputImage);
 
         outputImage = (CompressedImage ) inputImage.merge(layers, outputImage);
         saveImage(filename, outputImage);

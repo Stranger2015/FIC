@@ -2,15 +2,13 @@ package org.stranger2015.opencv.fic.core.codec;
 
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.utils.BitBuffer;
-
-import java.util.List;
+import org.stranger2015.opencv.fic.core.codec.tilers.Pool;
 
 /**
  *
  */
 public
-class SquareImageBlockGenerator<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
+class SquareImageBlockGenerator<N extends TreeNode <N>>
 
         extends ImageBlockGenerator <N> {
 
@@ -33,12 +31,32 @@ class SquareImageBlockGenerator<N extends TreeNode <N>, A extends IAddress , G e
     // }
 
     /**
+     * @param partitionProcessor
+     * @param scheme
+     * @param encoder
+     * @param image
+     * @param rangeSize
+     * @param domainSize
+     * @return
+     */
+    @Override
+    public
+    ImageBlockGenerator <N> newInstance ( IPartitionProcessor partitionProcessor,
+                                          EPartitionScheme scheme,
+                                          IEncoder encoder,
+                                          IImage image,
+                                          IIntSize rangeSize,
+                                          IIntSize domainSize ) {
+        return null;
+    }
+
+    /**
      * @param inputImage
      * @return
      */
     @Override
     public
-    List <IImageBlock > generateRangeBlocks ( IImageBlock  roi,
+    Pool <IImageBlock> generateRangeBlocks ( IImageBlock  roi,
                                                  int blockWidth,
                                                  int blockHeight ) throws ValueError {
 
@@ -52,9 +70,9 @@ class SquareImageBlockGenerator<N extends TreeNode <N>, A extends IAddress , G e
      * @param domainSize
      */
     public
-    SquareImageBlockGenerator ( IPartitionProcessor <N> partitionProcessor,
+    SquareImageBlockGenerator ( IPartitionProcessor partitionProcessor,
                                 EPartitionScheme scheme,
-                                IEncoder <N> encoder,
+                                IEncoder encoder,
                                 IImage image,
                                 IIntSize rangeSize,
                                 IIntSize domainSize
@@ -62,25 +80,25 @@ class SquareImageBlockGenerator<N extends TreeNode <N>, A extends IAddress , G e
         super(partitionProcessor, scheme, encoder, image, rangeSize, domainSize);
     }
 
-    /**
-     * @param partitionProcessor
-     * @param scheme
-     * @param encoder
-     * @param image
-     * @param rangeSize
-     * @param domainSize
-     * @return
-     */
-    @Override
-    public
-    ImageBlockGenerator <N> newInstance (
-            IPartitionProcessor <N> partitionProcessor,
-            EPartitionScheme scheme,
-            IEncoder <N> encoder,
-            IImage image,
-            IIntSize rangeSize,
-            IIntSize domainSize ) {
-
-        return this;
-    }
+//    /**
+//     * @param partitionProcessor
+//     * @param scheme
+//     * @param encoder
+//     * @param image
+//     * @param rangeSize
+//     * @param domainSize
+//     * @return
+//     */
+//    @Override
+//    public
+//    ImageBlockGenerator <N> newInstance (
+//            IPartitionProcessor partitionProcessor,
+//            EPartitionScheme scheme,
+//            IEncoder encoder,
+//            IImage image,
+//            IIntSize rangeSize,
+//            IIntSize domainSize ) {
+//
+//        return this;
+//    }
 }

@@ -15,7 +15,7 @@ package org.stranger2015.opencv.fic.core.geom;
 /**
  * Utility functions for working with quadrants of the Euclidean plane.
  * <p>
- * Quadrants are referenced and numbered as follows:
+ * ClassificationScheme are referenced and numbered as follows:
  * <pre>
  * 1 - NW | 0 - NE
  * -------+-------

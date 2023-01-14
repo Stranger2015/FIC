@@ -46,7 +46,7 @@ class DelaunayImageBlockGenerator<N extends TreeNode <N>>
      */
     @Override
     public
-    List <IImageBlock > generateRangeBlocks ( IImageBlock  roi, int rangeSize, int domainSize )
+    Pool <IImageBlock> generateRangeBlocks ( IImageBlock  roi, int rangeSize, int domainSize )
             throws ValueError {
 
         return super.generateRangeBlocks(roi, rangeSize, domainSize);

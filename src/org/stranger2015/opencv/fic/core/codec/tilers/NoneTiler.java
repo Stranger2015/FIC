@@ -2,12 +2,9 @@ package org.stranger2015.opencv.fic.core.codec.tilers;
 
 import org.jetbrains.annotations.NotNull;
 import org.stranger2015.opencv.fic.core.*;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
-import org.stranger2015.opencv.fic.core.codec.IImageBlock;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
 
@@ -17,8 +14,7 @@ import java.util.List;
  * @param <G>
  */
 public
-class NoneTiler<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
-        extends Tiler<N> {
+class NoneTiler extends Tiler {
 
     /**
      * @param image
@@ -31,19 +27,19 @@ class NoneTiler<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer
     NoneTiler ( IImage image,
                 IIntSize rangeSize,
                 IIntSize domainSize,
-                IEncoder <N> encoder,
-                ITreeNodeBuilder<N> builder ) {
+                IEncoder encoder,
+                ITreeNodeBuilder<?> builder ) {
 
         super(image, rangeSize, domainSize, encoder, builder);
     }
 
     @Override
     public
-    ITiler <N> instance () {
-        return new NoneTiler <>(
+    ITiler instance () {
+        return new NoneTiler (
                 getImage(),
-                getRangeSize(),
-                getDomainSize(),
+                this.getCurrentRangeSize(),
+                this.getCurrentDomainSize(),
                 getEncoder(),
                 getBuilder()
         );
@@ -55,17 +51,17 @@ class NoneTiler<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer
      */
     @Override
     public
-    void segmentPolygon (TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
+    void segmentPolygon (TreeNodeBase <?> node, IImageBlock  imageBlock ) throws ValueError {
     }
 
     @Override
     public
-    void segmentQuadrilateral (TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
+    void segmentQuadrilateral (TreeNodeBase <?> node, IImageBlock  imageBlock ) throws ValueError {
     }
 
     @Override
     public
-    void addLeafNode ( LeafNode <N> node ) {
+    void addLeafNode ( LeafNode <?> node ) {
 
     }
 
@@ -76,10 +72,11 @@ class NoneTiler<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer
     }
 
     public
-    List <IImageBlock > generateInitialRangeBlocks ( @NotNull IImageBlock  roi,
+    Pool <IImageBlock> generateInitialRangeBlocks ( @NotNull IImageBlock  roi,
                                                         int blockWidth,
                                                         int blockHeight ) throws ValueError {
-        return List.of(roi.getSubImage());
+
+        return super.generateInitialRangeBlocks(roi, blockWidth, blockHeight);
     }
 
     /**
@@ -98,10 +95,22 @@ class NoneTiler<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer
 
     @Override
     public
-    List <IImageBlock > generateRangeBlocks ( IImageBlock  roi,
+    Pool <IImageBlock> generateRangeBlocks ( IImageBlock  roi,
                                                  int blockWidth,
                                                  int blockHeight ) throws ValueError {
+
         return super.generateRangeBlocks(roi, blockWidth, blockHeight);
+    }
+
+    /**
+     * @param block
+     * @return
+     * @throws ValueError
+     */
+    @Override
+    public
+    ClassificationScheme createQuadrants ( ImageBlockInfo block ) throws ValueError {
+        return null;
     }
 
     /**
@@ -112,10 +121,9 @@ class NoneTiler<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer
      */
     @Override
     public
-    void segmentGeometry ( TreeNodeBase <N> node, IImageBlock  imageBlock
+    void segmentGeometry ( TreeNodeBase <?> node, IImageBlock  imageBlock
     ) throws ValueError {
         logger.info("Segmenting geometry ...");
-
     }
 
     /**
@@ -125,7 +133,7 @@ class NoneTiler<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer
      */
     @Override
     public
-    void segmentRectangle ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
+    void segmentRectangle ( TreeNodeBase <?> node, IImageBlock  imageBlock ) throws ValueError {
 
     }
 
@@ -138,13 +146,12 @@ class NoneTiler<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer
 
     }
 
-
     /**
      * @param node
      */
     @Override
     public
-    void addLeaf ( LeafNode <N> node ) {
+    void addLeaf ( LeafNode <?> node ) {
 
     }
 

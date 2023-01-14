@@ -12,12 +12,12 @@ package org.stranger2015.opencv.fic.core.geomgraph;
  * http://www.eclipse.org/org/documents/edl-v10.php.
  */
 
-import org.locationtech.jts.geom.Position;
-import org.locationtech.jts.geomgraph.TopologyLocation;
+
+import org.stranger2015.opencv.fic.core.geom.Position;
 
 import java.util.stream.IntStream;
 
-import static org.locationtech.jts.geom.Location.NONE;
+import static org.stranger2015.opencv.fic.core.geom.Location.NONE;
 
 /**
  * A <code>Label</code> indicates the topological relationship of a component

@@ -86,7 +86,7 @@ class IfsTransform extends ImageTransform {
      */
     public
     IImage downSample ( IImage src, int startX, int startY, int targetSize ) {
-        IImage out = new Image(src, address, targetSize);
+        IImage out = new Image(src, address, targetSize, colorType);
         int destX = 0;
         int destY = 0;
 

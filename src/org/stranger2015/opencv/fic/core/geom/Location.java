@@ -5,7 +5,7 @@ package org.stranger2015.opencv.fic.core.geom;
  *  Constants representing the different topological locations
  *  which can occur in a {@link Geometry}. 
  *  The constants are also used as the row and column indices 
- *  of DE-9IM {@link IntersectionMatrix}es.
+ *  of DE-9IM {@link IntersectionMatrix1}es.
  *
  *@version 1.7
  */

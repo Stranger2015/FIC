@@ -21,7 +21,7 @@ class SipTreeTraverser<N extends TreeNode <N>, A extends IAddress , IImage exten
      * @param action
      */
     public
-    SipTreeTraverser ( SipTree <N> tree, int depth, TreeNodeTask <N> action ) {
+    SipTreeTraverser ( SipTree <T, T1> tree, int depth, TreeNodeTask <N> action ) {
         super(tree, depth, action);
     }
 

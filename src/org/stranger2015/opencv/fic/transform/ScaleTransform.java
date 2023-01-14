@@ -9,8 +9,7 @@ import static java.lang.String.format;
  * functor class to affineScale an image
  */
 public
-class ScaleTransform
-        extends PreserveAlphaTransform {
+class ScaleTransform extends PreserveAlphaTransform {
 
     private final double scaleX;
     private final double scaleY;

@@ -1,9 +1,6 @@
 package org.stranger2015.opencv.fic.core.codec;
 
-import org.opencv.core.Size;
 import org.stranger2015.opencv.fic.core.*;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
@@ -11,22 +8,21 @@ import org.stranger2015.opencv.utils.BitBuffer;
  
  */
 public
-class DefaultCodec<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
-        extends Codec <N>
+class DefaultCodec extends Codec
 
         implements IConstants {
 
     private EPartitionScheme scheme;
 
-    private EncodeTask <N> task;
-    private DecodeTask <N> inverseTask;
+    private EncodeTask task;
+    private DecodeTask inverseTask;
 
     /**
      * @param scheme
      */
     public
-    DefaultCodec ( EPartitionScheme scheme, Class <?>[] paramTypes, Object... params  ) {
-        super(scheme, paramTypes, params);
+    DefaultCodec ( EPartitionScheme scheme, IEncoder encoder, IDecoder decoder) {
+        super(scheme, encoder, decoder);
     }
 
      /**
@@ -37,7 +33,7 @@ class DefaultCodec<N extends TreeNode <N>, A extends IAddress , G extends BitBuf
      */
 //    @Override
     public
-    IEncoder <N> getEncoder ( IImage image, IIntSize rangeSize, IIntSize domainSize ) {
+    IEncoder getEncoder ( IImage image, IIntSize rangeSize, IIntSize domainSize ) {
         return encoder;
     }
 
@@ -97,7 +93,7 @@ class DefaultCodec<N extends TreeNode <N>, A extends IAddress , G extends BitBuf
      */
     @Override
     public
-    IEncoder <N> getEncoder () {
+    IEncoder getEncoder () {
         return encoder;
     }
 
@@ -106,7 +102,7 @@ class DefaultCodec<N extends TreeNode <N>, A extends IAddress , G extends BitBuf
      */
     @Override
     public
-    IDecoder <N> getDecoder () {
+    IDecoder getDecoder () {
         return decoder;
     }
 
@@ -123,7 +119,7 @@ class DefaultCodec<N extends TreeNode <N>, A extends IAddress , G extends BitBuf
      * @param task
      */
     public
-    void setTask ( EncodeTask <N> task ) {
+    void setTask ( EncodeTask task ) {
         this.task = task;
     }
 
@@ -131,7 +127,7 @@ class DefaultCodec<N extends TreeNode <N>, A extends IAddress , G extends BitBuf
      * @return
      */
     public
-    DecodeTask <N> getInverseTask () {
+    DecodeTask getInverseTask () {
         return inverseTask;
     }
 
@@ -147,7 +143,7 @@ class DefaultCodec<N extends TreeNode <N>, A extends IAddress , G extends BitBuf
      * @return
      */
     public
-    EncodeTask <N> getTask () {
+    EncodeTask getTask () {
         return task;
     }
 
@@ -155,7 +151,7 @@ class DefaultCodec<N extends TreeNode <N>, A extends IAddress , G extends BitBuf
      * @param inverseTask
      */
     public
-    void setInverseTask ( DecodeTask <N> inverseTask ) {
+    void setInverseTask ( DecodeTask inverseTask ) {
         this.inverseTask = inverseTask;
     }
 }

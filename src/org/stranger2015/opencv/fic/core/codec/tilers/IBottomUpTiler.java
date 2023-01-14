@@ -2,7 +2,6 @@ package org.stranger2015.opencv.fic.core.codec.tilers;
 
 import org.stranger2015.opencv.fic.core.IImageBlock;
 import org.stranger2015.opencv.fic.core.TreeNodeBase;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.ValueError;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
 
@@ -50,7 +49,7 @@ interface IBottomUpTiler extends ITiler {
      * @return
      */
     default
-    List <IImageBlock > generateInitialRangeBlocks ( IImageBlock  roi,
+    Pool <IImageBlock> generateInitialRangeBlocks ( IImageBlock  roi,
                                                         int blockWidth,
                                                         int blockHeight ) throws ValueError {
 
@@ -78,7 +77,7 @@ interface IBottomUpTiler extends ITiler {
      */
     @Override
     default
-    List <IImageBlock > generateRangeBlocks ( IImageBlock  roi, int blockWidth, int blockHeight )
+    Pool <IImageBlock> generateRangeBlocks ( IImageBlock  roi, int blockWidth, int blockHeight )
             throws ValueError {
 
         List <IImageBlock > rangeBlocks = generateInitialRangeBlocks(roi, blockWidth, blockHeight);

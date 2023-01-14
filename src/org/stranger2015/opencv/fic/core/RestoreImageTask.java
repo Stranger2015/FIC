@@ -3,10 +3,7 @@ package org.stranger2015.opencv.fic.core;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.ICodec;
-import org.stranger2015.opencv.fic.core.codec.IImageBlock;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
 
@@ -17,9 +14,7 @@ import java.util.List;
  * @param <G>
  */
 public
-class RestoreImageTask<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
-
-        extends BidiTask <N> {
+class RestoreImageTask extends BidiTask{
 
     /**
      * @param filename
@@ -29,8 +24,8 @@ class RestoreImageTask<N extends TreeNode <N>, A extends IAddress , G extends Bi
     public
     RestoreImageTask ( String filename,
                        EPartitionScheme scheme,
-                       ICodec <N> codec,
-                       List <Task <N>> list ) {
+                       ICodec codec,
+                       List <Task> list ) {
 
         super(filename, scheme, codec, list);
     }
@@ -40,8 +35,19 @@ class RestoreImageTask<N extends TreeNode <N>, A extends IAddress , G extends Bi
      */
     @Override
     public
-    void onCreated ( ICodec <N> instance ) {
+    void onCreated ( ICodec instance ) {
         super.onCreated(instance);
+    }
+
+    /**
+     * @param processor
+     * @param filename
+     * @throws ValueError
+     */
+    @Override
+    public
+    void onPreprocess ( IImageProcessor processor, String filename ) throws ValueError {
+
     }
 
     /**
@@ -51,7 +57,7 @@ class RestoreImageTask<N extends TreeNode <N>, A extends IAddress , G extends Bi
      */
     @Override
     public
-    void onPreprocess ( IImageProcessor <N> processor, String filename, IImage image ) throws ValueError {
+    void onPreprocess ( IImageProcessor processor, String filename, IImage image ) throws ValueError {
         super.onPreprocess(processor, filename, image);
     }
 
@@ -61,8 +67,7 @@ class RestoreImageTask<N extends TreeNode <N>, A extends IAddress , G extends Bi
      */
     @Override
     public
-    void onPostprocess ( IImageProcessor <N> processor, CompressedImage  outputImage ) {
-        super.onPostprocess(processor, outputImage);
+    void onPostprocess ( IImageProcessor processor, CompressedImage  outputImage ) {
 
         outputImage = unionRegions(outputImage.getRegions());
     }
@@ -79,7 +84,7 @@ class RestoreImageTask<N extends TreeNode <N>, A extends IAddress , G extends Bi
             region.getMat().copyTo(dest);
         }
 
-        return new CompressedImage <>(dest);
+        return new CompressedImage ( dest);
     }
 
 }

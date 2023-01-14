@@ -44,8 +44,8 @@ class ThreeSideTriangularTiler<N extends TreeNode <N>, A extends IAddress , G ex
     ITiler <N> instance () {
         return new ThreeSideTriangularTiler<>(
                 getImage(),
-                getRangeSize(),
-                getDomainSize(),
+                getCurrentRangeSize(),
+                this.getCurrentDomainSize(),
                 getEncoder(),
                 getBuilder());
     }
@@ -90,7 +90,7 @@ class ThreeSideTriangularTiler<N extends TreeNode <N>, A extends IAddress , G ex
     }
 
     public
-    List <IImageBlock > generateInitialRangeBlocks ( IImageBlock  roi,
+    Pool <IImageBlock> generateInitialRangeBlocks ( IImageBlock  roi,
                                                         int blockWidth,
                                                         int blockHeight ) throws ValueError {
         return List.of();
@@ -104,7 +104,7 @@ class ThreeSideTriangularTiler<N extends TreeNode <N>, A extends IAddress , G ex
 
     @Override
     public
-    List <IImageBlock > generateRangeBlocks ( IImageBlock  roi,
+    Pool <IImageBlock> generateRangeBlocks ( IImageBlock  roi,
                                                  int blockWidth,
                                                  int blockHeight ) throws ValueError {
         return List.of();

@@ -1,6 +1,5 @@
 package org.stranger2015.opencv.fic.utils;
 
-import org.checkerframework.checker.units.qual.A;
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -29,7 +28,7 @@ class GrayScaleImage extends Image {
      */
     public
     GrayScaleImage ( Mat inputImage ) {
-        super(actualImage, inputImage, size);
+        super( inputImage);
     }
 
     /**
@@ -128,7 +127,7 @@ class GrayScaleImage extends Image {
      */
     @Override
     public
-    double[] pixelValues ( int addr, int i ) {
+    double pixelValues ( int addr, int i ) {
         return 0;
     }
 
@@ -140,7 +139,7 @@ class GrayScaleImage extends Image {
 
     @Override
     public
-    int getMeanPixelValue () {
+    double getMeanPixelValue () {
         return 0;
     }
 

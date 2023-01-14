@@ -1,5 +1,6 @@
 package org.stranger2015.opencv.fic.core;
 
+import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
@@ -16,58 +17,53 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.stranger2015.opencv.fic.core.EAddressKind.ORDINARY;
-import static org.stranger2015.opencv.fic.core.IAddress.create;
-
 /**
  *
  */
 public
-class Image implements IImage {
+class Image extends Mat implements IImage {
 
     public static final EAddressKind ADDRESS_KIND = ORDINARY;
 
-    //    public final Mat actualImage;
     protected /*final*/ IIntSize blockSize;
-    //    rotected final int[,] table;
-//    protected final int originalImageWidth;
-//    protected final int originalImageHeight;
-//
-    //    protected final MatOfInt roi;
     private GeometryFactory factory;
-    //    protected final int x;
-//    protected final int y;
-    //    protected List <IImageBlock > regions;
     protected double[] meanPixelValue;
+    private EColorType colorType;
 
-    /**
-     * @param roi
-     * @param regions
-     * @param actualImage
-     * @param blockSize1
-     * @param i
-     * @param j
-     */
-    public
-    Image ( IImageBlock actualImage, int blockSize1, int i, int j /*List <IImageBlock > regions */ ) {
+    private final List <Channel> imageLayers=new ArrayList <>(4);
+
+    protected double[] pixelSum;//todo is this needed h
+    // ere
+
+//    /**
+//     * @param roi
+//     * @param regions
+//     * @param actualImage
+//     * @param blockSize1
+//     * @param i
+//     * @param j
+//     */
+//    public
 //        this(actualImage, roi, i, j);
 //        this.actualImage = actualImage;
 //        this.blockSize = blockSize1;
 //        this.roi = roi;
 //        x = i;
 //        y = j;
-        //      this.regions = regions;
-        actualImage.getWidth();
-        actualImage.getHeight();
-    }
+    //      this.regions = regions;
+//        actualImage.getWidth();
+//        actualImage.getHeight();
+//    }
 
     /**
      * @param dest
      * @param size
      * @param actualImage
      * @param blockSize
+     * @param colorType
      */
     public
-    Image ( MatOfInt actualImage, IIntSize blockSize ) {
+    Image ( MatOfInt actualImage, IIntSize blockSize, EColorType colorType ) {
 //        this.actualImage = actualImage;
 //        this.blockSize = blockSize;
 //        this.roi = roi;
@@ -75,6 +71,7 @@ class Image implements IImage {
 //        y = 0;
 //        originalImageWidth = actualImage.width();
 //        originalImageHeight = actualImage.height();
+        this.colorType = colorType;
     }
 
     /**
@@ -82,32 +79,36 @@ class Image implements IImage {
      * @param x
      * @param y
      * @param blockWidth
+     * @param colorType
      * @throws ValueError
      */
     public
-    Image ( MatOfInt roi, int x, int y, int blockWidth ) throws ValueError {
+    Image ( MatOfInt roi, int x, int y, int blockWidth, EColorType colorType ) throws ValueError {
 //        actualImage = roi.getMat();
 //        this.x = x;
 //        this.y = y;
         blockSize = new IntSize(blockWidth, blockWidth);
         //originalImageWidth = actualImage.width();
         //originalImageHeight = actualImage.height();
+        this.colorType = colorType;
     }
 
     /**
-     * @param image
      * @param roi
+     * @param image
      * @param address
      * @param blockSize
+     * @param colorType
      */
     public
-    Image ( MatOfInt image, IAddress address, IIntSize blockSize ) {
+    Image ( MatOfInt image, IAddress address, IIntSize blockSize, EColorType colorType ) {
 //        actualImage = image;
 //        x = address.getX();
 //        y = address.getY();
         this.blockSize = blockSize;
 //        originalImageWidth = actualImage.width();
 //        originalImageHeight = actualImage.height();
+        this.colorType = colorType;
     }
 
 //    /**
@@ -128,14 +129,15 @@ class Image implements IImage {
 //
 
     /**
-     * @param image
      * @param roi
+     * @param image
      * @param address
      * @param blockSize
      * @param factory
+     * @param colorType
      */
     public
-    Image ( IImage image, IAddress address, IIntSize blockSize, GeometryFactory factory ) {
+    Image ( IImage image, IAddress address, IIntSize blockSize, GeometryFactory factory, EColorType colorType ) {
 //        actualImage = image.getMat();
 //        x = address.getX();
 //        y = address.getY();
@@ -144,66 +146,84 @@ class Image implements IImage {
         this.factory = factory;
 //        originalImageWidth = actualImage.width();
 //        originalImageHeight = actualImage.height();
+        this.colorType = colorType;
     }
 
     /**
-     * @param submat
-     * @param blockSize
      * @param originalImageWidth
      * @param originalImageHeight
+     * @param submat
+     * @param blockSize
+     * @param colorType
      */
 //    @Contract(pure = true)
     public
-    Image ( Mat submat, IIntSize blockSize, int originalImageWidth, int originalImageHeight ) {
+    Image ( Mat submat, IIntSize blockSize, /*,int originalImageWidth, int originalImageHeight*/ EColorType colorType ) {
 //        actualImage = submat;
         this.blockSize = blockSize;
 //        this.originalImageWidth = originalImageWidth;
 //        this.originalImageHeight = originalImageHeight;
 //        x = 0;
 //        y = 0;
+        this.colorType = colorType;
     }
 
     public
-    Image ( IImage image, int x, int y, IIntSize blockSize ) {
+    Image ( IImage image, int x, int y, IIntSize blockSize, EColorType colorType ) {
 //        actualImage = image.getMat();
 //        this.x = x;
 //        this.y = y;
 //        this.blockSize = blockSize;
         // this.originalImageWidth = blockSize.getWidth();
         //this.originalImageHeight = blockSize.getHeight();
+        this.colorType = colorType;
     }
 
     public
-    Image ( IImage image, int x, int y, int blockWidth, int regions ) {
+    Image ( IImage image, int x, int y, int blockWidth, int regions, EColorType colorType ) {
 //        actualImage = image.getMat();
 //        this.x = x;
 //        this.y = y;
 //        this.blockSize = new IntSize(blockWidth, blockWidth);
 //        th//is.originalImageWidth = blockSize.getWidth();
 //        this.originalImageHeight = blockSize.getHeight();
+        this.colorType = colorType;
     }
 
     public
-    Image ( Mat mat ) {
+    Image ( Mat mat, int rows, int cols, double[] pixels, EColorType colorType ) {
         super();
+        //actualImage=new Mat(cols, rows,-1,new Scalar(pixels));
+        this.colorType = colorType;
     }
 
     public
-    Image ( IImage src, IAddress address, int targetSize ) {
+    Image ( IImage src, IAddress address, int targetSize, EColorType colorType ) {
 
+        this.colorType = colorType;
     }
 
+    public
+    Image ( MatOfInt mat, EColorType colorType ) {
+
+        this.colorType = colorType;
+    }
+
+    public
+    Image () {
+
+    }
 
     /**
      * @return
      */
     @SuppressWarnings("unchecked")
     public
-    IImageBlock subImage ( int rowStart, int rowEnd, int colStart, int colEnd ) {
+    Mat subImage ( int rowStart, int rowEnd, int colStart, int colEnd ) {
         return (IImageBlock) submat(rowStart, rowEnd, colStart, colEnd);
     }
 
-    //    @Override
+    @Override
     public
     Coordinate[] getCoordinates () {
         return new Coordinate[0];
@@ -221,7 +241,7 @@ class Image implements IImage {
         return false;
     }
 
-    //    @Override
+    @Override
     public
     Coordinate getCentroid () {
         return null;
@@ -238,24 +258,32 @@ class Image implements IImage {
         return null;
     }
 
-    //    @Override
+    /**
+     * @return
+     */
+    @Override
     public
     int getBoundaryDimension () {
         return 0;
     }
 
+    /**
+     *
+     */
     public
     void normalize () {
 
     }
 
+    /**
+     * @return
+     */
     public
     int pixelAmount () {
         return getWidth() * getHeight();
     }
 
     protected List <ImageTransform> transforms;
-
 
     /**
      * @param n
@@ -270,8 +298,15 @@ class Image implements IImage {
     @Override
     public
     void initialize () {
+    }
 
-
+    /**
+     * @return
+     */
+    @Override
+    public
+    EColorType getColorType () {
+        return colorType;
     }
 
     /**
@@ -353,11 +388,9 @@ class Image implements IImage {
         IImage image = new Image(
                 inputImage.getMat(),
                 inputImage.getSize(),
-                inputImage.getWidth(),
-                inputImage.getHeight()
 //                ioriginalImageWidth,
 //                originalImageHeight
-        );
+                colorType);
 
         Core.reduce(inputImage.getMat(), image.getMat(), -1, -1, -2);//fixme - dim, rtype, dtype
 
@@ -399,10 +432,7 @@ class Image implements IImage {
      */
     public
     IImage createInputImage ( IImage image ) throws ValueError {
-        return new Image(image.getMat(),
-                image.getSize(),
-                image.getWidth(),// originalImageWidth,
-                image.getHeight());
+        return new Image(image.getMat(), image.getSize(), colorType);
     }
 
     /**
@@ -421,7 +451,7 @@ class Image implements IImage {
     @Override
     public
     IImage contract ( int contractivity ) {
-        IImage image = new Image((MatOfInt) this.getMat(), this.getSize());
+        IImage image = new Image((MatOfInt) this.getMat(), this.getSize(), colorType);
 
         int newWidth = image.getWidth() / contractivity;
         int newHeight = image.getHeight() / contractivity;
@@ -438,7 +468,7 @@ class Image implements IImage {
      */
     public
     IImage resize ( double scale ) {
-        IImage image = new Image((MatOfInt) this.getMat(), this.getSize());
+        IImage image = new Image((MatOfInt) this.getMat(), this.getSize(), colorType);
 
         int newWidth = (int) (image.getWidth() * scale);
         int newHeight = (int) (image.getHeight() * scale);
@@ -448,6 +478,7 @@ class Image implements IImage {
         return image;
     }
 
+    @Override
     public
     Image resize ( int contractivity ) {
         int newWidth = this.getWidth() / contractivity;
@@ -458,15 +489,15 @@ class Image implements IImage {
             for (int i = 0; i < newWidth; i++) {
                 for (int j = 0; j < newHeight; j++) {
                     newPixelValues(i, j)[c] =
-                            (double) ((pixelValues(i * 2, j * 2)[c]
+                            (pixelValues(i * 2, j * 2)[c]
                                     + pixelValues(i * 2, j * 2 + 1)[c]
                                     + pixelValues(i * 2 + 1, j * 2)[c]
                                     + pixelValues(i * 2 + 1, j * 2)[c]
-                            ) / contractivity * contractivity);
+                            ) / contractivity * contractivity;
                 }
             }
         }
-        IImage image = new Image(getMat());
+        IImage image = new Image();
 //    image
 //        this.cols(newWidth) = newWidth;
 //        this.height = newHeight;
@@ -504,7 +535,7 @@ class Image implements IImage {
 
     @Override
     public
-    void setMeanPixelValue ( double[] meanPixelValue ) {
+    void setMeanPixelValue ( double meanPixelValue ) {
         this.meanPixelValue = meanPixelValue;
     }
 
@@ -514,7 +545,7 @@ class Image implements IImage {
      */
     @Override
     public
-    int compareTo ( /*@NotNull*/ IImage other ) {
+    int compareTo ( /*@NotNull*/ @NotNull IImage other ) {
         return 0;
     }
 
@@ -599,22 +630,21 @@ class Image implements IImage {
 //        }
 //    }
 
-    /**
-     * @return
-     */
-    @Override
-    public
-    List <IImage> split () {
-//        List <Mat> list = new ArrayList <>();
-        List <IImage> layers = new ArrayList <>();
-//        fixme
-//        Core . split(getMat(), Collections.unmodifiableList(list));
-//        for (Mat mat : list) {
-//            layers.add(new Image <>((MatOfInt) mat, blockSize));
+//    /**
+//     * @return
+//     */
+//    @Override
+//    public
+//    List <Mat> split () {
+//        List <Mat> mv = new ArrayList <>();
+//        List <IImage> layers = new ArrayList <>();
+//        Core.split(getMat(), mv);
+//        for (Mat mat : mv) {
+//            layers.add(new Image(mat, getSize(), colorType));
 //        }
-
-        return layers;
-    }
+//
+//        return layers;
+//    }
 
     /**
      * @param layers
@@ -622,12 +652,12 @@ class Image implements IImage {
      */
     @Override
     public
-    IImage merge ( List <IImage> layers, IImage inputImage ) {
-        List <Mat> l = copyOf(layers);
-        IImage img = new Image((MatOfInt) inputImage.getMat(), blockSize);
-        Core.merge(l, img.getMat());
+    Mat merge ( List <Mat> layers, Mat image) {
+//        List <Mat> l = copyOf(layers);
+//        IImage img = new Image((MatOfInt) image, colorType);
+        Core.merge(layers, image);
 
-        return img;
+        return image;
     }
 
     /**
@@ -674,26 +704,17 @@ class Image implements IImage {
      * @param height
      * @return
      */
-//    @SuppressWarnings("unchecked")
     @Override
     public
     IImageBlock getSubImage ( int x, int y, int width, int height ) throws ValueError {
         return new ImageBlock(this, x, y, width, height);
     }
 
-    /**
-     * @param i
-     * @param i1
-     * @param sideSize
-     * @param img1pixels
-     * @param i2
-     * @param i3
-     */
-    @Override
-    public
-    void getRGB ( int i, int i1, int sideSize, double[] img1pixels, int i2, int i3 ) {
+    public abstract
+    int compareTo ( /*@NotNull*/ IIntSize o );
 
-    }
+    public abstract
+    Size toSize ();
 
     /**
      * @param i
@@ -704,10 +725,8 @@ class Image implements IImage {
      * @param i2
      * @param i3
      */
-    //   @Override
     public
     void getRGB ( int i, int i1, int width, int height, double[] img1pixels, int i2, int i3 ) {
-        getRGB(i, i1, width, img1pixels, i2, i3);
     }
 
     /**
@@ -738,16 +757,6 @@ class Image implements IImage {
         return getMat().get(col, row);
     }
 
-//    /**
-//     * @return
-//     */
-//    @Override
-//    @Contract(pure = true)
-//    public final
-//    List <IImageBlock > getRegions () {
-//        return regions;
-//    }
-
     /**
      * @param row
      * @param col
@@ -768,56 +777,13 @@ class Image implements IImage {
     EAddressKind getAddressKind () {
         return ORDINARY;
     }
-
-//    /**
-//     * @param regions
-//     */
-//    @Override
-//    public
-//    void setRegions ( List <IImageBlock > regions ) {
-//        this.regions.addAll(regions);
-//    }
-
     /**
      * @return
      */
     public
-    int[][] etAddressTable () {
+    int[][] getAddressTable () {
         return new int[0][0];//table;
     }
-//
-//    /**
-//     * @param pixelData
-//     */
-//    /**
-//     * Create a new "split edge" with the section of points between
-//     * (and including) the two intersections.
-//     * The label for the new edge is the same as the label for the parent edge.
-//     */
-//    Edge createSplitEdge( EdgeIntersection ei0, EdgeIntersection ei1)
-//    {
-////Debug.print("\ncreateSplitEdge"); Debug.print(ei0); Debug.print(ei1);
-//        int npts = ei1.segmentIndex - ei0.segmentIndex + 2;
-//
-//        Coordinate lastSegStartPt = edge.pts[ei1.segmentIndex];
-//        // if the last intersection point is not equal to the its segment start pt,
-//        // add it to the points list as well.
-//        // (This check is needed because the distance metric is not totally reliable!)
-//        // The check for point equality is 2D only - Z values are ignored
-//        boolean useIntPt1 = ei1.dist > 0.0 || ! ei1.coord.equals2D(lastSegStartPt);
-//        if (! useIntPt1) {
-//            npts--;
-//        }
-//
-//        Coordinate[] pts = new Coordinate[npts];
-//        int ipt = 0;
-//        pts[ipt++] = new Coordinate(ei0.coord);
-//        for (int i = ei0.segmentIndex + 1; i <= ei1.segmentIndex; i++) {
-//            pts[ipt++] = edge.pts[i];
-//        }
-//        if (useIntPt1) pts[ipt] = ei1.coord;
-//        return new Edge(pts, new Label(edge.label));
-//    }
 
     /**
      * @return
@@ -825,28 +791,12 @@ class Image implements IImage {
     @Override
     public
     double[] getPixels () {
-        return new double[(int) (getMat().total() * getMat().channels())];
+        return new double[(int) (getMat().total() * getMat().channels())][];
     }
 
-    /**
-     * @param x
-     * @param y
-     * @param pixelData
-     * @return
-     */
-    protected
-    double[] put ( int x, int y, double[] pixelData ) {
-        getMat().put(x, y, pixelData);
-
-        return pixelData;
-    }
-
-    /**
-     * @return
-     */
     @Override
     public
-    double[] getMeanPixelValue () {
+    double getMeanPixelValue () {
         return meanPixelValue;
     }
 
@@ -877,40 +827,18 @@ class Image implements IImage {
     }
 
     public
-    double[] get ( int c, int r, double[] data ) {
+    int get ( int c, int r, double[] data ) {
         data = getMat().get(c, r);
-        return data;
+        return 0;
     }
 
     /**
-     *
+     * @return
      */
-    enum EColorType {
-        GRAYSCALE(0),
-        GRAYSCALE_WITH_ALPHA(4),
-        INDEXED_COLOR(3),
-        TRUE_COLOR(2),
-        TRUE_COLOR_WITH_ALPHA(6);
-
-        private final int cType;
-
-        /**
-         * @param cType
-         */
-//        /@Contract(pure = true)
-        EColorType ( int cType ) {
-            this.cType = cType;
-        }
-
-        /**
-         * @return
-         */
-//        @Contract(pure = true)
-        public
-        int getCType () {
-            return cType;
-        }
-
+    @Override
+    public
+    List <IChannel> getChannels () {
+        return imageLayers;
     }
 
     public
@@ -920,13 +848,16 @@ class Image implements IImage {
 
     @Override
     public
-    double[] pixelValues ( int x, int y ) {
+    double pixelValues ( int x, int y ) {
         return getPixel(x, y);
     }
 
     @Override
     public
     double getPixelValuesLayer ( int x, int y, int ch ) {
+        double[] data = new double[ch];
+
+        data = get(x, y, data);
         return 0;//todo
     }
 
@@ -955,18 +886,6 @@ class Image implements IImage {
     @Override
     public
     IIntSize restoreSize ( int w, int h, int originalImageWidth, int originalImageHeight ) {
-        return null;
-    }
-
-    /**
-     * @param h
-     * @param originalImageWidth
-     * @param originalImageHeight
-     * @return
-     */
-//    @Override
-    public
-    IIntSize restoreSize ( int h, int originalImageWidth, int originalImageHeight ) {
         return null;
     }
 }

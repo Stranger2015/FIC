@@ -21,28 +21,37 @@ class HvEncoder extends Encoder {
 
     protected
     HvEncoder (
+            String fileName,
             EPartitionScheme scheme,
+            ICodec codec,
+            List <Task> tasks,
+            EtvColorSpace colorSpace,
             ITreeNodeBuilder <?> nodeBuilder,
             IPartitionProcessor partitionProcessor,
             ISearchProcessor searchProcessor,
-            ScaleTransform  scaleTransform,
+            ScaleTransform scaleTransform,
             ImageBlockGenerator <?> imageBlockGenerator,
-            IDistanceator  comparator,
-            Set <ImageTransform> transforms,
-            Set <IImageFilter > filters,
-            FCImageModel fractalModel
+            IDistanceator comparator,
+            Set <ImageTransform> imageTransforms,
+            Set <IImageFilter> imageFilters,
+            FCImageModel fractalModel,
+            IEncoder ... encoders
     ) {
-        super(
+        super(     fileName,
                 scheme,
+                codec,
+                tasks,
+                colorSpace,
                 nodeBuilder,
                 partitionProcessor,
                 searchProcessor,
                 scaleTransform,
                 imageBlockGenerator,
                 comparator,
-                transforms,
-                filters,
-                fractalModel
+                imageTransforms,
+                imageFilters,
+                fractalModel,
+                encoders
         );
     }
 
@@ -75,12 +84,6 @@ class HvEncoder extends Encoder {
 
     @Override
     public
-    IPartitionProcessor doCreatePartitionProcessor ( ITiler tiler ) {
-        return null;
-    }
-
-//    @Override
-    public
     IPartitionProcessor createPartitionProcessor0 ( ITiler tiler ) {
         return null;
     }
@@ -92,19 +95,20 @@ class HvEncoder extends Encoder {
      */
     @Override
     public
-    IImage flipAxis ( IImage image, int axis ) {
+    IImageBlock flipAxis ( IImageBlock image, int axis ) {
         return image;
     }
 
     @Override
     public
-    void initialize () throws ReflectiveOperationException, Exception {
+    void initialize () throws Exception {
 
     }
 
     @Override
     public
-    void doEncode ( IImage image ) {
+    IImage doEncode ( IImage image ) {
+
         return image;
     }
 
@@ -119,12 +123,6 @@ class HvEncoder extends Encoder {
     List <IImageBlock > segmentImage ( IImage image, List <Rectangle> bounds ) throws ValueError {
         return List.of(new ImageBlock((IImage) image.getMat()));
     }
-//
-//    @Override
-//    public
-//    IPartitionProcessor <?> getPartitionProcessor () {
-//        return new HvPartitionProcessor <>(image, image.getWidth(), image.getHeight());
-//    }
 
     /**
      * @param node
@@ -147,7 +145,7 @@ class HvEncoder extends Encoder {
     /**
      * @param node
      */
-//    @Override
+    @Override
     public
     void addLeafNode ( TreeNodeBase <?> node ) {
 
@@ -155,7 +153,7 @@ class HvEncoder extends Encoder {
 
     @Override
     public
-    Class <? extends ITiler> getTilerClass () {
+    Class <?> getTilerClass () {
         return tilerClass;
     }
 
@@ -185,7 +183,7 @@ class HvEncoder extends Encoder {
      */
     @Override
     public
-    IImage randomTransform ( IImage image, ImageTransform transform ) {
+    IImageBlock applyTransform ( IImageBlock image, ImageTransform transform ) {
         return null;//todo
     }
 
@@ -196,56 +194,45 @@ class HvEncoder extends Encoder {
      */
     @Override
     public
-    IImage applyTransform ( IImage image, ImageTransform transform ) {
-        return null;//todo
-    }
-
-    /**
-     * @param image
-     * @param transform
-     * @return
-     */
-    @Override
-    public
-    IImage applyAffineTransform ( IImage image, AffineTransform  transform ) {
+    IImageBlock applyAffineTransform ( IImageBlock image, AffineTransform  transform ) {
         return image;
     }
 
-    /**
-     * @param image
-     * @param sourceSize
-     * @param destinationSize
-     * @param step
-     * @return
-     */
+//    /**
+//     * @param image
+//     * @param sourceSize
+//     * @param destinationSize
+//     * @param step
+//     * @return
+//     */
 //    @Override
-    public
-    List <ImageTransform> compress ( IImage image, int sourceSize, int destinationSize, int step ) {
-        return null;//todo
-    }
-
-    /**
-     * @param image
-     * @param sourceSize
-     * @param destinationSize
-     * @param step
-     * @return
-     */
+//    public
+//    List <ImageTransform> compress ( IImage image, int sourceSize, int destinationSize, int step ) {
+//        return null;//todo
+//    }
+//
+//    /**
+//     * @param image
+//     * @param sourceSize
+//     * @param destinationSize
+//     * @param step
+//     * @return
+//     */
+//    @Override
+//    public
+//    List <IImageBlock > generateAllTransformedBlocks ( IImageBlock image,
+//                                                       int sourceSize,
+//                                                       int destinationSize,
+//                                                       int step ) {
+//        return null;//todo
+//    }
+//    @Override
+//    public
+//    IImage getInput () {
+//        return null;
+//    }
+//
     @Override
-    public
-    List <IImageBlock > generateAllTransformedBlocks ( IImage image,
-                                                          int sourceSize,
-                                                          int destinationSize,
-                                                          int step ) {
-        return null;//todo
-    }
-//    @Override
-    public
-    IImage getInput () {
-        return null;
-    }
-
-//    @Override
     public
     IImage getOutput () {
         return null;

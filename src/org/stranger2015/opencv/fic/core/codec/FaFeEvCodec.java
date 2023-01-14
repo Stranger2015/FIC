@@ -2,27 +2,23 @@ package org.stranger2015.opencv.fic.core.codec;
 
 import org.stranger2015.opencv.fic.core.EPartitionScheme;
 import org.stranger2015.opencv.fic.core.IAddress;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.ValueError;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
  * @param
- 
  * @param <G>
  */
 public
-class FaFeEvCodec
-        extends Codec {
+class FaFeEvCodec extends Codec {
     /**
      * @param scheme
      * @param paramTypes
      * @param params
      */
     protected
-    FaFeEvCodec ( EPartitionScheme scheme, Class <?>[] paramTypes, Object... params/*EncodeTask <N> encodeTask, DecodeTask <N> decodeTask*/ ) {
-        super(scheme, paramTypes, params/*encodeTask, decodeTask*/);
+    FaFeEvCodec ( EPartitionScheme scheme, IEncoder encoder, IDecoder decoder ) {
+        super(scheme, encoder, decoder);
     }
 //
 //    /**
@@ -59,7 +55,7 @@ class FaFeEvCodec
      */
     @Override
     public
-    IAddress  createAddress ( int address ) throws ValueError {
+    IAddress createAddress ( int address ) throws ValueError {
 //        return super.createAddress(address);
         return null;
     }

@@ -2,7 +2,6 @@ package org.stranger2015.opencv.fic.core.io;
 
 import org.stranger2015.opencv.fic.core.FCImageModel;
 import org.stranger2015.opencv.fic.core.ImageInfo;
-import org.stranger2015.opencv.fic.core.ValueError;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -34,7 +33,7 @@ class FractalWriter extends FractalIOBase {
      *                     created, or cannot be opened for any other reason
      */
     public
-    FractalWriter ( String fileName, FCImageModel fractalModel ) throws IOException, ValueError {
+    FractalWriter ( String fileName, FCImageModel fractalModel ) throws Exception {
         super(fileName, fractalModel);
     }
 
@@ -49,18 +48,17 @@ class FractalWriter extends FractalIOBase {
 
     /**
      * @param fileName
-     * @param model
      */
     public
-    void writeModel ( String fileName, FCImageModel model ) throws Exception {
+    void writeModel ( ) throws Exception {
         OutputStream fos;
-
         try (OutputStream os = new GZIPOutputStream(fos = newOutputStream(Path.of(fileName)))) {
             writeLabel(fos);
-            int dataLength = (int) ceil(model.getRangeBlocks().size() * ifsRecordLength / 8.0);
+            int dataLength = (int) ceil(fractalModel.getRangeBlocks().size() * ifsRecordLength / 8.0);
             bitBuffer = allocate(dataLength);
-            model.setIfsRecords(bitBuffer.getBytes().array());
-            byte[] ifsRecords = model.getIfsRecords();
+            fractalModel.setIfsRecords(bitBuffer.getBytes().array());
+            byte[] ifsRecords = fractalModel.getIfsRecords();
+
             writeData(os, ifsRecords);
         }
     }

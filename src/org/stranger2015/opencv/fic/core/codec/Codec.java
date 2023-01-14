@@ -10,15 +10,11 @@ import java.util.List;
 
 /**
  * @param <N>
- 
  * @param
  */
 public abstract
-class Codec implements ICodec{
+class Codec implements ICodec {
     protected final EPartitionScheme scheme;
-
-//    protected Class <?>[] paramTypes;
-//    protected Object[] params;
 
     protected IEncoder encoder;
     protected IDecoder decoder;
@@ -26,7 +22,13 @@ class Codec implements ICodec{
     protected EncodeTask encodeTask;
     protected DecodeTask decodeTask;
 
-    protected final List <ICodecListener > listeners = new ArrayList <>();
+    protected final List <ICodecListener> listeners = new ArrayList <>();
+
+    public
+    Codec ( EPartitionScheme scheme, EncodeTask action ) {
+        this.scheme = scheme;
+        encodeTask = action;
+    }
 
 //    /**
 //     * @param scheme
@@ -36,7 +38,7 @@ class Codec implements ICodec{
 //    @SuppressWarnings("unchecked")
 //    @Contract(pure = true)
 //    protected
-//    Codec ( EPartitionScheme scheme, Class <?>[] paramTypes, Object... params ) {
+//    Codec ( EPartitionScheme scheme, ImageBlockClassifier <?>[] paramTypes, Object... params ) {
 //        this.scheme = scheme;
 //        this.paramTypes = paramTypes;
 //        this.params = params;
@@ -56,7 +58,7 @@ class Codec implements ICodec{
      * @return
      */
     public
-    EncodeTask  getEncodeTask () {
+    EncodeTask getEncodeTask () {
         return encodeTask;
     }
 
@@ -64,7 +66,7 @@ class Codec implements ICodec{
 //    public static
 //    <N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
 //    ICodec <N> create ( @NotNull EPartitionScheme scheme,
-//                                 Class <?>[] paramTypes,
+//                                 ImageBlockClassifier <?>[] paramTypes,
 //                                 Object... params ) throws ReflectiveOperationException {
 //
 //        return (ICodec <N>) Utils.create(
@@ -130,7 +132,7 @@ class Codec implements ICodec{
      */
     @Override
     public abstract
-    IAddress  createAddress ( int address ) throws ValueError;
+    IAddress createAddress ( int address ) throws ValueError;
 
     /**
      * @param task
@@ -138,7 +140,6 @@ class Codec implements ICodec{
     @Override
     public
     void addTask ( Task task ) {
-
     }
 
     /**

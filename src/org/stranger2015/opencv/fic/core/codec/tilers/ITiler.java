@@ -7,7 +7,7 @@ import org.stranger2015.opencv.fic.core.codec.IEncoder;
 import org.stranger2015.opencv.fic.core.codec.IPartitionProcessor;
 import org.stranger2015.opencv.fic.core.triangulation.quadedge.Vertex;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.Deque;
 import java.util.List;
 
@@ -20,16 +20,32 @@ import static org.stranger2015.opencv.fic.core.ETilerState.*;
  */
 public
 interface ITiler {
+
+    IIntSize minRangeSize = new IntSize(4, 4);
+
+    IIntSize[] minRangeSizes = {
+            new IntSize(4, 4),
+            new IntSize(8, 8),
+            new IntSize(16, 16),
+            };
+
+    IIntSize minDomainSize = new IntSize(8, 8);
+
+    IIntSize[] minDomainSizes = {
+            new IntSize(8, 8),
+            new IntSize(16, 16),
+            new IntSize(32, 32),
+            };
+
+
     /**
      * @param <N>
      * @param
      * @param <G>
      * @return
      */
-//    @Contract(pure = true)
     static
-    /*@NotNull*/ IPartitionProcessor create ( IEncoder encoder, ITiler tiler ) {
-
+    IPartitionProcessor create ( IEncoder encoder, ITiler tiler ) {
         return encoder.createPartitionProcessor(tiler);
     }
 
@@ -212,12 +228,12 @@ interface ITiler {
     /**
      * @return
      */
-    IIntSize getRangeSize ();
+    IIntSize getCurrentRangeSize ();
 
     /**
      * @return +
      */
-    IIntSize getDomainSize ();
+    IIntSize getCurrentDomainSize ();
 
 //=============== segment
 
@@ -274,6 +290,8 @@ interface ITiler {
      */
     int successorAmount ();
 
+    ClassificationScheme createQuadrants ( ImageBlockInfo blockInfo, IImageBlock imageBlock ) throws ValueError;
+
     /**
      * @param roi
      * @param blockWidth
@@ -290,88 +308,57 @@ interface ITiler {
      * @throws ValueError
      */
     default
-    List <IImageBlock> generateRangeBlocks ( IImageBlock roi, int blockWidth, int blockHeight )
-            throws ValueError {
+    Pool <IImageBlock> generateRangeBlocks ( IImageBlock roi, int blockWidth, int blockHeight )
+            throws ValueError, IOException {
 
-        int numOfBlocksPerRow = roi.getWidth() / blockWidth;
-        int numOfBlocksPerCol = roi.getHeight() / blockHeight;
-
-        List <IImageBlock> blocks = new ArrayList <>();
-        for (int i = 0; i < numOfBlocksPerRow; i++) {
-            for (int j = 0; j < numOfBlocksPerCol; j++) {
-                IImageBlock block = new ImageBlock(
-                        roi,
-                        i * blockWidth,
-                        j * blockHeight,
-                        blockWidth,
-                        blockHeight);
-                int channels = roi.getChannelsAmount();
-                double[] sumOfPixelValues = new double[channels];
-                for (int c = 0; c < channels; c++) {
-                    sumOfPixelValues[c] = 0;
-                    for (int x = 0; x < blockWidth; x++) {
-                        for (int y = 0; y < blockHeight; y++) {
-                            block.pixelValues(x, y)[c] = roi.pixelValues(
-                                    i * blockWidth + x,
-                                    j * blockHeight + y)[c];
-                            sumOfPixelValues[c] += block.pixelValues(x, y)[c];
-                        }
-                    }
-                    block.setMeanPixelValuesLayer(c, sumOfPixelValues[c] / (double) (blockWidth * blockHeight));
-                    blocks.add(block);
-                }
-            }
-        }
-
-        return blocks;
+        return generateInitialRangeBlocks(roi, blockWidth, blockHeight);
     }
 
     /**
-     * @param roi
+     * @param block
+     * @return
+     * @throws ValueError
+     */
+    ClassificationScheme createQuadrants ( ImageBlockInfo block ) throws ValueError;
+
+    /**
+     * @param rangeBlock
      * @param blockWidth
      * @param blockHeight
+     * @param colorType
      * @return
      * @throws ValueError
      */
     default
-    List <IImageBlock> generateDomainBlocks ( IImageBlock roi, int blockWidth, int blockHeight )
-            throws ValueError {
+    Pool <IImageBlock> generateDomainBlocks ( IImageBlock rangeBlock, int blockWidth, int blockHeight, IImage.EColorType colorType )
+            throws ValueError, IOException {
 
-        int numOfBlocksPerRow = roi.getWidth() - blockWidth + 1;
-        int numOfBlocksPerCol = roi.getHeight() - blockHeight + 1;
+        int numOfBlocksPerRow = rangeBlock.getWidth() - blockWidth + 1;
+        int numOfBlocksPerCol = rangeBlock.getHeight() - blockHeight + 1;
 
-        final List <IImageBlock> blocks = new ArrayList <>();
-        int channels = roi.getChannelsAmount();
-        for (int i = 0; i < numOfBlocksPerRow; i++) {
-            for (int j = 0; j < numOfBlocksPerCol; j++) {
-                IImageBlock block = new ImageBlock(roi, i, j, blockWidth, blockHeight);
-                double[] sumOfPixelValues = new double[channels];
-                for (int c = 0; c < channels; c++) {
-                    sumOfPixelValues[c] = 0;
-                    for (int x = 0; x < blockWidth; x++) {
-                        for (int y = 0; y < blockHeight; y++) {
-                            block.pixelValues(x, y)[c] = roi.pixelValues(i + x, j + y)[c];
-                            sumOfPixelValues[c] += block.pixelValues(x, y)[c];
-                        }
-                    }
-                    block.setMeanPixelValuesLayer(c, sumOfPixelValues[c] / (double) (blockWidth * blockHeight));
+        final Pool <IImageBlock> domainBlocks = new Pool <>(minDomainSizes);
+        int channels = rangeBlock.getChannelsAmount();
+        for (int channelIndex = 0; channelIndex < channels; channelIndex++) {
+            double sumOfPixelValues = 0;
+            for (int i = 0, x = 0; i < numOfBlocksPerRow; i++, x += blockWidth) {
+                for (int j = 0, y = 0; j < numOfBlocksPerCol; j++, y += blockHeight) {
+                    IImageBlock block = rangeBlock.getSubImage(x, y, blockWidth, blockHeight);
+                    ClassificationScheme scheme = new ClassificationScheme(new ImageBlockInfo(colorType, block), block);
+
+                    sumOfPixelValues = 0;
+                    sumOfPixelValues += rangeBlock.pixelValues(i + x, j + y);//fixme
+                    block.setMeanPixelValues(sumOfPixelValues / (double) (blockWidth * blockHeight));
                     block.setBeta(0);
-                    for (int x = 0; x < blockWidth; x++) {
-                        for (int y = 0; y < blockHeight; y++) {
-                            block.setBeta(block.getBeta() +
-                                    Math.pow(block.pixelValues(x, y)[c] - block.getMeanPixelValue()[c], 2)
-                            );
-                        }
-                    }
+                    block.setBeta(block.getBeta() + Math.pow(block.pixelValues(x, y) - block.getMeanPixelValue(), 2));
                     block.resize(2);
-                    blocks.add(block);
+                    domainBlocks.add(block);
                 }
             }
         }
 
-        return blocks;
+        return domainBlocks;
     }
 
-    List <IImageBlock> generateInitialRangeBlocks ( IImageBlock roi, int blockWidth, int blockHeight )
-            throws ValueError;
+    Pool <IImageBlock> generateInitialRangeBlocks ( IImageBlock roi, int blockWidth, int blockHeight )
+            throws ValueError, IOException;
 }

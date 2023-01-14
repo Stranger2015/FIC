@@ -2,8 +2,10 @@ package org.stranger2015.opencv.fic.core;
 
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode.LeafNode;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
+import org.stranger2015.opencv.fic.core.codec.tilers.ClassificationScheme;
 import org.stranger2015.opencv.fic.core.codec.tilers.ITiler;
 import org.stranger2015.opencv.fic.core.codec.tilers.ITopDownTiler;
+import org.stranger2015.opencv.fic.core.codec.tilers.ImageBlockInfo;
 
 /**
  * @param <N>
@@ -11,9 +13,7 @@ import org.stranger2015.opencv.fic.core.codec.tilers.ITopDownTiler;
  * @param <G>
  */
 public
-class QuadTreeTopDownTiler
-        extends QuadTreeTiler
-        implements ITopDownTiler {
+class QuadTreeTopDownTiler extends QuadTreeTiler implements ITopDownTiler {
 
     /**
      * @param image
@@ -40,8 +40,8 @@ class QuadTreeTopDownTiler
     ITiler instance () {
         return new QuadTreeTopDownTiler (
                 getImage(),
-                getRangeSize(),
-                getDomainSize(),
+                this.getCurrentRangeSize(),
+                this.getCurrentDomainSize(),
                 getEncoder(),
                 getBuilder()
         );
@@ -133,12 +133,23 @@ class QuadTreeTopDownTiler
     }
 
     /**
+     * @param block
+     * @return
+     * @throws ValueError
+     */
+    @Override
+    public
+    ClassificationScheme createQuadrants ( ImageBlockInfo block ) throws ValueError {
+        return null;
+    }
+
+    /**
      * @param imageBlock
      * @throws ValueError
      */
     @Override
     public
-    void segmentPolygon ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
+    void segmentPolygon ( TreeNodeBase <?> node, IImageBlock  imageBlock ) throws ValueError {
         segmentSquare(node, imageBlock);
     }
 
@@ -148,6 +159,15 @@ class QuadTreeTopDownTiler
      */
     @Override
     public
-    void segmentQuadrilateral ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
+    void segmentQuadrilateral ( TreeNodeBase <?> node, IImageBlock  imageBlock ) throws ValueError {
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    String toString () {
+        return "QuadTreeTopDownTiler{" + "imageBlock=" + imageBlock + '}';
     }
 }

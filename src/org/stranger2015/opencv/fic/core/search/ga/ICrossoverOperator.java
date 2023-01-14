@@ -20,15 +20,14 @@ interface ICrossoverOperator<C extends Chromosome>
          * @param <T>
          */
         static
-        class TwoPointCrossover<T extends Individual <M, A, G, C>, A extends IAddress , G extends BitBuffer,
-                C extends Chromosome <M, A, G>>
-                extends OnePointCrossover <M, A, G, C> {
+        class TwoPointCrossover<C extends Chromosome >
+                extends OnePointCrossover <C> {
 
             /**
              * @param rate
              */
             protected
-            TwoPointCrossover ( GaSearchProcessor <M, A, G, C> gaProcessor, double rate ) {
+            TwoPointCrossover ( GaSearchProcessor gaProcessor, double rate ) {
                 super(gaProcessor, rate);
             }
 

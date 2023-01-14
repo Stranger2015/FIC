@@ -3,7 +3,6 @@ package org.stranger2015.opencv.fic.core.codec;
 import org.opencv.core.Rect;
 import org.stranger2015.opencv.fic.core.*;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
@@ -19,7 +18,7 @@ class SaTree<N extends TreeNode <N>>
      * @param action
      */
     public
-    SaTree ( TreeNodeBase <N> root, IImage image, TreeNodeTask <N> action ) {
+    SaTree ( TreeNodeBase <N> root, IImage image, TreeNodeTask action ) {
         super(root, image, action);
     }
 
@@ -61,10 +60,10 @@ class SaTree<N extends TreeNode <N>>
      *
      * @return
      */
-    @SuppressWarnings("unchecked")
-    @Override
-    public//fixme
-    Class <? extends TreeNode <N>> getNodeClass ( TreeNode <N> clazz ) {
-        return (Class <? extends TreeNode <N>>) clazz.getClass();
-    }
+//    @SuppressWarnings("unchecked")
+//    @Override
+//    public//fixme
+//    ImageBlockClassifier getNodeClass ( TreeNode <N> clazz ) {
+//        return (ImageBlockClassifier  clazz.getClass();
+//    }
 }

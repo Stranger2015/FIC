@@ -2,13 +2,12 @@ package org.stranger2015.opencv.fic.core;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.opencv.core.MatOfInt;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.EtvColorSpace;
 import org.stranger2015.opencv.fic.core.codec.ICodec;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import java.util.List;
+
+import static org.stranger2015.opencv.fic.core.CodecTask.ColorspaceConversionTask;
 
 /**
  * @param <N>
@@ -16,9 +15,7 @@ import java.util.List;
  * @param <G>
  */
 public
-class FromTvToRgbColorspaceConversionTask<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer>
-
-        extends CodecTask.ColorspaceConversionTask <N> {
+class FromTvToRgbColorspaceConversionTask        extends ColorspaceConversionTask  {
 
     /**
      * @param imageFilename
@@ -29,9 +26,9 @@ class FromTvToRgbColorspaceConversionTask<N extends TreeNode <N>, A extends IAdd
     public
     FromTvToRgbColorspaceConversionTask ( String imageFilename,
                                           EPartitionScheme scheme,
-                                          ICodec <N> codec,
+                                          ICodec  codec,
                                           EtvColorSpace colorSpace,
-                                          List <Task <N>> tasks ) {
+                                          List <Task > tasks ) {
 
         super(imageFilename, scheme, codec, colorSpace, tasks);
     }
@@ -114,23 +111,6 @@ class FromTvToRgbColorspaceConversionTask<N extends TreeNode <N>, A extends IAdd
         rgb[2] = (int) ((1.000 * y + 1.856 * pr + 0.000 * pb) * 255);
 
         return rgb;
-    }
-
-    /**
-     * @param filename
-     * @return
-     */
-    @Override
-    protected
-    IImage execute ( String filename ) throws ValueError {
-        IImage imageSrc = super.execute(filename);
-
-        IImage imageDst = new Image <>((MatOfInt) imageSrc.getMat(), imageSrc.getSize());
-
-        float[] cc = new float[3];
-        int[] tvCS = convertColorToRGB(cc, colorSpace);
-
-        return imageDst;
     }
 
     /**

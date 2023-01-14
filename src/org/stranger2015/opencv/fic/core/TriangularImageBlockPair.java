@@ -12,8 +12,8 @@ import java.util.List;
  */
 public
 class TriangularImageBlockPair<A extends IAddress>
-        extends ImageBlock
-        implements ITriangularImageBlockPair  {
+        extends ImageBlock{
+//        implements ITriangularImageBlockPair  {
 
     private IImageBlock  block1;
     private IImageBlock  block2;
@@ -36,7 +36,8 @@ class TriangularImageBlockPair<A extends IAddress>
                                IImageBlock  block2
     ) throws ValueError {
 
-        super(image, x, y, sideSize, vertices, kind);
+        super(image, x, y, sideSize, vertices);
+
         this.block1 = block1;
         this.block2 = block2;
     }
@@ -50,7 +51,7 @@ class TriangularImageBlockPair<A extends IAddress>
      */
     public
     TriangularImageBlockPair ( IImage inputImage, int i, Point[] vertices, IImageBlock  block1, IImageBlock  block2 ) {
-        this(inputImage.getMat(),vertices, block1);
+        this((MatOfInt) inputImage.getMat(),vertices, block1);
     }
 
     /**

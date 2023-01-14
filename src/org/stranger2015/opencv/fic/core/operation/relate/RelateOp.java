@@ -15,7 +15,6 @@ import org.locationtech.jts.algorithm.BoundaryNodeRule;
 import org.locationtech.jts.operation.GeometryGraphOperation;
 import org.locationtech.jts.operation.relate.RelateComputer;
 import org.stranger2015.opencv.fic.core.geom.Geometry;
-import org.stranger2015.opencv.fic.core.geom.IntersectionMatrix;
 
 /**
  * Implements the SFS <tt>relate()</tt> generalized spatial predicate on two {@link Geometry}s.
@@ -23,12 +22,12 @@ import org.stranger2015.opencv.fic.core.geom.IntersectionMatrix;
  * The class supports specifying a custom {@link BoundaryNodeRule}
  * to be used during the relate computation.
  * <p>
- * If named spatial predicates are used on the result {@link IntersectionMatrix}
+ * If named spatial predicates are used on the result {@link IntersectionMatrix1}
  * of the RelateOp, the result may or not be affected by the
  * choice of <tt>IBoundaryNodeRule</tt>, depending on the exact nature of the pattern.
- * For instance, {@link IntersectionMatrix#isIntersects()} is insensitive
+ * For instance, {@link IntersectionMatrix1#isIntersects()} is insensitive
  * to the choice of <tt>IBoundaryNodeRule</tt>,
- * whereas {@link IntersectionMatrix#isTouches(int, int)} is affected by the rule chosen.
+ * whereas {@link IntersectionMatrix1#isTouches(int, int)} is affected by the rule chosen.
  * <p>
  * <b>Note:</b> custom Boundary Node Rules do not (currently)
  * affect the results of other {@link Geometry} methods (such
@@ -42,14 +41,14 @@ public class RelateOp
         extends GeometryGraphOperation
 {
     /**
-     * Computes the {@link IntersectionMatrix} for the spatial relationship
+     * Computes the {@link IntersectionMatrix1} for the spatial relationship
      * between two {@link Geometry}s, using the default (OGC SFS) Boundary Node Rule
      *
      * @param a a Geometry to test
      * @param b a Geometry to test
-     * @return the IntersectionMatrix for the spatial relationship between the geometries
+     * @return the IntersectionMatrix1 for the spatial relationship between the geometries
      */
-    public static <T extends Geometry<T>>IntersectionMatrix  relate(Geometry<T> a, Geometry<T> b)
+    public static <T extends Geometry<T>> IntersectionMatrix1 relate( Geometry<T> a, Geometry<T> b)
     {
         RelateOp relOp = new RelateOp(a, b);
 
@@ -57,13 +56,13 @@ public class RelateOp
     }
 
     /**
-     * Computes the {@link IntersectionMatrix} for the spatial relationship
+     * Computes the {@link IntersectionMatrix1} for the spatial relationship
      * between two {@link Geometry}s using a specified Boundary Node Rule.
      *
      * @param a a Geometry to test
      * @param b a Geometry to test
      * @param boundaryNodeRule the Boundary Node Rule to use
-     * @return the IntersectionMatrix for the spatial relationship between the input geometries
+     * @return the IntersectionMatrix1 for the spatial relationship between the input geometries
      */
     public static  <T extends Geometry<T>>Geometry<T>IntersectionMatrix relate(Geometry<T> a, Geometry<T> b, BoundaryNodeRule boundaryNodeRule)
         RelateOp relOp = new RelateOp(a, b, boundaryNodeRule);
@@ -99,12 +98,13 @@ public class RelateOp
     }
 
     /**
-     * Gets the IntersectionMatrix for the spatial relationship
+     * Gets the IntersectionMatrix1 for the spatial relationship
      * between the input geometries.
      *
-     * @return the IntersectionMatrix for the spatial relationship between the input geometries
+     * @return the IntersectionMatrix1 for the spatial relationship between the input geometries
      */
-    public IntersectionMatrix getIntersectionMatrix()
+    public
+    IntersectionMatrix1 getIntersectionMatrix()
     {
         return relate.computeIM();
     }

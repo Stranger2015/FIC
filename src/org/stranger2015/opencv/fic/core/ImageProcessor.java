@@ -166,8 +166,7 @@ class ImageProcessor
     /**
      * @param outputImage
      * @return
-     */
-//    @Override
+     */    @Override
     public
     IImage postprocess ( IImage outputImage ) {
         return outputImage;
@@ -290,7 +289,6 @@ class ImageProcessor
      * @return
      */
     @SuppressWarnings("unchecked")
-    @Override
     public
     IImage execute ( String filename ) throws Exception {
         super.execute(filename);

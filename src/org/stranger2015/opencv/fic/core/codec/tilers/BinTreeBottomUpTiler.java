@@ -41,8 +41,8 @@ class BinTreeBottomUpTiler<N extends TreeNode <N>, A extends IAddress , G extend
     ITiler <N> instance () {
         return new BinTreeBottomUpTiler <>(
                 getImage(),
-                getRangeSize(),
-                getDomainSize(),
+                getCurrentRangeSize(),
+                this.getCurrentDomainSize(),
                 getEncoder(),
                 getBuilder()
         );

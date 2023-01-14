@@ -37,7 +37,6 @@ class QuadTreeTiler extends BinTreeTiler {
     public abstract
     ITiler instance ();
 
-
     /**
      * @param imageBlock
      */

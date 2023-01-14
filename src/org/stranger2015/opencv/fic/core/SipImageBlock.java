@@ -6,7 +6,7 @@ import org.opencv.core.Mat;
  *
  */
 public
-class SipImageBlock<A extends IAddress > extends SaImageBlock  {
+class SipImageBlock extends SaImageBlock  {
 
     public static final int blockSideSize = 3;//in encoder
 

@@ -1,6 +1,8 @@
 package org.stranger2015.opencv.fic.core;
 
 //import org.jetbrains.annotations.NotNull;
+
+import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.Rect;
@@ -16,9 +18,9 @@ import java.util.List;
 /**
  *
  */
-public class CompressedImage
-        extends Image
-        implements ICompressedImage, IIntSize {
+public
+class CompressedImage extends Image
+        implements ICompressedImage {
 
     private List <ImageTransform> transforms = new ArrayList <>(16);//fixme;
     private int originalImageWidth;
@@ -31,7 +33,7 @@ public class CompressedImage
      */
     public
     CompressedImage ( IImage image, int rows, int cols, int type ) throws ValueError {
-        super((IImageBlock) image, rows, cols, type);
+        super((MatOfInt) image.getMat(), rows, cols, type, colorType);
     }
 
     /**
@@ -39,10 +41,15 @@ public class CompressedImage
      */
     public
     CompressedImage ( IImage inputImage ) {
-        super((MatOfInt) inputImage.getMat(), inputImage.getSize());
+        super((MatOfInt) inputImage.getMat(), inputImage.getSize(), colorType);
 
         inputImage.getOriginalImageWidth();
-                inputImage.getOriginalImageHeight();
+        inputImage.getOriginalImageHeight();
+    }
+
+    public
+    CompressedImage ( Mat dest ) {
+        super((MatOfInt) dest, colorType);
     }
 
     /**
@@ -63,8 +70,8 @@ public class CompressedImage
      */
     @Override
     public
-    IImage merge ( List <IImage> layers, IImage inputImage ) {
-        return null;
+    Mat merge ( List <IImage> layers, IImage inputImage ) {
+        return inputImage;
     }
 
     /**
@@ -126,7 +133,7 @@ public class CompressedImage
     IImageBlock getSubImage ( IAddress address, int width, int height ) throws ValueError {
         Mat mat = getMat().submat((Rect) address.getCartesianCoordinates(address.radix()));
 
-        return new ImageBlock (mat, new Rectangle(address, width, height));
+        return new ImageBlock(mat, new Rectangle(address, width, height));
     }
 
     /**
@@ -140,13 +147,13 @@ public class CompressedImage
 
     @Override
     public
-    void setMeanPixelValue ( double[] meanPixelValue ) {
+    void setMeanPixelValue ( double meanPixelValue ) {
 
     }
 
     @Override
     public
-    double[] pixelValues ( int x, int y ) {
+    double pixelValues ( int x, int y ) {
         return new double[0];
     }
 
@@ -186,7 +193,7 @@ public class CompressedImage
      */
     @Override
     public
-    int compareTo ( /*@NotNull*/ IIntSize o ) {
+    int compareTo ( @NotNull IIntSize o ) {
         return -1;
     }
 
@@ -196,8 +203,12 @@ public class CompressedImage
     @Override
     public
     Size toSize () {
-        return IIntSize.super.toSize();
+        return null;//todo
     }
+
+    /**
+     * @return
+     */
 
     public
     void getRGB ( int i, int i1, int width, int height, double[] img1pixels, int i2, int i3 ) {
@@ -208,7 +219,8 @@ public class CompressedImage
      * @param address
      * @param pixels
      */
-    @Override    public
+    @Override
+    public
     void putPixel ( IAddress address, double[] pixels ) {
         getMat().put(address.getX(), address.getY(), pixels[0]);
     }
@@ -248,15 +260,15 @@ public class CompressedImage
 //        return 0;
 //    }
 
-//    @Override
+    //    @Override
     protected
-    int compareToSameClass ( Geometry<?> o ) {
+    int compareToSameClass ( Geometry <?> o ) {
         return 0;
     }
 
-//    @Override
+    //    @Override
     protected
-    int compareToSameClass ( Geometry<?> o, CoordinateSequenceComparator comp ) {
+    int compareToSameClass ( Geometry <?> o, CoordinateSequenceComparator comp ) {
         return 0;
     }
 

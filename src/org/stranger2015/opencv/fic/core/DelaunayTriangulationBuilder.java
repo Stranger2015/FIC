@@ -209,7 +209,7 @@ class DelaunayTriangulationBuilder<N extends TreeNode <N>> {
         return clazz;
     }
 //    public
-//    Class <? extends TriangularTiler <N>> getClazz () {
+//    ImageBlockClassifier <? extends TriangularTiler <N>> getClazz () {
 //        return clazz;
 //    }
 }

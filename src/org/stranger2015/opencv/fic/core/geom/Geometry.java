@@ -199,22 +199,39 @@ class Geometry<T extends Geometry <T>> implements Cloneable, Comparable <T>, Ser
      * Creates a new <code>Geometry</code> via the specified GeometryFactory.
      */
     public
-    Geometry ( IImage <?> image, IAddress <?> address, IIntSize blockSize, GeometryFactory factory ) {
+    Geometry ( IImage image, IAddress address, IIntSize blockSize, GeometryFactory factory ) {
         super();
         this.factory = factory;
         this.SRID = factory.getSRID();
     }
 
+    /**
+     * @param dest
+     * @param size
+     */
     public
     Geometry ( Mat dest, IIntSize size ) {
         factory = new GeometryFactory();
     }
 
+    /**
+     * @param roi
+     * @param i
+     * @param j
+     * @param blockSize
+     * @param blockSize1
+     * @param factory
+     */
+    @Contract(pure = true)
     public
     Geometry ( Mat roi, int i, int j, int[] blockSize, int[] blockSize1, GeometryFactory factory ) {
         this.factory = factory;
     }
 
+    /**
+     * @param factory
+     */
+    @Contract(pure = true)
     protected
     Geometry ( GeometryFactory factory ) {
         this.factory = factory;
@@ -1052,7 +1069,7 @@ class Geometry<T extends Geometry <T>> implements Cloneable, Comparable <T>, Ser
 
     /**
      * Tests whether the elements in the DE-9IM
-     * {@link IntersectionMatrix} for the two <code>Geometry</code>s match the elements in <code>intersectionPattern</code>.
+     * {@link IntersectionMatrix1} for the two <code>Geometry</code>s match the elements in <code>intersectionPattern</code>.
      * The pattern is a 9-character string, with symbols drawn from the following set:
      * <UL>
      * <LI> 0 (dimension 0)
@@ -1071,7 +1088,7 @@ class Geometry<T extends Geometry <T>> implements Cloneable, Comparable <T>, Ser
      *                            intersection matrix for the two <code>Geometry</code>s
      * @return <code>true</code> if the DE-9IM intersection
      * matrix for the two <code>Geometry</code>s match <code>intersectionPattern</code>
-     * @see IntersectionMatrix
+     * @see IntersectionMatrix1
      */
     public
     boolean relate ( Geometry <T> g, String intersectionPattern ) {
@@ -1079,14 +1096,14 @@ class Geometry<T extends Geometry <T>> implements Cloneable, Comparable <T>, Ser
     }
 
     /**
-     * Returns the DE-9IM {@link IntersectionMatrix} for the two <code>Geometry</code>s.
+     * Returns the DE-9IM {@link IntersectionMatrix1} for the two <code>Geometry</code>s.
      *
      * @param g the <code>Geometry</code> with which to compare this <code>Geometry</code>
-     * @return an {@link IntersectionMatrix} describing the intersections of the interiors,
+     * @return an {@link IntersectionMatrix1} describing the intersections of the interiors,
      * boundaries and exteriors of the two <code>Geometry</code>s
      */
     public
-    IntersectionMatrix relate ( Geometry <T> g ) {
+    IntersectionMatrix1 relate ( Geometry <T> g ) {
         checkNotGeometryCollection(this);
         checkNotGeometryCollection(g);
 

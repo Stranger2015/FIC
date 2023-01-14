@@ -21,9 +21,7 @@ public class Position {
      * Returns LEFT if the position is RIGHT, RIGHT if the position is LEFT, or the position
      * otherwise.
      */
-    public static
-    int opposite( int position)
-    {
+    public static int opposite(int position) {
         if (position == LEFT) {
             return RIGHT;
         }
@@ -34,3 +32,4 @@ public class Position {
         return position;
     }
 }
+

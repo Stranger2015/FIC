@@ -44,8 +44,8 @@ class BinTreeTopDownTiler<N extends TreeNode <N>, A extends IAddress , G extends
     ITiler <N> instance () {
         return new BinTreeTopDownTiler <>(
                 getImage(),
-                getRangeSize(),
-                getDomainSize(),
+                getCurrentRangeSize(),
+                this.getCurrentDomainSize(),
                 getEncoder(),
                 getBuilder());
     }

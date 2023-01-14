@@ -1,10 +1,10 @@
 package org.stranger2015.opencv.fic.core.search.ga;
 
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfInt;
 import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.Image;
 import org.stranger2015.opencv.fic.core.ValueError;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 import static org.stranger2015.opencv.utils.BitBuffer.allocate;
 
@@ -32,7 +32,7 @@ class Individual
      */
     public
     Individual ( int chromosomeLength ) throws ValueError {
-        super();
+        super((MatOfInt) mat, colorType);
         chromosome = (C) new BinChromosome (allocate(chromosomeLength));
     }
 

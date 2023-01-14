@@ -1,10 +1,10 @@
 package org.stranger2015.opencv.fic.core;
 
-import org.checkerframework.checker.units.qual.A;
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.Point;
+import org.stranger2015.opencv.fic.core.codec.classifiers.IClassifiable;
 import org.stranger2015.opencv.fic.core.codec.tilers.ImageBlocks;
 import org.stranger2015.opencv.fic.core.geom.*;
 import org.stranger2015.opencv.fic.core.geom.impl.CoordinateArraySequence;
@@ -16,11 +16,9 @@ import java.util.List;
  *
  */
 public
-class ImageBlock
-        extends Image 
-        implements IImageBlock  {
+class ImageBlock extends Image implements IImageBlock {
 
-    private final List <IImageBlock> originalImageWidth = new ImageBlocks<>();
+    private final List <IImageBlock> blocks = new ImageBlocks <>();
     private final IImage actualImage = this;
     /**
      *
@@ -35,13 +33,12 @@ class ImageBlock
      *
      */
     public IIntSize blockSize;
-    //    private int x;
-    //  private int y;
-    //private int originalImageWidth;
-    //private int originalImageHeight;
+    private int originalImageHeight;
+    private int originalImageWidth;
     private Geometry <?> geometry;
     private IImage boundary;
-    private int originalImageHeight;
+    transient protected IClassifiable classifiable;
+    transient private int usageCount;
 
     /**
      * @param kind
@@ -53,12 +50,10 @@ class ImageBlock
      * @throws ValueError
      */
     public
-    ImageBlock ( IImage image, int x, int y, int sideSize, Geometry <?> geometry ) throws ValueError {
-        super((IImageBlock) image, x, y, sideSize);
-//        super(image.getMat(), x, y);
+    ImageBlock ( IImage image, int x, int y, int sideSize, Point[] geometry ) throws ValueError {
+        super((MatOfInt) image, x, y, sideSize, colorType);
 
         blockSize = new IntSize(sideSize, sideSize);
-        this.geometry = geometry;
     }
 
     /**
@@ -81,7 +76,7 @@ class ImageBlock
      */
     public
     ImageBlock ( MatOfInt submat, IIntSize blockSize, Geometry <?> geometry ) {
-        super(submat, blockSize);
+        super(submat, blockSize, colorType);
         this.geometry = geometry;
     }
 
@@ -93,8 +88,13 @@ class ImageBlock
      * @param geometry
      */
     public
-    ImageBlock ( MatOfInt image, int rows, int cols, double[] pixels, Geometry <?> geometry ) throws ValueError {
-        super(image, rows, cols, pixels);
+    ImageBlock ( MatOfInt image,
+                 int rows,
+                 int cols,
+                 double[] pixels,
+                 Geometry <?> geometry ) throws ValueError {
+
+        super(image, rows, cols, pixels, colorType);
         this.geometry = geometry;
     }
 
@@ -104,40 +104,13 @@ class ImageBlock
      */
     public
     ImageBlock ( Mat submat, Geometry <?> geometry ) {
-        super(null, (IAddress) submat, (IIntSize) submat.size());
+        super(null, (IAddress) submat, (IIntSize) submat.size(), colorType);
         this.geometry = geometry;
     }
-
-    /**
-     * @param image
-     * @param blockSize
-     * @param address
-     * @param geometry
-     */
-//    public
-//    ImageBlock ( IImage image, IIntSize blockSize, IAddress  address ) {
-//        this(image, blockSize, address);
-//    }
-//
-//    /**
-//     * @param image
-//     * @param p
-//     * @param address
-//     * @param cols
-//     * @param pixels
-//     */
-//    public
-//    ImageBlock ( MatOfInt image, Point[] p, IAddress  address, int cols, int[] pixels ) {
-//        super(image, p, address, cols, pixels);
-//    }
-//    public
-//    ImageBlock ( IImage image, IIntSize blockSize, IAddress  address ) {
-//        super(image, address, blockSize);
-//    }
 
     public
     ImageBlock ( IImage inputImage, int i, IIntSize size, int i1, int i2, Geometry <?> geometry ) throws ValueError {
-        super((MatOfInt) inputImage, IAddress.valueOf(i1, inputImage.getWidth(), i2), size);
+        super((MatOfInt) inputImage, IAddress.valueOf(i1, inputImage.getWidth(), i2), size, colorType);
         this.geometry = geometry;
     }
 
@@ -148,32 +121,10 @@ class ImageBlock
      * @param geometry
      */
     public
-    ImageBlock ( IImage image, IAddress  address, IIntSize blockSize, Geometry <?> geometry ) {
-        super(image, address.getX(), address.getY(), blockSize);
+    ImageBlock ( IImage image, IAddress address, IIntSize blockSize, Geometry <?> geometry ) {
+        super(image, address.getX(), address.getY(), blockSize, colorType);
         this.geometry = geometry;
     }
-//
-//    public
-//    ImageBlock ( IImage image, int i, int i1, int i2, Geometry <?> geometry ) throws ValueError {
-//        super(image, i, i1, i2);
-//        this.geometry = geometry;
-//    }
-//
-//    /**
-//     * @param rangeBlock
-//     * @param i
-//     * @param j
-//     * @param blockWidth
-//     * @param blockHeight
-//     * @param geometry
-//     * @throws ValueError
-//     */
-//    public
-//    ImageBlock ( IImageBlock  rangeBlock, int i, int j, int blockWidth, int blockHeight, Geometry <?> geometry )
-//            throws ValueError {
-//        super(rangeBlock, i, j, blockWidth);
-//        this.geometry = geometry;
-//    }
 
     /**
      * @param mat
@@ -181,11 +132,13 @@ class ImageBlock
      */
     public
     ImageBlock ( Mat mat, Rectangle rectangle ) {
-        super((MatOfInt) mat, rectangle);
-        geometry = new Polygon <>(new LinearRing(
-                new CoordinateArraySequence(getCoordinates()),
-                new LinearRing[]{},
-                new GeometryFactory()));
+        super((MatOfInt) mat, rectangle, colorType);
+        geometry = new Polygon <>(
+                new LinearRing(
+                        new CoordinateArraySequence(getCoordinates()),
+                        new LinearRing[]{},
+                        new GeometryFactory())
+        );
     }
 
     /**
@@ -198,7 +151,7 @@ class ImageBlock
      */
     public
     ImageBlock ( IImage image, int x, int y, int width, int height ) throws ValueError {
-        super((IImageBlock) image, x, y, width);
+        super((MatOfInt) image.getMat(), x, y, width, colorType);
     }
 
     /**
@@ -207,29 +160,44 @@ class ImageBlock
      */
     public
     ImageBlock ( IImage key ) throws ValueError {
-
-        super(key,0,0, key.getMat().width(), key.getMat().height());
+        super(key, 0, 0, key.getMat().width(), key.getMat().height(), colorType);
     }
 
+    /**
+     * @param mat
+     * @param address
+     * @param size
+     */
     public
     ImageBlock ( MatOfInt mat, IAddress address, IIntSize size ) {
-        super(mat, address, size);
+        super(mat, address, size, colorType);
     }
-//
-//    public
-//    ImageBlock ( int x, int y, int width, int height ) {
-//
-//    }
-//
-//    public
-//    ImageBlock ( IImageBlock imageBlock, int rowStart, int rowEnd, int colStart, int colEnd, Geometry<?> geometry ) {
-//
-//
-//    }
+
+    /**
+     * @param imageBlock
+     * @param rowStart
+     * @param rowEnd
+     * @param colStart
+     * @param colEnd
+     * @param geometry
+     */
+    public
+    ImageBlock ( IImageBlock imageBlock,
+                 int rowStart,
+                 int rowEnd,
+                 int colStart,
+                 int colEnd,
+                 Geometry <?> geometry ) {
+
+        super(imageBlock, rowStart, rowEnd, colStart, colEnd, colorType);
+
+        this.geometry = geometry;
+    }
 
     public
-    ImageBlock ( IImageBlock imageBlock, int rowStart, int rowEnd, int colStart, int colEnd, Geometry<?> geometry ) {
-        super(imageBlock, rowStart, rowEnd, colStart);
+    ImageBlock ( Mat dest ) {
+
+        super((MatOfInt) mat, colorType);
     }
 
     /**
@@ -317,6 +285,9 @@ class ImageBlock
         return new Point[0];
     }
 
+    /**
+     * @return
+     */
     //    @Override
     public
     double perimeter () {
@@ -332,6 +303,19 @@ class ImageBlock
         return new Point[0];
     }
 
+    @Override
+    public
+    String toString () {
+        return String.format(
+                "ImageBlock{actualImage=%s, blockSize=%s, geometry=%s}",
+                actualImage,
+                blockSize,
+                geometry);
+    }
+
+    /**
+     * @return
+     */
     @Override
     public
     Geometry <?> getGeometry () {
@@ -367,7 +351,7 @@ class ImageBlock
      */
     @Override
     public
-    IImageBlock  subImage ( int rowStart, int rowEnd, int colStart, int colEnd ) {
+    Mat subImage ( int rowStart, int rowEnd, int colStart, int colEnd ) {
         return super.subImage(rowStart, rowEnd, colStart, colEnd);
     }
 
@@ -380,15 +364,25 @@ class ImageBlock
         return new IntSize(0, 0, getOriginalImageWidth(), getOriginalImageHeight());
     }
 
+    /**
+     * @param address
+     * @param b       The band to set.
+     * @param s       The input sample as an int.
+     */
     @Override
     public
-    void setSample ( IAddress  address, int b, int s ) {
+    void setSample ( IAddress address, int b, int s ) {
 
     }
 
+    /**
+     * @param address
+     * @param b       The band to return.
+     * @return
+     */
     @Override
     public
-    int getSample ( IAddress  address, int b ) {
+    int getSample ( IAddress address, int b ) {
         return 0;
     }
 
@@ -405,20 +399,21 @@ class ImageBlock
      * @param i
      * @param i1
      * @param sideSize
+     * @param height
      * @param img1pixels
      * @param i2
      * @param i3
      */
     @Override
     public
-    void getRGB ( int i, int i1, int sideSize, double[] img1pixels, int i2, int i3 ) {
+    void getRGB ( int i, int i1, int sideSize, int height, double[] img1pixels, int i2, int i3 ) {
 
     }
 
     @Override
     public
     List <ImageTransform> getTransforms () throws ValueError {
-        return null;
+        return transforms;
     }
 
     /**
@@ -435,30 +430,46 @@ class ImageBlock
      */
     @Override
     public
-    List <IImage > getComponents () {
+    List <IImage> getComponents () {
         return null;
     }
 
+    /**
+     * @param pixelData
+     */
     @Override
     public
     void putPixels ( double[] pixelData ) {
         getMat().put(0, 0, pixelData);
     }
 
+    /**
+     * @return
+     */
     @Override
     public
-    double[] getMeanPixelValue () {
+    double getMeanPixelValue () {
         return super.getMeanPixelValue();
     }
 
+    /**
+     * @param address
+     * @return
+     */
     @Override
     public
-    double[] getPixel ( IAddress  address ) {
+    double[] getPixel ( IAddress address ) {
         return get(address.getX(), address.getY());
     }
 
+    /**
+     * @param address
+     * @param data
+     * @return
+     */
+    @Override
     public
-    double[] put ( IAddress  address, double[] data ) {
+    double[] put ( IAddress address, double[] data ) {
         put(address.getX(), address.getY(), data);
 
         return data;
@@ -475,7 +486,7 @@ class ImageBlock
 
     @Override
     public
-    double[] put ( int x, int y, double[] data ) {
+    int put ( int x, int y, double[] data ) {
         getMat().put(x, y, data);
 
         return data;
@@ -486,10 +497,10 @@ class ImageBlock
      * @param j
      * @return
      */
-//    @Override
+    @Override
     public
     double[] get ( int x, int y ) {
-        return super.getPixel(x, y);
+        return getPixel(x, y);
     }
 
     /**
@@ -498,7 +509,7 @@ class ImageBlock
      */
     @Override
     public
-    IImageBlock  getSubImage ( Rectangle rectangle ) throws ValueError {
+    IImageBlock getSubImage ( Rectangle rectangle ) throws ValueError {
         return getSubImage(
                 rectangle.getX(),
                 rectangle.getY(),
@@ -511,10 +522,13 @@ class ImageBlock
      */
     @Override
     public
-    IImageBlock  getSubImage () {
-        return new ImageBlock (getActualImage(), blockSize, geometry);
+    IImageBlock getSubImage () {
+        return new ImageBlock(getActualImage(), blockSize, geometry);
     }
 
+    /**
+     * @return
+     */
     @Override
     public
     int getOriginalImageHeight () {
@@ -524,9 +538,9 @@ class ImageBlock
     /**
      * @param meanPixelValue
      */
-//    @Override
+    @Override
     public
-    void setMeanPixelValue ( double[] meanPixelValue ) {
+    void setMeanPixelValue ( double meanPixelValue ) {
         this.meanPixelValue = meanPixelValue;
     }
 
@@ -580,8 +594,52 @@ class ImageBlock
      */
     @Override
     public
-    A merge ( List <IImageBlock > iImageBlocks, List <IImageBlock > blocksToMerge ) {
+    IImageBlock merge ( List <IImageBlock> iImageBlocks, List <IImageBlock> blocksToMerge ) {
         return null;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    IClassifiable getClassifiable () {
+        return classifiable;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    boolean isOverlapping () {
+        return false;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    int getUsageCount () {
+        return usageCount;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    int incUsageCount () {
+        return ++usageCount;
+    }
+
+    /**
+     * @param classifiable
+     */
+    public
+    void setClassifiable ( IClassifiable classifiable ) {
+        this.classifiable = classifiable;
     }
 
     /**
@@ -631,7 +689,125 @@ class ImageBlock
 
     @Override
     public
-    void setRegions ( List <IImageBlock > blocks ) {
+    void setRegions ( List <IImageBlock> blocks ) {
 
     }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    int getChannelsAmount () {
+        return getMat().channels();
+    }
+
+    /**
+     * @param x
+     * @param y
+     * @return
+     */
+    @Override
+    public
+    double pixelValues ( int x, int y ) {
+        return new double[0];
+    }
+
+    /**
+     * @param x
+     * @param y
+     * @param c
+     * @return
+     */
+    @Override
+    public
+    double getPixelValuesLayer ( int x, int y, int c ) {
+        return 0;
+    }
+
+    /**
+     * @param c
+     * @param v
+     */
+    @Override
+    public
+    void setMeanPixelValuesLayer ( int c, double v ) {
+
+    }
+
+    /**
+     * @param originalImageWidth
+     */
+    @Override
+    public
+    void setOriginalImageWidth ( int originalImageWidth ) {
+
+    }
+
+    /**
+     * @param w
+     * @param h
+     * @param originalImageWidth
+     * @param originalImageHeight
+     * @return
+     */
+    @Override
+    public
+    IIntSize restoreSize ( int w, int h, int originalImageWidth, int originalImageHeight ) {
+//        setOriginalImageWidth(originalImageWidth);
+//        setOriginalImageHeight(originalImageHeight);
+
+        return new IntSize(w, h, originalImageWidth, originalImageHeight);
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public
+    int getOriginalImageWidth () {
+        return originalImageWidth;
+    }
+
+    public
+    void setOriginalImageHeight ( int originalImageHeight ) {
+        this.originalImageHeight = originalImageHeight;
+    }
+
+    @Override
+    public
+    boolean equals ( Object o ) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ImageBlock)) {
+            return false;
+        }
+
+        ImageBlock that = (ImageBlock) o;
+
+        if (!getActualImage().equals(that.getActualImage())) {
+            return false;
+        }
+        if (!blockSize.equals(that.blockSize)) {
+            return false;
+        }
+        if (!getGeometry().equals(that.getGeometry())) {
+            return false;
+        }
+        throw new IllegalStateException();
+    }
+
+    @Override
+    public
+    int hashCode () {
+        int result = getActualImage().hashCode();
+        result = 31 * result + blockSize.hashCode();
+        result = 31 * result + getGeometry().hashCode();
+        result = 31 * result + getClassifiable().hashCode();
+        result = 31 * result + getUsageCount();
+
+        return result;
+    }
+
 }

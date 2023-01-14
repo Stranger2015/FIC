@@ -1,9 +1,7 @@
 package org.stranger2015.opencv.fic.core.codec.tilers;
 
 import org.stranger2015.opencv.fic.core.*;
-import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
 import org.stranger2015.opencv.fic.core.codec.IEncoder;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * @param <N>
@@ -40,8 +38,8 @@ class AlterBinTreeTopDownTiler
     ITiler instance () {
         return new AlterBinTreeTopDownTiler(
                 getImage(),
-                getRangeSize(),
-                getDomainSize(),
+                getCurrentRangeSize(),
+                this.getCurrentDomainSize(),
                 getEncoder(),
                 getBuilder()
         );
@@ -82,7 +80,7 @@ class AlterBinTreeTopDownTiler
      * @throws ValueError
      */
     private
-    void segmentSquareOrRectangle ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
+    void segmentSquareOrRectangle ( TreeNodeBase <?> node, IImageBlock  imageBlock ) throws ValueError {
         if (imageBlock.isSquare()) {
             segmentSquare(node, imageBlock);
         }
@@ -97,7 +95,7 @@ class AlterBinTreeTopDownTiler
      */
     @Override
     public
-    void segmentPolygon ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
+    void segmentPolygon ( TreeNodeBase <?> node, IImageBlock  imageBlock ) throws ValueError {
 
     }
 
@@ -107,7 +105,7 @@ class AlterBinTreeTopDownTiler
      */
     @Override
     public
-    void segmentRectangle ( TreeNodeBase <N> node, IImageBlock  imageBlock ) throws ValueError {
+    void segmentRectangle ( TreeNodeBase <?> node, IImageBlock  imageBlock ) throws ValueError {
         super.segmentRectangle(node, imageBlock);
     }
 

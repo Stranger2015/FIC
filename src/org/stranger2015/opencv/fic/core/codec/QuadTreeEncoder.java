@@ -1,13 +1,11 @@
 package org.stranger2015.opencv.fic.core.codec;
 
 import org.stranger2015.opencv.fic.core.*;
-import org.stranger2015.opencv.fic.core.io.FractalReader;
 import org.stranger2015.opencv.fic.core.search.ISearchProcessor;
 import org.stranger2015.opencv.fic.transform.AffineTransform;
 import org.stranger2015.opencv.fic.transform.ImageTransform;
 import org.stranger2015.opencv.fic.transform.ScaleTransform;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -16,17 +14,18 @@ import java.util.Set;
  * @param
  */
 public
-class QuadTreeEncoder
-        extends BinTreeEncoder {
+class QuadTreeEncoder extends BinTreeEncoder {
 
     /**
      * @param image
+     * @return
      * @throws ValueError
      */
     @Override
     public
-    void doEncode ( IImage image ) throws Exception {
+    IImage doEncode ( IImage image ) throws Exception {
         super.doEncode(image);
+        return image;
     }
 
     /**
@@ -73,9 +72,20 @@ class QuadTreeEncoder
      * @param transform
      * @return
      */
+   @Override
+    public
+    IImageBlock randomTransform ( IImageBlock image, ImageTransform transform ) {
+        return image;
+    }
+
+    /**
+     * @param image
+     * @param transform
+     * @return
+     */
     @Override
     public
-    IImage randomTransform ( IImage image, ImageTransform transform ) {
+    IImageBlock applyTransform ( IImageBlock image, ImageTransform transform ) {
         return image;//todo
     }
 
@@ -86,18 +96,7 @@ class QuadTreeEncoder
      */
     @Override
     public
-    IImage applyTransform ( IImage image, ImageTransform transform ) {
-        return image;//todo
-    }
-
-    /**
-     * @param image
-     * @param transform
-     * @return
-     */
-    @Override
-    public
-    IImage applyAffineTransform ( IImage image, AffineTransform  transform ) {
+    IImageBlock applyAffineTransform ( IImageBlock image, AffineTransform  transform ) {
         return image;//todo
     }
 
@@ -110,10 +109,10 @@ class QuadTreeEncoder
      */
     @Override
     public
-    List <IImageBlock > generateAllTransformedBlocks ( IImage image,
-                                                          int sourceSize,
-                                                          int destinationSize,
-                                                          int step )
+    List <IImageBlock > generateAllTransformedBlocks ( IImageBlock image,
+                                                       int sourceSize,
+                                                       int destinationSize,
+                                                       int step )
             throws ValueError {
 
         return List.of(image.getSubImage());
@@ -147,38 +146,5 @@ class QuadTreeEncoder
                 rangeSize,
                 domainSize
         );
-    }
-
-    /**
-     * @param image
-     * @param axis
-     * @return
-     */
-    @Override
-    public
-    IImage flipAxis ( IImage image, int axis ) {
-        return image;
-    }
-
-//    /**
-//     * @return
-//     */
-////    @Override
-//    public
-//    ISearchProcessor createSearchProcessor () {
-//        return null;
-//    }
-
-    /**
-     * @param filename
-     * @return
-     */
-    @Override
-    public
-    FCImageModel loadModel ( String filename ) throws ValueError, IOException {
-        FCImageModel m= new FCImageModel(null);
-        new FractalReader(filename);
-
-        return m;
     }
 }

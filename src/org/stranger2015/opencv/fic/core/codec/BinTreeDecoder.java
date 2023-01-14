@@ -2,9 +2,6 @@ package org.stranger2015.opencv.fic.core.codec;
 
 import org.stranger2015.opencv.fic.core.FCImageModel;
 import org.stranger2015.opencv.fic.core.IImage;
-import org.stranger2015.opencv.fic.core.ValueError;
-
-import java.io.IOException;
 
 /**
  * @param <N>
@@ -23,8 +20,8 @@ class BinTreeDecoder extends Decoder {
 
     @Override
     public
-    IImage decode ( String fileName ) throws ValueError, IOException {
-       return super.decode(fileName);
+    IImage decode ( String fileName ) throws Exception {
+        return super.decode(fileName);
     }
 
     /**
@@ -33,8 +30,8 @@ class BinTreeDecoder extends Decoder {
      */
     @Override
     public
-    void saveModel ( String filename, FCImageModel fractalModel ) {
-
+    void saveModel ( String filename, FCImageModel fractalModel ) throws Exception {
+        super.saveModel(filename, fractalModel);
     }
 
     @Override

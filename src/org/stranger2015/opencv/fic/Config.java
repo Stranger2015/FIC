@@ -1,18 +1,11 @@
 package org.stranger2015.opencv.fic;
 
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.ParameterException;
-import org.stranger2015.opencv.fic.core.EError;
 import org.stranger2015.opencv.fic.core.EPartitionScheme;
-import org.stranger2015.opencv.fic.core.IAddress;
 import org.stranger2015.opencv.fic.core.TreeNodeBase.TreeNode;
+import org.stranger2015.opencv.fic.core.cli.Options;
 import org.stranger2015.opencv.fic.core.codec.EtvColorSpace;
-import org.stranger2015.opencv.fic.core.codec.IPartitionProcessor;
 import org.stranger2015.opencv.fic.core.search.EMetrics;
-import org.stranger2015.opencv.fic.transform.ScaleTransform;
 import org.stranger2015.opencv.fic.utils.Commands;
-import org.stranger2015.opencv.fic.utils.Options;
-import org.stranger2015.opencv.utils.BitBuffer;
 
 /**
  * Holds the configuration of the system,
@@ -20,14 +13,15 @@ import org.stranger2015.opencv.utils.BitBuffer;
  */
 @SuppressWarnings(value = {"rawtypes"})
 public
-class Config<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer> {
+class Config<N extends TreeNode <N>> {
 
     private Commands command;
 
-    private final Options <N> options;
-    private final JCommander parser;
+//    private final Options <N> options;
+//    private final JCommander parser;
 
     private EtvColorSpace colorSpace;
+    private Options options;
 
 //    private IEncoder <N> encoder;
 //    private IDecoder <N> decoder;
@@ -39,72 +33,73 @@ class Config<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer> {
      * @param args the args to parse
      */
     public
-    Config ( String[] args ) throws ClassNotFoundException, NoSuchMethodException {
+    Config ( String[] args ) throws ReflectiveOperationException {
 //        parser = new JCommander(this.options = new Options<>());
 //
 //        parser.setProgramName(FicApplication.class.getCanonicalName());
 //        parser.addCommand(Commands.COMPRESS.id(), Commands.COMPRESS);
 //        parser.addCommand(Commands.DECOMPRESS.id(), Commands.DECOMPRESS);
 
-        try {
-            parser.parse(args);
-        } catch (ParameterException pe) {
-            selectUsage(parser.getParsedCommand());
-            System.err.println(pe.getMessage());
-            System.exit(options.help ? 0 : 1);
-        }
+//        try {
+//            parser.parse(args);
+//        } catch (ParameterException pe) {
+//            selectUsage(parser.getParsedCommand());
+//            System.err.println(pe.getMessage());
+//            System.exit(options.help ? 0 : 1);
+//        }
 
-        String cmd = parser.getParsedCommand();
+//        String cmd = parser.getParsedCommand();
 
         /*
          * even if there was not a parsing error
          * help could still have been requested
          */
-        if (options.help) {
-            selectUsage(cmd);
-            System.exit(0);
+//        if (options.help) {
+//            selectUsage(cmd);
+//            System.exit(0);
         }
 
-        if (cmd != null) {
-            command = Commands.valueOf(cmd.toUpperCase());
-        }
-        else {
-            parser.usage();
-            System.err.println(EError.REQUIRED_ARG_NOT_FOUND.description("<command>"));
-            System.exit(1);
-        }
-    }
+//        if (cmd != null) {
+//            command = Commands.valueOf(cmd.toUpperCase());
+//        }
+//        else {
+//            parser.usage();
+//            System.err.println(EError.REQUIRED_ARG_NOT_FOUND.description("<command>"));
+//            System.exit(1);
+//        }
+//    }
 
     /**
      * if a command was parsed, show
      * the usage for that command
      */
-    private
-    void selectUsage ( String cmd ) {
-        if (cmd != null) {
-            parser.usage(cmd);
-        }
-        else {
-            parser.usage();
-        }
-    }
-
-    /**
-     * @return
-     */
-    public
-    boolean help () {
-        return options.help;
-    }
-
-    /**
-     * @return
-     */
-    public
-    boolean debug () {
-        return options.debug;
-    }
-
+//    private
+//    void selectUsage ( String cmd ) {
+//        if (cmd != null) {
+//            parser.usage(cmd);
+//        }
+//        else {
+//            parser.usage();
+//        }
+//    }
+//
+//    /**
+//     * @return
+//     */
+//    public
+//    boolean help () {
+//        return options.help;
+//        e
+//    }
+//
+//    /**
+//     * @return
+//     */
+//    public
+//    boolean debug () {
+//        return options.debug;
+//    }
+//
     /**
      * @return
      */
@@ -113,29 +108,29 @@ class Config<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer> {
         return options.metrics;
     }
 
-    /**
-     * @return
-     */
-    public
-    double fuzz () {
-        return options.fuzz;
-    }
-
-    /**
-     * @return
-     */
-    public
-    ScaleTransform  domainScale () {
-        return options.domainScale;
-    }
-
-    /**
-     * @return
-     */
-    public
-    IPartitionProcessor <N> tiler () {
-        return options.partitionProcessor;
-    }
+//    /**
+//     * @return
+//     */
+//    public
+//    double fuzz () {
+//        return options.fuzz;
+//    }
+//
+//    /**
+//     * @return
+//     */
+//    public
+//    ScaleTransform  domainScale () {
+//        return options.domainScale;
+//    }
+//
+//    /**
+//     * @return
+//     */
+//    public
+//    IPartitionProcessor <N> tiler () {
+//        return options.partitionProcessor;
+//    }
 
     /**
      * @return
@@ -161,29 +156,29 @@ class Config<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer> {
 //        return command.output;
 //    }
 
-    /**
-     *
-     */
-    public
-    void printUsage () {
-        parser.usage();
-    }
-
-    /**
-     * @param command
-     */
-    public
-    void printUsage ( Commands command ) {
-        parser.usage(command.id());
-    }
-
-    /**
-     * @return
-     */
-    public
-    EtvColorSpace colorSpace () {
-        return options.colorSpace;
-    }
+//    /**
+//     *
+//     */
+//    public
+//    void printUsage () {
+//        parser.usage();
+//    }
+//
+//    /**
+//     * @param command
+//     */
+//    public
+//    void printUsage ( Commands command ) {
+//        parser.usage(command.id());
+//    }
+//
+//    /**
+//     * @return
+//     */
+//    public
+//    EtvColorSpace colorSpace () {
+//        return options.colorSpace;
+//    }
 
     /**
      * @return
@@ -209,9 +204,14 @@ class Config<N extends TreeNode <N>, A extends IAddress , G extends BitBuffer> {
         this.colorSpace = colorSpace;
     }
 
+//??????????    public
+//    G partitionProcessor () {
+//        return null;
+//    }
+
     public
-    G partitionProcessor () {
-        return null;
+    void setOptions ( Options options ) {
+        this.options = options;
     }
 
 //    /**
